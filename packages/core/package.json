@@ -1,7 +1,7 @@
 {
   "name": "@nawa-ui/core",
   "version": "0.1.0",
-  "description": "Nawa UI core: accessible design tokens, 18 color themes (light, dark, high contrast × 6 accents) and framework-agnostic CSS.",
+  "description": "Nawa UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
   "type": "module",
   "files": [
     "nawa-ui.css",
@@ -39,7 +39,8 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/check-contrast.mjs"
+    "test": "node scripts/check-contrast.mjs",
+    "prepublishOnly": "node scripts/build.mjs && node scripts/check-contrast.mjs"
   },
   "keywords": [
     "nawa-ui",

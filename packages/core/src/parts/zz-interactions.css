@@ -1,0 +1,46 @@
+/* ---------- Nawa interaction language ----------
+ * Focus: a crisp 2px outline (kept in forced-colors mode) plus a soft accent halo.
+ * Hover: tonal lift. Press: a short squeeze. All motion is neutralised by the reduced-motion block above. */
+[class*='nw-']:focus-visible {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--nw-focus) 22%, transparent);
+}
+.nw-btn {
+  transition: background 160ms var(--nw-ease), box-shadow 200ms var(--nw-ease), transform 160ms var(--nw-ease), border-color 160ms var(--nw-ease);
+}
+.nw-btn--primary,
+.nw-btn--danger {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent), 0 1px 2px color-mix(in srgb, var(--nw-primary) 30%, transparent);
+}
+.nw-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.nw-btn--primary:hover:not(:disabled) {
+  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 24%, transparent), 0 8px 20px -8px color-mix(in srgb, var(--nw-primary) 65%, transparent);
+}
+.nw-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+.nw-btn--primary:focus-visible,
+.nw-btn--danger:focus-visible {
+  box-shadow: 0 0 0 5px color-mix(in srgb, var(--nw-focus) 22%, transparent);
+}
+
+/* Fields: borders warm up on hover, accent on focus. */
+.nw-input:hover:not(:disabled):not(:focus),
+.nw-textarea:hover:not(:disabled):not(:focus),
+.nw-select:hover:not(:disabled):not(:focus) { border-color: var(--nw-text-muted); }
+
+/* Interactive surfaces get an accent-tinted hover instead of plain grey. */
+.nw-tabs__tab:hover:not(:disabled):not([aria-selected='true']),
+.nw-pagination__btn:hover:not(:disabled):not([aria-current='page']),
+.nw-accordion__trigger:hover,
+.nw-close:hover { background: var(--nw-primary-soft); color: var(--nw-primary-ink); }
+.nw-tabs__tab { border-radius: var(--nw-radius-sm) var(--nw-radius-sm) 0 0; transition: background 160ms var(--nw-ease), color 160ms var(--nw-ease); }
+
+/* Cards that are links or buttons lift on hover. */
+a.nw-card:hover,
+button.nw-card:hover,
+.nw-card[data-interactive]:hover { transform: translateY(-2px); box-shadow: var(--nw-shadow-lg); border-color: color-mix(in srgb, var(--nw-primary) 35%, var(--nw-border)); }
+a.nw-card,
+button.nw-card,
+.nw-card[data-interactive] { transition: transform 200ms var(--nw-ease), box-shadow 200ms var(--nw-ease), border-color 200ms var(--nw-ease); }
+
+@media (forced-colors: active) {
+  [class*='nw-']:focus-visible { outline: 2px solid Highlight; }
+}

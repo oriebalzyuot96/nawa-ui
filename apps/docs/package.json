@@ -15,9 +15,11 @@
     "@nawa-ui/astro": "0.1.0",
     "@nawa-ui/core": "0.1.0",
     "@nawa-ui/react": "0.1.0",
+    "@nawa-ui/three": "0.1.0",
     "astro": "5.1.1",
     "react": "18.3.1",
-    "react-dom": "18.3.1"
+    "react-dom": "18.3.1",
+    "three": "0.170.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.4",

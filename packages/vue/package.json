@@ -1,7 +1,7 @@
 {
   "name": "@nawa-ui/vue",
   "version": "0.1.0",
-  "description": "Nawa UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 18 themes, RTL.",
+  "description": "Nawa UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -22,7 +22,8 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "vue": "^3.4.0"

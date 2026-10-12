@@ -1,0 +1,46 @@
+name: Release to npm
+
+# Publishes every @nawa-ui package to the npm registry (installable with npm, yarn, pnpm and bun).
+# Trigger: push a tag like v0.1.0. Requires the repository secret NPM_TOKEN (an npm "Automation" token
+# with publish rights on the @nawa-ui organisation).
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write # npm provenance
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - name: Verify (contrast checks, tests, typecheck, builds)
+        run: npm run release:check
+      - name: Publish packages
+        run: |
+          for pkg in core react vue svelte astro react-native three angular; do
+            if [ -f "packages/$pkg/package.json" ]; then
+              name=$(node -p "require('./packages/$pkg/package.json').name")
+              version=$(node -p "require('./packages/$pkg/package.json').version")
+              if npm view "$name@$version" version >/dev/null 2>&1; then
+                echo "$name@$version already published, skipping"
+              else
+                dir="packages/$pkg"
+                # Angular publishes its ng-packagr output.
+                if [ "$pkg" = "angular" ]; then npm run build -w "$name" && dir="packages/angular/dist"; fi
+                npm publish "$dir" --access public --provenance
+              fi
+            fi
+          done
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

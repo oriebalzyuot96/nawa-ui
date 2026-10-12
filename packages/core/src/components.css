@@ -302,8 +302,8 @@
 .nw-table th { background: var(--nw-surface-alt); color: var(--nw-text-muted); font-weight: 600; white-space: nowrap; }
 .nw-table tbody tr:last-child td { border-bottom: none; }
 .nw-table tbody tr:hover td { background: var(--nw-surface-alt); }
-.nw-table__align-end { text-align: end; }
-.nw-table__align-center { text-align: center; }
+.nw-table .nw-table__align-end { text-align: end; }
+.nw-table .nw-table__align-center { text-align: center; }
 .nw-table__sort {
   display: inline-flex;
   align-items: center;

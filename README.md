@@ -4,7 +4,7 @@
 
 **Accessible, themeable UI components for React, Vue, Svelte, Astro and React Native.**
 
-WCAG 2.2 AA · 18 themes · Dark mode & high contrast · Skeleton loaders · RTL / Arabic · MIT
+WCAG 2.2 AA · 21 themes · Dark mode & high contrast · Skeleton loaders · RTL / Arabic · MIT
 
 [Docs & live preview](https://oriebalzyuot96.github.io/nawa-ui/) · [Components](https://oriebalzyuot96.github.io/nawa-ui/components/) · [Themes](https://oriebalzyuot96.github.io/nawa-ui/themes/) · [العربية](https://oriebalzyuot96.github.io/nawa-ui/ar/)
 
@@ -48,11 +48,11 @@ Themes are CSS attributes, so they work in every framework and can be scoped to 
 | `data-accent` | `teal` · `indigo` · `rose` · `amber` · `emerald` · `slate` |
 | `data-shape` | `sharp` · `default` · `round` |
 
-All theme colors come from one file, [`packages/core/src/themes.mjs`](packages/core/src/themes.mjs). The build generates the CSS and the React Native tokens from it, and `npm test -w @nawa-ui/core` checks **450 WCAG contrast pairs** (every mode × accent).
+All theme colors come from one file, [`packages/core/src/themes.mjs`](packages/core/src/themes.mjs). The build generates the CSS and the React Native tokens from it, and `npm test -w @nawa-ui/core` checks **525 WCAG contrast pairs** (every mode × accent).
 
 ## Accessibility
 
-- Contrast verified for all 18 themes (text 4.5:1, controls and focus 3:1).
+- Contrast verified for all 21 themes (text 4.5:1, controls and focus 3:1).
 - 2px focus outlines that survive Windows High Contrast; `forced-colors` styles for selection and state.
 - Dialog and Drawer: focus trap, Escape, scroll lock, focus return.
 - Tabs, Segmented, Pagination follow WAI-ARIA keyboard patterns.

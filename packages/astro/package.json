@@ -1,7 +1,7 @@
 {
   "name": "@nawa-ui/astro",
   "version": "0.1.0",
-  "description": "Nawa UI for Astro — accessible, zero-JS server-rendered components with 18 themes.",
+  "description": "Nawa UI for Astro — accessible, zero-JS server-rendered components with 21 themes.",
   "type": "module",
   "files": [
     "src",

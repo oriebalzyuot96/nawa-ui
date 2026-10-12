@@ -13,3 +13,6 @@ export type { ThemeMode, ThemeAccent, ThemeShape } from '@nawa-ui/core/tokens';
 export * from './components/forms-advanced';
 export * from './components/menus-overlays';
 export * from './components/data-panels-media';
+export * from './components/charts';
+export * from './components/effects-3d';
+export * from './components/feedback';

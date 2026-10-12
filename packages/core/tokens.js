@@ -2,6 +2,31 @@
 
 export const themes = {
   "light": {
+    "violet": {
+      "primary": "#5b34d6",
+      "primaryHover": "#4925b8",
+      "primaryInk": "#5230cc",
+      "onPrimary": "#ffffff",
+      "primarySoft": "#e8e3f9",
+      "focus": "#5b34d6",
+      "surface": "#ffffff",
+      "surfaceAlt": "#f4f8f9",
+      "surfaceMuted": "#e8eef0",
+      "text": "#16262d",
+      "textMuted": "#4b6873",
+      "border": "#dbe5e8",
+      "controlBorder": "#768c95",
+      "success": "#0f6b33",
+      "warning": "#9a4100",
+      "danger": "#c0262d",
+      "info": "#1458b0",
+      "onDanger": "#ffffff",
+      "successSoft": "#e2ede7",
+      "warningSoft": "#f3e8e0",
+      "dangerSoft": "#f7e5e6",
+      "infoSoft": "#e3ebf6",
+      "overlay": "rgba(13, 20, 24, 0.55)"
+    },
     "teal": {
       "primary": "#0d7377",
       "primaryHover": "#0a5c5f",
@@ -154,6 +179,31 @@ export const themes = {
     }
   },
   "dark": {
+    "violet": {
+      "primary": "#b9a5ff",
+      "primaryHover": "#d3c7ff",
+      "primaryInk": "#c4b5fd",
+      "onPrimary": "#1d0f4a",
+      "primarySoft": "#282a3b",
+      "focus": "#b9a5ff",
+      "surface": "#10161b",
+      "surfaceAlt": "#172028",
+      "surfaceMuted": "#202b34",
+      "text": "#e7eef1",
+      "textMuted": "#a1b4bc",
+      "border": "#283640",
+      "controlBorder": "#6d838e",
+      "success": "#4cd987",
+      "warning": "#f6a35c",
+      "danger": "#ff8a8a",
+      "info": "#78b3ff",
+      "onDanger": "#2a0606",
+      "successSoft": "#172d28",
+      "warningSoft": "#2c2723",
+      "dangerSoft": "#2d2428",
+      "infoSoft": "#1c2936",
+      "overlay": "rgba(0, 0, 0, 0.65)"
+    },
     "teal": {
       "primary": "#2fb8b8",
       "primaryHover": "#5fcaca",
@@ -306,6 +356,31 @@ export const themes = {
     }
   },
   "hc": {
+    "violet": {
+      "primary": "#3a17a3",
+      "primaryHover": "#2b0f80",
+      "primaryInk": "#3a17a3",
+      "onPrimary": "#ffffff",
+      "primarySoft": "#e3dff2",
+      "focus": "#3a17a3",
+      "surface": "#ffffff",
+      "surfaceAlt": "#ffffff",
+      "surfaceMuted": "#ececec",
+      "text": "#000000",
+      "textMuted": "#1a1a1a",
+      "border": "#000000",
+      "controlBorder": "#000000",
+      "success": "#00561f",
+      "warning": "#6e2a00",
+      "danger": "#9c0006",
+      "info": "#00339c",
+      "onDanger": "#ffffff",
+      "successSoft": "#e0ebe4",
+      "warningSoft": "#eee5e0",
+      "dangerSoft": "#f3e0e1",
+      "infoSoft": "#e0e7f3",
+      "overlay": "rgba(0, 0, 0, 0.75)"
+    },
     "teal": {
       "primary": "#005252",
       "primaryHover": "#003d3d",
@@ -477,14 +552,14 @@ export const shapes = {
   }
 };
 
-export const lightTheme = themes.light.teal;
-export const darkTheme = themes.dark.teal;
-export const highContrastTheme = themes.hc.teal;
+export const lightTheme = themes.light.violet;
+export const darkTheme = themes.dark.violet;
+export const highContrastTheme = themes.hc.violet;
 
 export const radius = { ...shapes.default, pill: 999 };
 export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 };
 export const fontSize = { xs: 11, sm: 13, md: 15, lg: 17, xl: 20 };
 
-export function getTheme(mode = 'light', accent = 'teal') {
+export function getTheme(mode = 'light', accent = 'violet') {
   return themes[mode][accent];
 }

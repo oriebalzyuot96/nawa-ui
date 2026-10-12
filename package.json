@@ -10,6 +10,8 @@
     "packages/react-native",
     "packages/svelte",
     "packages/astro",
+    "packages/three",
+    "packages/angular",
     "apps/docs"
   ],
   "scripts": {
@@ -17,6 +19,8 @@
     "test": "npm test --workspaces --if-present",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "docs:dev": "npm run dev -w @nawa-ui/docs",
-    "docs:build": "npm run build -w @nawa-ui/core && npm run build -w @nawa-ui/react && npm run build -w @nawa-ui/docs"
+    "docs:build": "npm run build -w @nawa-ui/core && npm run build -w @nawa-ui/react && npm run build -w @nawa-ui/docs",
+    "release:check": "npm run build -w @nawa-ui/core && npm test && npm run typecheck && npm run build -w @nawa-ui/react -w @nawa-ui/vue -w @nawa-ui/three",
+    "release:dry": "npm publish --dry-run -w @nawa-ui/core -w @nawa-ui/react -w @nawa-ui/vue -w @nawa-ui/svelte -w @nawa-ui/astro -w @nawa-ui/react-native -w @nawa-ui/three"
   }
 }

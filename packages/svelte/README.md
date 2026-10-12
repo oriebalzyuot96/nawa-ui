@@ -1,6 +1,6 @@
 # @nawa-ui/svelte
 
-**Nawa UI for Svelte 5** — an accessible, themeable UI component library. WCAG 2.2 AA, 18 themes (light, dark, high contrast × 6 accents), skeleton loaders and full RTL support. Same components and API in React, Vue, Svelte, Astro and React Native.
+**Nawa UI for Svelte 5** — an accessible, themeable UI component library. WCAG 2.2 AA, 21 themes (light, dark, high contrast × 7 accents), skeleton loaders and full RTL support. Same components and API in React, Vue, Svelte, Astro and React Native.
 
 - 📖 Docs and live preview: https://oriebalzyuot96.github.io/nawa-ui/
 - 🧩 Components: https://oriebalzyuot96.github.io/nawa-ui/components/
@@ -27,7 +27,7 @@ npm i @nawa-ui/svelte @nawa-ui/core
 ## Why Nawa UI
 
 - Accessible by default: verified contrast for every theme, focus traps, keyboard patterns, screen-reader labels, reduced motion.
-- 18 themes and 3 shapes with one attribute; follows the OS dark mode and high-contrast settings.
+- 21 themes and 3 shapes with one attribute; follows the OS dark mode and high-contrast settings.
 - Skeletons, DataTable, Dialog, Drawer, Tabs, Toast, Tooltip, Stepper, Timeline and more.
 - One design system across five frameworks.
 

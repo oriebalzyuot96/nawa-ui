@@ -1,7 +1,7 @@
 /**
  * Nawa UI theme source of truth.
  *
- * A theme = mode (light | dark | hc) × accent (teal | indigo | rose | amber | emerald | slate) × shape.
+ * A theme = mode (light | dark | hc) × accent (violet | teal | indigo | rose | amber | emerald | slate) × shape.
  * `scripts/build.mjs` generates `nawa-ui.css` and `tokens.ts` from this file, and
  * `scripts/check-contrast.mjs` verifies every mode × accent pair against WCAG 2.2 AA.
  */
@@ -67,6 +67,12 @@ export const modes = {
  * - primaryInk: accent text and links on surfaces
  */
 export const accents = {
+  /** Default Nawa accent: electric violet. */
+  violet: {
+    light: { primary: '#5b34d6', primaryHover: '#4925b8', primaryInk: '#5230cc', onPrimary: '#ffffff' },
+    dark: { primary: '#b9a5ff', primaryHover: '#d3c7ff', primaryInk: '#c4b5fd', onPrimary: '#1d0f4a' },
+    hc: { primary: '#3a17a3', primaryHover: '#2b0f80', primaryInk: '#3a17a3', onPrimary: '#ffffff' },
+  },
   teal: {
     light: { primary: '#0d7377', primaryHover: '#0a5c5f', primaryInk: '#0b6b6b', onPrimary: '#ffffff' },
     dark: { primary: '#2fb8b8', primaryHover: '#5fcaca', primaryInk: '#6fd1d1', onPrimary: '#06201f' },
@@ -110,5 +116,5 @@ export const shapes = {
 export const softMix = { primary: 0.14, status: 0.12 };
 
 export const defaultMode = 'light';
-export const defaultAccent = 'teal';
+export const defaultAccent = 'violet';
 export const defaultShape = 'default';
