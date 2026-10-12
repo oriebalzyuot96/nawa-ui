@@ -1,0 +1,36 @@
+---
+// On/off switch (role="switch"). A hidden input carries the value in forms.
+// Listen for changes with: el.addEventListener('nw-change', (e) => e.detail.checked)
+interface Props {
+  label: string;
+  /** Show the label next to the switch. When false it is still the accessible name. */
+  showLabel?: boolean;
+  name?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  id?: string;
+}
+
+const { label, showLabel = true, name, checked = false, disabled = false, id } = Astro.props;
+const switchId = id ?? `nw-switch-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<span class="nw-check">
+  <button
+    id={switchId}
+    type="button"
+    role="switch"
+    class="nw-switch"
+    aria-checked={checked ? 'true' : 'false'}
+    aria-label={showLabel ? undefined : label}
+    aria-labelledby={showLabel ? `${switchId}-label` : undefined}
+    disabled={disabled}
+    data-nw-switch
+  ></button>
+  {name && <input type="hidden" name={name} value={checked ? 'on' : ''} />}
+  {showLabel && <span id={`${switchId}-label`}>{label}</span>}
+</span>
+
+<script>
+  import '../client/switch';
+</script>

@@ -1,0 +1,16 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description } = Astro.props;
+const hasAction = Astro.slots.has('action');
+---
+
+<div class="nw-empty">
+  {Astro.slots.has('icon') && <div class="nw-empty__icon" aria-hidden="true"><slot name="icon" /></div>}
+  <div class="nw-empty__title">{title}</div>
+  {description && <p class="nw-empty__desc">{description}</p>}
+  {hasAction && <div class="nw-empty__action"><slot name="action" /></div>}
+</div>

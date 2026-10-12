@@ -1,0 +1,60 @@
+{
+  "name": "@nawa-ui/astro",
+  "version": "0.1.0",
+  "description": "Nawa UI for Astro — accessible, zero-JS server-rendered components with 18 themes.",
+  "type": "module",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "exports": {
+    "./components/*": "./src/components/*.astro"
+  },
+  "scripts": {
+    "typecheck": "astro check"
+  },
+  "peerDependencies": {
+    "astro": "^5.0.0"
+  },
+  "dependencies": {
+    "@nawa-ui/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@astrojs/check": "0.9.4",
+    "astro": "5.1.1",
+    "typescript": "5.6.3"
+  },
+  "keywords": [
+    "astro",
+    "astro-component",
+    "withastro",
+    "astro-ui",
+    "nawa-ui",
+    "ui-library",
+    "component-library",
+    "design-system",
+    "accessible",
+    "accessibility",
+    "wcag",
+    "a11y",
+    "themes",
+    "dark-mode",
+    "skeleton",
+    "datatable",
+    "rtl",
+    "arabic",
+    "primeng-alternative"
+  ],
+  "homepage": "https://oriieebgsmile96.github.io/nawa-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oriieebgSmile96/nawa-ui.git",
+    "directory": "packages/astro"
+  },
+  "bugs": "https://github.com/oriieebgSmile96/nawa-ui/issues",
+  "author": "oriieebgSmile96",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

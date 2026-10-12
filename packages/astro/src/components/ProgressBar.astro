@@ -1,0 +1,22 @@
+---
+interface Props {
+  /** 0–100. Leave undefined for an indeterminate bar. */
+  value?: number;
+  label?: string;
+}
+
+const { value, label = 'Progress' } = Astro.props;
+const indeterminate = value === undefined;
+const clamped = indeterminate ? undefined : Math.min(100, Math.max(0, value as number));
+---
+
+<div
+  role="progressbar"
+  aria-label={label}
+  aria-valuemin="0"
+  aria-valuemax="100"
+  aria-valuenow={clamped}
+  class:list={['nw-progress', indeterminate && 'nw-progress--indeterminate']}
+>
+  <div class="nw-progress__bar" style={indeterminate ? undefined : `width:${clamped}%`}></div>
+</div>

@@ -1,0 +1,20 @@
+---
+// Hover/focus tooltip. The first element in the slot is the trigger; it is linked to the
+// bubble with aria-describedby at runtime, and Escape dismisses the bubble (WCAG 1.4.13).
+interface Props {
+  text: string;
+  placement?: 'top' | 'bottom';
+}
+
+const { text, placement = 'top' } = Astro.props;
+const id = `nw-tip-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<span class:list={['nw-tooltip', placement === 'bottom' && 'nw-tooltip--bottom']} data-nw-tooltip>
+  <slot />
+  <span role="tooltip" id={id} class="nw-tooltip__bubble">{text}</span>
+</span>
+
+<script>
+  import '../client/tooltip';
+</script>

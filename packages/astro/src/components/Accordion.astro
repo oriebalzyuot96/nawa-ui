@@ -1,0 +1,36 @@
+---
+// Native <details>/<summary>: works with zero JavaScript and is keyboard accessible.
+interface Item {
+  title: string;
+  /** Plain text panel content. Use a framework island for rich content. */
+  content: string;
+  /** Render expanded. */
+  open?: boolean;
+}
+
+interface Props {
+  items: Item[];
+  /** Keep the accordion as one group: opening an item closes the others (browser support: Chrome 120+, Firefox 130+, Safari 17.2+). */
+  exclusive?: boolean;
+}
+
+const { items, exclusive = false } = Astro.props;
+---
+
+<div class="nw-accordion" data-nw-exclusive={exclusive ? '' : undefined}>
+  {items.map((item) => (
+    <details class="nw-accordion__item" open={item.open} name={exclusive ? 'nw-accordion' : undefined}>
+      <summary class="nw-accordion__trigger">
+        {item.title}
+        <span class="nw-accordion__icon" aria-hidden="true">▾</span>
+      </summary>
+      <div class="nw-accordion__panel">{item.content}</div>
+    </details>
+  ))}
+</div>
+
+<style is:global>
+  details.nw-accordion__item > summary { list-style: none; }
+  details.nw-accordion__item > summary::-webkit-details-marker { display: none; }
+  details.nw-accordion__item[open] .nw-accordion__icon { transform: rotate(180deg); }
+</style>

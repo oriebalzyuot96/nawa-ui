@@ -1,0 +1,10 @@
+---
+interface Props {
+  size?: 'md' | 'lg';
+  label?: string;
+}
+
+const { size = 'md', label = 'Loading' } = Astro.props;
+---
+
+<span role="status" aria-label={label} class:list={['nw-spinner', size === 'lg' && 'nw-spinner--lg']}></span>

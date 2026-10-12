@@ -1,0 +1,14 @@
+---
+// Paragraph placeholder. The last line is shorter. Announced once as a loading status.
+interface Props {
+  lines?: number;
+  label?: string;
+}
+
+const { lines = 3, label = 'Loading…' } = Astro.props;
+---
+
+<div role="status" aria-busy="true" class="nw-skeleton-text">
+  <span class="nw-sr-only">{label}</span>
+  {Array.from({ length: lines }, () => <span class="nw-skeleton" aria-hidden="true" style="height:12px"></span>)}
+</div>

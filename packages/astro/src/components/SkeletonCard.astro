@@ -1,0 +1,23 @@
+---
+// Card placeholder: avatar, title lines and a body paragraph.
+interface Props {
+  lines?: number;
+  label?: string;
+}
+
+const { lines = 3, label = 'Loading…' } = Astro.props;
+---
+
+<div role="status" aria-busy="true" class="nw-skeleton-card">
+  <span class="nw-sr-only">{label}</span>
+  <div class="nw-skeleton-card__head">
+    <span class="nw-skeleton nw-skeleton--circle" aria-hidden="true" style="width:40px;height:40px"></span>
+    <div class="nw-skeleton-text" aria-hidden="true">
+      <span class="nw-skeleton" style="height:12px;width:50%"></span>
+      <span class="nw-skeleton" style="height:10px;width:30%"></span>
+    </div>
+  </div>
+  <div class="nw-skeleton-text" aria-hidden="true">
+    {Array.from({ length: lines }, () => <span class="nw-skeleton" style="height:12px"></span>)}
+  </div>
+</div>

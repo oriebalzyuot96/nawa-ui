@@ -1,0 +1,13 @@
+---
+// Static tag. For a removable tag that updates state, use a framework island.
+interface Props {
+  removeHref?: string;
+}
+
+const { removeHref } = Astro.props;
+---
+
+<span class="nw-tag">
+  <slot />
+  {removeHref && <a class="nw-tag__remove" href={removeHref} aria-label="Remove">×</a>}
+</span>

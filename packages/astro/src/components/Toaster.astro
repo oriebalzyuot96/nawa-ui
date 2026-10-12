@@ -1,0 +1,11 @@
+---
+// Live region for toasts. Place once per page, then call from any client script:
+//   window.nawaToast({ title: 'Saved', message: 'Your changes are live', variant: 'success' })
+// Auto-dismiss pauses while a toast is hovered or focused.
+---
+
+<div class="nw-toast-stack" role="status" aria-live="polite" data-nw-toaster></div>
+
+<script>
+  import '../client/toast';
+</script>

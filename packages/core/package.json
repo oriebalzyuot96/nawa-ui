@@ -1,0 +1,70 @@
+{
+  "name": "@nawa-ui/core",
+  "version": "0.1.0",
+  "description": "Nawa UI core: accessible design tokens, 18 color themes (light, dark, high contrast × 6 accents) and framework-agnostic CSS.",
+  "type": "module",
+  "files": [
+    "nawa-ui.css",
+    "tokens.js",
+    "tokens.d.ts",
+    "src/themes.mjs",
+    "src/a11y.js",
+    "src/a11y.d.ts",
+    "src/theme.js",
+    "src/theme.d.ts",
+    "README.md"
+  ],
+  "style": "nawa-ui.css",
+  "main": "tokens.js",
+  "types": "tokens.d.ts",
+  "exports": {
+    "./style.css": "./nawa-ui.css",
+    "./nawa-ui.css": "./nawa-ui.css",
+    "./tokens": {
+      "types": "./tokens.d.ts",
+      "default": "./tokens.js"
+    },
+    "./themes": "./src/themes.mjs",
+    "./a11y": {
+      "types": "./src/a11y.d.ts",
+      "default": "./src/a11y.js"
+    },
+    "./theme": {
+      "types": "./src/theme.d.ts",
+      "default": "./src/theme.js"
+    }
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/check-contrast.mjs"
+  },
+  "keywords": [
+    "nawa-ui",
+    "ui-library",
+    "design-system",
+    "design-tokens",
+    "css",
+    "themes",
+    "dark-mode",
+    "accessibility",
+    "wcag",
+    "a11y",
+    "rtl",
+    "arabic"
+  ],
+  "homepage": "https://oriieebgsmile96.github.io/nawa-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oriieebgSmile96/nawa-ui.git",
+    "directory": "packages/core"
+  },
+  "bugs": "https://github.com/oriieebgSmile96/nawa-ui/issues",
+  "author": "oriieebgSmile96",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

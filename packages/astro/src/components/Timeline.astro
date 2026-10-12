@@ -1,0 +1,25 @@
+---
+interface Item {
+  title: string;
+  description?: string;
+  time?: string;
+  variant?: 'primary' | 'info' | 'success' | 'warning' | 'danger';
+}
+
+interface Props {
+  items: Item[];
+}
+
+const { items } = Astro.props;
+---
+
+<ol class="nw-timeline">
+  {items.map((item) => (
+    <li class="nw-timeline__item">
+      <span class:list={['nw-timeline__dot', item.variant && item.variant !== 'primary' && `nw-timeline__dot--${item.variant}`]} aria-hidden="true"></span>
+      {item.time && <div class="nw-timeline__time">{item.time}</div>}
+      <div class="nw-timeline__title">{item.title}</div>
+      {item.description && <div class="nw-timeline__desc">{item.description}</div>}
+    </li>
+  ))}
+</ol>

@@ -1,0 +1,174 @@
+---
+import '@nawa-ui/core/style.css';
+import '../styles/site.css';
+import ThemeScript from '@nawa-ui/astro/components/ThemeScript';
+import Toaster from '@nawa-ui/astro/components/Toaster';
+import Logo from '../components/Logo.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  lang?: 'en' | 'ar';
+  /** Path of the equivalent page in the other language, for hreflang. */
+  alternate?: { en?: string; ar?: string };
+}
+
+const { title, description, lang = 'en', alternate } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const site = Astro.site!;
+const canonical = new URL(Astro.url.pathname, site).href;
+const ogImage = new URL(`${base}/og.png`, site).href;
+const repo = 'https://github.com/oriieebgSmile96/nawa-ui';
+const fullTitle = title.includes('Nawa UI') ? title : `${title} — Nawa UI`;
+const path = Astro.url.pathname;
+const isAr = lang === 'ar';
+
+const nav = isAr
+  ? [
+      { href: `${base}/ar/`, label: 'الرئيسية' },
+      { href: `${base}/components/`, label: 'المكونات' },
+      { href: `${base}/themes/`, label: 'الثيمات' },
+      { href: `${base}/accessibility/`, label: 'إمكانية الوصول' },
+      { href: `${base}/getting-started/`, label: 'ابدأ' },
+    ]
+  : [
+      { href: `${base}/`, label: 'Home' },
+      { href: `${base}/components/`, label: 'Components' },
+      { href: `${base}/themes/`, label: 'Themes' },
+      { href: `${base}/accessibility/`, label: 'Accessibility' },
+      { href: `${base}/getting-started/`, label: 'Get started' },
+    ];
+
+const jsonLd = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareSourceCode',
+    name: 'Nawa UI',
+    alternateName: ['nawa-ui', 'نواة UI'],
+    description:
+      'Accessible, themeable UI component library for React, Vue, Svelte, Astro and React Native. WCAG 2.2 AA, 18 themes, dark mode, high contrast, skeleton loaders, RTL.',
+    url: new URL(`${base}/`, site).href,
+    codeRepository: repo,
+    programmingLanguage: ['TypeScript', 'CSS'],
+    runtimePlatform: ['React', 'Vue', 'Svelte', 'Astro', 'React Native'],
+    license: 'https://opensource.org/licenses/MIT',
+    keywords: 'ui library, component library, design system, react, vue, svelte, astro, react native, accessibility, wcag, themes, dark mode, skeleton, rtl, arabic',
+  },
+  {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Nawa UI',
+    url: new URL(`${base}/`, site).href,
+    inLanguage: ['en', 'ar'],
+  },
+];
+---
+
+<!doctype html>
+<html lang={lang} dir={isAr ? 'rtl' : 'ltr'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#0d7377" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
+    {alternate?.en && <link rel="alternate" hreflang="en" href={new URL(`${base}${alternate.en}`, site).href} />}
+    {alternate?.ar && <link rel="alternate" hreflang="ar" href={new URL(`${base}${alternate.ar}`, site).href} />}
+    {alternate?.en && <link rel="alternate" hreflang="x-default" href={new URL(`${base}${alternate.en}`, site).href} />}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Nawa UI" />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={isAr ? 'ar_AR' : 'en_US'} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={ogImage} />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <ThemeScript />
+  </head>
+  <body>
+    <a class="nw-skip-link" href="#main">{isAr ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
+    <header class="site-header">
+      <div class="container site-header__inner">
+        <a class="brand" href={isAr ? `${base}/ar/` : `${base}/`}>
+          <Logo />
+          <span>Nawa UI</span>
+        </a>
+        <nav class="site-nav" aria-label={isAr ? 'التنقل الرئيسي' : 'Main'}>
+          {nav.map((item) => (
+            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
+          ))}
+        </nav>
+        <div class="header-tools">
+          <div class="theme-picker" role="group" aria-label={isAr ? 'المظهر' : 'Theme'}>
+            <label>
+              {isAr ? 'الوضع' : 'Mode'}
+              <select data-theme-control="mode">
+                <option value="system">{isAr ? 'النظام' : 'System'}</option>
+                <option value="light">{isAr ? 'فاتح' : 'Light'}</option>
+                <option value="dark">{isAr ? 'داكن' : 'Dark'}</option>
+                <option value="hc">{isAr ? 'تباين عالٍ' : 'High contrast'}</option>
+              </select>
+            </label>
+            <label>
+              {isAr ? 'اللون' : 'Accent'}
+              <select data-theme-control="accent">
+                {['teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'].map((a) => <option value={a}>{a}</option>)}
+              </select>
+            </label>
+            <label>
+              {isAr ? 'الشكل' : 'Shape'}
+              <select data-theme-control="shape">
+                {['default', 'sharp', 'round'].map((s) => <option value={s}>{s}</option>)}
+              </select>
+            </label>
+          </div>
+          <a href={isAr ? `${base}/` : `${base}/ar/`} lang={isAr ? 'en' : 'ar'} hreflang={isAr ? 'en' : 'ar'}>{isAr ? 'English' : 'العربية'}</a>
+          <a href={repo} rel="noopener">GitHub</a>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" tabindex="-1">
+      <slot />
+    </main>
+
+    <footer class="site-footer">
+      <div class="container site-footer__inner">
+        <span>Nawa UI · MIT License · {isAr ? 'مكتبة واجهات مفتوحة المصدر' : 'Open-source UI library'}</span>
+        <span>
+          <a href={repo}>GitHub</a> · <a href="https://www.npmjs.com/org/nawa-ui">npm</a> · <a href={`${base}/accessibility/`}>{isAr ? 'إمكانية الوصول' : 'Accessibility'}</a>
+        </span>
+      </div>
+    </footer>
+
+    <Toaster />
+
+    <script>
+      import { applyTheme, loadTheme, saveTheme } from '@nawa-ui/core/theme';
+      type Choice = { mode?: 'system' | 'light' | 'dark' | 'hc'; accent?: string; shape?: string };
+      const saved: Choice = loadTheme() ?? {};
+      const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'teal', shape: saved.shape ?? 'default' };
+      for (const select of document.querySelectorAll<HTMLSelectElement>('[data-theme-control]')) {
+        const key = select.dataset.themeControl as keyof Choice;
+        select.value = String(choice[key]);
+        select.addEventListener('change', () => {
+          (choice as Record<string, string>)[key] = select.value;
+          applyTheme(choice as Parameters<typeof applyTheme>[0]);
+          saveTheme(choice as Parameters<typeof saveTheme>[0]);
+        });
+      }
+    </script>
+  </body>
+</html>

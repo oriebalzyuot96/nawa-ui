@@ -1,0 +1,61 @@
+{
+  "name": "@nawa-ui/react-native",
+  "version": "0.1.0",
+  "description": "Nawa UI for React Native — accessible, themeable mobile components with the same API as the web packages.",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "files": [
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">=0.74.0"
+  },
+  "dependencies": {
+    "@nawa-ui/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@types/react": "18.3.12",
+    "react": "18.3.1",
+    "react-native": "0.76.5",
+    "typescript": "5.6.3"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "mobile",
+    "ios",
+    "android",
+    "nawa-ui",
+    "ui-library",
+    "component-library",
+    "design-system",
+    "accessible",
+    "accessibility",
+    "wcag",
+    "a11y",
+    "themes",
+    "dark-mode",
+    "skeleton",
+    "datatable",
+    "rtl",
+    "arabic",
+    "primeng-alternative"
+  ],
+  "homepage": "https://oriieebgsmile96.github.io/nawa-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oriieebgSmile96/nawa-ui.git",
+    "directory": "packages/react-native"
+  },
+  "bugs": "https://github.com/oriieebgSmile96/nawa-ui/issues",
+  "author": "oriieebgSmile96",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

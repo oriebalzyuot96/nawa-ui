@@ -1,0 +1,26 @@
+---
+interface Step {
+  label: string;
+  description?: string;
+}
+
+interface Props {
+  steps: Step[];
+  /** Zero-based index of the active step. */
+  current?: number;
+}
+
+const { steps, current = 0 } = Astro.props;
+---
+
+<ol class="nw-stepper">
+  {steps.map((s, i) => {
+    const state = i < current ? 'complete' : i === current ? 'current' : 'upcoming';
+    return (
+      <li class="nw-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
+        <span>{s.label}</span>
+        {s.description && <span class="nw-stepper__desc">{s.description}</span>}
+      </li>
+    );
+  })}
+</ol>

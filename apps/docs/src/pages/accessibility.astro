@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Alert from '@nawa-ui/astro/components/Alert';
+
+const groups = [
+  {
+    title: 'Color and contrast',
+    items: [
+      'All 18 themes are verified on every build: 450 automated checks for text (4.5:1) and controls/focus (3:1), WCAG 1.4.3 and 1.4.11.',
+      'Input and switch borders use a dedicated control color that meets 3:1 against the page.',
+      'A high-contrast theme, applied automatically when the OS asks for more contrast (prefers-contrast: more).',
+      'Windows High Contrast / forced-colors mode keeps borders, selection and focus visible.',
+    ],
+  },
+  {
+    title: 'Keyboard',
+    items: [
+      'Visible 2px focus outlines on every interactive element (they survive forced-colors mode, unlike box-shadow rings).',
+      'Tabs, Segmented controls and Pagination follow the WAI-ARIA keyboard patterns (arrow keys, Home, End).',
+      'Dialogs and Drawers trap focus, close on Escape, lock page scroll and return focus to the opener.',
+      'Tooltips open on focus as well as hover and can be dismissed with Escape (WCAG 1.4.13).',
+    ],
+  },
+  {
+    title: 'Screen readers',
+    items: [
+      'Every field has a programmatic label; hints and errors are linked with aria-describedby and invalid fields set aria-invalid.',
+      'Skeletons announce one "Loading…" status instead of many empty shapes; tables set aria-busy while loading.',
+      'Toasts use a polite live region; danger and warning alerts use role="alert".',
+      'Sortable table headers expose aria-sort; the current page and step use aria-current.',
+    ],
+  },
+  {
+    title: 'Motion, touch and language',
+    items: [
+      'prefers-reduced-motion stops shimmer and slide animations (WCAG 2.3.3); React Native follows the OS "Reduce motion" setting.',
+      'Small targets such as tag remove buttons and switches are at least 24×24px (WCAG 2.5.8).',
+      'Toast auto-dismiss pauses on hover and focus (WCAG 2.2.1).',
+      'Logical CSS properties throughout, so right-to-left languages mirror correctly.',
+    ],
+  },
+];
+---
+
+<Base
+  title="Accessibility"
+  description="How Nawa UI meets WCAG 2.2 AA: verified color contrast across 18 themes, keyboard patterns, focus management, screen-reader semantics, reduced motion and forced-colors support."
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Accessibility</p>
+      <h1>Built for everyone, verified on every build</h1>
+      <p class="lead">Nawa UI targets WCAG 2.2 level AA. Accessibility is part of the components, not a checklist you have to remember.</p>
+      <div class="grid grid--2" style="margin-top:2rem">
+        {groups.map((g) => (
+          <article class="feature">
+            <h2 style="font-size:1.2rem">{g.title}</h2>
+            <ul class="checklist">
+              {g.items.map((item) => <li>{item}</li>)}
+            </ul>
+          </article>
+        ))}
+      </div>
+      <div style="margin-top:2rem">
+        <Alert title="Your part">
+          Components handle semantics and behavior, but content is yours: write meaningful labels, give icon-only buttons an <code>aria-label</code>, and keep a
+          logical heading order. Found an accessibility bug? Please open an issue on GitHub.
+        </Alert>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,19 @@
+---
+interface Props {
+  name: string;
+  src?: string;
+  size?: 'sm' | 'md' | 'lg';
+}
+
+const { name, src, size = 'md' } = Astro.props;
+const initials = name
+  .trim()
+  .split(/\s+/)
+  .slice(0, 2)
+  .map((part) => part[0]?.toUpperCase() ?? '')
+  .join('');
+---
+
+<span role="img" aria-label={name} class:list={['nw-avatar', size !== 'md' && `nw-avatar--${size}`]}>
+  {src ? <img src={src} alt="" /> : initials}
+</span>

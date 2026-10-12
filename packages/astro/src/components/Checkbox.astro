@@ -1,0 +1,16 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'input'> {
+  label?: string;
+  disabled?: boolean;
+  checked?: boolean;
+}
+
+const { label, disabled = false, checked = false, ...rest } = Astro.props;
+---
+
+<label class:list={['nw-check', disabled && 'nw-check--disabled']}>
+  <input type="checkbox" checked={checked} disabled={disabled} {...rest} />
+  {label}<slot />
+</label>

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://oriieebgsmile96.github.io/nawa-ui/sitemap-index.xml

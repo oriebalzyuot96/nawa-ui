@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build tokens and CSS
+        run: npm run build -w @nawa-ui/core
+      - name: WCAG contrast checks (all themes)
+        run: npm test -w @nawa-ui/core
+      - name: React tests
+        run: npm test -w @nawa-ui/react
+      - name: Vue tests
+        run: npm test -w @nawa-ui/vue
+      - name: Typecheck all packages
+        run: |
+          npm run typecheck -w @nawa-ui/react
+          npm run typecheck -w @nawa-ui/vue
+          npm run typecheck -w @nawa-ui/svelte
+          npm run typecheck -w @nawa-ui/react-native
+          npm run typecheck -w @nawa-ui/astro
+      - name: Build libraries
+        run: |
+          npm run build -w @nawa-ui/react
+          npm run build -w @nawa-ui/vue

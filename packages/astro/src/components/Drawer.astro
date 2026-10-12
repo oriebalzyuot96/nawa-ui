@@ -1,0 +1,24 @@
+---
+// Side panel on a native <dialog>. Open with data-nw-open="<id>"; close with data-nw-close.
+interface Props {
+  id: string;
+  title: string;
+  side?: 'left' | 'right';
+}
+
+const { id, title, side = 'right' } = Astro.props;
+const titleId = `${id}-title`;
+---
+
+<dialog id={id} class:list={['nw-drawer', side === 'right' ? 'nw-drawer--right' : 'nw-drawer--left']} aria-labelledby={titleId}>
+  <header class="nw-dialog__header">
+    <h2 id={titleId} class="nw-dialog__title">{title}</h2>
+    <button type="button" class="nw-close" aria-label="Close" data-nw-close>×</button>
+  </header>
+  <div class="nw-dialog__body"><slot /></div>
+  {Astro.slots.has('footer') && <footer class="nw-dialog__footer"><slot name="footer" /></footer>}
+</dialog>
+
+<script>
+  import '../client/overlay';
+</script>

@@ -1,0 +1,78 @@
+{
+  "name": "@nawa-ui/react",
+  "version": "0.1.0",
+  "description": "Nawa UI for React — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 18 themes, RTL.",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "dependencies": {
+    "@nawa-ui/core": "0.1.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/react": "16.1.0",
+    "@testing-library/user-event": "14.5.2",
+    "@types/react": "18.3.12",
+    "@types/react-dom": "18.3.1",
+    "jsdom": "25.0.1",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "typescript": "5.6.3",
+    "vitest": "2.1.8"
+  },
+  "keywords": [
+    "react",
+    "react-components",
+    "react-ui",
+    "nawa-ui",
+    "ui-library",
+    "component-library",
+    "design-system",
+    "accessible",
+    "accessibility",
+    "wcag",
+    "a11y",
+    "themes",
+    "dark-mode",
+    "skeleton",
+    "datatable",
+    "rtl",
+    "arabic",
+    "primeng-alternative"
+  ],
+  "homepage": "https://oriieebgsmile96.github.io/nawa-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oriieebgSmile96/nawa-ui.git",
+    "directory": "packages/react"
+  },
+  "bugs": "https://github.com/oriieebgSmile96/nawa-ui/issues",
+  "author": "oriieebgSmile96",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

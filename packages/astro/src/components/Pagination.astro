@@ -1,0 +1,26 @@
+---
+import { getPageItems } from '../utils';
+
+interface Props {
+  /** 1-based current page. */
+  page: number;
+  pageCount: number;
+  /** URL for a page, e.g. `/blog?page=${n}` is built as `href.replace('{page}', n)`. */
+  href: string;
+}
+
+const { page, pageCount, href } = Astro.props;
+const url = (n: number) => href.replace('{page}', String(n));
+---
+
+<nav aria-label="Pagination" class="nw-pagination">
+  {page > 1 ? <a class="nw-pagination__btn" href={url(page - 1)} aria-label="Previous page">‹</a> : <span class="nw-pagination__btn" aria-disabled="true">‹</span>}
+  {getPageItems(page, pageCount).map((item) =>
+    item === 'ellipsis' ? (
+      <span class="nw-pagination__ellipsis" aria-hidden="true">…</span>
+    ) : (
+      <a class="nw-pagination__btn" href={url(item)} aria-label={`Page ${item}`} aria-current={item === page ? 'page' : undefined}>{item}</a>
+    ),
+  )}
+  {page < pageCount ? <a class="nw-pagination__btn" href={url(page + 1)} aria-label="Next page">›</a> : <span class="nw-pagination__btn" aria-disabled="true">›</span>}
+</nav>

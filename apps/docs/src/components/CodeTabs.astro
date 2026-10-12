@@ -1,0 +1,22 @@
+---
+import { Code } from 'astro:components';
+import Tabs from '@nawa-ui/astro/components/Tabs';
+import { frameworks, type Framework } from '../data/snippets';
+
+interface Props {
+  code: Record<Framework, string>;
+  label: string;
+}
+
+const { code, label } = Astro.props;
+---
+
+<div class="code-tabs">
+  <Tabs label={`${label} code examples`} tabs={frameworks.map((f) => ({ key: f.key, label: f.label }))}>
+    <Code slot="panel-react" code={code.react} lang="tsx" theme="github-dark" />
+    <Code slot="panel-vue" code={code.vue} lang="vue" theme="github-dark" />
+    <Code slot="panel-svelte" code={code.svelte} lang="svelte" theme="github-dark" />
+    <Code slot="panel-astro" code={code.astro} lang="astro" theme="github-dark" />
+    <Code slot="panel-rn" code={code.rn} lang="tsx" theme="github-dark" />
+  </Tabs>
+</div>

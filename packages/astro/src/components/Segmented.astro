@@ -1,0 +1,27 @@
+---
+// Segmented control built on real radio inputs: arrow keys, form submission and
+// screen-reader semantics work with zero JavaScript.
+interface Option {
+  label: string;
+  value: string;
+}
+
+interface Props {
+  name: string;
+  options: Option[];
+  value?: string;
+  /** Accessible name of the group. */
+  label: string;
+}
+
+const { name, options, value = options[0]?.value, label } = Astro.props;
+---
+
+<div role="radiogroup" aria-label={label} class="nw-segmented">
+  {options.map((o) => (
+    <label class="nw-segmented__item">
+      <input type="radio" class="nw-sr-only" name={name} value={o.value} checked={o.value === value} />
+      {o.label}
+    </label>
+  ))}
+</div>

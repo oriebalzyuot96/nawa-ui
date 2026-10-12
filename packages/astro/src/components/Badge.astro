@@ -1,0 +1,9 @@
+---
+interface Props {
+  variant?: 'neutral' | 'primary' | 'info' | 'success' | 'warning' | 'danger';
+}
+
+const { variant = 'neutral' } = Astro.props;
+---
+
+<span class:list={['nw-badge', variant !== 'neutral' && `nw-badge--${variant}`]}><slot /></span>

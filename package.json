@@ -1,0 +1,22 @@
+{
+  "name": "nawa-ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Nawa UI — accessible, themeable UI components for React, Vue, Svelte, Astro and React Native",
+  "workspaces": [
+    "packages/core",
+    "packages/react",
+    "packages/vue",
+    "packages/react-native",
+    "packages/svelte",
+    "packages/astro",
+    "apps/docs"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm test --workspaces --if-present",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "docs:dev": "npm run dev -w @nawa-ui/docs",
+    "docs:build": "npm run build -w @nawa-ui/core && npm run build -w @nawa-ui/react && npm run build -w @nawa-ui/docs"
+  }
+}

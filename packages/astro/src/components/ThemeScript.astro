@@ -1,0 +1,15 @@
+---
+// Put in <head>. Restores the saved theme before first paint so there is no flash of the wrong theme.
+---
+
+<script is:inline>
+  try {
+    var t = JSON.parse(localStorage.getItem('nawa-ui-theme') || 'null');
+    if (t) {
+      var r = document.documentElement;
+      if (t.mode && t.mode !== 'system') r.setAttribute('data-theme', t.mode);
+      if (t.accent) r.setAttribute('data-accent', t.accent);
+      if (t.shape) r.setAttribute('data-shape', t.shape);
+    }
+  } catch (e) {}
+</script>

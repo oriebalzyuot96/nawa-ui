@@ -1,0 +1,17 @@
+---
+import Base from '../layouts/Base.astro';
+import EmptyState from '@nawa-ui/astro/components/EmptyState';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Base title="Page not found" description="This page does not exist. Browse Nawa UI components or go back home.">
+  <section class="section">
+    <div class="container">
+      <EmptyState title="Page not found" description="The page you are looking for does not exist or has moved.">
+        <span slot="icon">🧭</span>
+        <a slot="action" class="nw-btn nw-btn--primary" href={`${base}/`}>Back to home</a>
+      </EmptyState>
+    </div>
+  </section>
+</Base>

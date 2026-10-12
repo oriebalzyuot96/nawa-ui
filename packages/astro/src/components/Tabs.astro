@@ -1,0 +1,58 @@
+---
+// WAI-ARIA tabs. Put each panel in a slot named `panel-<key>`:
+//   <Tabs tabs={[{ key: 'a', label: 'A' }]}><div slot="panel-a">…</div></Tabs>
+// All panels render on the server (good for SEO); a tiny script switches them.
+interface TabItem {
+  key: string;
+  label: string;
+  disabled?: boolean;
+}
+
+interface Props {
+  tabs: TabItem[];
+  /** Initially selected key. Defaults to the first tab. */
+  value?: string;
+  /** Accessible name of the tab list. */
+  label?: string;
+}
+
+const { tabs, value = tabs[0]?.key, label } = Astro.props;
+const baseId = `nw-tabs-${Math.random().toString(36).slice(2, 8)}`;
+const panels = await Promise.all(
+  tabs.map(async (t) => ({ key: t.key, html: Astro.slots.has(`panel-${t.key}`) ? await Astro.slots.render(`panel-${t.key}`) : '' })),
+);
+---
+
+<div class="nw-tabs" data-nw-tabs>
+  <div role="tablist" class="nw-tabs__list" aria-label={label}>
+    {tabs.map((t) => (
+      <button
+        type="button"
+        role="tab"
+        id={`${baseId}-tab-${t.key}`}
+        aria-controls={`${baseId}-panel-${t.key}`}
+        aria-selected={t.key === value ? 'true' : 'false'}
+        tabindex={t.key === value ? 0 : -1}
+        disabled={t.disabled}
+        class="nw-tabs__tab"
+      >
+        {t.label}
+      </button>
+    ))}
+  </div>
+  {panels.map((p) => (
+    <div
+      role="tabpanel"
+      id={`${baseId}-panel-${p.key}`}
+      aria-labelledby={`${baseId}-tab-${p.key}`}
+      class="nw-tabs__panel"
+      hidden={p.key !== value}
+      tabindex="0"
+      set:html={p.html}
+    />
+  ))}
+</div>
+
+<script>
+  import '../client/tabs';
+</script>

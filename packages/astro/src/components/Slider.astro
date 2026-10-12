@@ -1,0 +1,38 @@
+---
+interface Props {
+  name?: string;
+  label: string;
+  value?: number;
+  min?: number;
+  max?: number;
+  step?: number;
+  showValue?: boolean;
+  disabled?: boolean;
+}
+
+const { name, label, value = 50, min = 0, max = 100, step = 1, showValue = false, disabled = false } = Astro.props;
+const id = `nw-slider-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class="nw-field">
+  <label class="nw-label" for={id}>
+    {label}
+    {showValue && <output class="nw-hint" id={`${id}-out`} for={id}>{value}</output>}
+  </label>
+  <input
+    id={id}
+    name={name}
+    type="range"
+    class="nw-slider"
+    value={value}
+    min={min}
+    max={max}
+    step={step}
+    disabled={disabled}
+    data-nw-output={showValue ? `${id}-out` : undefined}
+  />
+</div>
+
+<script>
+  import '../client/slider';
+</script>

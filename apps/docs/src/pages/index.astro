@@ -1,0 +1,105 @@
+---
+import Base from '../layouts/Base.astro';
+import Playground from '../components/Playground';
+import Badge from '@nawa-ui/astro/components/Badge';
+import Button from '@nawa-ui/astro/components/Button';
+import Card from '@nawa-ui/astro/components/Card';
+import Alert from '@nawa-ui/astro/components/Alert';
+import ProgressBar from '@nawa-ui/astro/components/ProgressBar';
+import Stepper from '@nawa-ui/astro/components/Stepper';
+import SkeletonCard from '@nawa-ui/astro/components/SkeletonCard';
+import Segmented from '@nawa-ui/astro/components/Segmented';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const frameworks = ['React', 'Vue', 'Svelte', 'Astro', 'React Native'];
+const features = [
+  { icon: '♿', title: 'Accessible by default', text: 'WCAG 2.2 AA. 450 automated contrast checks, focus traps, keyboard patterns, screen-reader labels, reduced motion and Windows High Contrast support.' },
+  { icon: '🎨', title: '18 themes, 3 shapes', text: 'Light, dark and high contrast × six accents. Switch with one attribute, scope a theme to any section, follow the OS automatically.' },
+  { icon: '⚡', title: 'One design, five frameworks', text: 'React, Vue, Svelte, Astro and React Native share the same tokens, names and behavior. Learn once, ship everywhere.' },
+  { icon: '🦴', title: 'Skeletons built in', text: 'Text, card and table loading states that screen readers announce once — not as a pile of empty boxes.' },
+  { icon: '📊', title: 'Data-ready', text: 'Sortable DataTable, pagination, tabs, dialogs, drawers, toasts, stepper and timeline — the PrimeNG essentials.' },
+  { icon: '🌍', title: 'RTL and Arabic', text: 'Logical CSS properties throughout, so layouts mirror correctly in Arabic, Hebrew and Persian.' },
+];
+---
+
+<Base
+  title="Nawa UI — Accessible UI component library for React, Vue, Svelte, Astro & React Native"
+  description="Nawa UI is an open-source, accessible (WCAG 2.2 AA) UI component library with 18 themes, dark mode, high contrast, skeleton loaders and RTL support for React, Vue, Svelte, Astro and React Native."
+  alternate={{ en: '/', ar: '/ar/' }}
+>
+  <section class="hero">
+    <div class="container hero__grid">
+      <div>
+        <p class="eyebrow">Open-source UI library</p>
+        <h1>Nawa UI — the accessible component library for every framework</h1>
+        <p class="lead">
+          Beautiful, themeable components for <strong>React, Vue, Svelte, Astro and React Native</strong>. Accessible by default,
+          18 themes out of the box, and the same API everywhere.
+        </p>
+        <div class="framework-row" aria-label="Supported frameworks">
+          {frameworks.map((f) => <Badge variant="primary">{f}</Badge>)}
+        </div>
+        <div class="hero__actions">
+          <a class="nw-btn nw-btn--primary nw-btn--lg" href={`${base}/getting-started/`}>Get started</a>
+          <a class="nw-btn nw-btn--secondary nw-btn--lg" href={`${base}/components/`}>Browse components</a>
+        </div>
+        <div class="install" aria-label="Install command"><span aria-hidden="true">$</span><code>npm i @nawa-ui/react @nawa-ui/core</code></div>
+      </div>
+      <div class="hero__showcase">
+        <Card title="Launch checklist">
+          <Stepper current={2} steps={[{ label: 'Design' }, { label: 'Build' }, { label: 'Review' }, { label: 'Ship' }]} />
+          <div style="margin-top:1rem"><ProgressBar value={68} label="Launch progress" /></div>
+          <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
+            <Badge variant="success">WCAG 2.2 AA</Badge>
+            <Badge variant="info">18 themes</Badge>
+            <Badge variant="warning">RTL ready</Badge>
+          </div>
+          <div slot="footer" style="display:flex;gap:.5rem;justify-content:flex-end">
+            <Button variant="ghost">Later</Button>
+            <Button>Ship it</Button>
+          </div>
+        </Card>
+        <Segmented name="hero-plan" label="Billing period" options={[{ label: 'Monthly', value: 'm' }, { label: 'Yearly', value: 'y' }]} />
+        <SkeletonCard label="Loading example card" lines={2} />
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="playground-title">
+    <div class="container">
+      <p class="eyebrow">Live preview</p>
+      <h2 id="playground-title">Try it — a real app built with Nawa UI</h2>
+      <p class="lead">Search, filter, sort, paginate, add a member, toggle loading skeletons. Everything below is <code>@nawa-ui/react</code>. Change the theme from the header and watch it update.</p>
+      <Playground client:visible />
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="features-title">
+    <div class="container">
+      <p class="eyebrow">Why Nawa UI</p>
+      <h2 id="features-title">Senior-grade defaults, zero setup</h2>
+      <div class="grid grid--3" style="margin-top:1.5rem">
+        {features.map((f) => (
+          <article class="feature">
+            <h3><span aria-hidden="true">{f.icon}</span>{f.title}</h3>
+            <p>{f.text}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="numbers-title">
+    <div class="container">
+      <h2 id="numbers-title" class="nw-sr-only">Nawa UI in numbers</h2>
+      <div class="grid grid--3">
+        <div class="feature"><div class="stat">5</div><p>frameworks with one shared design system</p></div>
+        <div class="feature"><div class="stat">450</div><p>automated WCAG contrast checks on every build</p></div>
+        <div class="feature"><div class="stat">30+</div><p>components, from Button to DataTable</p></div>
+      </div>
+      <div style="margin-top:1.5rem">
+        <Alert variant="success" title="Free and open source">MIT licensed. Use it in personal and commercial projects.</Alert>
+      </div>
+    </div>
+  </section>
+</Base>

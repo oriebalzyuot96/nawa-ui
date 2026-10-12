@@ -1,0 +1,20 @@
+---
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'textarea'> {
+  label?: string;
+  hint?: string;
+  error?: string;
+  value?: string;
+}
+
+const { label, hint, error, value = '', id, class: className, ...rest } = Astro.props;
+const inputId = id ?? `nw-textarea-${Math.random().toString(36).slice(2, 8)}`;
+const describedBy = error ? `${inputId}-err` : hint ? `${inputId}-hint` : undefined;
+---
+
+<div class:list={['nw-field', error && 'nw-field--error']}>
+  {label && <label class="nw-label" for={inputId}>{label}</label>}
+  <textarea id={inputId} class:list={['nw-textarea', className]} aria-invalid={error ? 'true' : undefined} aria-describedby={describedBy} {...rest}>{value}</textarea>
+  {error ? <span id={`${inputId}-err`} class="nw-error-text">{error}</span> : hint ? <span id={`${inputId}-hint`} class="nw-hint">{hint}</span> : null}
+</div>
