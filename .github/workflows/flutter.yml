@@ -1,0 +1,34 @@
+name: Flutter
+
+on:
+  push:
+    branches: [main]
+    paths: ['packages/flutter/**', 'packages/core/src/themes.mjs', '.github/workflows/flutter.yml']
+  pull_request:
+    paths: ['packages/flutter/**', 'packages/core/src/themes.mjs']
+  workflow_dispatch:
+
+jobs:
+  flutter:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/flutter
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Tokens in sync with the web themes
+        working-directory: .
+        run: node packages/flutter/tool/generate_tokens.mjs --check
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter --version
+      - run: flutter pub get
+      - run: flutter analyze
+      - run: flutter test
+      - name: Publish dry run
+        run: dart pub publish --dry-run

@@ -1,0 +1,20 @@
+name: nawa_ui_example
+description: Gallery of every Nawa UI widget with a theme switcher.
+publish_to: none
+version: 1.0.0
+
+environment:
+  sdk: ">=3.5.0 <4.0.0"
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  nawa_ui:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
