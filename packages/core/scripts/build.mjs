@@ -1,5 +1,5 @@
 // Generates nawa-ui.css and tokens.ts from src/themes.mjs. Run: node scripts/build.mjs
-import { readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { accents, defaultAccent, defaultShape, modes, shapes, softMix } from '../src/themes.mjs';
@@ -95,6 +95,13 @@ ${block('[data-theme="light"]', bindingVars('light'))}${block('[data-theme="dark
 
 css += '\n' + readFileSync(join(root, 'src/base.css'), 'utf8');
 css += '\n' + readFileSync(join(root, 'src/components.css'), 'utf8');
+// Additional component groups live in src/parts/*.css (one file per area), concatenated in name order.
+const partsDir = join(root, 'src/parts');
+if (existsSync(partsDir)) {
+  for (const file of readdirSync(partsDir).filter((f) => f.endsWith('.css')).sort()) {
+    css += `\n/* ===== ${file} ===== */\n` + readFileSync(join(partsDir, file), 'utf8');
+  }
+}
 writeFileSync(join(root, 'nawa-ui.css'), css);
 
 // ---------- tokens.ts for React Native and other JS consumers ----------

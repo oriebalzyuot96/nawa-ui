@@ -954,3 +954,12 @@ html:has(dialog.nw-dialog[open], dialog.nw-drawer[open]) { overflow: hidden; }
 
 /* Sortable header rendered as a link (server-side sorting). */
 a.nw-table__sort { text-decoration: none; }
+
+/* ===== data-panels-media.css ===== */
+/* data-panels-media — PrimeNG parity components. */
+
+/* ===== forms-advanced.css ===== */
+/* forms-advanced — PrimeNG parity components. */
+
+/* ===== menus-overlays.css ===== */
+/* menus-overlays — PrimeNG parity components. */

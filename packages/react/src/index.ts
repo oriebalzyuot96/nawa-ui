@@ -9,3 +9,7 @@ export { getPageItems, cx } from './utils';
 export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@nawa-ui/core/theme';
 export type { ThemeChoice } from '@nawa-ui/core/theme';
 export type { ThemeMode, ThemeAccent, ThemeShape } from '@nawa-ui/core/tokens';
+// PrimeNG parity groups
+export * from './components/forms-advanced';
+export * from './components/menus-overlays';
+export * from './components/data-panels-media';
