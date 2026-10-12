@@ -46,14 +46,14 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriieebgsmile96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriieebgSmile96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
     "directory": "packages/react-native"
   },
-  "bugs": "https://github.com/oriieebgSmile96/nawa-ui/issues",
-  "author": "oriieebgSmile96",
+  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"
   },

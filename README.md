@@ -6,7 +6,7 @@
 
 WCAG 2.2 AA · 18 themes · Dark mode & high contrast · Skeleton loaders · RTL / Arabic · MIT
 
-[Docs & live preview](https://oriieebgsmile96.github.io/nawa-ui/) · [Components](https://oriieebgsmile96.github.io/nawa-ui/components/) · [Themes](https://oriieebgsmile96.github.io/nawa-ui/themes/) · [العربية](https://oriieebgsmile96.github.io/nawa-ui/ar/)
+[Docs & live preview](https://oriebalzyuot96.github.io/nawa-ui/) · [Components](https://oriebalzyuot96.github.io/nawa-ui/components/) · [Themes](https://oriebalzyuot96.github.io/nawa-ui/themes/) · [العربية](https://oriebalzyuot96.github.io/nawa-ui/ar/)
 
 </div>
 
@@ -96,4 +96,4 @@ npm run docs:dev                  # docs site with live preview
 
 ## License
 
-MIT © oriieebgSmile96
+MIT © oriebalzyuot96
