@@ -10,7 +10,7 @@
   }: { checked?: boolean; disabled?: boolean; label?: string; children?: Snippet; [key: string]: unknown } = $props();
 </script>
 
-<label class={['nw-check', disabled && 'nw-check--disabled']}>
+<label class={['oc-check', disabled && 'oc-check--disabled']}>
   <input type="checkbox" bind:checked {disabled} {...rest} />
   {label ?? ''}{@render children?.()}
 </label>

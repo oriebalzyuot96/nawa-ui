@@ -1,289 +1,291 @@
 /* charts — accessible, dependency-free SVG charts.
  * Palette is built only from theme tokens, so it adapts to light / dark / high-contrast × every accent.
- * Patterns, dashes and markers (non-color cues) are on with .nw-chart--patterns, in the hc theme,
- * under prefers-contrast: more, and under forced colors; .nw-chart--no-patterns opts out. */
+ * Patterns, dashes and markers (non-color cues) are on with .oc-chart--patterns, in the hc theme,
+ * under prefers-contrast: more, and under forced colors; .oc-chart--no-patterns opts out. */
 
-.nw-chart,
-.nw-chart-legend,
-.nw-sparkline {
-  --nw-chart-1: var(--nw-primary-ink);
-  --nw-chart-2: var(--nw-warning);
-  --nw-chart-3: var(--nw-info);
-  --nw-chart-4: var(--nw-danger);
-  --nw-chart-5: var(--nw-success);
-  --nw-chart-6: var(--nw-text-muted);
-  --nw-chart-7: color-mix(in srgb, var(--nw-info) 55%, var(--nw-text));
-  --nw-chart-8: color-mix(in srgb, var(--nw-warning) 55%, var(--nw-text));
-  --nw-chart-heat-1: color-mix(in srgb, var(--nw-primary) 18%, var(--nw-surface));
-  --nw-chart-heat-2: color-mix(in srgb, var(--nw-primary) 36%, var(--nw-surface));
-  --nw-chart-heat-3: color-mix(in srgb, var(--nw-primary) 56%, var(--nw-surface));
-  --nw-chart-heat-4: color-mix(in srgb, var(--nw-primary) 78%, var(--nw-surface));
-  --nw-chart-heat-5: var(--nw-primary);
-  --nw-chart-c: var(--nw-chart-1);
+.oc-chart,
+.oc-chart-legend,
+.oc-sparkline {
+  --oc-chart-1: var(--oc-primary-ink);
+  --oc-chart-2: var(--oc-warning);
+  --oc-chart-3: var(--oc-info);
+  --oc-chart-4: var(--oc-danger);
+  --oc-chart-5: var(--oc-success);
+  --oc-chart-6: var(--oc-text-muted);
+  --oc-chart-7: color-mix(in srgb, var(--oc-info) 55%, var(--oc-text));
+  --oc-chart-8: color-mix(in srgb, var(--oc-warning) 55%, var(--oc-text));
+  --oc-chart-heat-1: color-mix(in srgb, var(--oc-primary) 18%, var(--oc-surface));
+  --oc-chart-heat-2: color-mix(in srgb, var(--oc-primary) 36%, var(--oc-surface));
+  --oc-chart-heat-3: color-mix(in srgb, var(--oc-primary) 56%, var(--oc-surface));
+  --oc-chart-heat-4: color-mix(in srgb, var(--oc-primary) 78%, var(--oc-surface));
+  --oc-chart-heat-5: var(--oc-primary);
+  --oc-chart-c: var(--oc-chart-1);
 }
-.nw-chart-s0 { --nw-chart-c: var(--nw-chart-1); }
-.nw-chart-s1 { --nw-chart-c: var(--nw-chart-2); }
-.nw-chart-s2 { --nw-chart-c: var(--nw-chart-3); }
-.nw-chart-s3 { --nw-chart-c: var(--nw-chart-4); }
-.nw-chart-s4 { --nw-chart-c: var(--nw-chart-5); }
-.nw-chart-s5 { --nw-chart-c: var(--nw-chart-6); }
-.nw-chart-s6 { --nw-chart-c: var(--nw-chart-7); }
-.nw-chart-s7 { --nw-chart-c: var(--nw-chart-8); }
+.oc-chart-s0 { --oc-chart-c: var(--oc-chart-1); }
+.oc-chart-s1 { --oc-chart-c: var(--oc-chart-2); }
+.oc-chart-s2 { --oc-chart-c: var(--oc-chart-3); }
+.oc-chart-s3 { --oc-chart-c: var(--oc-chart-4); }
+.oc-chart-s4 { --oc-chart-c: var(--oc-chart-5); }
+.oc-chart-s5 { --oc-chart-c: var(--oc-chart-6); }
+.oc-chart-s6 { --oc-chart-c: var(--oc-chart-7); }
+.oc-chart-s7 { --oc-chart-c: var(--oc-chart-8); }
 
 /* ---------- Shell ---------- */
-.nw-chart {
+.oc-chart {
   position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
   min-width: 0;
   margin: 0;
-  font-family: var(--nw-font);
-  color: var(--nw-text);
+  font-family: var(--oc-font);
+  color: var(--oc-text);
 }
-.nw-chart__caption { display: flex; flex-direction: column; gap: 0.15rem; }
-.nw-chart__title { font-size: 1rem; font-weight: 700; color: var(--nw-text); }
-.nw-chart__desc,
-.nw-chart__summary { font-size: 0.85rem; color: var(--nw-text-muted); }
-.nw-chart__summary { margin: 0; }
-.nw-chart__body { position: relative; width: 100%; min-width: 0; }
-.nw-chart__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
-.nw-chart__plot { position: relative; border-radius: var(--nw-radius-sm); }
-.nw-chart__plot:focus { outline: none; }
-.nw-chart__plot:focus-visible { outline: 2px solid var(--nw-focus); outline-offset: 4px; }
-.nw-chart__svg { display: block; width: 100%; height: auto; overflow: visible; direction: ltr; }
-.nw-chart__svg text { font-family: var(--nw-font); }
-.nw-chart__data { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
-.nw-chart__table { width: 100%; }
-.nw-chart__table-caption { padding: 0.5rem 1rem; text-align: start; font-weight: 600; color: var(--nw-text); }
-.nw-chart__footer { font-size: 0.8rem; color: var(--nw-text-muted); }
+.oc-chart__caption { display: flex; flex-direction: column; gap: 0.15rem; }
+.oc-chart__title { color: var(--oc-text); font-size: var(--oc-text-lg); font-weight: var(--oc-weight-semibold); letter-spacing: var(--oc-tracking-tight); line-height: var(--oc-leading-tight); }
+.oc-chart__desc,
+.oc-chart__summary { color: var(--oc-text-muted); font-size: var(--oc-text-sm); line-height: var(--oc-leading-snug); }
+.oc-chart__summary { margin: 0; }
+.oc-chart__body { position: relative; width: 100%; min-width: 0; }
+.oc-chart__defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+.oc-chart__plot { position: relative; border-radius: var(--oc-radius-sm); }
+.oc-chart__plot:focus { outline: none; }
+.oc-chart__plot:focus-visible { outline: 2px solid var(--oc-focus); outline-offset: 4px; }
+.oc-chart__svg { display: block; width: 100%; height: auto; overflow: visible; direction: ltr; }
+.oc-chart__svg text { font-family: var(--oc-font); }
+.oc-chart__data { display: flex; flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+.oc-chart__table { width: 100%; }
+.oc-chart__table-caption { padding: var(--oc-pad-sm) var(--oc-cell-px); color: var(--oc-text); font-size: var(--oc-text-md); font-weight: var(--oc-weight-semibold); text-align: start; }
+.oc-chart__footer { color: var(--oc-text-muted); font-size: var(--oc-text-xs); }
 
 /* ---------- Axes, grid, references ---------- */
-.nw-chart-axis__line,
-.nw-chart-axis__tick line { stroke: var(--nw-control-border); stroke-width: 1; }
-.nw-chart-axis--bare .nw-chart-axis__line { stroke: none; }
-.nw-chart-axis__tick text,
-.nw-chart-axis__ring-label { fill: var(--nw-text-muted); font-size: 11px; }
-.nw-chart-axis__label { fill: var(--nw-text); font-size: 12px; font-weight: 600; }
-.nw-chart-grid line,
-.nw-chart-grid path { stroke: var(--nw-border); stroke-width: 1; fill: none; }
-.nw-chart-ref line { stroke: var(--nw-text-muted); stroke-width: 1.5; }
-.nw-chart-ref--dashed line { stroke-dasharray: 5 4; }
-.nw-chart-ref--baseline line { stroke: var(--nw-control-border); stroke-width: 1; }
-.nw-chart-ref--primary line { stroke: var(--nw-primary-ink); }
-.nw-chart-ref--success line { stroke: var(--nw-success); }
-.nw-chart-ref--warning line { stroke: var(--nw-warning); }
-.nw-chart-ref--danger line { stroke: var(--nw-danger); }
-.nw-chart-ref--info line { stroke: var(--nw-info); }
-.nw-chart-ref__label { fill: var(--nw-text); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--nw-surface); stroke-width: 3px; }
-.nw-chart-annotation line { stroke: var(--nw-text-muted); stroke-width: 1; }
-.nw-chart-annotation circle { fill: var(--nw-text); }
-.nw-chart-annotation text { fill: var(--nw-text); font-size: 12px; font-weight: 600; paint-order: stroke; stroke: var(--nw-surface); stroke-width: 3px; }
-.nw-chart__connector { stroke: var(--nw-control-border); stroke-width: 1; stroke-dasharray: 3 3; }
+.oc-chart-axis__line,
+.oc-chart-axis__tick line { stroke: var(--oc-control-border); stroke-width: 1; }
+.oc-chart-axis--bare .oc-chart-axis__line { stroke: none; }
+.oc-chart-axis__tick text,
+.oc-chart-axis__ring-label { fill: var(--oc-text-muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.oc-chart-axis__label { fill: var(--oc-text); font-size: 12px; font-weight: 600; }
+.oc-chart-grid line,
+.oc-chart-grid path { stroke: var(--oc-border-subtle); stroke-width: 1; fill: none; stroke-dasharray: 2 3; }
+.oc-chart-ref line { stroke: var(--oc-text-muted); stroke-width: 1.5; }
+.oc-chart-ref--dashed line { stroke-dasharray: 5 4; }
+.oc-chart-ref--baseline line { stroke: var(--oc-control-border); stroke-width: 1; }
+.oc-chart-ref--primary line { stroke: var(--oc-primary-ink); }
+.oc-chart-ref--success line { stroke: var(--oc-success); }
+.oc-chart-ref--warning line { stroke: var(--oc-warning); }
+.oc-chart-ref--danger line { stroke: var(--oc-danger); }
+.oc-chart-ref--info line { stroke: var(--oc-info); }
+.oc-chart-ref__label { fill: var(--oc-text); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--oc-surface); stroke-width: 3px; }
+.oc-chart-annotation line { stroke: var(--oc-text-muted); stroke-width: 1; }
+.oc-chart-annotation circle { fill: var(--oc-text); }
+.oc-chart-annotation text { fill: var(--oc-text); font-size: 12px; font-weight: 600; paint-order: stroke; stroke: var(--oc-surface); stroke-width: 3px; }
+.oc-chart__connector { stroke: var(--oc-control-border); stroke-width: 1; stroke-dasharray: 3 3; }
 
 /* ---------- Marks ---------- */
-.nw-chart__bar { fill: var(--nw-chart-c); }
-.nw-chart__arc { fill: var(--nw-chart-c); stroke: var(--nw-surface); stroke-width: 1.5px; }
-.nw-chart__line { fill: none; stroke: var(--nw-chart-c); stroke-width: 2.25px; stroke-linejoin: round; stroke-linecap: round; }
-.nw-chart__area { fill: var(--nw-chart-c); fill-opacity: 0.22; stroke: none; }
-.nw-chart__area--gradient { fill-opacity: 1; }
-.nw-chart__area--radar { fill-opacity: 0.16; }
-.nw-chart__stop--top { stop-color: var(--nw-chart-c); stop-opacity: 0.42; }
-.nw-chart__stop--bottom { stop-color: var(--nw-chart-c); stop-opacity: 0.04; }
-.nw-chart__marker { fill: var(--nw-chart-c); stroke: var(--nw-surface); stroke-width: 1.5px; }
-.nw-chart__marker--auto { display: none; }
-.nw-chart__point { fill: var(--nw-chart-c); fill-opacity: 0.8; stroke: var(--nw-surface); stroke-width: 1px; }
-.nw-chart__series--bubble .nw-chart__point { fill-opacity: 0.55; stroke: var(--nw-chart-c); stroke-width: 1.5px; }
-.nw-chart__pattern { display: none; pointer-events: none; }
-.nw-chart__hatch { stroke: var(--nw-surface); fill: var(--nw-surface); stroke-width: 1.5px; opacity: 0.85; }
-.nw-chart__label { fill: var(--nw-text); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--nw-surface); stroke-width: 3px; }
-.nw-chart__label--series { fill: var(--nw-chart-c); font-size: 12px; }
-.nw-chart__label--inside { fill: var(--nw-text); }
-.nw-chart__center-value { fill: var(--nw-text); font-size: 1.4rem; font-weight: 700; }
-.nw-chart__center-sub { fill: var(--nw-text-muted); font-size: 0.75rem; }
-.nw-chart__cell { fill: var(--nw-surface-muted); }
-.nw-chart__cell--1 { fill: var(--nw-chart-heat-1); }
-.nw-chart__cell--2 { fill: var(--nw-chart-heat-2); }
-.nw-chart__cell--3 { fill: var(--nw-chart-heat-3); }
-.nw-chart__cell--4 { fill: var(--nw-chart-heat-4); }
-.nw-chart__cell--5 { fill: var(--nw-chart-heat-5); }
-.nw-chart__cell-text { fill: var(--nw-text); font-size: 10px; }
-.nw-chart__cell-text--on { fill: var(--nw-on-primary); }
+.oc-chart__bar { fill: var(--oc-chart-c); }
+.oc-chart__arc { fill: var(--oc-chart-c); stroke: var(--oc-surface); stroke-width: 1.5px; }
+.oc-chart__line { fill: none; stroke: var(--oc-chart-c); stroke-width: 2.25px; stroke-linejoin: round; stroke-linecap: round; }
+.oc-chart__area { fill: var(--oc-chart-c); fill-opacity: 0.22; stroke: none; }
+.oc-chart__area--gradient { fill-opacity: 1; }
+.oc-chart__area--radar { fill-opacity: 0.16; }
+.oc-chart__stop--top { stop-color: var(--oc-chart-c); stop-opacity: 0.42; }
+.oc-chart__stop--bottom { stop-color: var(--oc-chart-c); stop-opacity: 0.04; }
+.oc-chart__marker { fill: var(--oc-chart-c); stroke: var(--oc-surface); stroke-width: 1.5px; }
+.oc-chart__marker--auto { display: none; }
+.oc-chart__point { fill: var(--oc-chart-c); fill-opacity: 0.8; stroke: var(--oc-surface); stroke-width: 1px; }
+.oc-chart__series--bubble .oc-chart__point { fill-opacity: 0.55; stroke: var(--oc-chart-c); stroke-width: 1.5px; }
+.oc-chart__pattern { display: none; pointer-events: none; }
+.oc-chart__hatch { stroke: var(--oc-surface); fill: var(--oc-surface); stroke-width: 1.5px; opacity: 0.85; }
+.oc-chart__label { fill: var(--oc-text); font-size: 11px; font-weight: 600; paint-order: stroke; stroke: var(--oc-surface); stroke-width: 3px; }
+.oc-chart__label--series { fill: var(--oc-chart-c); font-size: 12px; }
+.oc-chart__label--inside { fill: var(--oc-text); }
+.oc-chart__center-value { fill: var(--oc-text); font-size: 1.4rem; font-weight: var(--oc-weight-bold); letter-spacing: var(--oc-tracking-tight); font-variant-numeric: tabular-nums; }
+.oc-chart__center-sub { fill: var(--oc-text-muted); font-size: 0.75rem; }
+.oc-chart__cell { fill: var(--oc-surface-muted); }
+.oc-chart__cell--1 { fill: var(--oc-chart-heat-1); }
+.oc-chart__cell--2 { fill: var(--oc-chart-heat-2); }
+.oc-chart__cell--3 { fill: var(--oc-chart-heat-3); }
+.oc-chart__cell--4 { fill: var(--oc-chart-heat-4); }
+.oc-chart__cell--5 { fill: var(--oc-chart-heat-5); }
+.oc-chart__cell-text { fill: var(--oc-text); font-size: 10px; }
+.oc-chart__cell-text--on { fill: var(--oc-on-primary); }
 
 /* Focused / hovered point */
-.nw-chart__focus-ring { fill: none; stroke: var(--nw-focus); stroke-width: 2.5px; }
-.nw-chart__hover-dot { fill: var(--nw-surface); stroke: var(--nw-text); stroke-width: 2px; pointer-events: none; }
+.oc-chart__focus-ring { fill: none; stroke: var(--oc-focus); stroke-width: 2.5px; }
+.oc-chart__hover-dot { fill: var(--oc-surface); stroke: var(--oc-chart-c, var(--oc-text)); stroke-width: 2.5px; pointer-events: none; }
 
 /* ---------- Tooltip ---------- */
-.nw-chart-tooltip {
+.oc-chart-tooltip {
   position: absolute;
-  z-index: var(--nw-z-tooltip);
+  z-index: var(--oc-z-tooltip);
   max-width: 16rem;
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--nw-border);
-  border-radius: var(--nw-radius-sm);
-  background: var(--nw-surface);
-  box-shadow: var(--nw-shadow-md);
-  color: var(--nw-text);
-  font-size: 0.8rem;
-  line-height: 1.35;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--oc-border-subtle);
+  border-radius: var(--oc-radius-sm);
+  background: var(--oc-surface-raised);
+  box-shadow: var(--oc-elev-2);
+  color: var(--oc-text);
+  font-size: var(--oc-text-xs);
+  line-height: var(--oc-leading-snug);
+  font-variant-numeric: tabular-nums;
   white-space: nowrap;
   pointer-events: none;
   transform: translate(-50%, calc(-100% - 10px));
 }
-.nw-chart-tooltip--left { transform: translate(-12px, calc(-100% - 10px)); }
-.nw-chart-tooltip--right { transform: translate(calc(-100% + 12px), calc(-100% - 10px)); }
-.nw-chart-tooltip--below { transform: translate(-50%, 14px); }
-.nw-chart-tooltip--below.nw-chart-tooltip--left { transform: translate(-12px, 14px); }
-.nw-chart-tooltip--below.nw-chart-tooltip--right { transform: translate(calc(-100% + 12px), 14px); }
-.nw-chart-tooltip__title { font-weight: 700; }
-.nw-chart-tooltip__series { color: var(--nw-text-muted); }
+.oc-chart-tooltip--left { transform: translate(-12px, calc(-100% - 10px)); }
+.oc-chart-tooltip--right { transform: translate(calc(-100% + 12px), calc(-100% - 10px)); }
+.oc-chart-tooltip--below { transform: translate(-50%, 14px); }
+.oc-chart-tooltip--below.oc-chart-tooltip--left { transform: translate(-12px, 14px); }
+.oc-chart-tooltip--below.oc-chart-tooltip--right { transform: translate(calc(-100% + 12px), 14px); }
+.oc-chart-tooltip__title { margin-bottom: 0.125rem; font-weight: var(--oc-weight-semibold); }
+.oc-chart-tooltip__body { display: grid; gap: 0.125rem; }
+.oc-chart-tooltip__series { color: var(--oc-text-muted); }
 
 /* ---------- Legend ---------- */
-.nw-chart-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-family: var(--nw-font); font-size: 0.8rem; color: var(--nw-text); }
-.nw-chart-legend__title { font-weight: 600; }
-.nw-chart-legend__list { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; margin: 0; padding: 0; list-style: none; }
-.nw-chart-legend--scale .nw-chart-legend__list { gap: 3px; }
-.nw-chart-legend__item { display: inline-flex; align-items: center; gap: 0.4rem; }
-.nw-chart-legend__swatch { flex: none; overflow: visible; }
-.nw-chart-legend__value { color: var(--nw-text-muted); font-variant-numeric: tabular-nums; }
-.nw-chart-legend--scale .nw-chart-legend__label { color: var(--nw-text-muted); }
+.oc-chart-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem 0.75rem; color: var(--oc-text); font-family: var(--oc-font); font-size: var(--oc-text-xs); }
+.oc-chart-legend__title { color: var(--oc-text-muted); font-weight: var(--oc-weight-semibold); }
+.oc-chart-legend__list { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; margin: 0; padding: 0; list-style: none; }
+.oc-chart-legend--scale .oc-chart-legend__list { gap: 3px; }
+.oc-chart-legend__item { display: inline-flex; align-items: center; gap: 0.4rem; font-weight: var(--oc-weight-medium); }
+.oc-chart-legend__swatch { flex: none; overflow: visible; }
+.oc-chart-legend__value { color: var(--oc-text-muted); font-variant-numeric: tabular-nums; }
+.oc-chart-legend--scale .oc-chart-legend__label { color: var(--oc-text-muted); }
 
 /* ---------- Sparkline ---------- */
-.nw-sparkline { display: inline-block; vertical-align: middle; line-height: 0; }
-.nw-sparkline svg { overflow: visible; }
-.nw-sparkline .nw-chart__line { stroke-width: 1.75px; }
-.nw-sparkline--primary { --nw-chart-c: var(--nw-primary-ink); }
-.nw-sparkline--success { --nw-chart-c: var(--nw-success); }
-.nw-sparkline--warning { --nw-chart-c: var(--nw-warning); }
-.nw-sparkline--danger { --nw-chart-c: var(--nw-danger); }
-.nw-sparkline--info { --nw-chart-c: var(--nw-info); }
-.nw-sparkline--neutral { --nw-chart-c: var(--nw-text-muted); }
-.nw-sparkline__end { fill: var(--nw-chart-c); stroke: var(--nw-surface); stroke-width: 1.5px; }
+.oc-sparkline { display: inline-block; vertical-align: middle; line-height: 0; }
+.oc-sparkline svg { overflow: visible; }
+.oc-sparkline .oc-chart__line { stroke-width: 1.75px; }
+.oc-sparkline--primary { --oc-chart-c: var(--oc-primary-ink); }
+.oc-sparkline--success { --oc-chart-c: var(--oc-success); }
+.oc-sparkline--warning { --oc-chart-c: var(--oc-warning); }
+.oc-sparkline--danger { --oc-chart-c: var(--oc-danger); }
+.oc-sparkline--info { --oc-chart-c: var(--oc-info); }
+.oc-sparkline--neutral { --oc-chart-c: var(--oc-text-muted); }
+.oc-sparkline__end { fill: var(--oc-chart-c); stroke: var(--oc-surface); stroke-width: 1.5px; }
 
 /* ---------- Gauge ---------- */
-.nw-chart--gauge { align-items: center; text-align: center; }
-.nw-chart--gauge .nw-chart__caption { align-items: center; }
-.nw-chart-gauge { display: flex; justify-content: center; }
-.nw-chart-gauge__svg { width: auto; max-width: 100%; }
-.nw-chart-gauge__track { fill: var(--nw-surface-muted); stroke: var(--nw-border); stroke-width: 1px; }
-.nw-chart-gauge__value { fill: var(--nw-primary); }
-.nw-chart-gauge__value--neutral { fill: var(--nw-text-muted); }
-.nw-chart-gauge__value--success { fill: var(--nw-success); }
-.nw-chart-gauge__value--warning { fill: var(--nw-warning); }
-.nw-chart-gauge__value--danger { fill: var(--nw-danger); }
-.nw-chart-gauge__value--info { fill: var(--nw-info); }
-.nw-chart-gauge__target line { stroke: var(--nw-text); stroke-width: 3px; stroke-linecap: round; }
-.nw-chart-gauge__text { fill: var(--nw-text); font-size: 1.6rem; font-weight: 700; }
-.nw-chart-gauge--radial .nw-chart-gauge__text { font-size: 1.25rem; }
-.nw-chart-gauge__sub { fill: var(--nw-text-muted); font-size: 0.75rem; }
+.oc-chart--gauge { align-items: center; text-align: center; }
+.oc-chart--gauge .oc-chart__caption { align-items: center; }
+.oc-chart-gauge { display: flex; justify-content: center; }
+.oc-chart-gauge__svg { width: auto; max-width: 100%; }
+.oc-chart-gauge__track { fill: var(--oc-surface-muted); stroke: var(--oc-border); stroke-width: 1px; }
+.oc-chart-gauge__value { fill: var(--oc-primary); }
+.oc-chart-gauge__value--neutral { fill: var(--oc-text-muted); }
+.oc-chart-gauge__value--success { fill: var(--oc-success); }
+.oc-chart-gauge__value--warning { fill: var(--oc-warning); }
+.oc-chart-gauge__value--danger { fill: var(--oc-danger); }
+.oc-chart-gauge__value--info { fill: var(--oc-info); }
+.oc-chart-gauge__target line { stroke: var(--oc-text); stroke-width: 3px; stroke-linecap: round; }
+.oc-chart-gauge__text { fill: var(--oc-text); font-size: 1.6rem; font-weight: var(--oc-weight-bold); letter-spacing: var(--oc-tracking-tight); font-variant-numeric: tabular-nums; }
+.oc-chart-gauge--radial .oc-chart-gauge__text { font-size: 1.25rem; }
+.oc-chart-gauge__sub { fill: var(--oc-text-muted); font-size: 0.75rem; }
 
 /* ---------- Non-color cues: patterns, dashes, always-on markers ---------- */
-.nw-chart--patterns .nw-chart__pattern,
-[data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns) .nw-chart__pattern,
-[data-theme='hc'] .nw-chart-legend .nw-chart__pattern { display: inline; }
-.nw-chart--patterns .nw-chart__marker--auto,
-[data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns) .nw-chart__marker--auto { display: inline; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s1 .nw-chart__line { stroke-dasharray: 7 3; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s2 .nw-chart__line { stroke-dasharray: 2 3; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s3 .nw-chart__line { stroke-dasharray: 9 3 2 3; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s4 .nw-chart__line { stroke-dasharray: 12 4; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s5 .nw-chart__line { stroke-dasharray: 4 4; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s6 .nw-chart__line { stroke-dasharray: 1 3; }
-:is(.nw-chart--patterns, [data-theme='hc'] .nw-chart:not(.nw-chart--no-patterns)) .nw-chart-s7 .nw-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
+.oc-chart--patterns .oc-chart__pattern,
+[data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns) .oc-chart__pattern,
+[data-theme='hc'] .oc-chart-legend .oc-chart__pattern { display: inline; }
+.oc-chart--patterns .oc-chart__marker--auto,
+[data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns) .oc-chart__marker--auto { display: inline; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s1 .oc-chart__line { stroke-dasharray: 7 3; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s2 .oc-chart__line { stroke-dasharray: 2 3; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s3 .oc-chart__line { stroke-dasharray: 9 3 2 3; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s4 .oc-chart__line { stroke-dasharray: 12 4; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s5 .oc-chart__line { stroke-dasharray: 4 4; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s6 .oc-chart__line { stroke-dasharray: 1 3; }
+:is(.oc-chart--patterns, [data-theme='hc'] .oc-chart:not(.oc-chart--no-patterns)) .oc-chart-s7 .oc-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
 @media (prefers-contrast: more) {
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) :is(.nw-chart__pattern, .nw-chart__marker--auto) { display: inline; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s1 .nw-chart__line { stroke-dasharray: 7 3; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s2 .nw-chart__line { stroke-dasharray: 2 3; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s3 .nw-chart__line { stroke-dasharray: 9 3 2 3; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s4 .nw-chart__line { stroke-dasharray: 12 4; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s5 .nw-chart__line { stroke-dasharray: 4 4; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s6 .nw-chart__line { stroke-dasharray: 1 3; }
-  :root:not([data-theme]) .nw-chart:not(.nw-chart--no-patterns) .nw-chart-s7 .nw-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) :is(.oc-chart__pattern, .oc-chart__marker--auto) { display: inline; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s1 .oc-chart__line { stroke-dasharray: 7 3; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s2 .oc-chart__line { stroke-dasharray: 2 3; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s3 .oc-chart__line { stroke-dasharray: 9 3 2 3; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s4 .oc-chart__line { stroke-dasharray: 12 4; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s5 .oc-chart__line { stroke-dasharray: 4 4; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s6 .oc-chart__line { stroke-dasharray: 1 3; }
+  :root:not([data-theme]) .oc-chart:not(.oc-chart--no-patterns) .oc-chart-s7 .oc-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
 }
 /* In the hc theme, separate marks with a solid outline. */
-[data-theme='hc'] .nw-chart :is(.nw-chart__bar, .nw-chart__point) { stroke: var(--nw-text); stroke-width: 1px; }
+[data-theme='hc'] .oc-chart :is(.oc-chart__bar, .oc-chart__point) { stroke: var(--oc-text); stroke-width: 1px; }
 
 /* ---------- Motion (subtle; none when reduced motion is requested) ---------- */
 @media (prefers-reduced-motion: no-preference) {
-  .nw-chart__bar,
-  .nw-chart__arc,
-  .nw-chart__cell,
-  .nw-chart-gauge__value { transition: fill 150ms var(--nw-ease), opacity 150ms var(--nw-ease); }
-  .nw-chart__series { animation: nw-chart-in 320ms var(--nw-ease) both; }
-  .nw-chart-tooltip { transition: left 120ms var(--nw-ease), top 120ms var(--nw-ease); }
+  .oc-chart__bar,
+  .oc-chart__arc,
+  .oc-chart__cell,
+  .oc-chart-gauge__value { transition: fill 150ms var(--oc-ease), opacity 150ms var(--oc-ease); }
+  .oc-chart__series { animation: oc-chart-in 320ms var(--oc-ease) both; }
+  .oc-chart-tooltip { transition: left 120ms var(--oc-ease), top 120ms var(--oc-ease); }
 }
 @media (prefers-reduced-motion: reduce) {
-  .nw-chart__series,
-  .nw-chart-tooltip { animation: none !important; transition: none !important; }
+  .oc-chart__series,
+  .oc-chart-tooltip { animation: none !important; transition: none !important; }
 }
-@keyframes nw-chart-in { from { opacity: 0; } }
+@keyframes oc-chart-in { from { opacity: 0; } }
 
 /* ---------- Forced colors (Windows High Contrast) ---------- */
 @media (forced-colors: active) {
-  .nw-chart,
-  .nw-chart-legend,
-  .nw-sparkline { forced-color-adjust: none; --nw-chart-c: CanvasText; }
-  .nw-chart [class*='nw-chart-s'],
-  .nw-chart-legend [class*='nw-chart-s'] { --nw-chart-c: CanvasText; }
-  .nw-chart .nw-chart__pattern,
-  .nw-chart-legend .nw-chart__pattern,
-  .nw-chart .nw-chart__marker--auto { display: inline; }
-  .nw-chart__hatch { stroke: Canvas; fill: Canvas; opacity: 1; }
-  .nw-chart__bar,
-  .nw-chart__arc,
-  .nw-chart__point,
-  .nw-chart__marker { stroke: Canvas; }
-  .nw-chart__area { fill: CanvasText; fill-opacity: 0.15; }
-  .nw-chart__area--gradient { fill: CanvasText !important; fill-opacity: 0.15; }
-  .nw-chart-s1 .nw-chart__line { stroke-dasharray: 7 3; }
-  .nw-chart-s2 .nw-chart__line { stroke-dasharray: 2 3; }
-  .nw-chart-s3 .nw-chart__line { stroke-dasharray: 9 3 2 3; }
-  .nw-chart-s4 .nw-chart__line { stroke-dasharray: 12 4; }
-  .nw-chart-s5 .nw-chart__line { stroke-dasharray: 4 4; }
-  .nw-chart-s6 .nw-chart__line { stroke-dasharray: 1 3; }
-  .nw-chart-s7 .nw-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
-  .nw-chart-axis__line,
-  .nw-chart-axis__tick line,
-  .nw-chart-grid line,
-  .nw-chart-grid path,
-  .nw-chart-ref line,
-  .nw-chart__connector,
-  .nw-chart-annotation line,
-  .nw-chart-gauge__target line { stroke: CanvasText; }
-  .nw-chart-grid line,
-  .nw-chart-grid path { stroke: GrayText; }
-  .nw-chart-axis__tick text,
-  .nw-chart-axis__ring-label,
-  .nw-chart-axis__label,
-  .nw-chart__label,
-  .nw-chart__label--series,
-  .nw-chart__center-value,
-  .nw-chart__center-sub,
-  .nw-chart-ref__label,
-  .nw-chart-annotation text,
-  .nw-chart-gauge__text,
-  .nw-chart-gauge__sub,
-  .nw-chart__cell-text { fill: CanvasText; stroke: Canvas; }
-  .nw-chart__focus-ring { stroke: Highlight; stroke-width: 3px; }
-  .nw-chart__hover-dot { fill: Canvas; stroke: Highlight; }
-  .nw-chart__plot:focus-visible { outline: 2px solid Highlight; }
-  .nw-chart-tooltip { border-color: CanvasText; background: Canvas; color: CanvasText; }
-  .nw-chart__cell { fill: Canvas; stroke: CanvasText; stroke-width: 1px; }
-  .nw-chart__cell--1 { fill: CanvasText; fill-opacity: 0.2; }
-  .nw-chart__cell--2 { fill: CanvasText; fill-opacity: 0.4; }
-  .nw-chart__cell--3 { fill: CanvasText; fill-opacity: 0.6; }
-  .nw-chart__cell--4 { fill: CanvasText; fill-opacity: 0.8; }
-  .nw-chart__cell--5 { fill: CanvasText; fill-opacity: 1; }
-  .nw-chart-gauge__track { fill: Canvas; stroke: CanvasText; }
-  .nw-chart-gauge__value { fill: Highlight; }
-  .nw-sparkline__end { fill: CanvasText; stroke: Canvas; }
+  .oc-chart,
+  .oc-chart-legend,
+  .oc-sparkline { forced-color-adjust: none; --oc-chart-c: CanvasText; }
+  .oc-chart [class*='oc-chart-s'],
+  .oc-chart-legend [class*='oc-chart-s'] { --oc-chart-c: CanvasText; }
+  .oc-chart .oc-chart__pattern,
+  .oc-chart-legend .oc-chart__pattern,
+  .oc-chart .oc-chart__marker--auto { display: inline; }
+  .oc-chart__hatch { stroke: Canvas; fill: Canvas; opacity: 1; }
+  .oc-chart__bar,
+  .oc-chart__arc,
+  .oc-chart__point,
+  .oc-chart__marker { stroke: Canvas; }
+  .oc-chart__area { fill: CanvasText; fill-opacity: 0.15; }
+  .oc-chart__area--gradient { fill: CanvasText !important; fill-opacity: 0.15; }
+  .oc-chart-s1 .oc-chart__line { stroke-dasharray: 7 3; }
+  .oc-chart-s2 .oc-chart__line { stroke-dasharray: 2 3; }
+  .oc-chart-s3 .oc-chart__line { stroke-dasharray: 9 3 2 3; }
+  .oc-chart-s4 .oc-chart__line { stroke-dasharray: 12 4; }
+  .oc-chart-s5 .oc-chart__line { stroke-dasharray: 4 4; }
+  .oc-chart-s6 .oc-chart__line { stroke-dasharray: 1 3; }
+  .oc-chart-s7 .oc-chart__line { stroke-dasharray: 10 3 2 3 2 3; }
+  .oc-chart-axis__line,
+  .oc-chart-axis__tick line,
+  .oc-chart-grid line,
+  .oc-chart-grid path,
+  .oc-chart-ref line,
+  .oc-chart__connector,
+  .oc-chart-annotation line,
+  .oc-chart-gauge__target line { stroke: CanvasText; }
+  .oc-chart-grid line,
+  .oc-chart-grid path { stroke: GrayText; }
+  .oc-chart-axis__tick text,
+  .oc-chart-axis__ring-label,
+  .oc-chart-axis__label,
+  .oc-chart__label,
+  .oc-chart__label--series,
+  .oc-chart__center-value,
+  .oc-chart__center-sub,
+  .oc-chart-ref__label,
+  .oc-chart-annotation text,
+  .oc-chart-gauge__text,
+  .oc-chart-gauge__sub,
+  .oc-chart__cell-text { fill: CanvasText; stroke: Canvas; }
+  .oc-chart__focus-ring { stroke: Highlight; stroke-width: 3px; }
+  .oc-chart__hover-dot { fill: Canvas; stroke: Highlight; }
+  .oc-chart__plot:focus-visible { outline: 2px solid Highlight; }
+  .oc-chart-tooltip { border-color: CanvasText; background: Canvas; color: CanvasText; }
+  .oc-chart__cell { fill: Canvas; stroke: CanvasText; stroke-width: 1px; }
+  .oc-chart__cell--1 { fill: CanvasText; fill-opacity: 0.2; }
+  .oc-chart__cell--2 { fill: CanvasText; fill-opacity: 0.4; }
+  .oc-chart__cell--3 { fill: CanvasText; fill-opacity: 0.6; }
+  .oc-chart__cell--4 { fill: CanvasText; fill-opacity: 0.8; }
+  .oc-chart__cell--5 { fill: CanvasText; fill-opacity: 1; }
+  .oc-chart-gauge__track { fill: Canvas; stroke: CanvasText; }
+  .oc-chart-gauge__value { fill: Highlight; }
+  .oc-sparkline__end { fill: CanvasText; stroke: Canvas; }
 }
 
 /* ---------- Print ---------- */
 @media print {
-  .nw-chart { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-  .nw-chart__table-toggle,
-  .nw-chart-tooltip { display: none !important; }
-  .nw-chart__plot:focus-visible { outline: none; }
+  .oc-chart { break-inside: avoid; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  .oc-chart__table-toggle,
+  .oc-chart-tooltip { display: none !important; }
+  .oc-chart__plot:focus-visible { outline: none; }
 }

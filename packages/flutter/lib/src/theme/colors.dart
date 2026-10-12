@@ -2,14 +2,14 @@ import 'dart:ui' show Brightness, Color;
 
 import 'package:flutter/foundation.dart';
 
-/// One fully resolved Nawa UI color theme (one mode x one accent).
+/// One fully resolved Orca UI color theme (one mode x one accent).
 ///
 /// The values are generated from the same source as the web CSS
 /// (`packages/core/src/themes.mjs`), see `lib/src/tokens.g.dart`.
 @immutable
-class NawaColors {
-  /// Creates a color theme. Prefer [NawaTheme.resolve] over building one by hand.
-  const NawaColors({
+class OrcaColors {
+  /// Creates a color theme. Prefer [OrcaTheme.resolve] over building one by hand.
+  const OrcaColors({
     required this.brightness,
     required this.primary,
     required this.primaryHover,
@@ -109,9 +109,9 @@ class NawaColors {
   final Color overlay;
 
   /// Linear interpolation between two color themes.
-  static NawaColors lerp(NawaColors a, NawaColors b, double t) {
+  static OrcaColors lerp(OrcaColors a, OrcaColors b, double t) {
     Color l(Color x, Color y) => Color.lerp(x, y, t)!;
-    return NawaColors(
+    return OrcaColors(
       brightness: t < 0.5 ? a.brightness : b.brightness,
       primary: l(a.primary, b.primary),
       primaryHover: l(a.primaryHover, b.primaryHover),
@@ -169,7 +169,7 @@ class NawaColors {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-    return other is NawaColors && listEquals(other._props, _props);
+    return other is OrcaColors && listEquals(other._props, _props);
   }
 
   @override
@@ -178,9 +178,9 @@ class NawaColors {
 
 /// Corner radii of a shape preset, in logical pixels.
 @immutable
-class NawaRadii {
+class OrcaRadii {
   /// Creates a radius set.
-  const NawaRadii({required this.sm, required this.md, required this.lg});
+  const OrcaRadii({required this.sm, required this.md, required this.lg});
 
   /// Small radius (tags, skeleton lines, segments).
   final double sm;
@@ -195,7 +195,7 @@ class NawaRadii {
   static const double pill = 999;
 
   /// Linear interpolation between two radius sets.
-  static NawaRadii lerp(NawaRadii a, NawaRadii b, double t) => NawaRadii(
+  static OrcaRadii lerp(OrcaRadii a, OrcaRadii b, double t) => OrcaRadii(
         sm: a.sm + (b.sm - a.sm) * t,
         md: a.md + (b.md - a.md) * t,
         lg: a.lg + (b.lg - a.lg) * t,
@@ -203,14 +203,14 @@ class NawaRadii {
 
   @override
   bool operator ==(Object other) =>
-      other is NawaRadii && other.sm == sm && other.md == md && other.lg == lg;
+      other is OrcaRadii && other.sm == sm && other.md == md && other.lg == lg;
 
   @override
   int get hashCode => Object.hash(sm, md, lg);
 }
 
 /// Integer RGB color math shared with the web build (`packages/core/scripts/color.mjs`).
-abstract final class NawaColorMath {
+abstract final class OrcaColorMath {
   /// Mixes two `0xRRGGBB` colors like CSS `color-mix(in srgb, a amount, b)`.
   ///
   /// Returns an opaque `0xFFRRGGBB` value. Rounds each channel the same way

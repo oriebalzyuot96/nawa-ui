@@ -1,24 +1,24 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NwButton } from './button';
-import { NwDialog, NwDialogFooter, NwDrawer } from './overlay';
-import { NwTooltip } from './tooltip';
-import { NwToastService, NwToaster } from './toast';
-import { NawaThemeService, provideNawaTheme } from './theme';
-import { THEME_STORAGE_KEY } from '@nawa-ui/core/theme';
+import { OcButton } from './button';
+import { OcDialog, OcDialogFooter, OcDrawer } from './overlay';
+import { OcTooltip } from './tooltip';
+import { OcToastService, OcToaster } from './toast';
+import { OrcaThemeService, provideOrcaTheme } from './theme';
+import { THEME_STORAGE_KEY } from '@orca-ui/core/theme';
 
 const press = (key: string, target: EventTarget = document, init: KeyboardEventInit = {}) =>
   target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
 
-describe('NwDialog', () => {
+describe('OcDialog', () => {
   @Component({
-    imports: [NwDialog, NwDialogFooter, NwButton],
+    imports: [OcDialog, OcDialogFooter, OcButton],
     template: `
-      <button nwButton id="opener" (click)="open.set(true)">Open</button>
-      <nw-dialog [(open)]="open" title="Edit profile" (closed)="closedCount = closedCount + 1">
+      <button ocButton id="opener" (click)="open.set(true)">Open</button>
+      <oc-dialog [(open)]="open" title="Edit profile" (closed)="closedCount = closedCount + 1">
         <input id="first" />
-        <div nwDialogFooter><button nwButton id="last">Save</button></div>
-      </nw-dialog>
+        <div ocDialogFooter><button ocButton id="last">Save</button></div>
+      </oc-dialog>
     `,
   })
   class Host {
@@ -48,7 +48,7 @@ describe('NwDialog', () => {
     expect(panel.getAttribute('aria-modal')).toBe('true');
     const title = document.getElementById(panel.getAttribute('aria-labelledby')!);
     expect(title?.textContent).toContain('Edit profile');
-    expect(panel.querySelector('.nw-dialog__footer #last')).not.toBeNull();
+    expect(panel.querySelector('.oc-dialog__footer #last')).not.toBeNull();
     expect(document.activeElement).toBe(panel);
     expect(document.body.style.overflow).toBe('hidden');
     fixture.destroy();
@@ -56,7 +56,7 @@ describe('NwDialog', () => {
 
   it('traps Tab inside the panel', async () => {
     const { fixture, panel } = await openDialog();
-    const close = panel.querySelector('.nw-close') as HTMLButtonElement;
+    const close = panel.querySelector('.oc-close') as HTMLButtonElement;
     const last = panel.querySelector('#last') as HTMLButtonElement;
     last.focus();
     const forward = press('Tab', last);
@@ -91,15 +91,15 @@ describe('NwDialog', () => {
   it('removes the portaled overlay when destroyed while open', async () => {
     const { fixture } = await openDialog();
     fixture.destroy();
-    expect(document.body.querySelector('.nw-overlay')).toBeNull();
+    expect(document.body.querySelector('.oc-overlay')).toBeNull();
     expect(document.body.style.overflow).toBe('');
   });
 });
 
-describe('NwDrawer', () => {
+describe('OcDrawer', () => {
   @Component({
-    imports: [NwDrawer],
-    template: `<nw-drawer [(open)]="open" title="Filters" side="left"><button id="inside">x</button></nw-drawer>`,
+    imports: [OcDrawer],
+    template: `<oc-drawer [(open)]="open" title="Filters" side="left"><button id="inside">x</button></oc-drawer>`,
   })
   class Host {
     open = signal(true);
@@ -108,20 +108,20 @@ describe('NwDrawer', () => {
   it('renders drawer classes and closes on Escape', async () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
-    const panel = document.body.querySelector('.nw-drawer') as HTMLElement;
+    const panel = document.body.querySelector('.oc-drawer') as HTMLElement;
     expect(panel.getAttribute('role')).toBe('dialog');
-    expect(panel.classList).not.toContain('nw-drawer--right');
-    expect(panel.parentElement?.className).toBe('nw-overlay nw-overlay--drawer');
+    expect(panel.classList).not.toContain('oc-drawer--right');
+    expect(panel.parentElement?.className).toBe('oc-overlay oc-overlay--drawer');
     press('Escape');
     await fixture.whenStable();
-    expect(document.body.querySelector('.nw-drawer')).toBeNull();
+    expect(document.body.querySelector('.oc-drawer')).toBeNull();
   });
 });
 
-describe('NwTooltip', () => {
+describe('OcTooltip', () => {
   @Component({
-    imports: [NwTooltip],
-    template: `<button id="t" nwTooltip="Copy link" aria-describedby="extra">Copy</button><span id="extra">x</span>`,
+    imports: [OcTooltip],
+    template: `<button id="t" ocTooltip="Copy link" aria-describedby="extra">Copy</button><span id="extra">x</span>`,
   })
   class Host {}
 
@@ -152,37 +152,37 @@ describe('NwTooltip', () => {
   });
 });
 
-describe('NwToastService + nw-toaster', () => {
-  @Component({ imports: [NwToaster], template: `<nw-toaster />` })
+describe('OcToastService + oc-toaster', () => {
+  @Component({ imports: [OcToaster], template: `<oc-toaster />` })
   class Host {}
 
   afterEach(() => {
     vi.useRealTimers();
-    TestBed.inject(NwToastService).clear();
+    TestBed.inject(OcToastService).clear();
   });
 
   it('shows and dismisses toasts in a polite live region', async () => {
     const fixture = TestBed.createComponent(Host);
-    const toasts = TestBed.inject(NwToastService);
+    const toasts = TestBed.inject(OcToastService);
     await fixture.whenStable();
-    const stack = fixture.nativeElement.querySelector('nw-toaster') as HTMLElement;
+    const stack = fixture.nativeElement.querySelector('oc-toaster') as HTMLElement;
     expect(stack.getAttribute('role')).toBe('status');
     expect(stack.getAttribute('aria-live')).toBe('polite');
-    expect(stack.classList).toContain('nw-toast-stack');
+    expect(stack.classList).toContain('oc-toast-stack');
 
     const id = toasts.show({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
     toasts.show('Plain message');
     await fixture.whenStable();
-    const items = stack.querySelectorAll('.nw-toast');
+    const items = stack.querySelectorAll('.oc-toast');
     expect(items.length).toBe(2);
-    expect(items[0].className).toBe('nw-toast nw-toast--success');
-    expect(items[0].querySelector('.nw-toast__title')?.textContent).toBe('Saved');
+    expect(items[0].className).toBe('oc-toast oc-toast--success');
+    expect(items[0].querySelector('.oc-toast__title')?.textContent).toBe('Saved');
 
     toasts.dismiss(id);
     await fixture.whenStable();
-    expect(stack.querySelectorAll('.nw-toast').length).toBe(1);
+    expect(stack.querySelectorAll('.oc-toast').length).toBe(1);
 
-    (stack.querySelector('.nw-close') as HTMLButtonElement).click();
+    (stack.querySelector('.oc-close') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(toasts.toasts().length).toBe(0);
   });
@@ -191,8 +191,8 @@ describe('NwToastService + nw-toaster', () => {
     vi.useFakeTimers();
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const toasts = TestBed.inject(NwToastService);
-    const stack = fixture.nativeElement.querySelector('nw-toaster') as HTMLElement;
+    const toasts = TestBed.inject(OcToastService);
+    const stack = fixture.nativeElement.querySelector('oc-toaster') as HTMLElement;
 
     toasts.show({ message: 'Hi', duration: 1000 });
     vi.advanceTimersByTime(400);
@@ -224,19 +224,19 @@ describe('Theme', () => {
     for (const a of ['data-theme', 'data-accent', 'data-shape']) document.documentElement.removeAttribute(a);
   });
 
-  it('provideNawaTheme applies the theme on startup', () => {
-    TestBed.configureTestingModule({ providers: [provideNawaTheme({ mode: 'dark', accent: 'rose', shape: 'round' })] });
-    const service = TestBed.inject(NawaThemeService);
+  it('provideOrcaTheme applies the theme on startup', () => {
+    TestBed.configureTestingModule({ providers: [provideOrcaTheme({ mode: 'dark', accent: 'rose', shape: 'round' })] });
+    const service = TestBed.inject(OrcaThemeService);
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
     expect(document.documentElement.getAttribute('data-accent')).toBe('rose');
     expect(document.documentElement.getAttribute('data-shape')).toBe('round');
     expect(service.theme()).toEqual({ mode: 'dark', accent: 'rose', shape: 'round' });
   });
 
-  it('NawaThemeService persists and restores a choice', () => {
+  it('OrcaThemeService persists and restores a choice', () => {
     localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode: 'hc' }));
-    TestBed.configureTestingModule({ providers: [provideNawaTheme({ mode: 'light', accent: 'teal' })] });
-    const service = TestBed.inject(NawaThemeService);
+    TestBed.configureTestingModule({ providers: [provideOrcaTheme({ mode: 'light', accent: 'teal' })] });
+    const service = TestBed.inject(OrcaThemeService);
     expect(service.theme()).toEqual({ mode: 'hc', accent: 'teal' });
     service.set({ mode: 'system' }, { persist: true });
     expect(document.documentElement.hasAttribute('data-theme')).toBe(false);

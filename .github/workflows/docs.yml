@@ -24,8 +24,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build -w @nawa-ui/core && npm run build -w @nawa-ui/react && npm run build -w @nawa-ui/three
-      - run: npm run build -w @nawa-ui/docs
+      - run: npm run build -w @orca-ui/core && npm run build -w @orca-ui/react && npm run build -w @orca-ui/three
+      - run: npm run build -w @orca-ui/docs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/docs/dist

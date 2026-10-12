@@ -1,8 +1,8 @@
 /**
- * Nawa UI theme source of truth.
+ * Orca UI theme source of truth.
  *
  * A theme = mode (light | dark | hc) × accent (violet | teal | indigo | rose | amber | emerald | slate) × shape.
- * `scripts/build.mjs` generates `nawa-ui.css` and `tokens.ts` from this file, and
+ * `scripts/build.mjs` generates `orca-ui.css` and `tokens.ts` from this file, and
  * `scripts/check-contrast.mjs` verifies every mode × accent pair against WCAG 2.2 AA.
  */
 
@@ -67,7 +67,7 @@ export const modes = {
  * - primaryInk: accent text and links on surfaces
  */
 export const accents = {
-  /** Default Nawa accent: electric violet. */
+  /** Default Orca accent: electric violet. */
   violet: {
     light: { primary: '#5b34d6', primaryHover: '#4925b8', primaryInk: '#5230cc', onPrimary: '#ffffff' },
     dark: { primary: '#b9a5ff', primaryHover: '#d3c7ff', primaryInk: '#c4b5fd', onPrimary: '#1d0f4a' },
@@ -114,6 +114,13 @@ export const shapes = {
 
 /** Soft tints are a mix of a color into the surface. Kept here so CSS and JS agree. */
 export const softMix = { primary: 0.14, status: 0.12 };
+
+/**
+ * Accent tints of the Orca design language (fractions of primary mixed into a neutral):
+ * hover = interactive hover wash, press = pressed wash, canvas = sunken/page areas (into surfaceAlt),
+ * border = hairlines that pick up the accent hue (into border).
+ */
+export const tint = { hover: 0.07, press: 0.12, canvas: 0.035, border: 0.1 };
 
 export const defaultMode = 'light';
 export const defaultAccent = 'violet';

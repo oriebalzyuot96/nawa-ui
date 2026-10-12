@@ -1,0 +1,18 @@
+---
+// Themeable scene as inline SVG. Decorative unless `label` is set.
+import { illustrationToSvg, type IllustrationName } from '../illustrations.js';
+
+interface Props {
+  name: IllustrationName;
+  label?: string;
+  compact?: boolean;
+  animated?: boolean;
+  styles?: boolean;
+  class?: string;
+}
+
+const { name, label = '', compact = false, animated = true, styles = true, class: className } = Astro.props;
+const svg = illustrationToSvg(name, { label, compact, animated, styles, className });
+---
+
+<Fragment set:html={svg} />

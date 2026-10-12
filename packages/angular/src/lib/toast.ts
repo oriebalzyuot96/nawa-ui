@@ -27,16 +27,16 @@ interface Timer {
 }
 
 /**
- * App-wide toast queue. Render `<nw-toaster />` once (e.g. in the root component), then:
+ * App-wide toast queue. Render `<oc-toaster />` once (e.g. in the root component), then:
  *
  * ```ts
- * inject(NwToastService).show({ title: 'Saved', message: 'Your changes are live.', variant: 'success' });
+ * inject(OcToastService).show({ title: 'Saved', message: 'Your changes are live.', variant: 'success' });
  * ```
  *
  * Auto-dismiss pauses while the pointer is over the toaster or focus is inside it (WCAG 2.2.1).
  */
 @Injectable({ providedIn: 'root' })
-export class NwToastService implements OnDestroy {
+export class OcToastService implements OnDestroy {
   /** Default auto-dismiss delay in ms. */
   defaultDuration = 5000;
 
@@ -51,7 +51,7 @@ export class NwToastService implements OnDestroy {
   show(options: ToastOptions | string): ToastId {
     const opts: ToastOptions = typeof options === 'string' ? { message: options } : options;
     this.counter += 1;
-    const id = opts.id ?? `nw-toast-${this.counter}`;
+    const id = opts.id ?? `oc-toast-${this.counter}`;
     const item: ToastItem = { id, message: opts.message, title: opts.title, variant: opts.variant };
     this.clearTimer(id);
     this.items.update((list) => {
@@ -121,14 +121,14 @@ export class NwToastService implements OnDestroy {
   }
 }
 
-/** Polite live region that renders the toasts from `NwToastService`. Place it once. */
+/** Polite live region that renders the toasts from `OcToastService`. Place it once. */
 @Component({
-  selector: 'nw-toaster',
+  selector: 'oc-toaster',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     role: 'status',
     'aria-live': 'polite',
-    class: 'nw-toast-stack',
+    class: 'oc-toast-stack',
     '(mouseenter)': 'onEnter()',
     '(mouseleave)': 'onLeave()',
     '(focusin)': 'onFocusIn()',
@@ -137,25 +137,25 @@ export class NwToastService implements OnDestroy {
   template: `
     @for (t of service.toasts(); track t.id) {
       <div [class]="toastClass(t)">
-        <div class="nw-toast__body">
+        <div class="oc-toast__body">
           @if (t.title) {
-            <div class="nw-toast__title">{{ t.title }}</div>
+            <div class="oc-toast__title">{{ t.title }}</div>
           }
-          <div class="nw-toast__message">{{ t.message }}</div>
+          <div class="oc-toast__message">{{ t.message }}</div>
         </div>
-        <button type="button" class="nw-close" [attr.aria-label]="dismissLabel()" (click)="service.dismiss(t.id)">×</button>
+        <button type="button" class="oc-close" [attr.aria-label]="dismissLabel()" (click)="service.dismiss(t.id)">×</button>
       </div>
     }
   `,
 })
-export class NwToaster {
-  protected readonly service = inject(NwToastService);
+export class OcToaster {
+  protected readonly service = inject(OcToastService);
   readonly dismissLabel = input('Dismiss');
   private hovered = false;
   private focused = false;
 
   protected toastClass(t: ToastItem): string {
-    return cx('nw-toast', t.variant && t.variant !== 'info' && `nw-toast--${t.variant}`);
+    return cx('oc-toast', t.variant && t.variant !== 'info' && `oc-toast--${t.variant}`);
   }
 
   protected onLeave(): void {

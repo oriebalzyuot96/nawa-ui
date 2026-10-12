@@ -18,7 +18,7 @@ import {
   type TreeNode,
   type TreeTableNode,
   type TimelineItem,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Output, SwitchField } from './shared';
 
 interface Member extends Record<string, unknown> {
@@ -181,7 +181,7 @@ function DataViewDemo() {
       rows={4}
       getKey={(p) => p.id}
       itemTemplate={(p, layout) => (
-        <div style={{ display: 'flex', flexDirection: layout === 'grid' ? 'column' : 'row', gap: '0.5rem', justifyContent: 'space-between', alignItems: layout === 'grid' ? 'flex-start' : 'center', padding: '0.75rem', border: '1px solid var(--nw-border)', borderRadius: 'var(--nw-radius)', background: 'var(--nw-surface)' }}>
+        <div style={{ display: 'flex', flexDirection: layout === 'grid' ? 'column' : 'row', gap: '0.5rem', justifyContent: 'space-between', alignItems: layout === 'grid' ? 'flex-start' : 'center', padding: '0.75rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius)', background: 'var(--oc-surface)' }}>
           <strong>{p.name}</strong>
           <span className="muted">{p.category}</span>
           <span>${p.price}</span>
@@ -198,6 +198,7 @@ function PaginatorDemo() {
   return (
     <div className="demo-col">
       <Paginator
+        label="Paginator demo"
         totalRecords={240}
         first={first}
         rows={rows}
@@ -218,7 +219,7 @@ function PaginationDemo() {
   const [page, setPage] = useState(5);
   return (
     <>
-      <Pagination value={page} pageCount={12} onChange={setPage} />
+      <Pagination label="Pagination demo" value={page} pageCount={12} onChange={setPage} />
       <Output label="Page">{page}</Output>
     </>
   );

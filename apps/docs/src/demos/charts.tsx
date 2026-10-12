@@ -28,7 +28,7 @@ import {
   calendarHeatmapData,
   linearScale,
   type ChartPoint,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Row, SwitchField } from './shared';
 
 /* ---------- Realistic datasets (a fictional SaaS company) ---------- */
@@ -103,12 +103,12 @@ const markets = [
 ];
 
 const scores = [
-  { metric: 'Accessibility', nawa: 9.6, avg: 6.8 },
-  { metric: 'Theming', nawa: 9.2, avg: 7.1 },
-  { metric: 'Bundle size', nawa: 8.4, avg: 6.2 },
-  { metric: 'Docs', nawa: 8.8, avg: 7.4 },
-  { metric: 'RTL', nawa: 9.4, avg: 4.9 },
-  { metric: 'Frameworks', nawa: 9.0, avg: 5.6 },
+  { metric: 'Accessibility', orca: 9.6, avg: 6.8 },
+  { metric: 'Theming', orca: 9.2, avg: 7.1 },
+  { metric: 'Bundle size', orca: 8.4, avg: 6.2 },
+  { metric: 'Docs', orca: 8.8, avg: 7.4 },
+  { metric: 'RTL', orca: 9.4, avg: 4.9 },
+  { metric: 'Frameworks', orca: 9.0, avg: 5.6 },
 ];
 
 const hours = ['00', '03', '06', '09', '12', '15', '18', '21'];
@@ -291,7 +291,7 @@ function RadarDemo() {
       x="metric"
       max={10}
       series={[
-        { key: 'nawa', label: 'Nawa UI' },
+        { key: 'orca', label: 'Orca UI' },
         { key: 'avg', label: 'Category average' },
       ]}
       height={340}
@@ -339,10 +339,10 @@ function GaugeDemo() {
         />
       </Row>
       <Row style={{ justifyContent: 'center' }}>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm" onClick={() => setLoad((v) => Math.max(0, v - 10))}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setLoad((v) => Math.max(0, v - 10))}>
           −10
         </button>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm" onClick={() => setLoad((v) => Math.min(100, v + 10))}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setLoad((v) => Math.min(100, v + 10))}>
           +10
         </button>
       </Row>
@@ -387,7 +387,7 @@ function SparkDemo() {
   return (
     <div className="demo-col">
       <table className="props-table" style={{ maxWidth: '32rem' }}>
-        <caption className="nw-sr-only">Key metrics with trends</caption>
+        <caption className="oc-sr-only">Key metrics with trends</caption>
         <thead>
           <tr>
             <th scope="col">Metric</th>

@@ -1,11 +1,11 @@
-name: nawa_ui
+name: orca_ui
 description: >-
-  Accessible, themeable Flutter widgets from the Nawa UI design system: light,
+  Accessible, themeable Flutter widgets from the Orca UI design system: light,
   dark and high-contrast themes with several accents, matching the web tokens.
 version: 0.1.0
-homepage: https://oriebalzyuot96.github.io/nawa-ui/
-repository: https://github.com/oriebalzyuot96/nawa-ui
-issue_tracker: https://github.com/oriebalzyuot96/nawa-ui/issues
+homepage: https://oriebalzyuot96.github.io/orca-ui/
+repository: https://github.com/oriebalzyuot96/orca-ui
+issue_tracker: https://github.com/oriebalzyuot96/orca-ui/issues
 topics:
   - ui
   - design-system

@@ -10,7 +10,7 @@ export const forms: CategoryDoc = {
   description:
     'Accessible form components for React, Vue, Svelte, Astro, React Native and Angular: Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Slider and Segmented — with live demos.',
   intro:
-    'The core form controls ship in every Nawa UI package. Labels are always linked, hints and errors are announced through aria-describedby, and invalid fields set aria-invalid.',
+    'The core form controls ship in every Orca UI package. Labels are always linked, hints and errors are announced through aria-describedby, and invalid fields set aria-invalid.',
   entries: [
     {
       id: 'button',
@@ -44,7 +44,7 @@ export const forms: CategoryDoc = {
       a11y: 'Errors replace the hint so screen readers announce a single, current message.',
       code: {
         ...snippets.input,
-        angular: `<nw-input label="Email" type="email" [(value)]="email"
+        angular: `<oc-input label="Email" type="email" [(value)]="email"
   [error]="email() ? undefined : 'Required'" />`,
       },
     },
@@ -65,7 +65,7 @@ export const forms: CategoryDoc = {
         svelte: `<Textarea bind:value={brief} label="Project brief" rows={4} hint="Markdown supported" />`,
         astro: `<Textarea name="brief" label="Project brief" rows={4} hint="Markdown supported" />`,
         rn: `<Textarea label="Project brief" value={brief} onChangeText={setBrief} />`,
-        angular: `<nw-textarea label="Project brief" [rows]="4" [(value)]="brief" hint="Markdown supported" />`,
+        angular: `<oc-textarea label="Project brief" [rows]="4" [(value)]="brief" hint="Markdown supported" />`,
       },
     },
     {
@@ -90,7 +90,7 @@ export const forms: CategoryDoc = {
         svelte: `<Select bind:value={team} label="Team" placeholder="Choose a team" options={teams} />`,
         astro: `<Select name="team" label="Team" placeholder="Choose a team" options={teams} />`,
         rn: `<Select label="Team" value={team} onChange={setTeam} options={teams} />`,
-        angular: `<nw-select label="Team" placeholder="Choose a team" [options]="teams" [(value)]="team" />`,
+        angular: `<oc-select label="Team" placeholder="Choose a team" [options]="teams" [(value)]="team" />`,
       },
     },
     {
@@ -110,7 +110,7 @@ export const forms: CategoryDoc = {
         svelte: `<Checkbox bind:checked={updates} label="Email me updates" />`,
         astro: `<Checkbox name="updates" label="Email me updates" checked />`,
         rn: `<Checkbox label="Email me updates" checked={updates} onChange={setUpdates} />`,
-        angular: `<nw-checkbox label="Email me updates" [(value)]="updates" />`,
+        angular: `<oc-checkbox label="Email me updates" [(value)]="updates" />`,
       },
     },
     {
@@ -130,7 +130,7 @@ export const forms: CategoryDoc = {
         svelte: `<Switch bind:checked={dark} label="Dark previews" />`,
         astro: `<Switch name="dark" label="Dark previews" checked />`,
         rn: `<Switch label="Dark previews" checked={dark} onChange={setDark} />`,
-        angular: `<nw-switch label="Dark previews" [(value)]="dark" />`,
+        angular: `<oc-switch label="Dark previews" [(value)]="dark" />`,
       },
     },
     {
@@ -154,7 +154,7 @@ export const forms: CategoryDoc = {
         svelte: `<RadioGroup bind:value={plan} name="plan" label="Plan" options={plans} />`,
         astro: `<RadioGroup name="plan" label="Plan" value="pro" options={plans} />`,
         rn: `<RadioGroup label="Plan" value={plan} onChange={setPlan} options={plans} />`,
-        angular: `<nw-radio-group name="plan" label="Plan" [options]="plans" [(value)]="plan" />`,
+        angular: `<oc-radio-group name="plan" label="Plan" [options]="plans" [(value)]="plan" />`,
       },
     },
     {
@@ -177,7 +177,7 @@ export const forms: CategoryDoc = {
         vue: `<Slider v-model="budget" label="Budget" show-value />`,
         svelte: `<Slider bind:value={budget} label="Budget" showValue />`,
         astro: `<Slider name="budget" label="Budget" value={40} showValue />`,
-        angular: `<nw-slider label="Budget" [(value)]="budget" showValue />`,
+        angular: `<oc-slider label="Budget" [(value)]="budget" showValue />`,
       },
     },
     {
@@ -198,7 +198,7 @@ export const forms: CategoryDoc = {
         svelte: `<Segmented bind:value={view} label="View" options={views} />`,
         astro: `<Segmented name="view" label="View" options={views} />`,
         rn: `<Segmented label="View" value={view} onChange={setView} options={views} />`,
-        angular: `<nw-segmented label="View" [options]="views" [(value)]="view" />`,
+        angular: `<oc-segmented label="View" [options]="views" [(value)]="view" />`,
       },
     },
   ],

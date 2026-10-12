@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { Skeleton } from './display';
-import { fontSize, radius, space, useNawaTheme } from '../theme';
+import { fontSize, radius, space, useOrcaTheme } from '../theme';
 
 export type SortDirection = 'asc' | 'desc';
 
@@ -49,7 +49,7 @@ export function DataTable<T extends Record<string, unknown>>({
   defaultSort,
   onSortChange,
 }: DataTableProps<T>) {
-  const t = useNawaTheme();
+  const t = useOrcaTheme();
   const [sort, setSort] = useState(defaultSort);
 
   const data = useMemo(() => {

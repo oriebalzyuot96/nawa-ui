@@ -206,9 +206,9 @@ describe('keyboard navigation and announcements', () => {
 
   it('shows the same tooltip on pointer hover', () => {
     render(<BarChart title="Hover" data={sales} x="month" series={[{ key: 'revenue', label: 'Revenue' }]} width={600} />);
-    const svg = document.querySelector('.nw-chart__svg') as SVGSVGElement;
+    const svg = document.querySelector('.oc-chart__svg') as SVGSVGElement;
     // jsdom has no layout: the bounding rect is 0, so client coords map 1:1 to the viewBox.
-    const firstBar = document.querySelector('.nw-chart__bar') as SVGRectElement;
+    const firstBar = document.querySelector('.oc-chart__bar') as SVGRectElement;
     const bx = Number(firstBar.getAttribute('x')) + Number(firstBar.getAttribute('width')) / 2 + 48;
     const by = Number(firstBar.getAttribute('y')) + 16;
     fireEvent.mouseMove(svg, { clientX: bx, clientY: by });
@@ -239,7 +239,7 @@ describe('data table fallback', () => {
     const table = screen.getByRole('table', { name: 'Sales' });
     const wrap = document.getElementById(toggle.getAttribute('aria-controls')!)!;
     expect(wrap).toContainElement(table);
-    expect(wrap).toHaveClass('nw-sr-only');
+    expect(wrap).toHaveClass('oc-sr-only');
 
     const headers = within(table).getAllByRole('columnheader').map((h) => h.textContent);
     expect(headers).toEqual(['Category', 'Revenue', 'Cost']);
@@ -250,7 +250,7 @@ describe('data table fallback', () => {
     await user.click(toggle);
     expect(toggle).toHaveAttribute('aria-expanded', 'true');
     expect(toggle).toHaveTextContent('Hide data table');
-    expect(wrap).not.toHaveClass('nw-sr-only');
+    expect(wrap).not.toHaveClass('oc-sr-only');
   });
 
   it('omits the table with table="none" and formats numbers with the locale', () => {
@@ -278,32 +278,32 @@ describe('non-color cues', () => {
       </div>,
     );
     const figures = container.querySelectorAll('figure');
-    expect(figures[0]).toHaveClass('nw-chart--patterns');
+    expect(figures[0]).toHaveClass('oc-chart--patterns');
     // Second series bars carry a pattern overlay referencing a defined <pattern>.
-    const overlay = figures[0].querySelector('.nw-chart-s1 .nw-chart__pattern') as SVGRectElement;
+    const overlay = figures[0].querySelector('.oc-chart-s1 .oc-chart__pattern') as SVGRectElement;
     const id = overlay.getAttribute('fill')!.match(/url\(#(.+)\)/)![1];
     expect(document.getElementById(id)?.tagName.toLowerCase()).toBe('pattern');
     // Legend swatches repeat the pattern.
-    expect(figures[0].querySelector('.nw-chart-legend .nw-chart-s1 .nw-chart__pattern')).not.toBeNull();
+    expect(figures[0].querySelector('.oc-chart-legend .oc-chart-s1 .oc-chart__pattern')).not.toBeNull();
   });
 
   it('keeps patterns off by default outside high contrast, and on with patterns', () => {
     const { container, rerender } = render(<BarChart title="Plain" data={sales} x="month" series={salesSeries} />);
-    expect(container.querySelector('figure')).not.toHaveClass('nw-chart--patterns');
+    expect(container.querySelector('figure')).not.toHaveClass('oc-chart--patterns');
     rerender(<BarChart title="Plain" data={sales} x="month" series={salesSeries} patterns />);
-    expect(container.querySelector('figure')).toHaveClass('nw-chart--patterns');
+    expect(container.querySelector('figure')).toHaveClass('oc-chart--patterns');
     rerender(
       <div data-theme="hc">
         <BarChart title="Plain" data={sales} x="month" series={salesSeries} patterns={false} />
       </div>,
     );
-    expect(container.querySelector('figure')).toHaveClass('nw-chart--no-patterns');
+    expect(container.querySelector('figure')).toHaveClass('oc-chart--no-patterns');
   });
 
   it('gives each line series its own marker shape', () => {
     const { container } = render(<LineChart title="Shapes" data={sales} x="month" series={salesSeries} />);
-    const a = container.querySelector('.nw-chart-s0 .nw-chart__marker')!.getAttribute('data-shape');
-    const b = container.querySelector('.nw-chart-s1 .nw-chart__marker')!.getAttribute('data-shape');
+    const a = container.querySelector('.oc-chart-s0 .oc-chart__marker')!.getAttribute('data-shape');
+    const b = container.querySelector('.oc-chart-s1 .oc-chart__marker')!.getAttribute('data-shape');
     expect(a).toBe('circle');
     expect(b).toBe('square');
   });
@@ -318,17 +318,17 @@ describe('ready-made charts', () => {
     const { container } = render(
       <BarChart title="Stacked" stacked data={data} x="q" series={[{ key: 'a', label: 'A' }, { key: 'b', label: 'B' }]} height={300} />,
     );
-    const a = container.querySelector('.nw-chart__plot .nw-chart-s0 .nw-chart__bar')!;
-    const b = container.querySelector('.nw-chart__plot .nw-chart-s1 .nw-chart__bar')!;
+    const a = container.querySelector('.oc-chart__plot .oc-chart-s0 .oc-chart__bar')!;
+    const b = container.querySelector('.oc-chart__plot .oc-chart-s1 .oc-chart__bar')!;
     // B (negative) starts where A's baseline is (zero) and extends down.
     const aBottom = Number(a.getAttribute('y')) + Number(a.getAttribute('height'));
     expect(Number(b.getAttribute('y'))).toBeCloseTo(aBottom, 1);
-    expect(container.querySelector('.nw-chart-ref--baseline')).not.toBeNull();
+    expect(container.querySelector('.oc-chart-ref--baseline')).not.toBeNull();
   });
 
   it('mirrors horizontal layout in RTL', () => {
     const { container } = render(<BarChart title="RTL" dir="rtl" data={sales} x="month" series={[{ key: 'revenue', label: 'Revenue' }]} />);
-    const bars = container.querySelectorAll('.nw-chart__bar');
+    const bars = container.querySelectorAll('.oc-chart__bar');
     expect(Number(bars[0].getAttribute('x'))).toBeGreaterThan(Number(bars[5].getAttribute('x')));
     expect(container.querySelector('figure')).toHaveAttribute('dir', 'rtl');
   });
@@ -391,12 +391,12 @@ describe('ready-made charts', () => {
         <BubbleChart title="Bubble" data={[{ a: 1, b: 2, c: 10, g: 'X' }, { a: 2, b: 1, c: 40, g: 'Y' }]} x="a" y="b" size="c" group="g" />
       </>,
     );
-    expect(container.querySelectorAll('.nw-chart__area--gradient').length).toBe(2);
-    expect(container.querySelectorAll('.nw-chart-axis--end').length).toBe(1);
+    expect(container.querySelectorAll('.oc-chart__area--gradient').length).toBe(2);
+    expect(container.querySelectorAll('.oc-chart-axis--end').length).toBe(1);
     expect(screen.getByText(/Radar chart with 3 axes\. Team A: highest Speed \(8\), lowest Cost \(3\)\./)).toBeInTheDocument();
     expect(screen.getByText(/strong positive correlation/)).toBeInTheDocument();
     expect(within(screen.getAllByRole('table')[1]).getAllByRole('row')[1]).toHaveTextContent(/Jan.*12,000.*25%/);
-    const bubbles = container.querySelectorAll('.nw-chart__series--bubble .nw-chart__point');
+    const bubbles = container.querySelectorAll('.oc-chart__series--bubble .oc-chart__point');
     expect(bubbles).toHaveLength(2);
   });
 
@@ -416,7 +416,7 @@ describe('ready-made charts', () => {
     expect(meter).toHaveAttribute('aria-valuenow', '72');
     expect(meter).toHaveAttribute('aria-valuetext', '72 of 100 (72%)');
     expect(screen.getByText(/Target 80: 8 below target/)).toBeInTheDocument();
-    expect(document.querySelector('.nw-chart-gauge__value--success')).not.toBeNull();
+    expect(document.querySelector('.oc-chart-gauge__value--success')).not.toBeNull();
     expect(screen.getByRole('meter', { name: 'Upload' })).toHaveAttribute('aria-valuenow', '40');
   });
 
@@ -439,7 +439,7 @@ describe('ready-made charts', () => {
         locale="en-US"
       />,
     );
-    expect(container.querySelectorAll('.nw-chart__cell')).toHaveLength(14 + 5); // 14 cells + 5 legend swatches
+    expect(container.querySelectorAll('.oc-chart__cell')).toHaveLength(14 + 5); // 14 cells + 5 legend swatches
     act(() => screen.getByRole('group', { name: 'Activity' }).focus());
     await user.keyboard('{ArrowRight}');
     expect(live(container)).toHaveTextContent('Jan 7, 2024: 0');
@@ -463,7 +463,7 @@ describe('custom charts from primitives', () => {
         ]}
       />,
     );
-    expect(container.querySelectorAll('.nw-chart__bar')).toHaveLength(4 + 3); // bars + legend swatches
+    expect(container.querySelectorAll('.oc-chart__bar')).toHaveLength(4 + 3); // bars + legend swatches
     expect(screen.getByText(/ending at 115\. Largest increase: Sales \(\+40\)\. Largest decrease: Costs \(-25\)\./)).toBeInTheDocument();
     act(() => screen.getByRole('group', { name: 'Profit bridge' }).focus());
     await user.keyboard('{ArrowRight}{ArrowRight}{ArrowRight}');
@@ -500,7 +500,7 @@ describe('custom charts from primitives', () => {
       </ChartContainer>,
     );
     expect(screen.getByRole('figure', { name: 'Visitors' })).toBeInTheDocument();
-    expect(container.querySelectorAll('.nw-chart-axis__tick text')[0]).toHaveTextContent('Mon');
+    expect(container.querySelectorAll('.oc-chart-axis__tick text')[0]).toHaveTextContent('Mon');
     expect(screen.getByText('Goal')).toBeInTheDocument();
     act(() => screen.getByRole('group', { name: 'Visitors' }).focus());
     await user.keyboard('{End}');

@@ -1,4 +1,4 @@
-// Client toast API for the <Toaster /> region: window.nawaToast({ title, message, variant, duration }).
+// Client toast API for the <Toaster /> region: window.orcaToast({ title, message, variant, duration }).
 
 export interface ToastOptions {
   title?: string;
@@ -9,28 +9,28 @@ export interface ToastOptions {
 }
 
 function show({ title, message, variant = 'info', duration = 5000 }: ToastOptions) {
-  const region = document.querySelector<HTMLElement>('[data-nw-toaster]');
+  const region = document.querySelector<HTMLElement>('[data-oc-toaster]');
   if (!region) return;
 
   const toast = document.createElement('div');
-  toast.className = variant === 'info' ? 'nw-toast' : `nw-toast nw-toast--${variant}`;
+  toast.className = variant === 'info' ? 'oc-toast' : `oc-toast oc-toast--${variant}`;
 
   const body = document.createElement('div');
-  body.className = 'nw-toast__body';
+  body.className = 'oc-toast__body';
   if (title) {
     const t = document.createElement('div');
-    t.className = 'nw-toast__title';
+    t.className = 'oc-toast__title';
     t.textContent = title;
     body.append(t);
   }
   const m = document.createElement('div');
-  m.className = 'nw-toast__message';
+  m.className = 'oc-toast__message';
   m.textContent = message;
   body.append(m);
 
   const close = document.createElement('button');
   close.type = 'button';
-  close.className = 'nw-close';
+  close.className = 'oc-close';
   close.setAttribute('aria-label', 'Dismiss');
   close.textContent = '×';
 
@@ -58,8 +58,8 @@ function show({ title, message, variant = 'info', duration = 5000 }: ToastOption
 
 declare global {
   interface Window {
-    nawaToast: (options: ToastOptions) => void;
+    orcaToast: (options: ToastOptions) => void;
   }
 }
 
-window.nawaToast = show;
+window.orcaToast = show;

@@ -4,15 +4,15 @@ import '../foundation/group_focus.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
-/// A tab of [NawaTabs].
+/// A tab of [OrcaTabs].
 @immutable
-class NawaTabItem {
+class OrcaTabItem {
   /// Creates a tab.
-  const NawaTabItem({required this.id, required this.label, this.disabled = false, this.content});
+  const OrcaTabItem({required this.id, required this.label, this.disabled = false, this.content});
 
   /// Unique id.
   final String id;
@@ -32,12 +32,12 @@ class NawaTabItem {
 /// Keyboard: Left / Right move to the previous / next tab (mirrored in RTL)
 /// and select it, Home / End jump to the first / last tab. Only the selected
 /// tab is in the Tab order (roving focus), like the web tabs.
-class NawaTabs extends StatefulWidget {
+class OrcaTabs extends StatefulWidget {
   /// Creates tabs. Pass [value] to control the selection, or [initialValue].
-  const NawaTabs({super.key, required this.tabs, this.value, this.initialValue, this.onChanged, this.label});
+  const OrcaTabs({super.key, required this.tabs, this.value, this.initialValue, this.onChanged, this.label});
 
   /// Tabs.
-  final List<NawaTabItem> tabs;
+  final List<OrcaTabItem> tabs;
 
   /// Selected id (controlled).
   final String? value;
@@ -52,11 +52,11 @@ class NawaTabs extends StatefulWidget {
   final String? label;
 
   @override
-  State<NawaTabs> createState() => _NawaTabsState();
+  State<OrcaTabs> createState() => _OrcaTabsState();
 }
 
-class _NawaTabsState extends State<NawaTabs> {
-  final NawaGroupFocus _focus = NawaGroupFocus('NawaTab');
+class _OrcaTabsState extends State<OrcaTabs> {
+  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaTab');
   String? _inner;
 
   @override
@@ -85,11 +85,11 @@ class _NawaTabsState extends State<NawaTabs> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final int length = widget.tabs.length;
-    final int activeIndex = widget.tabs.indexWhere((NawaTabItem tab) => tab.id == _active);
-    final int tabStop = activeIndex >= 0 ? activeIndex : nawaEdgeEnabled(false, length, _enabled);
+    final int activeIndex = widget.tabs.indexWhere((OrcaTabItem tab) => tab.id == _active);
+    final int tabStop = activeIndex >= 0 ? activeIndex : orcaEdgeEnabled(false, length, _enabled);
     final Widget? panel = activeIndex >= 0 ? widget.tabs[activeIndex].content : null;
 
     return Column(
@@ -104,16 +104,16 @@ class _NawaTabsState extends State<NawaTabs> {
             label: widget.label,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: NawaArrowKeys(
+              child: OrcaArrowKeys(
                 onMove: (int delta) {
                   final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-                  _select(nawaNextEnabled(from, delta, length, _enabled));
+                  _select(orcaNextEnabled(from, delta, length, _enabled));
                 },
-                onEdge: (bool last) => _select(nawaEdgeEnabled(last, length, _enabled)),
+                onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
                 child: Row(
                   children: <Widget>[
                     for (int i = 0; i < length; i++)
-                      NawaPressable(
+                      OrcaPressable(
                         focusNode: _focus[i]..skipTraversal = i != tabStop,
                         requestFocusOnTap: true,
                         selected: i == activeIndex,
@@ -121,7 +121,7 @@ class _NawaTabsState extends State<NawaTabs> {
                         onPressed: _enabled(i) ? () => _select(i) : null,
                         borderRadius: BorderRadius.circular(t.radii.sm),
                         child: Container(
-                          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.md, vertical: NawaSpace.md),
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md, vertical: OrcaSpace.md),
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
@@ -137,7 +137,7 @@ class _NawaTabsState extends State<NawaTabs> {
                                   ? c.primaryInk
                                   : (_enabled(i) ? c.textMuted : c.border),
                               fontWeight: FontWeight.w600,
-                              fontSize: NawaFontSize.md,
+                              fontSize: OrcaFontSize.md,
                             ),
                           ),
                         ),
@@ -154,7 +154,7 @@ class _NawaTabsState extends State<NawaTabs> {
             explicitChildNodes: true,
             label: activeIndex >= 0 ? widget.tabs[activeIndex].label : null,
             child: Padding(
-              padding: const EdgeInsetsDirectional.symmetric(vertical: NawaSpace.md),
+              padding: const EdgeInsetsDirectional.symmetric(vertical: OrcaSpace.md),
               child: KeyedSubtree(key: ValueKey<String>(widget.tabs[activeIndex].id), child: panel),
             ),
           ),
@@ -163,11 +163,11 @@ class _NawaTabsState extends State<NawaTabs> {
   }
 }
 
-/// A section of [NawaAccordion].
+/// A section of [OrcaAccordion].
 @immutable
-class NawaAccordionItem {
+class OrcaAccordionItem {
   /// Creates a section.
-  const NawaAccordionItem({required this.id, required this.title, required this.content});
+  const OrcaAccordionItem({required this.id, required this.title, required this.content});
 
   /// Unique id.
   final String id;
@@ -180,12 +180,12 @@ class NawaAccordionItem {
 }
 
 /// Expandable sections.
-class NawaAccordion extends StatefulWidget {
+class OrcaAccordion extends StatefulWidget {
   /// Creates an accordion.
-  const NawaAccordion({super.key, required this.items, this.multiple = false, this.initiallyOpen = const <String>{}});
+  const OrcaAccordion({super.key, required this.items, this.multiple = false, this.initiallyOpen = const <String>{}});
 
   /// Sections.
-  final List<NawaAccordionItem> items;
+  final List<OrcaAccordionItem> items;
 
   /// Allow several open sections.
   final bool multiple;
@@ -194,10 +194,10 @@ class NawaAccordion extends StatefulWidget {
   final Set<String> initiallyOpen;
 
   @override
-  State<NawaAccordion> createState() => _NawaAccordionState();
+  State<OrcaAccordion> createState() => _OrcaAccordionState();
 }
 
-class _NawaAccordionState extends State<NawaAccordion> {
+class _OrcaAccordionState extends State<OrcaAccordion> {
   late Set<String> _open = <String>{...widget.initiallyOpen};
 
   void _toggle(String id) {
@@ -212,8 +212,8 @@ class _NawaAccordionState extends State<NawaAccordion> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final Duration duration = _reduceMotion(context) ? Duration.zero : const Duration(milliseconds: 180);
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -229,18 +229,18 @@ class _NawaAccordionState extends State<NawaAccordion> {
           for (int i = 0; i < widget.items.length; i++) ...<Widget>[
             if (i > 0) Container(height: 1, color: c.border),
             Builder(builder: (BuildContext context) {
-              final NawaAccordionItem item = widget.items[i];
+              final OrcaAccordionItem item = widget.items[i];
               final bool expanded = _open.contains(item.id);
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  NawaPressable(
+                  OrcaPressable(
                     onPressed: () => _toggle(item.id),
                     semanticValue: expanded ? 'Expanded' : 'Collapsed',
                     semanticHint: expanded ? 'Activate to collapse' : 'Activate to expand',
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+                      padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -248,7 +248,7 @@ class _NawaAccordionState extends State<NawaAccordion> {
                               header: true,
                               child: Text(
                                 item.title,
-                                style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: NawaFontSize.md),
+                                style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: OrcaFontSize.md),
                               ),
                             ),
                           ),
@@ -269,10 +269,10 @@ class _NawaAccordionState extends State<NawaAccordion> {
                     child: expanded
                         ? Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                              NawaSpace.lg,
+                              OrcaSpace.lg,
                               0,
-                              NawaSpace.lg,
-                              NawaSpace.lg,
+                              OrcaSpace.lg,
+                              OrcaSpace.lg,
                             ),
                             child: item.content,
                           )
@@ -288,11 +288,11 @@ class _NawaAccordionState extends State<NawaAccordion> {
   }
 }
 
-/// A crumb of [NawaBreadcrumb].
+/// A crumb of [OrcaBreadcrumb].
 @immutable
-class NawaBreadcrumbItem {
+class OrcaBreadcrumbItem {
   /// Creates a crumb.
-  const NawaBreadcrumbItem({required this.label, this.onPressed});
+  const OrcaBreadcrumbItem({required this.label, this.onPressed});
 
   /// Text.
   final String label;
@@ -302,20 +302,20 @@ class NawaBreadcrumbItem {
 }
 
 /// Trail of links to parent pages. The last item is the current page.
-class NawaBreadcrumb extends StatelessWidget {
+class OrcaBreadcrumb extends StatelessWidget {
   /// Creates a breadcrumb.
-  const NawaBreadcrumb({super.key, required this.items, this.label = 'Breadcrumb'});
+  const OrcaBreadcrumb({super.key, required this.items, this.label = 'Breadcrumb'});
 
   /// Crumbs, root first.
-  final List<NawaBreadcrumbItem> items;
+  final List<OrcaBreadcrumbItem> items;
 
   /// Accessible name of the trail.
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -327,15 +327,15 @@ class NawaBreadcrumb extends StatelessWidget {
             if (i > 0)
               ExcludeSemantics(
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.xs),
-                  child: Text('/', style: TextStyle(color: c.controlBorder, fontSize: NawaFontSize.sm)),
+                  padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs),
+                  child: Text('/', style: TextStyle(color: c.controlBorder, fontSize: OrcaFontSize.sm)),
                 ),
               ),
             if (i == items.length - 1 || items[i].onPressed == null)
               Semantics(
                 hint: i == items.length - 1 ? 'Current page' : null,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: nawaMinTapTarget),
+                  constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
                   child: Align(
                     widthFactor: 1,
                     heightFactor: 1,
@@ -344,20 +344,20 @@ class NawaBreadcrumb extends StatelessWidget {
                       style: TextStyle(
                         color: c.text,
                         fontWeight: i == items.length - 1 ? FontWeight.w700 : FontWeight.w500,
-                        fontSize: NawaFontSize.sm,
+                        fontSize: OrcaFontSize.sm,
                       ),
                     ),
                   ),
                 ),
               )
             else
-              NawaPressable(
+              OrcaPressable(
                 link: true,
                 onPressed: items[i].onPressed,
                 borderRadius: BorderRadius.circular(t.radii.sm),
-                minSize: const Size(nawaMinTapTarget, nawaMinTapTarget),
+                minSize: const Size(orcaMinTapTarget, orcaMinTapTarget),
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.xs),
+                  padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs),
                   child: Center(
                     widthFactor: 1,
                     heightFactor: 1,
@@ -366,7 +366,7 @@ class NawaBreadcrumb extends StatelessWidget {
                       style: TextStyle(
                         color: c.primaryInk,
                         fontWeight: FontWeight.w500,
-                        fontSize: NawaFontSize.sm,
+                        fontSize: OrcaFontSize.sm,
                         decoration: TextDecoration.underline,
                         decorationColor: c.primaryInk,
                       ),
@@ -385,9 +385,9 @@ class NawaBreadcrumb extends StatelessWidget {
 ///
 /// Keyboard: Left / Right go to the previous / next page (mirrored in RTL),
 /// Home / End to the first / last page.
-class NawaPagination extends StatelessWidget {
+class OrcaPagination extends StatelessWidget {
   /// Creates pagination.
-  const NawaPagination({
+  const OrcaPagination({
     super.key,
     required this.page,
     required this.pageCount,
@@ -428,8 +428,8 @@ class NawaPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     Widget pageButton({
       required Widget child,
       required String semanticLabel,
@@ -437,7 +437,7 @@ class NawaPagination extends StatelessWidget {
       required bool enabled,
       bool selected = false,
     }) {
-      return NawaPressable(
+      return OrcaPressable(
         onPressed: enabled ? () => _go(target) : null,
         selected: selected,
         semanticLabel: semanticLabel,
@@ -445,9 +445,9 @@ class NawaPagination extends StatelessWidget {
         excludeChildSemantics: true,
         borderRadius: BorderRadius.circular(t.radii.md),
         child: Container(
-          constraints: const BoxConstraints(minWidth: nawaMinTapTarget, minHeight: nawaMinTapTarget),
+          constraints: const BoxConstraints(minWidth: orcaMinTapTarget, minHeight: orcaMinTapTarget),
           alignment: Alignment.center,
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm),
           decoration: BoxDecoration(
             color: selected ? c.primary : null,
             borderRadius: BorderRadius.circular(t.radii.md),
@@ -456,7 +456,7 @@ class NawaPagination extends StatelessWidget {
             style: TextStyle(
               color: selected ? c.onPrimary : (enabled ? c.text : c.border),
               fontWeight: FontWeight.w600,
-              fontSize: NawaFontSize.md,
+              fontSize: OrcaFontSize.md,
             ),
             child: IconTheme.merge(
               data: IconThemeData(color: enabled ? c.text : c.border),
@@ -472,12 +472,12 @@ class NawaPagination extends StatelessWidget {
       explicitChildNodes: true,
       label: label,
       value: 'Page $page of $pageCount',
-      child: NawaArrowKeys(
+      child: OrcaArrowKeys(
         onMove: (int delta) => _go(page + delta),
         onEdge: (bool last) => _go(last ? pageCount : 1),
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: NawaSpace.xs,
+          spacing: OrcaSpace.xs,
           children: <Widget>[
             pageButton(
               // chevron_left / chevron_right mirror automatically in RTL (matchTextDirection).
@@ -486,12 +486,12 @@ class NawaPagination extends StatelessWidget {
               target: page - 1,
               enabled: page > 1,
             ),
-            for (final int? item in nawaPageItems(page, pageCount))
+            for (final int? item in orcaPageItems(page, pageCount))
               if (item == null)
                 ExcludeSemantics(
                   child: SizedBox(
                     width: 24,
-                    height: nawaMinTapTarget,
+                    height: orcaMinTapTarget,
                     child: Center(child: Text('…', style: TextStyle(color: c.textMuted))),
                   ),
                 )

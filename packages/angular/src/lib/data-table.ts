@@ -13,7 +13,7 @@ import {
   output,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { NwSkeleton } from './display';
+import { OcSkeleton } from './display';
 
 export type SortDirection = 'asc' | 'desc';
 export interface SortState {
@@ -30,7 +30,7 @@ export interface DataColumn<T = Record<string, unknown>> {
   sortValue?: (row: T) => string | number | null | undefined;
 }
 
-export interface NwCellContext<T> {
+export interface OcCellContext<T> {
   $implicit: T;
   row: T;
   index: number;
@@ -38,14 +38,14 @@ export interface NwCellContext<T> {
 
 /**
  * Custom cell content for a column:
- * `<ng-template nwCell="status" let-row>{{ row.status }}</ng-template>`.
+ * `<ng-template ocCell="status" let-row>{{ row.status }}</ng-template>`.
  */
-@Directive({ selector: 'ng-template[nwCell]' })
-export class NwCell<T = any> {
-  readonly key = input.required<string>({ alias: 'nwCell' });
-  readonly template = inject<TemplateRef<NwCellContext<T>>>(TemplateRef);
+@Directive({ selector: 'ng-template[ocCell]' })
+export class OcCell<T = any> {
+  readonly key = input.required<string>({ alias: 'ocCell' });
+  readonly template = inject<TemplateRef<OcCellContext<T>>>(TemplateRef);
 
-  static ngTemplateContextGuard<T>(_dir: NwCell<T>, ctx: unknown): ctx is NwCellContext<T> {
+  static ngTemplateContextGuard<T>(_dir: OcCell<T>, ctx: unknown): ctx is OcCellContext<T> {
     return true;
   }
 }
@@ -59,21 +59,21 @@ function compareValues(a: unknown, b: unknown): number {
 }
 
 @Component({
-  selector: 'nw-data-table',
+  selector: 'oc-data-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, NwSkeleton],
-  host: { class: 'nw-table-wrap' },
+  imports: [NgTemplateOutlet, OcSkeleton],
+  host: { class: 'oc-table-wrap', 'data-responsive': 'stack' },
   template: `
-    <table class="nw-table" [attr.aria-busy]="loading() ? 'true' : null">
+    <table class="oc-table" [attr.aria-busy]="loading() ? 'true' : null">
       @if (caption()) {
-        <caption [class.nw-sr-only]="!captionVisible()">{{ caption() }}</caption>
+        <caption [class.oc-sr-only]="!captionVisible()">{{ caption() }}</caption>
       }
       <thead>
         <tr>
           @for (col of columns(); track col.key) {
             <th [class]="alignClass(col.align)" [attr.aria-sort]="ariaSort(col)">
               @if (col.sortable) {
-                <button type="button" class="nw-table__sort" (click)="toggleSort(col.key)">
+                <button type="button" class="oc-table__sort" (click)="toggleSort(col.key)">
                   {{ col.label }}
                   <span aria-hidden="true">{{ sortIcon(col.key) }}</span>
                 </button>
@@ -89,7 +89,7 @@ function compareValues(a: unknown, b: unknown): number {
           @for (r of skeletonRows(); track r) {
             <tr>
               @for (col of columns(); track col.key) {
-                <td><nw-skeleton [height]="14" /></td>
+                <td><oc-skeleton [height]="14" /></td>
               }
             </tr>
           }
@@ -97,7 +97,7 @@ function compareValues(a: unknown, b: unknown): number {
           @for (row of sortedRows(); track keyOf(row, $index); let i = $index) {
             <tr>
               @for (col of columns(); track col.key) {
-                <td [class]="alignClass(col.align)">
+                <td [class]="alignClass(col.align)" [attr.data-label]="col.label">
                   @if (cellTemplates().get(col.key); as tpl) {
                     <ng-container [ngTemplateOutlet]="tpl" [ngTemplateOutletContext]="{ $implicit: row, row: row, index: i }" />
                   } @else {
@@ -108,7 +108,7 @@ function compareValues(a: unknown, b: unknown): number {
             </tr>
           } @empty {
             <tr>
-              <td class="nw-table__empty" [attr.colspan]="columns().length">{{ emptyMessage() }}</td>
+              <td class="oc-table__empty" [attr.colspan]="columns().length">{{ emptyMessage() }}</td>
             </tr>
           }
         }
@@ -116,7 +116,7 @@ function compareValues(a: unknown, b: unknown): number {
     </table>
   `,
 })
-export class NwDataTable<T extends Record<string, any> = Record<string, any>> {
+export class OcDataTable<T extends Record<string, any> = Record<string, any>> {
   readonly columns = input<DataColumn<T>[]>([]);
   readonly rows = input<T[]>([]);
   /** Field name or function that returns a unique row key. Defaults to `id`. */
@@ -132,13 +132,13 @@ export class NwDataTable<T extends Record<string, any> = Record<string, any>> {
   readonly captionVisible = input(false, { transform: booleanAttribute });
   readonly sortChange = output<SortState>();
 
-  protected readonly cells = contentChildren(NwCell);
+  protected readonly cells = contentChildren(OcCell);
   /** Current sort (starts at `defaultSort`). */
   readonly sort = linkedSignal<SortState | undefined>(() => this.defaultSort());
 
   protected readonly cellTemplates = computed(() => {
-    const map = new Map<string, TemplateRef<NwCellContext<T>>>();
-    for (const c of this.cells()) map.set(c.key(), c.template as TemplateRef<NwCellContext<T>>);
+    const map = new Map<string, TemplateRef<OcCellContext<T>>>();
+    for (const c of this.cells()) map.set(c.key(), c.template as TemplateRef<OcCellContext<T>>);
     return map;
   });
 
@@ -183,6 +183,6 @@ export class NwDataTable<T extends Record<string, any> = Record<string, any>> {
   }
 
   protected alignClass(align: DataColumn['align']): string {
-    return align === 'end' ? 'nw-table__align-end' : align === 'center' ? 'nw-table__align-center' : '';
+    return align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : '';
   }
 }

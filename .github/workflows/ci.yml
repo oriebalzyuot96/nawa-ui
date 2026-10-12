@@ -7,7 +7,11 @@ on:
 
 jobs:
   test:
+    name: Unit tests, typecheck and build
     runs-on: ubuntu-latest
+    env:
+      # Unit tests never need a browser; the e2e job installs Chrome itself.
+      PUPPETEER_SKIP_DOWNLOAD: 'true'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -16,21 +20,71 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build tokens and CSS
-        run: npm run build -w @nawa-ui/core
-      - name: WCAG contrast checks (all themes)
-        run: npm test -w @nawa-ui/core
-      - name: React tests
-        run: npm test -w @nawa-ui/react
-      - name: Vue tests
-        run: npm test -w @nawa-ui/vue
+        run: npm run build -w @orca-ui/core
+      - name: Core (tokens, a11y helpers, theme, build output, WCAG contrast)
+        run: |
+          npm run test:contrast -w @orca-ui/core
+          npm test -w @orca-ui/core
+      - name: React tests (incl. axe-core)
+        run: npm test -w @orca-ui/react
+      - name: Vue tests (incl. axe-core)
+        run: npm test -w @orca-ui/vue
+      - name: Svelte tests
+        run: npm test -w @orca-ui/svelte
+      - name: Astro tests (container rendering + client scripts)
+        run: npm test -w @orca-ui/astro
+      - name: React Native tests
+        run: npm test -w @orca-ui/react-native
+      - name: Three tests
+        run: npm test -w @orca-ui/three
+      - name: Angular tests
+        run: npm test -w @orca-ui/angular
       - name: Typecheck all packages
         run: |
-          npm run typecheck -w @nawa-ui/react
-          npm run typecheck -w @nawa-ui/vue
-          npm run typecheck -w @nawa-ui/svelte
-          npm run typecheck -w @nawa-ui/react-native
-          npm run typecheck -w @nawa-ui/astro
+          npm run typecheck -w @orca-ui/react
+          npm run typecheck -w @orca-ui/vue
+          npm run typecheck -w @orca-ui/svelte
+          npm run typecheck -w @orca-ui/react-native
+          npm run typecheck -w @orca-ui/astro
       - name: Build libraries
         run: |
-          npm run build -w @nawa-ui/react
-          npm run build -w @nawa-ui/vue
+          npm run build -w @orca-ui/react
+          npm run build -w @orca-ui/vue
+
+  e2e:
+    name: E2E, axe (real browser) and visual smoke
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Install Puppeteer's Chrome
+        run: npx puppeteer browsers install chrome
+        working-directory: tests/e2e
+      - name: Build core, React, Three and the docs
+        run: |
+          npm run build -w @orca-ui/core
+          npm run build -w @orca-ui/react
+          npm run build -w @orca-ui/three
+          npm run build -w @orca-ui/docs
+      - name: Start astro preview
+        working-directory: apps/docs
+        # Runs in the background; the suite waits up to 60 s for E2E_URL to respond.
+        run: nohup npx astro preview --host 127.0.0.1 --port 4329 > ../../preview.log 2>&1 &
+      - name: Run e2e suite
+        env:
+          E2E_URL: http://127.0.0.1:4329/orca-ui/
+          CI: 'true'
+        run: npm run test:e2e
+      - name: Upload screenshots and axe report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-artifacts
+          path: |
+            tests/e2e/artifacts
+            preview.log
+          if-no-files-found: ignore

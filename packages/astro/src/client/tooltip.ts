@@ -1,9 +1,9 @@
 // Tooltip: link the trigger to its bubble with aria-describedby, and let Escape dismiss it (WCAG 1.4.13).
 
 function wire(root: ParentNode) {
-  for (const tip of root.querySelectorAll<HTMLElement>('.nw-tooltip[data-nw-tooltip]')) {
-    if (tip.dataset.nwWired) continue;
-    tip.dataset.nwWired = '';
+  for (const tip of root.querySelectorAll<HTMLElement>('.oc-tooltip[data-oc-tooltip]')) {
+    if (tip.dataset.ocWired !== undefined) continue;
+    tip.dataset.ocWired = '';
     const bubble = tip.querySelector<HTMLElement>('[role="tooltip"]');
     const trigger = tip.firstElementChild as HTMLElement | null;
     if (bubble && trigger && trigger !== bubble) {

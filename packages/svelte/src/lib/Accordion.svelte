@@ -16,7 +16,7 @@
 
   // svelte-ignore state_referenced_locally
   let open = $state<string[]>([...defaultOpen]);
-  const baseId = nextId('nw-acc');
+  const baseId = nextId('oc-acc');
 
   function toggle(key: string) {
     if (open.includes(key)) open = open.filter((k) => k !== key);
@@ -24,24 +24,24 @@
   }
 </script>
 
-<div class="nw-accordion">
+<div class="oc-accordion">
   {#each items as item (item.key)}
     {@const expanded = open.includes(item.key)}
-    <div class="nw-accordion__item">
+    <div class="oc-accordion__item">
       <h3 style="margin: 0">
         <button
           type="button"
-          class="nw-accordion__trigger"
+          class="oc-accordion__trigger"
           aria-expanded={expanded}
           aria-controls="{baseId}-{item.key}-panel"
           onclick={() => toggle(item.key)}
         >
           {item.title}
-          <span class="nw-accordion__icon" aria-hidden="true">▾</span>
+          <span class="oc-accordion__icon" aria-hidden="true">▾</span>
         </button>
       </h3>
       {#if expanded}
-        <div id="{baseId}-{item.key}-panel" role="region" class="nw-accordion__panel">{@render panel(item.key)}</div>
+        <div id="{baseId}-{item.key}-panel" role="region" class="oc-accordion__panel">{@render panel(item.key)}</div>
       {/if}
     </div>
   {/each}

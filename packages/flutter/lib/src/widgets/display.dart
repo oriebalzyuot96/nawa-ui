@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 
 /// Semantic color tone shared by badges, alerts, toasts and timelines.
-enum NawaTone {
+enum OrcaTone {
   /// Neutral gray.
   neutral,
 
@@ -26,35 +26,35 @@ enum NawaTone {
   danger,
 }
 
-/// Foreground and soft background colors for a [NawaTone].
-({Color fg, Color bg}) nawaToneColors(NawaColors c, NawaTone tone) {
+/// Foreground and soft background colors for a [OrcaTone].
+({Color fg, Color bg}) orcaToneColors(OrcaColors c, OrcaTone tone) {
   switch (tone) {
-    case NawaTone.success:
+    case OrcaTone.success:
       return (fg: c.success, bg: c.successSoft);
-    case NawaTone.warning:
+    case OrcaTone.warning:
       return (fg: c.warning, bg: c.warningSoft);
-    case NawaTone.danger:
+    case OrcaTone.danger:
       return (fg: c.danger, bg: c.dangerSoft);
-    case NawaTone.info:
+    case OrcaTone.info:
       return (fg: c.info, bg: c.infoSoft);
-    case NawaTone.primary:
+    case OrcaTone.primary:
       return (fg: c.primaryInk, bg: c.primarySoft);
-    case NawaTone.neutral:
+    case OrcaTone.neutral:
       return (fg: c.text, bg: c.surfaceMuted);
   }
 }
 
-IconData _toneIcon(NawaTone tone) {
+IconData _toneIcon(OrcaTone tone) {
   switch (tone) {
-    case NawaTone.success:
+    case OrcaTone.success:
       return Icons.check_circle_outline;
-    case NawaTone.warning:
+    case OrcaTone.warning:
       return Icons.warning_amber_outlined;
-    case NawaTone.danger:
+    case OrcaTone.danger:
       return Icons.error_outline;
-    case NawaTone.info:
-    case NawaTone.primary:
-    case NawaTone.neutral:
+    case OrcaTone.info:
+    case OrcaTone.primary:
+    case OrcaTone.neutral:
       return Icons.info_outline;
   }
 }
@@ -62,37 +62,37 @@ IconData _toneIcon(NawaTone tone) {
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
 /// Small status label.
-class NawaBadge extends StatelessWidget {
+class OrcaBadge extends StatelessWidget {
   /// Creates a badge.
-  const NawaBadge({super.key, required this.label, this.tone = NawaTone.neutral, this.semanticLabel});
+  const OrcaBadge({super.key, required this.label, this.tone = OrcaTone.neutral, this.semanticLabel});
 
   /// Text.
   final String label;
 
   /// Color tone.
-  final NawaTone tone;
+  final OrcaTone tone;
 
   /// Accessible text when [label] alone is not descriptive (e.g. "3 unread").
   final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final ({Color fg, Color bg}) c = nawaToneColors(t.colors, tone);
+    final OrcaTheme t = OrcaTheme.of(context);
+    final ({Color fg, Color bg}) c = orcaToneColors(t.colors, tone);
     return Semantics(
       label: semanticLabel,
       excludeSemantics: semanticLabel != null,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: c.bg,
-          borderRadius: BorderRadius.circular(NawaRadii.pill),
+          borderRadius: BorderRadius.circular(OrcaRadii.pill),
           border: t.isHighContrast ? Border.all(color: c.fg) : null,
         ),
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.sm, vertical: 2),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: 2),
           child: Text(
             label,
-            style: TextStyle(color: c.fg, fontSize: NawaFontSize.xs, fontWeight: FontWeight.w600),
+            style: TextStyle(color: c.fg, fontSize: OrcaFontSize.xs, fontWeight: FontWeight.w600),
           ),
         ),
       ),
@@ -130,9 +130,9 @@ class _TagPainter extends CustomPainter {
 }
 
 /// Label chip, optionally removable. The remove button has a 48x48 hit area.
-class NawaTag extends StatelessWidget {
+class OrcaTag extends StatelessWidget {
   /// Creates a tag.
-  const NawaTag({super.key, required this.label, this.onRemove, this.removeLabel});
+  const OrcaTag({super.key, required this.label, this.onRemove, this.removeLabel});
 
   /// Text.
   final String label;
@@ -145,7 +145,7 @@ class NawaTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     final bool removable = onRemove != null;
     return CustomPaint(
       painter: _TagPainter(
@@ -156,19 +156,19 @@ class NawaTag extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsetsDirectional.only(
-          start: NawaSpace.sm + 2,
-          end: removable ? 0 : NawaSpace.sm + 2,
-          top: removable ? 0 : NawaSpace.xs,
-          bottom: removable ? 0 : NawaSpace.xs,
+          start: OrcaSpace.sm + 2,
+          end: removable ? 0 : OrcaSpace.sm + 2,
+          top: removable ? 0 : OrcaSpace.xs,
+          bottom: removable ? 0 : OrcaSpace.xs,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Flexible(
-              child: Text(label, style: TextStyle(color: t.colors.text, fontSize: NawaFontSize.sm)),
+              child: Text(label, style: TextStyle(color: t.colors.text, fontSize: OrcaFontSize.sm)),
             ),
             if (removable)
-              NawaPressable(
+              OrcaPressable(
                 onPressed: onRemove,
                 semanticLabel: removeLabel ?? 'Remove $label',
                 excludeChildSemantics: true,
@@ -187,7 +187,7 @@ class NawaTag extends StatelessWidget {
 }
 
 /// Avatar size.
-enum NawaAvatarSize {
+enum OrcaAvatarSize {
   /// 32
   sm,
 
@@ -199,9 +199,9 @@ enum NawaAvatarSize {
 }
 
 /// Round avatar showing an image, or the initials of [name].
-class NawaAvatar extends StatelessWidget {
+class OrcaAvatar extends StatelessWidget {
   /// Creates an avatar.
-  const NawaAvatar({super.key, required this.name, this.image, this.size = NawaAvatarSize.md});
+  const OrcaAvatar({super.key, required this.name, this.image, this.size = OrcaAvatarSize.md});
 
   /// Person or entity name (also the accessible label).
   final String name;
@@ -210,22 +210,22 @@ class NawaAvatar extends StatelessWidget {
   final ImageProvider<Object>? image;
 
   /// Size.
-  final NawaAvatarSize size;
+  final OrcaAvatarSize size;
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     final double dim = switch (size) {
-      NawaAvatarSize.sm => 32.0,
-      NawaAvatarSize.md => 40.0,
-      NawaAvatarSize.lg => 56.0,
+      OrcaAvatarSize.sm => 32.0,
+      OrcaAvatarSize.md => 40.0,
+      OrcaAvatarSize.lg => 56.0,
     };
     final Widget initials = Center(
       child: Padding(
         padding: EdgeInsets.all(dim * 0.18),
         child: FittedBox(
           child: Text(
-            nawaInitials(name),
+            orcaInitials(name),
             style: TextStyle(color: c.primaryInk, fontWeight: FontWeight.w600, fontSize: dim * 0.38),
           ),
         ),
@@ -257,15 +257,15 @@ class NawaAvatar extends StatelessWidget {
 }
 
 /// Bordered container with optional title and footer.
-class NawaCard extends StatelessWidget {
+class OrcaCard extends StatelessWidget {
   /// Creates a card.
-  const NawaCard({
+  const OrcaCard({
     super.key,
     this.title,
     this.trailing,
     this.child,
     this.footer,
-    this.padding = const EdgeInsetsDirectional.all(NawaSpace.lg),
+    this.padding = const EdgeInsetsDirectional.all(OrcaSpace.lg),
   });
 
   /// Title, exposed as a heading.
@@ -285,8 +285,8 @@ class NawaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final BorderSide side = BorderSide(color: t.isHighContrast ? c.controlBorder : c.border, width: t.borderWidth);
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -303,7 +303,7 @@ class NawaCard extends StatelessWidget {
             DecoratedBox(
               decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
               child: Padding(
-                padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+                padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -311,7 +311,7 @@ class NawaCard extends StatelessWidget {
                         header: true,
                         child: Text(
                           title!,
-                          style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.md),
+                          style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
                         ),
                       ),
                     ),
@@ -327,7 +327,7 @@ class NawaCard extends StatelessWidget {
                 color: c.surfaceAlt,
                 border: Border(top: BorderSide(color: c.border)),
               ),
-              child: Padding(padding: const EdgeInsetsDirectional.all(NawaSpace.md), child: footer),
+              child: Padding(padding: const EdgeInsetsDirectional.all(OrcaSpace.md), child: footer),
             ),
         ],
       ),
@@ -336,11 +336,11 @@ class NawaCard extends StatelessWidget {
 }
 
 /// Inline status message. Announced by screen readers when it appears.
-class NawaAlert extends StatelessWidget {
+class OrcaAlert extends StatelessWidget {
   /// Creates an alert.
-  const NawaAlert({
+  const OrcaAlert({
     super.key,
-    this.tone = NawaTone.info,
+    this.tone = OrcaTone.info,
     this.title,
     this.message,
     this.child,
@@ -349,7 +349,7 @@ class NawaAlert extends StatelessWidget {
   });
 
   /// Tone (info, success, warning, danger).
-  final NawaTone tone;
+  final OrcaTone tone;
 
   /// Bold title.
   final String? title;
@@ -368,9 +368,9 @@ class NawaAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
-    final ({Color fg, Color bg}) tc = nawaToneColors(c, tone);
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
+    final ({Color fg, Color bg}) tc = orcaToneColors(c, tone);
     return Semantics(
       container: true,
       liveRegion: true,
@@ -381,17 +381,17 @@ class NawaAlert extends StatelessWidget {
           border: Border.all(color: tc.fg, width: t.borderWidth),
         ),
         padding: EdgeInsetsDirectional.only(
-          start: NawaSpace.md,
-          top: NawaSpace.md,
-          bottom: NawaSpace.md,
-          end: onDismiss == null ? NawaSpace.md : 0,
+          start: OrcaSpace.md,
+          top: OrcaSpace.md,
+          bottom: OrcaSpace.md,
+          end: onDismiss == null ? OrcaSpace.md : 0,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ExcludeSemantics(
               child: Padding(
-                padding: const EdgeInsetsDirectional.only(end: NawaSpace.md, top: 1),
+                padding: const EdgeInsetsDirectional.only(end: OrcaSpace.md, top: 1),
                 child: Icon(_toneIcon(tone), color: tc.fg, size: 20),
               ),
             ),
@@ -403,22 +403,22 @@ class NawaAlert extends StatelessWidget {
                   if (title != null)
                     Text(
                       title!,
-                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.md),
+                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
                     ),
                   if (message != null)
                     Padding(
                       padding: EdgeInsetsDirectional.only(top: title == null ? 0 : 2),
-                      child: Text(message!, style: TextStyle(color: c.text, fontSize: NawaFontSize.sm)),
+                      child: Text(message!, style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm)),
                     ),
                   if (child != null)
-                    Padding(padding: const EdgeInsetsDirectional.only(top: NawaSpace.sm), child: child),
+                    Padding(padding: const EdgeInsetsDirectional.only(top: OrcaSpace.sm), child: child),
                 ],
               ),
             ),
             if (onDismiss != null)
               Transform.translate(
-                offset: const Offset(0, -NawaSpace.md),
-                child: NawaPressable(
+                offset: const Offset(0, -OrcaSpace.md),
+                child: OrcaPressable(
                   onPressed: onDismiss,
                   semanticLabel: dismissLabel,
                   excludeChildSemantics: true,
@@ -437,10 +437,39 @@ class NawaAlert extends StatelessWidget {
   }
 }
 
-/// Placeholder for empty lists and search results.
-class NawaEmptyState extends StatelessWidget {
+/// Size of a [OrcaEmptyState].
+enum OrcaEmptyStateSize {
+  /// Inline / table use.
+  compact,
+
+  /// Panels and cards.
+  standard,
+
+  /// Full-page states (404, onboarding).
+  page,
+}
+
+/// Placeholder for empty lists, search results, errors and onboarding.
+///
+/// [illustration] is decorative (excluded from semantics) — e.g. an `SvgPicture` of a scene
+/// from `@orca-ui/illustrations` (`dist/svg/<name>.svg`). [tone] tints the [icon].
+class OrcaEmptyState extends StatelessWidget {
   /// Creates an empty state.
-  const NawaEmptyState({super.key, required this.title, this.description, this.icon, this.action});
+  const OrcaEmptyState({
+    super.key,
+    required this.title,
+    this.description,
+    this.icon,
+    this.illustration,
+    this.action,
+    this.primaryAction,
+    this.secondaryAction,
+    this.size = OrcaEmptyStateSize.standard,
+    this.alignStart = false,
+    this.split = false,
+    this.tone,
+    this.isHeader = true,
+  });
 
   /// Heading.
   final String title;
@@ -451,55 +480,141 @@ class NawaEmptyState extends StatelessWidget {
   /// Decorative icon (hidden from screen readers).
   final Widget? icon;
 
-  /// Call to action.
+  /// Decorative illustration shown above (or beside, when [split]) the text.
+  final Widget? illustration;
+
+  /// Call to action (kept for backwards compatibility; rendered after the primary/secondary actions).
   final Widget? action;
+
+  /// Main call to action.
+  final Widget? primaryAction;
+
+  /// Secondary call to action.
+  final Widget? secondaryAction;
+
+  /// Compact, standard or page size.
+  final OrcaEmptyStateSize size;
+
+  /// Align content to the start edge instead of centering.
+  final bool alignStart;
+
+  /// Place the illustration beside the text when at least 576 logical pixels wide.
+  final bool split;
+
+  /// Tints the icon (use [OrcaTone.danger] for error states).
+  final OrcaTone? tone;
+
+  /// Expose the title as a semantic header (default true).
+  final bool isHeader;
+
+  double get _mediaWidth => switch (size) {
+        OrcaEmptyStateSize.compact => 88,
+        OrcaEmptyStateSize.standard => 200,
+        OrcaEmptyStateSize.page => 280,
+      };
+
+  Widget _content(OrcaColors c, {required bool row}) {
+    final bool start = alignStart || row;
+    final TextAlign textAlign = start ? TextAlign.start : TextAlign.center;
+    final CrossAxisAlignment cross = start ? CrossAxisAlignment.start : CrossAxisAlignment.center;
+    final List<Widget> actions = <Widget>[
+      if (primaryAction != null) primaryAction!,
+      if (secondaryAction != null) secondaryAction!,
+      if (action != null) action!,
+    ];
+    final Widget body = Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: cross,
+      children: <Widget>[
+        if (icon != null)
+          ExcludeSemantics(
+            child: IconTheme.merge(
+              data: IconThemeData(
+                color: tone == null ? c.textMuted : orcaToneColors(c, tone!).fg,
+                size: size == OrcaEmptyStateSize.compact ? 28 : 40,
+              ),
+              child: icon!,
+            ),
+          ),
+        if (icon != null) const SizedBox(height: OrcaSpace.sm),
+        Semantics(
+          header: isHeader,
+          child: Text(
+            title,
+            textAlign: textAlign,
+            style: TextStyle(
+              color: c.text,
+              fontWeight: FontWeight.w700,
+              fontSize: switch (size) {
+                OrcaEmptyStateSize.compact => OrcaFontSize.md,
+                OrcaEmptyStateSize.standard => OrcaFontSize.lg,
+                OrcaEmptyStateSize.page => OrcaFontSize.xl + 4,
+              },
+            ),
+          ),
+        ),
+        if (description != null) ...<Widget>[
+          const SizedBox(height: OrcaSpace.xs),
+          Text(
+            description!,
+            textAlign: textAlign,
+            style: TextStyle(color: c.textMuted, fontSize: size == OrcaEmptyStateSize.page ? OrcaFontSize.md : OrcaFontSize.sm),
+          ),
+        ],
+        if (actions.isNotEmpty) ...<Widget>[
+          SizedBox(height: size == OrcaEmptyStateSize.compact ? OrcaSpace.sm : OrcaSpace.md),
+          Wrap(
+            spacing: OrcaSpace.sm,
+            runSpacing: OrcaSpace.sm,
+            alignment: start ? WrapAlignment.start : WrapAlignment.center,
+            children: actions,
+          ),
+        ],
+      ],
+    );
+    final Widget? media = illustration == null
+        ? null
+        : ExcludeSemantics(child: SizedBox(width: _mediaWidth, child: illustration));
+    if (row && media != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[media, const SizedBox(width: OrcaSpace.xl), Flexible(child: body)],
+      );
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: cross,
+      children: <Widget>[
+        if (media != null) ...<Widget>[media, const SizedBox(height: OrcaSpace.md)],
+        body,
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
+    final EdgeInsetsGeometry padding = switch (size) {
+      OrcaEmptyStateSize.compact => const EdgeInsetsDirectional.all(OrcaSpace.md),
+      OrcaEmptyStateSize.standard => const EdgeInsetsDirectional.all(OrcaSpace.xl),
+      OrcaEmptyStateSize.page => const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xl, vertical: OrcaSpace.xl * 2),
+    };
     return Padding(
-      padding: const EdgeInsetsDirectional.all(NawaSpace.xl),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (icon != null)
-            ExcludeSemantics(
-              child: IconTheme.merge(
-                data: IconThemeData(color: c.textMuted, size: 40),
-                child: icon!,
-              ),
-            ),
-          if (icon != null) const SizedBox(height: NawaSpace.sm),
-          Semantics(
-            header: true,
-            child: Text(
-              title,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.lg),
-            ),
-          ),
-          if (description != null) ...<Widget>[
-            const SizedBox(height: NawaSpace.xs),
-            Text(
-              description!,
-              textAlign: TextAlign.center,
-              style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm),
-            ),
-          ],
-          if (action != null) ...<Widget>[
-            const SizedBox(height: NawaSpace.md),
-            action!,
-          ],
-        ],
-      ),
+      padding: padding,
+      child: split
+          ? LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) =>
+                  _content(c, row: constraints.maxWidth >= 576),
+            )
+          : _content(c, row: false),
     );
   }
 }
 
 /// Decorative separator line, optionally with a centered label ("or").
-class NawaDivider extends StatelessWidget {
+class OrcaDivider extends StatelessWidget {
   /// Creates a divider.
-  const NawaDivider({super.key, this.vertical = false, this.label});
+  const OrcaDivider({super.key, this.vertical = false, this.label});
 
   /// Vertical line (needs a bounded height).
   final bool vertical;
@@ -509,7 +624,7 @@ class NawaDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     final Color color = t.isHighContrast ? t.colors.controlBorder : t.colors.border;
     if (vertical) {
       return ExcludeSemantics(child: SizedBox(width: 1, height: double.infinity, child: ColoredBox(color: color)));
@@ -520,8 +635,8 @@ class NawaDivider extends StatelessWidget {
       children: <Widget>[
         Expanded(child: ExcludeSemantics(child: line)),
         Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.md),
-          child: Text(label!, style: TextStyle(color: t.colors.textMuted, fontSize: NawaFontSize.sm)),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md),
+          child: Text(label!, style: TextStyle(color: t.colors.textMuted, fontSize: OrcaFontSize.sm)),
         ),
         Expanded(child: ExcludeSemantics(child: line)),
       ],
@@ -530,7 +645,7 @@ class NawaDivider extends StatelessWidget {
 }
 
 /// Spinner size.
-enum NawaSpinnerSize {
+enum OrcaSpinnerSize {
   /// 16
   sm,
 
@@ -542,12 +657,12 @@ enum NawaSpinnerSize {
 }
 
 /// Indeterminate loading indicator. Static when animations are disabled.
-class NawaSpinner extends StatelessWidget {
+class OrcaSpinner extends StatelessWidget {
   /// Creates a spinner.
-  const NawaSpinner({super.key, this.size = NawaSpinnerSize.md, this.color, this.label = 'Loading'});
+  const OrcaSpinner({super.key, this.size = OrcaSpinnerSize.md, this.color, this.label = 'Loading'});
 
   /// Size.
-  final NawaSpinnerSize size;
+  final OrcaSpinnerSize size;
 
   /// Color. Defaults to the accent.
   final Color? color;
@@ -557,11 +672,11 @@ class NawaSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     final double dim = switch (size) {
-      NawaSpinnerSize.sm => 16.0,
-      NawaSpinnerSize.md => 24.0,
-      NawaSpinnerSize.lg => 36.0,
+      OrcaSpinnerSize.sm => 16.0,
+      OrcaSpinnerSize.md => 24.0,
+      OrcaSpinnerSize.lg => 36.0,
     };
     final Widget indicator = SizedBox.square(
       dimension: dim,
@@ -581,10 +696,10 @@ class NawaSpinner extends StatelessWidget {
 ///
 /// The shimmer stops (and the block is static) when
 /// `MediaQuery.disableAnimationsOf(context)` is true. Hidden from screen readers;
-/// wrap groups in [NawaSkeletonText] / [NawaSkeletonCard] or label them yourself.
-class NawaSkeleton extends StatefulWidget {
+/// wrap groups in [OrcaSkeletonText] / [OrcaSkeletonCard] or label them yourself.
+class OrcaSkeleton extends StatefulWidget {
   /// Creates a skeleton block.
-  const NawaSkeleton({super.key, this.width = double.infinity, this.height = 14, this.circle = false, this.borderRadius});
+  const OrcaSkeleton({super.key, this.width = double.infinity, this.height = 14, this.circle = false, this.borderRadius});
 
   /// Width (defaults to the available width).
   final double width;
@@ -599,10 +714,10 @@ class NawaSkeleton extends StatefulWidget {
   final BorderRadiusGeometry? borderRadius;
 
   @override
-  State<NawaSkeleton> createState() => _NawaSkeletonState();
+  State<OrcaSkeleton> createState() => _OrcaSkeletonState();
 }
 
-class _NawaSkeletonState extends State<NawaSkeleton> with SingleTickerProviderStateMixin {
+class _OrcaSkeletonState extends State<OrcaSkeleton> with SingleTickerProviderStateMixin {
   late final AnimationController _controller =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 1400));
 
@@ -626,8 +741,8 @@ class _NawaSkeletonState extends State<NawaSkeleton> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final bool reduce = _reduceMotion(context);
     final BorderRadiusGeometry radius = widget.circle
         ? BorderRadius.circular(widget.height / 2)
@@ -667,11 +782,11 @@ Widget _skeletonLines(int lines) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       for (int i = 0; i < lines; i++) ...<Widget>[
-        if (i > 0) const SizedBox(height: NawaSpace.sm),
+        if (i > 0) const SizedBox(height: OrcaSpace.sm),
         FractionallySizedBox(
           alignment: AlignmentDirectional.centerStart,
           widthFactor: i == lines - 1 && lines > 1 ? 0.6 : 1,
-          child: const NawaSkeleton(height: 12),
+          child: const OrcaSkeleton(height: 12),
         ),
       ],
     ],
@@ -679,9 +794,9 @@ Widget _skeletonLines(int lines) {
 }
 
 /// Paragraph placeholder, announced once as [label]. The last line is shorter.
-class NawaSkeletonText extends StatelessWidget {
+class OrcaSkeletonText extends StatelessWidget {
   /// Creates a text skeleton.
-  const NawaSkeletonText({super.key, this.lines = 3, this.label = 'Loading'});
+  const OrcaSkeletonText({super.key, this.lines = 3, this.label = 'Loading'});
 
   /// Number of lines.
   final int lines;
@@ -696,9 +811,9 @@ class NawaSkeletonText extends StatelessWidget {
 }
 
 /// Card placeholder: avatar, title lines and a body paragraph.
-class NawaSkeletonCard extends StatelessWidget {
+class OrcaSkeletonCard extends StatelessWidget {
   /// Creates a card skeleton.
-  const NawaSkeletonCard({super.key, this.lines = 3, this.label = 'Loading'});
+  const OrcaSkeletonCard({super.key, this.lines = 3, this.label = 'Loading'});
 
   /// Number of body lines.
   final int lines;
@@ -708,12 +823,12 @@ class NawaSkeletonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     return Semantics(
       container: true,
       label: label,
       child: Container(
-        padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+        padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
         decoration: BoxDecoration(
           color: t.colors.surface,
           borderRadius: BorderRadius.circular(t.radii.lg),
@@ -725,8 +840,8 @@ class NawaSkeletonCard extends StatelessWidget {
           children: <Widget>[
             const Row(
               children: <Widget>[
-                NawaSkeleton(circle: true, height: 40),
-                SizedBox(width: NawaSpace.md),
+                OrcaSkeleton(circle: true, height: 40),
+                SizedBox(width: OrcaSpace.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -734,20 +849,20 @@ class NawaSkeletonCard extends StatelessWidget {
                       FractionallySizedBox(
                         alignment: AlignmentDirectional.centerStart,
                         widthFactor: 0.5,
-                        child: NawaSkeleton(height: 12),
+                        child: OrcaSkeleton(height: 12),
                       ),
-                      SizedBox(height: NawaSpace.sm),
+                      SizedBox(height: OrcaSpace.sm),
                       FractionallySizedBox(
                         alignment: AlignmentDirectional.centerStart,
                         widthFactor: 0.3,
-                        child: NawaSkeleton(height: 10),
+                        child: OrcaSkeleton(height: 10),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: NawaSpace.lg),
+            const SizedBox(height: OrcaSpace.lg),
             _skeletonLines(lines),
           ],
         ),
@@ -757,9 +872,9 @@ class NawaSkeletonCard extends StatelessWidget {
 }
 
 /// Linear progress. [value] is a percentage (0-100); null is indeterminate.
-class NawaProgressBar extends StatelessWidget {
+class OrcaProgressBar extends StatelessWidget {
   /// Creates a progress bar.
-  const NawaProgressBar({super.key, this.value, this.label = 'Progress', this.showValue = false});
+  const OrcaProgressBar({super.key, this.value, this.label = 'Progress', this.showValue = false});
 
   /// Percentage 0-100, or null for indeterminate.
   final double? value;
@@ -772,12 +887,12 @@ class NawaProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     final double? pct = value?.clamp(0, 100).toDouble();
     final bool reduce = _reduceMotion(context);
     final String? semanticValue = pct == null ? null : '${pct.round()}%';
     final Widget bar = ClipRRect(
-      borderRadius: BorderRadius.circular(NawaRadii.pill),
+      borderRadius: BorderRadius.circular(OrcaRadii.pill),
       child: LinearProgressIndicator(
         value: pct == null ? (reduce ? 0.4 : null) : pct / 100,
         minHeight: 8,
@@ -799,13 +914,13 @@ class NawaProgressBar extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(label, style: TextStyle(color: t.colors.text, fontSize: NawaFontSize.sm)),
+                        child: Text(label, style: TextStyle(color: t.colors.text, fontSize: OrcaFontSize.sm)),
                       ),
                       if (semanticValue != null)
-                        Text(semanticValue, style: TextStyle(color: t.colors.textMuted, fontSize: NawaFontSize.sm)),
+                        Text(semanticValue, style: TextStyle(color: t.colors.textMuted, fontSize: OrcaFontSize.sm)),
                     ],
                   ),
-                  const SizedBox(height: NawaSpace.xs),
+                  const SizedBox(height: OrcaSpace.xs),
                   bar,
                 ],
               )
@@ -815,11 +930,11 @@ class NawaProgressBar extends StatelessWidget {
   }
 }
 
-/// One step of a [NawaStepper].
+/// One step of a [OrcaStepper].
 @immutable
-class NawaStep {
+class OrcaStep {
   /// Creates a step.
-  const NawaStep({required this.label, this.description});
+  const OrcaStep({required this.label, this.description});
 
   /// Step name.
   final String label;
@@ -829,19 +944,19 @@ class NawaStep {
 }
 
 /// Horizontal progress through a sequence of steps. [current] is 0-based.
-class NawaStepper extends StatelessWidget {
+class OrcaStepper extends StatelessWidget {
   /// Creates a stepper.
-  const NawaStepper({super.key, required this.steps, required this.current});
+  const OrcaStepper({super.key, required this.steps, required this.current});
 
   /// Steps.
-  final List<NawaStep> steps;
+  final List<OrcaStep> steps;
 
   /// Index of the current step.
   final int current;
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -850,14 +965,14 @@ class NawaStepper extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           for (int i = 0; i < steps.length; i++) ...<Widget>[
-            if (i > 0) const SizedBox(width: NawaSpace.sm),
+            if (i > 0) const SizedBox(width: OrcaSpace.sm),
             Expanded(
               child: MergeSemantics(
                 child: Semantics(
                   selected: i == current,
                   value: i < current ? 'Completed' : (i == current ? 'Current step' : 'Not started'),
                   child: Container(
-                    padding: const EdgeInsetsDirectional.only(top: NawaSpace.sm),
+                    padding: const EdgeInsetsDirectional.only(top: OrcaSpace.sm),
                     decoration: BoxDecoration(
                       border: Border(top: BorderSide(color: i <= current ? c.primary : c.border, width: 3)),
                     ),
@@ -869,11 +984,11 @@ class NawaStepper extends StatelessWidget {
                           style: TextStyle(
                             color: i == current ? c.primaryInk : (i < current ? c.text : c.textMuted),
                             fontWeight: i == current ? FontWeight.w700 : FontWeight.w500,
-                            fontSize: NawaFontSize.sm,
+                            fontSize: OrcaFontSize.sm,
                           ),
                         ),
                         if (steps[i].description != null)
-                          Text(steps[i].description!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.xs)),
+                          Text(steps[i].description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.xs)),
                       ],
                     ),
                   ),
@@ -887,11 +1002,11 @@ class NawaStepper extends StatelessWidget {
   }
 }
 
-/// One entry of a [NawaTimeline].
+/// One entry of a [OrcaTimeline].
 @immutable
-class NawaTimelineItem {
+class OrcaTimelineItem {
   /// Creates an entry.
-  const NawaTimelineItem({required this.title, this.description, this.time, this.tone = NawaTone.primary});
+  const OrcaTimelineItem({required this.title, this.description, this.time, this.tone = OrcaTone.primary});
 
   /// Title.
   final String title;
@@ -903,20 +1018,20 @@ class NawaTimelineItem {
   final String? time;
 
   /// Dot color.
-  final NawaTone tone;
+  final OrcaTone tone;
 }
 
 /// Vertical list of events.
-class NawaTimeline extends StatelessWidget {
+class OrcaTimeline extends StatelessWidget {
   /// Creates a timeline.
-  const NawaTimeline({super.key, required this.items});
+  const OrcaTimeline({super.key, required this.items});
 
   /// Entries, oldest or newest first as you prefer.
-  final List<NawaTimelineItem> items;
+  final List<OrcaTimelineItem> items;
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -936,7 +1051,7 @@ class NawaTimeline extends StatelessWidget {
                             width: 10,
                             height: 10,
                             decoration: BoxDecoration(
-                              color: nawaToneColors(c, items[i].tone).fg,
+                              color: orcaToneColors(c, items[i].tone).fg,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -949,23 +1064,23 @@ class NawaTimeline extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: NawaSpace.md),
+                  const SizedBox(width: OrcaSpace.md),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.only(bottom: NawaSpace.lg),
+                      padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.lg),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           if (items[i].time != null)
-                            Text(items[i].time!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.xs)),
+                            Text(items[i].time!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.xs)),
                           Text(
                             items[i].title,
-                            style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: NawaFontSize.md),
+                            style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: OrcaFontSize.md),
                           ),
                           if (items[i].description != null)
                             Text(
                               items[i].description!,
-                              style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm),
+                              style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm),
                             ),
                         ],
                       ),
@@ -981,9 +1096,9 @@ class NawaTimeline extends StatelessWidget {
 }
 
 /// Tooltip on hover, long press and keyboard focus. Escape dismisses it.
-class NawaTooltip extends StatelessWidget {
+class OrcaTooltip extends StatelessWidget {
   /// Creates a tooltip.
-  const NawaTooltip({super.key, required this.message, required this.child, this.preferBelow = false});
+  const OrcaTooltip({super.key, required this.message, required this.child, this.preferBelow = false});
 
   /// Text.
   final String message;
@@ -996,13 +1111,13 @@ class NawaTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     return Tooltip(
       message: message,
       preferBelow: preferBelow,
       decoration: BoxDecoration(color: t.colors.text, borderRadius: BorderRadius.circular(t.radii.sm)),
-      textStyle: TextStyle(color: t.colors.surface, fontSize: NawaFontSize.sm),
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.sm, vertical: NawaSpace.xs),
+      textStyle: TextStyle(color: t.colors.surface, fontSize: OrcaFontSize.sm),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: OrcaSpace.xs),
       waitDuration: const Duration(milliseconds: 400),
       child: child,
     );

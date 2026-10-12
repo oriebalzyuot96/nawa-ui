@@ -1,17 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { NwPagination, NwTabPanel, NwTabs } from './navigation';
-import { NwCell, NwDataTable, type DataColumn, type SortState } from './data-table';
+import { OcPagination, OcTabPanel, OcTabs } from './navigation';
+import { OcCell, OcDataTable, type DataColumn, type SortState } from './data-table';
 
-describe('NwTabs', () => {
+describe('OcTabs', () => {
   @Component({
-    imports: [NwTabs, NwTabPanel],
+    imports: [OcTabs, OcTabPanel],
     template: `
-      <nw-tabs label="Settings" [tabs]="tabs" [(value)]="active">
-        <ng-template nwTabPanel="profile"><p class="content">Profile panel</p></ng-template>
-        <ng-template nwTabPanel="billing"><p class="content">Billing panel</p></ng-template>
-        <ng-template nwTabPanel="team"><p class="content">Team panel</p></ng-template>
-      </nw-tabs>
+      <oc-tabs label="Settings" [tabs]="tabs" [(value)]="active">
+        <ng-template ocTabPanel="profile"><p class="content">Profile panel</p></ng-template>
+        <ng-template ocTabPanel="billing"><p class="content">Billing panel</p></ng-template>
+        <ng-template ocTabPanel="team"><p class="content">Team panel</p></ng-template>
+      </oc-tabs>
     `,
   })
   class Host {
@@ -74,10 +74,10 @@ describe('NwTabs', () => {
   });
 });
 
-describe('NwPagination', () => {
+describe('OcPagination', () => {
   @Component({
-    imports: [NwPagination],
-    template: `<nw-pagination [(page)]="page" [pageCount]="10" (pageChange)="changes.push($event)" />`,
+    imports: [OcPagination],
+    template: `<oc-pagination [(page)]="page" [pageCount]="10" (pageChange)="changes.push($event)" />`,
   })
   class Host {
     page = signal(5);
@@ -90,7 +90,7 @@ describe('NwPagination', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('nav')?.getAttribute('aria-label')).toBe('Pagination');
     expect(el.querySelector('[aria-current="page"]')?.textContent?.trim()).toBe('5');
-    expect(el.querySelectorAll('.nw-pagination__ellipsis').length).toBe(2);
+    expect(el.querySelectorAll('.oc-pagination__ellipsis').length).toBe(2);
 
     (el.querySelector('[aria-label="Next page"]') as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -112,19 +112,19 @@ interface Person extends Record<string, unknown> {
   age: number;
 }
 
-describe('NwDataTable', () => {
+describe('OcDataTable', () => {
   @Component({
-    imports: [NwDataTable, NwCell],
+    imports: [OcDataTable, OcCell],
     template: `
-      <nw-data-table
+      <oc-data-table
         caption="People"
         [columns]="columns"
         [rows]="rows"
         [loading]="loading()"
         (sortChange)="sorts.push($event)"
       >
-        <ng-template nwCell="name" let-row><strong class="custom">{{ row.name }}!</strong></ng-template>
-      </nw-data-table>
+        <ng-template ocCell="name" let-row><strong class="custom">{{ row.name }}!</strong></ng-template>
+      </oc-data-table>
     `,
   })
   class Host {
@@ -148,11 +148,11 @@ describe('NwDataTable', () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('caption')?.className).toBe('nw-sr-only');
+    expect(el.querySelector('caption')?.className).toBe('oc-sr-only');
     expect(names(el)).toEqual(['Zed!', 'amy!', 'Bob!']);
     expect(el.querySelector('.custom')).not.toBeNull();
 
-    const [nameSort, ageSort] = Array.from(el.querySelectorAll('.nw-table__sort')) as HTMLButtonElement[];
+    const [nameSort, ageSort] = Array.from(el.querySelectorAll('.oc-table__sort')) as HTMLButtonElement[];
     nameSort.click();
     await fixture.whenStable();
     expect(names(el)).toEqual(['amy!', 'Bob!', 'Zed!']);
@@ -167,7 +167,7 @@ describe('NwDataTable', () => {
     await fixture.whenStable();
     expect(names(el)).toEqual(['amy!', 'Zed!', 'Bob!']);
     expect(el.querySelectorAll('th')[0].hasAttribute('aria-sort')).toBe(false);
-    expect(el.querySelectorAll('td')[1].className).toBe('nw-table__align-end');
+    expect(el.querySelectorAll('td')[1].className).toBe('oc-table__align-end');
     expect(fixture.componentInstance.sorts).toEqual([
       { key: 'name', direction: 'asc' },
       { key: 'name', direction: 'desc' },
@@ -182,6 +182,6 @@ describe('NwDataTable', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('table')?.getAttribute('aria-busy')).toBe('true');
     expect(el.querySelectorAll('tbody tr').length).toBe(3);
-    expect(el.querySelectorAll('tbody .nw-skeleton').length).toBe(6);
+    expect(el.querySelectorAll('tbody .oc-skeleton').length).toBe(6);
   });
 });

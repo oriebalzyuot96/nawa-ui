@@ -10,7 +10,7 @@ import {
   Perspective3DStack,
   Text3D,
   TiltCard,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Output } from './shared';
 
 function TiltDemo() {
@@ -82,7 +82,7 @@ function ParallaxDemo() {
   return (
     <div style={{ width: '100%' }}>
       <ParallaxLayers
-        style={{ height: '16rem', borderRadius: 'var(--nw-radius-lg)', overflow: 'hidden', background: 'linear-gradient(180deg, var(--nw-primary-soft), var(--nw-surface))' }}
+        style={{ height: '16rem', borderRadius: 'var(--oc-radius-lg)', overflow: 'hidden', background: 'linear-gradient(180deg, var(--oc-primary-soft), var(--oc-surface))' }}
         layers={[
           { depth: 0.15, decorative: true, content: <div style={{ position: 'absolute', insetInlineStart: '12%', top: '14%', fontSize: '3rem' }}>☁️</div> },
           { depth: 0.35, decorative: true, content: <div style={{ position: 'absolute', insetInlineEnd: '14%', top: '10%', fontSize: '3.5rem' }}>🌙</div> },
@@ -109,10 +109,10 @@ function Text3DDemo() {
   return (
     <div className="demo-col" style={{ justifyItems: 'center' }}>
       <Text3D as="p" depth={depth} style={{ fontSize: 'clamp(2.5rem, 8vw, 4.5rem)', fontWeight: 900, margin: 0 }}>
-        Nawa UI
+        Orca UI
       </Text3D>
       <Text3D as="p" depth={4} tone="surface" style={{ fontSize: '2rem', fontWeight: 800, margin: 0 }}>
-        نواة
+        أوركا
       </Text3D>
       <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
         Depth
@@ -151,7 +151,7 @@ function OrbitDemo() {
 function StackDemo() {
   const [open, setOpen] = useState(false);
   const card = (n: number, amount: string, status: string) => (
-    <div key={n} style={{ padding: '1rem', width: '15rem', border: '1px solid var(--nw-border)', borderRadius: 'var(--nw-radius-lg)', background: 'var(--nw-surface)', boxShadow: 'var(--nw-shadow-md)' }}>
+    <div key={n} style={{ padding: '1rem', width: '15rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius-lg)', background: 'var(--oc-surface)', boxShadow: 'var(--oc-shadow-md)' }}>
       <strong>Invoice #{1040 + n}</strong>
       <p style={{ margin: '0.25rem 0 0' }}>
         {amount} · <span className="muted">{status}</span>

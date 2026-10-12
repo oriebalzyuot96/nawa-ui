@@ -1,0 +1,162 @@
+/* ---------- Empty states ----------
+ * Markup (every framework renders the same structure):
+ *   .oc-empty [--compact|--page] [--start] [--split] [--tone-<tone>]
+ *     .oc-empty__inner
+ *       .oc-empty__media   (illustration; decorative)      .oc-empty__icon (legacy glyph)
+ *       .oc-empty__body > .oc-empty__title, .oc-empty__desc, .oc-empty__actions
+ * Illustrations come from @orca-ui/illustrations; their colors are --oc-illus-* → theme tokens,
+ * so a tone simply re-points --oc-illus-accent / --oc-illus-soft. Loads after components.css. */
+.oc-empty {
+  --oc-empty-media: 200px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  inline-size: 100%;
+  padding: 2.5rem 1.25rem;
+  text-align: center;
+  color: var(--oc-text);
+  font-family: var(--oc-font);
+}
+.oc-empty__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+  inline-size: 100%;
+  max-inline-size: 36rem;
+}
+.oc-empty__media {
+  display: block;
+  inline-size: min(100%, var(--oc-empty-media));
+  line-height: 0;
+  color: var(--oc-text-muted);
+}
+.oc-empty__media:empty { display: none; }
+.oc-empty__media > svg,
+.oc-empty__media .oc-illus,
+.oc-empty__media > img,
+.oc-empty__media oc-illustration {
+  display: block;
+  inline-size: 100%;
+  max-inline-size: none;
+  block-size: auto;
+}
+.oc-empty__icon {
+  display: inline-flex;
+  font-size: 2rem;
+  line-height: 1;
+  color: var(--oc-text-muted);
+}
+.oc-empty__body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  min-inline-size: 0;
+  max-inline-size: 30rem;
+}
+.oc-empty__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--oc-text);
+  text-wrap: balance;
+}
+.oc-empty__desc {
+  margin: 0;
+  max-inline-size: 28rem;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--oc-text-muted);
+  text-wrap: pretty;
+}
+.oc-empty__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-block-start: 0.75rem;
+}
+.oc-empty__actions:empty { display: none; }
+
+/* Sizes */
+.oc-empty--compact { --oc-empty-media: 88px; padding: 1rem 0.75rem; }
+.oc-empty--compact .oc-empty__inner { gap: 0.6rem; }
+.oc-empty--compact .oc-empty__body { gap: 0.2rem; }
+.oc-empty--compact .oc-empty__title { font-size: 0.95rem; }
+.oc-empty--compact .oc-empty__desc { font-size: 0.85rem; }
+.oc-empty--compact .oc-empty__actions { margin-block-start: 0.4rem; }
+.oc-empty--compact .oc-empty__icon { font-size: 1.5rem; }
+
+.oc-empty--page {
+  --oc-empty-media: 300px;
+  min-block-size: min(70vh, 40rem);
+  padding: clamp(2.5rem, 8vh, 5rem) 1.25rem;
+}
+.oc-empty--page .oc-empty__inner { gap: 1.75rem; max-inline-size: 40rem; }
+.oc-empty--page .oc-empty__body { gap: 0.6rem; max-inline-size: 34rem; }
+.oc-empty--page .oc-empty__title { font-size: clamp(1.35rem, 1.1rem + 1vw, 1.75rem); }
+.oc-empty--page .oc-empty__desc { max-inline-size: 32rem; font-size: 1rem; }
+.oc-empty--page .oc-empty__actions { margin-block-start: 1rem; }
+
+/* Alignment */
+.oc-empty--start { align-items: flex-start; text-align: start; }
+.oc-empty--start .oc-empty__inner,
+.oc-empty--start .oc-empty__body { align-items: flex-start; }
+.oc-empty--start .oc-empty__actions { justify-content: flex-start; }
+
+/* Side-by-side layout when the empty state itself is wide (container query, not viewport). */
+.oc-empty--split { container-type: inline-size; }
+@container (min-width: 36rem) {
+  .oc-empty--split .oc-empty__inner {
+    flex-direction: row;
+    align-items: center;
+    gap: 2.5rem;
+    max-inline-size: 54rem;
+    text-align: start;
+  }
+  .oc-empty--split .oc-empty__media { flex: 0 0 auto; inline-size: min(42%, var(--oc-empty-media)); }
+  .oc-empty--split .oc-empty__body { flex: 1 1 0; align-items: flex-start; }
+  .oc-empty--split .oc-empty__actions { justify-content: flex-start; }
+}
+
+/* Narrow screens: page-level actions stack full width for easy tapping. */
+@media (max-width: 30rem) {
+  .oc-empty--page .oc-empty__body { inline-size: 100%; }
+  .oc-empty--page .oc-empty__actions { flex-direction: column; align-items: stretch; }
+}
+
+/* Tones retint the illustration (and legacy icon); text keeps its AA colors. */
+.oc-empty--tone-neutral { --oc-illus-accent: var(--oc-text-muted); --oc-illus-soft: var(--oc-surface-muted); }
+.oc-empty--tone-info { --oc-illus-accent: var(--oc-info); --oc-illus-soft: var(--oc-info-soft); }
+.oc-empty--tone-success { --oc-illus-accent: var(--oc-success); --oc-illus-soft: var(--oc-success-soft); }
+.oc-empty--tone-warning { --oc-illus-accent: var(--oc-warning); --oc-illus-soft: var(--oc-warning-soft); }
+.oc-empty--tone-danger { --oc-illus-accent: var(--oc-danger); --oc-illus-soft: var(--oc-danger-soft); }
+.oc-empty[class*='oc-empty--tone-'] .oc-empty__icon { color: var(--oc-illus-accent); }
+
+/* Illustration runtime rules (mirrors @orca-ui/illustrations ILLUSTRATION_CSS, for styles: false). */
+oc-illustration { display: block; line-height: 0; }
+.oc-illus { display: block; inline-size: 100%; block-size: auto; max-inline-size: var(--oc-illus-size, 240px); overflow: visible; }
+.oc-illus--compact { --oc-illus-size: 96px; }
+.oc-illus__float { animation: oc-illus-float 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.oc-illus__float--slow { animation-duration: 9s; animation-delay: -3s; }
+@keyframes oc-illus-float { 50% { transform: translateY(-5px); } }
+@media (prefers-reduced-motion: reduce) {
+  .oc-illus__float { animation: none; }
+}
+@media (forced-colors: active) {
+  .oc-illus * { opacity: 1; fill-opacity: 1; stroke-opacity: 1; }
+  .oc-illus [fill]:not([fill='none']) { fill: Canvas; }
+  .oc-illus [stroke]:not([stroke='none']) { stroke: CanvasText; }
+  .oc-illus :is(path, rect, circle, ellipse, polygon):not([stroke]) { stroke: CanvasText; stroke-width: 1.5px; }
+  .oc-illus [fill].oc-illus__solid { fill: CanvasText; }
+  .oc-illus [fill].oc-illus__bg { fill: none; stroke: none; }
+  .oc-illus .oc-illus__knock[class]:not([stroke='none']) { stroke: Canvas; }
+  .oc-empty__icon { color: CanvasText; }
+}

@@ -7,8 +7,8 @@ const { title } = Astro.props;
 const hasFooter = Astro.slots.has('footer');
 ---
 
-<article class="nw-card">
-  {title && <header class="nw-card__header">{title}</header>}
-  <div class="nw-card__body"><slot /></div>
-  {hasFooter && <footer class="nw-card__footer"><slot name="footer" /></footer>}
+<article class="oc-card">
+  {title && <header class="oc-card__header">{title}</header>}
+  <div class="oc-card__body"><slot /></div>
+  {hasFooter && <footer class="oc-card__footer"><slot name="footer" /></footer>}
 </article>

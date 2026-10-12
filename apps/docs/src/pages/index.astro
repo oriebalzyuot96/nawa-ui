@@ -1,20 +1,20 @@
 ---
 import Base from '../layouts/Base.astro';
 import Playground from '../components/Playground';
-import Badge from '@nawa-ui/astro/components/Badge';
-import Button from '@nawa-ui/astro/components/Button';
-import Card from '@nawa-ui/astro/components/Card';
-import Alert from '@nawa-ui/astro/components/Alert';
-import ProgressBar from '@nawa-ui/astro/components/ProgressBar';
-import Stepper from '@nawa-ui/astro/components/Stepper';
-import SkeletonCard from '@nawa-ui/astro/components/SkeletonCard';
-import Segmented from '@nawa-ui/astro/components/Segmented';
-import * as NawaReact from '@nawa-ui/react';
+import Badge from '@orca-ui/astro/components/Badge';
+import Button from '@orca-ui/astro/components/Button';
+import Card from '@orca-ui/astro/components/Card';
+import Alert from '@orca-ui/astro/components/Alert';
+import ProgressBar from '@orca-ui/astro/components/ProgressBar';
+import Stepper from '@orca-ui/astro/components/Stepper';
+import SkeletonCard from '@orca-ui/astro/components/SkeletonCard';
+import Segmented from '@orca-ui/astro/components/Segmented';
+import * as OrcaReact from '@orca-ui/react';
 import { categories, documentedCount } from '../data/catalog';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
-// Real count of exported React components (PascalCase functions and forwardRef objects) in @nawa-ui/react.
-const componentCount = Object.entries(NawaReact).filter(
+// Real count of exported React components (PascalCase functions and forwardRef objects) in @orca-ui/react.
+const componentCount = Object.entries(OrcaReact).filter(
   ([name, value]) => /^[A-Z][a-z]/.test(name) && (typeof value === 'function' || (typeof value === 'object' && value !== null && '$$typeof' in value)),
 ).length;
 const frameworks = ['React', 'Vue', 'Svelte', 'Astro', 'React Native'];
@@ -29,15 +29,15 @@ const features = [
 ---
 
 <Base
-  title="Nawa UI — Accessible UI component library for React, Vue, Svelte, Astro & React Native"
-  description="Nawa UI is an open-source, accessible (WCAG 2.2 AA) UI component library with 21 themes, dark mode, high contrast, skeleton loaders and RTL support for React, Vue, Svelte, Astro and React Native."
+  title="Orca UI — Accessible UI component library for React, Vue, Svelte, Astro & React Native"
+  description="Orca UI is an open-source, accessible (WCAG 2.2 AA) UI component library with 21 themes, dark mode, high contrast, skeleton loaders and RTL support for React, Vue, Svelte, Astro and React Native."
   alternate={{ en: '/', ar: '/ar/' }}
 >
   <section class="hero">
     <div class="container hero__grid">
       <div>
         <p class="eyebrow">Open-source UI library</p>
-        <h1>Nawa UI — the accessible component library for every framework</h1>
+        <h1>Orca UI — the accessible component library for every framework</h1>
         <p class="lead">
           Beautiful, themeable components for <strong>React, Vue, Svelte, Astro and React Native</strong>. Accessible by default,
           21 themes out of the box, and the same API everywhere.
@@ -46,10 +46,10 @@ const features = [
           {frameworks.map((f) => <Badge variant="primary">{f}</Badge>)}
         </div>
         <div class="hero__actions">
-          <a class="nw-btn nw-btn--primary nw-btn--lg" href={`${base}/getting-started/`}>Get started</a>
-          <a class="nw-btn nw-btn--secondary nw-btn--lg" href={`${base}/components/`}>Browse components</a>
+          <a class="oc-btn oc-btn--primary oc-btn--lg" href={`${base}/getting-started/`}>Get started</a>
+          <a class="oc-btn oc-btn--secondary oc-btn--lg" href={`${base}/components/`}>Browse components</a>
         </div>
-        <div class="install" aria-label="Install command"><span aria-hidden="true">$</span><code>npm i @nawa-ui/react @nawa-ui/core</code></div>
+        <div class="install" aria-label="Install command"><span aria-hidden="true">$</span><code>npm i @orca-ui/react @orca-ui/core</code></div>
       </div>
       <div class="hero__showcase">
         <Card title="Launch checklist">
@@ -74,8 +74,8 @@ const features = [
   <section class="section section--alt" aria-labelledby="playground-title">
     <div class="container">
       <p class="eyebrow">Live preview</p>
-      <h2 id="playground-title">Try it — a real app built with Nawa UI</h2>
-      <p class="lead">Search, filter, sort, paginate, add a member, toggle loading skeletons. Everything below is <code>@nawa-ui/react</code>. Change the theme from the header and watch it update.</p>
+      <h2 id="playground-title">Try it — a real app built with Orca UI</h2>
+      <p class="lead">Search, filter, sort, paginate, add a member, toggle loading skeletons. Everything below is <code>@orca-ui/react</code>. Change the theme from the header and watch it update.</p>
       <Playground client:visible />
     </div>
   </section>
@@ -99,14 +99,14 @@ const features = [
         }
       </div>
       <p style="margin-top:1.5rem">
-        <a class="nw-btn nw-btn--secondary" href={`${base}/components/`} style="text-decoration:none">See all components</a>
+        <a class="oc-btn oc-btn--secondary" href={`${base}/components/`} style="text-decoration:none">See all components</a>
       </p>
     </div>
   </section>
 
   <section class="section section--alt" aria-labelledby="features-title">
     <div class="container">
-      <p class="eyebrow">Why Nawa UI</p>
+      <p class="eyebrow">Why Orca UI</p>
       <h2 id="features-title">Senior-grade defaults, zero setup</h2>
       <div class="grid grid--3" style="margin-top:1.5rem">
         {features.map((f) => (
@@ -121,7 +121,7 @@ const features = [
 
   <section class="section" aria-labelledby="numbers-title">
     <div class="container">
-      <h2 id="numbers-title" class="nw-sr-only">Nawa UI in numbers</h2>
+      <h2 id="numbers-title" class="oc-sr-only">Orca UI in numbers</h2>
       <div class="grid grid--3">
         <div class="feature"><div class="stat">5</div><p>frameworks with one shared design system</p></div>
         <div class="feature"><div class="stat">525</div><p>automated WCAG contrast checks on every build</p></div>

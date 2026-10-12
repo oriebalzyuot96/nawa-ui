@@ -17,14 +17,14 @@ interface Props {
 }
 
 const { tabs, value = tabs[0]?.key, label } = Astro.props;
-const baseId = `nw-tabs-${Math.random().toString(36).slice(2, 8)}`;
+const baseId = `oc-tabs-${Math.random().toString(36).slice(2, 8)}`;
 const panels = await Promise.all(
   tabs.map(async (t) => ({ key: t.key, html: Astro.slots.has(`panel-${t.key}`) ? await Astro.slots.render(`panel-${t.key}`) : '' })),
 );
 ---
 
-<div class="nw-tabs" data-nw-tabs>
-  <div role="tablist" class="nw-tabs__list" aria-label={label}>
+<div class="oc-tabs" data-oc-tabs>
+  <div role="tablist" class="oc-tabs__list" aria-label={label}>
     {tabs.map((t) => (
       <button
         type="button"
@@ -34,7 +34,7 @@ const panels = await Promise.all(
         aria-selected={t.key === value ? 'true' : 'false'}
         tabindex={t.key === value ? 0 : -1}
         disabled={t.disabled}
-        class="nw-tabs__tab"
+        class="oc-tabs__tab"
       >
         {t.label}
       </button>
@@ -45,7 +45,7 @@ const panels = await Promise.all(
       role="tabpanel"
       id={`${baseId}-panel-${p.key}`}
       aria-labelledby={`${baseId}-tab-${p.key}`}
-      class="nw-tabs__panel"
+      class="oc-tabs__panel"
       hidden={p.key !== value}
       tabindex="0"
       set:html={p.html}

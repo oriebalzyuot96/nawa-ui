@@ -16,10 +16,10 @@ interface Props {
 const { name, options, value, label } = Astro.props;
 ---
 
-<fieldset class="nw-radio-group" style="border: 0; margin: 0; padding: 0; min-inline-size: 0;">
-  {label && <legend class="nw-label" style="padding: 0; margin-bottom: 0.375rem;">{label}</legend>}
+<fieldset class="oc-radio-group" style="border: 0; margin: 0; padding: 0; min-inline-size: 0;">
+  {label && <legend class="oc-label" style="padding: 0; margin-bottom: 0.375rem;">{label}</legend>}
   {options.map((o) => (
-    <label class:list={['nw-check', o.disabled && 'nw-check--disabled']}>
+    <label class:list={['oc-check', o.disabled && 'oc-check--disabled']}>
       <input type="radio" name={name} value={o.value} checked={o.value === value} disabled={o.disabled} />
       {o.label}
     </label>

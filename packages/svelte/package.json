@@ -1,7 +1,7 @@
 {
-  "name": "@nawa-ui/svelte",
+  "name": "@orca-ui/svelte",
   "version": "0.1.0",
-  "description": "Nawa UI for Svelte 5 — accessible, themeable component library. WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Orca UI for Svelte 5 — accessible, themeable component library. WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "svelte": "src/lib/index.ts",
   "types": "src/lib/index.ts",
@@ -17,25 +17,32 @@
     "README.md"
   ],
   "scripts": {
-    "typecheck": "svelte-check --tsconfig ./tsconfig.json"
+    "typecheck": "svelte-check --tsconfig ./tsconfig.json",
+    "test": "vitest run"
   },
   "peerDependencies": {
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "@nawa-ui/core": "0.1.0"
+    "@orca-ui/core": "0.1.0"
   },
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "5.1.1",
+    "@testing-library/jest-dom": "6.6.3",
+    "@testing-library/svelte": "5.2.8",
+    "@testing-library/user-event": "14.5.2",
+    "jsdom": "25.0.1",
     "svelte": "5.16.0",
     "svelte-check": "4.1.1",
-    "typescript": "5.6.3"
+    "typescript": "5.6.3",
+    "vitest": "3.2.4"
   },
   "keywords": [
     "svelte",
     "svelte5",
     "svelte-components",
     "svelte-ui",
-    "nawa-ui",
+    "orca-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -51,13 +58,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
     "directory": "packages/svelte"
   },
-  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

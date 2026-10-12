@@ -638,7 +638,7 @@ describe('FloatLabel', () => {
   it('labels its child and adds a blank placeholder for :placeholder-shown', () => {
     render(
       <FloatLabel label="Email">
-        <input className="nw-input" />
+        <input className="oc-input" />
       </FloatLabel>,
     );
     const input = screen.getByRole('textbox', { name: 'Email' });

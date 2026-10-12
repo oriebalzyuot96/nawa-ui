@@ -1,0 +1,14 @@
+{
+  "name": "@orca-ui/e2e",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "End-to-end, accessibility (axe in a real browser) and visual smoke tests for the Orca UI docs site.",
+  "scripts": {
+    "test:e2e": "node --test --test-concurrency=1 --test-reporter=spec e2e.test.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/puppeteer": "4.10.2",
+    "puppeteer": "24.10.0"
+  }
+}

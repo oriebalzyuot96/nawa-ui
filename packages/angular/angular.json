@@ -7,11 +7,11 @@
   },
   "newProjectRoot": ".",
   "projects": {
-    "nawa-ui": {
+    "orca-ui": {
       "projectType": "library",
       "root": ".",
       "sourceRoot": "src",
-      "prefix": "nw",
+      "prefix": "oc",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",

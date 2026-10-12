@@ -1,8 +1,8 @@
 ---
 import Base from '../../layouts/Base.astro';
 import Playground from '../../components/Playground';
-import Badge from '@nawa-ui/astro/components/Badge';
-import Alert from '@nawa-ui/astro/components/Alert';
+import Badge from '@orca-ui/astro/components/Badge';
+import Alert from '@orca-ui/astro/components/Alert';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const features = [
@@ -17,14 +17,14 @@ const features = [
 
 <Base
   lang="ar"
-  title="Nawa UI — مكتبة واجهات مستخدم عربية سهلة الوصول لـ React وVue وSvelte وAstro وReact Native"
-  description="نواة UI (Nawa UI) مكتبة مكونات واجهات مستخدم مفتوحة المصدر، سهلة الوصول (WCAG 2.2 AA)، مع 21 ثيم ووضع داكن وتباين عالٍ وهياكل تحميل ودعم كامل للعربية RTL، لـ React وVue وSvelte وAstro وReact Native."
+  title="Orca UI — مكتبة واجهات مستخدم عربية سهلة الوصول لـ React وVue وSvelte وAstro وReact Native"
+  description="أوركا UI (Orca UI) مكتبة مكونات واجهات مستخدم مفتوحة المصدر، سهلة الوصول (WCAG 2.2 AA)، مع 21 ثيم ووضع داكن وتباين عالٍ وهياكل تحميل ودعم كامل للعربية RTL، لـ React وVue وSvelte وAstro وReact Native."
   alternate={{ en: '/', ar: '/ar/' }}
 >
   <section class="hero">
     <div class="container">
       <p class="eyebrow">مكتبة واجهات مفتوحة المصدر</p>
-      <h1>نواة UI — مكتبة مكونات واجهات المستخدم لكل الأطر</h1>
+      <h1>أوركا UI — مكتبة مكونات واجهات المستخدم لكل الأطر</h1>
       <p class="lead">
         مكونات جميلة وقابلة للتخصيص لـ <strong>React وVue وSvelte وAstro وReact Native</strong>. سهلة الوصول افتراضياً، مع 21 ثيم جاهز ونفس
         الواجهة البرمجية في كل مكان، ودعم كامل للغة العربية.
@@ -33,17 +33,17 @@ const features = [
         {['React', 'Vue', 'Svelte', 'Astro', 'React Native'].map((f) => <Badge variant="primary">{f}</Badge>)}
       </div>
       <div class="hero__actions">
-        <a class="nw-btn nw-btn--primary nw-btn--lg" href={`${base}/getting-started/`}>ابدأ الآن</a>
-        <a class="nw-btn nw-btn--secondary nw-btn--lg" href={`${base}/components/`}>تصفّح المكونات</a>
+        <a class="oc-btn oc-btn--primary oc-btn--lg" href={`${base}/getting-started/`}>ابدأ الآن</a>
+        <a class="oc-btn oc-btn--secondary oc-btn--lg" href={`${base}/components/`}>تصفّح المكونات</a>
       </div>
-      <div class="install" dir="ltr"><span aria-hidden="true">$</span><code>npm i @nawa-ui/react @nawa-ui/core</code></div>
+      <div class="install" dir="ltr"><span aria-hidden="true">$</span><code>npm i @orca-ui/react @orca-ui/core</code></div>
     </div>
   </section>
 
   <section class="section section--alt" aria-labelledby="ar-playground">
     <div class="container">
       <p class="eyebrow">معاينة مباشرة</p>
-      <h2 id="ar-playground">جرّبها الآن — تطبيق حقيقي مبني بنواة UI</h2>
+      <h2 id="ar-playground">جرّبها الآن — تطبيق حقيقي مبني بأوركا UI</h2>
       <p class="lead">ابحث، صفِّ، رتّب، أضف عضواً، وشغّل هياكل التحميل. غيّر الثيم من الأعلى وشاهد التحديث فوراً.</p>
       <Playground client:visible />
     </div>
@@ -51,7 +51,7 @@ const features = [
 
   <section class="section" aria-labelledby="ar-features">
     <div class="container">
-      <h2 id="ar-features">لماذا نواة UI؟</h2>
+      <h2 id="ar-features">لماذا أوركا UI؟</h2>
       <div class="grid grid--3" style="margin-top:1.5rem">
         {features.map((f) => (
           <article class="feature">

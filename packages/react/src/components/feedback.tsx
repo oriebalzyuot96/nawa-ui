@@ -16,7 +16,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { lockScroll, trapFocus } from '@nawa-ui/core/a11y';
+import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
 import { cx } from '../utils';
 
 /* ==========================================================================
@@ -77,32 +77,32 @@ const DEFAULT_STATUS_LABEL: Record<StatusTone, string> = {
 /** Decorative animated status glyph. Always pair it with text that carries the status. */
 function StatusGlyph({ tone, className }: { tone: StatusTone; className?: string }) {
   return (
-    <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false" className={cx('nw-glyph', `nw-glyph--${tone}`, className)}>
-      <circle className="nw-glyph__track" cx="26" cy="26" r="23" />
-      <circle className="nw-glyph__ring" cx="26" cy="26" r="23" pathLength={1} />
-      {tone === 'success' && <path className="nw-glyph__mark" d="M15.5 27.5l7 7L37 19.5" pathLength={1} />}
+    <svg viewBox="0 0 52 52" aria-hidden="true" focusable="false" className={cx('oc-glyph', `oc-glyph--${tone}`, className)}>
+      <circle className="oc-glyph__track" cx="26" cy="26" r="23" />
+      <circle className="oc-glyph__ring" cx="26" cy="26" r="23" pathLength={1} />
+      {tone === 'success' && <path className="oc-glyph__mark" d="M15.5 27.5l7 7L37 19.5" pathLength={1} />}
       {tone === 'error' && (
         <>
-          <path className="nw-glyph__mark" d="M18 18l16 16" pathLength={1} />
-          <path className="nw-glyph__mark nw-glyph__mark--late" d="M34 18L18 34" pathLength={1} />
+          <path className="oc-glyph__mark" d="M18 18l16 16" pathLength={1} />
+          <path className="oc-glyph__mark oc-glyph__mark--late" d="M34 18L18 34" pathLength={1} />
         </>
       )}
       {tone === 'warning' && (
         <>
-          <path className="nw-glyph__mark" d="M26 14.5v14" pathLength={1} />
-          <circle className="nw-glyph__dot" cx="26" cy="36.5" r="2" />
+          <path className="oc-glyph__mark" d="M26 14.5v14" pathLength={1} />
+          <circle className="oc-glyph__dot" cx="26" cy="36.5" r="2" />
         </>
       )}
       {tone === 'info' && (
         <>
-          <circle className="nw-glyph__dot" cx="26" cy="15.5" r="2" />
-          <path className="nw-glyph__mark" d="M26 22.5v15" pathLength={1} />
+          <circle className="oc-glyph__dot" cx="26" cy="15.5" r="2" />
+          <path className="oc-glyph__mark" d="M26 22.5v15" pathLength={1} />
         </>
       )}
       {tone === 'question' && (
         <>
-          <path className="nw-glyph__mark" d="M20 20.5a6 6 0 1 1 8.6 5.4c-1.7.9-2.6 2.1-2.6 3.8v1.3" pathLength={1} />
-          <circle className="nw-glyph__dot" cx="26" cy="37" r="2" />
+          <path className="oc-glyph__mark" d="M20 20.5a6 6 0 1 1 8.6 5.4c-1.7.9-2.6 2.1-2.6 3.8v1.3" pathLength={1} />
+          <circle className="oc-glyph__dot" cx="26" cy="37" r="2" />
         </>
       )}
     </svg>
@@ -507,12 +507,12 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
     switch (o.input) {
       case 'textarea':
         field = (
-          <textarea {...extra} {...commonInput} ref={setRef} className="nw-textarea nw-swal__input" placeholder={o.inputPlaceholder} value={strValue} onChange={(e) => setValue(e.target.value)} />
+          <textarea {...extra} {...commonInput} ref={setRef} className="oc-textarea oc-swal__input" placeholder={o.inputPlaceholder} value={strValue} onChange={(e) => setValue(e.target.value)} />
         );
         break;
       case 'select':
         field = (
-          <select {...extra} {...commonInput} ref={setRef} className="nw-select nw-swal__input" value={strValue} onChange={(e) => setValue(e.target.value)}>
+          <select {...extra} {...commonInput} ref={setRef} className="oc-select oc-swal__input" value={strValue} onChange={(e) => setValue(e.target.value)}>
             {o.inputPlaceholder && (
               <option value="" disabled>
                 {o.inputPlaceholder}
@@ -528,9 +528,9 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         break;
       case 'radio':
         field = (
-          <div role="radiogroup" className="nw-swal__choices" aria-labelledby={inputLabelledBy} aria-label={inputLabelledBy ? undefined : 'Options'} aria-invalid={invalid || undefined} aria-describedby={described}>
+          <div role="radiogroup" className="oc-swal__choices" aria-labelledby={inputLabelledBy} aria-label={inputLabelledBy ? undefined : 'Options'} aria-invalid={invalid || undefined} aria-describedby={described}>
             {options.map((opt, i) => (
-              <label key={opt.value} className="nw-swal__choice">
+              <label key={opt.value} className="oc-swal__choice">
                 <input
                   type="radio"
                   name={inputId}
@@ -550,7 +550,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         break;
       case 'checkbox':
         field = (
-          <label className="nw-swal__choice nw-swal__choice--single">
+          <label className="oc-swal__choice oc-swal__choice--single">
             <input {...extra} type="checkbox" id={inputId} aria-invalid={invalid || undefined} aria-describedby={described} ref={setRef} checked={value === true} onChange={(e) => setValue(e.target.checked)} />
             <span>{o.inputLabel ?? o.inputPlaceholder}</span>
           </label>
@@ -558,9 +558,9 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         break;
       case 'range':
         field = (
-          <div className="nw-swal__range">
+          <div className="oc-swal__range">
             <input {...extra} {...commonInput} ref={setRef} type="range" value={strValue} onChange={(e) => setValue(e.target.value)} />
-            <output htmlFor={inputId} className="nw-swal__range-value">
+            <output htmlFor={inputId} className="oc-swal__range-value">
               {strValue}
             </output>
           </div>
@@ -568,7 +568,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         break;
       default:
         field = (
-          <input {...extra} {...commonInput} ref={setRef} type={o.input} className="nw-input nw-swal__input" placeholder={o.inputPlaceholder} value={strValue} onChange={(e) => setValue(e.target.value)} />
+          <input {...extra} {...commonInput} ref={setRef} type={o.input} className="oc-input oc-swal__input" placeholder={o.inputPlaceholder} value={strValue} onChange={(e) => setValue(e.target.value)} />
         );
     }
   }
@@ -580,25 +580,25 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         key="confirm"
         ref={confirmRef}
         type="submit"
-        className={cx('nw-swal__btn', 'nw-swal__btn--confirm', loading && 'is-loading')}
+        className={cx('oc-swal__btn', 'oc-swal__btn--confirm', loading && 'is-loading')}
         aria-disabled={loading || undefined}
         aria-busy={loading || undefined}
       >
-        {loading && <LoaderArt type="dots" className="nw-swal__btn-loader" />}
+        {loading && <LoaderArt type="dots" className="oc-swal__btn-loader" />}
         <span>{o.confirmButtonText ?? 'OK'}</span>
       </button>,
     );
   }
   if (o.showDenyButton) {
     buttons.push(
-      <button key="deny" ref={denyRef} type="button" className="nw-swal__btn nw-swal__btn--deny" aria-disabled={loading || undefined} onClick={deny}>
+      <button key="deny" ref={denyRef} type="button" className="oc-swal__btn oc-swal__btn--deny" aria-disabled={loading || undefined} onClick={deny}>
         {o.denyButtonText ?? 'No'}
       </button>,
     );
   }
   if (o.showCancelButton) {
     buttons.push(
-      <button key="cancel" ref={cancelRef} type="button" className="nw-swal__btn nw-swal__btn--cancel" onClick={() => dismiss('cancel')}>
+      <button key="cancel" ref={cancelRef} type="button" className="oc-swal__btn oc-swal__btn--cancel" onClick={() => dismiss('cancel')}>
         {o.cancelButtonText ?? 'Cancel'}
       </button>,
     );
@@ -614,7 +614,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
       aria-label={o.title == null ? statusLabel ?? 'Dialog' : undefined}
       aria-describedby={hasBody ? textId : undefined}
       tabIndex={-1}
-      className={cx('nw-swal__popup', tone && `nw-swal__popup--${tone}`, o.className)}
+      className={cx('oc-swal__popup', tone && `oc-swal__popup--${tone}`, o.className)}
       style={o.width !== undefined ? { width: typeof o.width === 'number' ? `${o.width}px` : o.width } : undefined}
       data-paused={o.timer ? String(paused) : undefined}
       onKeyDown={onPanelKeyDown}
@@ -624,53 +624,53 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
       onBlur={onPanelBlur}
     >
       {o.showCloseButton && (
-        <button type="button" className="nw-swal__close" aria-label={o.closeButtonAriaLabel ?? 'Close'} onClick={() => dismiss('close')}>
+        <button type="button" className="oc-swal__close" aria-label={o.closeButtonAriaLabel ?? 'Close'} onClick={() => dismiss('close')}>
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
         </button>
       )}
       {tone && (
-        <div className="nw-swal__icon">
+        <div className="oc-swal__icon">
           <StatusGlyph tone={tone} />
         </div>
       )}
       {customIcon && (
-        <div className="nw-swal__icon nw-swal__icon--custom" aria-hidden="true">
+        <div className="oc-swal__icon oc-swal__icon--custom" aria-hidden="true">
           {customIcon}
         </div>
       )}
-      {o.imageUrl && <img className="nw-swal__image" src={o.imageUrl} alt={o.imageAlt ?? ''} width={o.imageWidth} height={o.imageHeight} />}
-      <form className="nw-swal__form" onSubmit={onSubmit} noValidate>
-        <div className="nw-swal__content">
+      {o.imageUrl && <img className="oc-swal__image" src={o.imageUrl} alt={o.imageAlt ?? ''} width={o.imageWidth} height={o.imageHeight} />}
+      <form className="oc-swal__form" onSubmit={onSubmit} noValidate>
+        <div className="oc-swal__content">
           {o.title != null && (
-            <h2 id={titleId} className="nw-swal__title">
-              {statusLabel && <span className="nw-sr-only">{statusLabel}: </span>}
+            <h2 id={titleId} className="oc-swal__title">
+              {statusLabel && <span className="oc-sr-only">{statusLabel}: </span>}
               {o.title}
             </h2>
           )}
           {hasBody && (
-            <div id={textId} className="nw-swal__text">
+            <div id={textId} className="oc-swal__text">
               {o.text != null && <div>{o.text}</div>}
               {o.html}
             </div>
           )}
         </div>
         {o.input && (
-          <div className="nw-swal__field">
+          <div className="oc-swal__field">
             {o.inputLabel && o.input !== 'checkbox' && (o.input === 'radio' ? (
-              <div id={labelId} className="nw-label">
+              <div id={labelId} className="oc-label">
                 {o.inputLabel}
               </div>
             ) : (
-              <label id={labelId} htmlFor={inputId} className="nw-label">
+              <label id={labelId} htmlFor={inputId} className="oc-label">
                 {o.inputLabel}
               </label>
             ))}
             {field}
           </div>
         )}
-        <div id={validationId} role="alert" className="nw-swal__validation">
+        <div id={validationId} role="alert" className="oc-swal__validation">
           {validation && (
             <>
               <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
@@ -681,17 +681,17 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
             </>
           )}
         </div>
-        {buttons.length > 0 && <div className="nw-swal__actions">{buttons}</div>}
+        {buttons.length > 0 && <div className="oc-swal__actions">{buttons}</div>}
       </form>
-      {o.footer != null && <footer className="nw-swal__footer">{o.footer}</footer>}
+      {o.footer != null && <footer className="oc-swal__footer">{o.footer}</footer>}
       {o.timer ? (
-        <div className="nw-swal__timer">
+        <div className="oc-swal__timer">
           {o.timerProgressBar && (
-            <div className="nw-swal__timer-track" aria-hidden="true">
-              <span className="nw-swal__timer-bar" style={vars({ '--nw-countdown': `${o.timer}ms`, animationPlayState: paused || loading ? 'paused' : 'running' })} />
+            <div className="oc-swal__timer-track" aria-hidden="true">
+              <span className="oc-swal__timer-bar" style={vars({ '--oc-countdown': `${o.timer}ms`, animationPlayState: paused || loading ? 'paused' : 'running' })} />
             </div>
           )}
-          <button type="button" className="nw-swal__pause" aria-pressed={manualPause} aria-label={o.pauseTimerLabel ?? 'Pause auto-close'} onClick={() => setManualPause((p) => !p)}>
+          <button type="button" className="oc-swal__pause" aria-pressed={manualPause} aria-label={o.pauseTimerLabel ?? 'Pause auto-close'} onClick={() => setManualPause((p) => !p)}>
             <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
               {manualPause ? <path d="M5.5 3.5l7 4.5-7 4.5z" /> : <path d="M5.5 3.5v9M10.5 3.5v9" />}
             </svg>
@@ -702,7 +702,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
   );
 
   return (
-    <div className={cx('nw-swal', `nw-swal--${position}`, isToast ? 'nw-swal--toast' : 'nw-swal--modal')} onMouseDown={onBackdrop}>
+    <div className={cx('oc-swal', `oc-swal--${position}`, isToast ? 'oc-swal--toast' : 'oc-swal--modal')} onMouseDown={onBackdrop}>
       {panel}
     </div>
   );
@@ -771,7 +771,7 @@ const TOAST_EXIT_MS = 200;
 
 function upsertToast(message: ReactNode, opts: ToastOptions = {}): ToastId {
   const list = toastStore.get();
-  const id = opts.id ?? `nw-toast-${++toastSeq}`;
+  const id = opts.id ?? `oc-toast-${++toastSeq}`;
   const existing = list.find((t) => t.id === id);
   if (existing) {
     toastStore.set(list.map((t) => (t.id === id ? { ...t, ...opts, message, id, type: opts.type ?? t.type, version: t.version + 1, dismissed: false } : t)));
@@ -872,9 +872,9 @@ export interface ToasterProps {
 export const TOAST_SWIPE_THRESHOLD = 64;
 
 function ToastGlyph({ type }: { type: ToastType }) {
-  if (type === 'loading') return <LoaderArt type="ring" className="nw-toaster__spinner" />;
+  if (type === 'loading') return <LoaderArt type="ring" className="oc-toaster__spinner" />;
   if (type === 'default') return null;
-  return <StatusGlyph tone={type} className="nw-glyph--sm" />;
+  return <StatusGlyph tone={type} className="oc-glyph--sm" />;
 }
 
 interface ToastViewProps {
@@ -982,10 +982,10 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
   const isError = t.type === 'error';
   const y = expanded ? offset : index * 14;
   const style = vars({
-    '--nw-toast-y': `${isTop ? y : -y}px`,
-    '--nw-toast-scale': expanded ? 1 : Math.max(0.8, 1 - index * 0.055),
-    '--nw-toast-front-h': `${frontHeight}px`,
-    '--nw-swipe-x': `${dx}px`,
+    '--oc-toast-y': `${isTop ? y : -y}px`,
+    '--oc-toast-scale': expanded ? 1 : Math.max(0.8, 1 - index * 0.055),
+    '--oc-toast-front-h': `${frontHeight}px`,
+    '--oc-swipe-x': `${dx}px`,
     zIndex: count - index,
     opacity: dx ? Math.max(0.35, 1 - Math.abs(dx) / 220) : undefined,
   });
@@ -996,7 +996,7 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
       role={isError ? 'alert' : 'status'}
       aria-atomic="true"
       tabIndex={0}
-      className={cx('nw-toaster__toast', `nw-toaster__toast--${t.type}`, t.className)}
+      className={cx('oc-toaster__toast', `oc-toaster__toast--${t.type}`, t.className)}
       data-type={t.type}
       data-front={index === 0 || undefined}
       data-collapsed={collapsedBack || undefined}
@@ -1010,20 +1010,20 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
       onPointerCancel={endSwipe}
       onKeyDown={onKeyDown}
     >
-      {(t.icon ?? t.type !== 'default') && <span className="nw-toaster__icon">{t.icon ?? <ToastGlyph type={t.type} />}</span>}
-      <div className="nw-toaster__body">
-        {t.type !== 'default' && t.type !== 'loading' && <span className="nw-sr-only">{DEFAULT_STATUS_LABEL[t.type]}: </span>}
-        <div className="nw-toaster__title">{t.message}</div>
-        {t.description != null && <div className="nw-toaster__desc">{t.description}</div>}
+      {(t.icon ?? t.type !== 'default') && <span className="oc-toaster__icon">{t.icon ?? <ToastGlyph type={t.type} />}</span>}
+      <div className="oc-toaster__body">
+        {t.type !== 'default' && t.type !== 'loading' && <span className="oc-sr-only">{DEFAULT_STATUS_LABEL[t.type]}: </span>}
+        <div className="oc-toaster__title">{t.message}</div>
+        {t.description != null && <div className="oc-toaster__desc">{t.description}</div>}
         {(t.action || t.cancel) && (
-          <div className="nw-toaster__actions">
+          <div className="oc-toaster__actions">
             {t.cancel && (
-              <button type="button" className="nw-toaster__btn nw-toaster__btn--cancel" onClick={runAction(t.cancel)}>
+              <button type="button" className="oc-toaster__btn oc-toaster__btn--cancel" onClick={runAction(t.cancel)}>
                 {t.cancel.label}
               </button>
             )}
             {t.action && (
-              <button type="button" className="nw-toaster__btn nw-toaster__btn--action" onClick={runAction(t.action)}>
+              <button type="button" className="oc-toaster__btn oc-toaster__btn--action" onClick={runAction(t.action)}>
                 {t.action.label}
               </button>
             )}
@@ -1031,15 +1031,15 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
         )}
       </div>
       {(t.closeButton ?? closeButton) && dismissible && (
-        <button type="button" className="nw-toaster__close" aria-label={closeLabel} onClick={() => dismissToast(t.id)}>
+        <button type="button" className="oc-toaster__close" aria-label={closeLabel} onClick={() => dismissToast(t.id)}>
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d="M4.5 4.5l7 7M11.5 4.5l-7 7" />
           </svg>
         </button>
       )}
       {(t.progress ?? progress) && finite && (
-        <span className="nw-toaster__progress" aria-hidden="true">
-          <span key={t.version} style={vars({ '--nw-countdown': `${duration}ms`, animationPlayState: paused ? 'paused' : 'running' })} />
+        <span className="oc-toaster__progress" aria-hidden="true">
+          <span key={t.version} style={vars({ '--oc-countdown': `${duration}ms`, animationPlayState: paused ? 'paused' : 'running' })} />
         </span>
       )}
     </li>
@@ -1094,7 +1094,7 @@ export function Toaster({
         e.metaKey === Boolean(hotkey.metaKey);
       if (!match) return;
       e.preventDefault();
-      const first = listRef.current?.querySelector<HTMLElement>('.nw-toaster__toast[data-state="open"]');
+      const first = listRef.current?.querySelector<HTMLElement>('.oc-toaster__toast[data-state="open"]');
       (first ?? listRef.current)?.focus();
     };
     document.addEventListener('keydown', onKey);
@@ -1118,7 +1118,7 @@ export function Toaster({
   return (
     <section
       aria-label={`${label} (${hotkeyLabel})`}
-      className={cx('nw-toaster', `nw-toaster--${position}`, richColors && 'nw-toaster--rich', className)}
+      className={cx('oc-toaster', `oc-toaster--${position}`, richColors && 'oc-toaster--rich', className)}
       data-expanded={expanded || undefined}
       dir={dir}
       onFocus={() => setFocusWithin(true)}
@@ -1131,7 +1131,7 @@ export function Toaster({
         tabIndex={-1}
         aria-live="polite"
         aria-relevant="additions text"
-        className="nw-toaster__list"
+        className="oc-toaster__list"
         style={{ height: listHeight || undefined }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
@@ -1224,21 +1224,21 @@ function LoaderArt({ type, value, className, label }: { type: LoaderType; value?
   if (type === 'infinity') {
     const d = 'M50 25c-6-11-12-15-19-15a15 15 0 0 0 0 30c7 0 13-4 19-15s12-15 19-15a15 15 0 0 1 0 30c-7 0-13-4-19-15z';
     return (
-      <span className={cx('nw-loader__art', 'nw-loader__art--infinity', className)} aria-hidden="true">
+      <span className={cx('oc-loader__art', 'oc-loader__art--infinity', className)} aria-hidden="true">
         <svg viewBox="0 0 100 50" focusable="false">
-          <path className="nw-loader__track" d={d} pathLength={100} />
-          <path className="nw-loader__runner" d={d} pathLength={100} />
+          <path className="oc-loader__track" d={d} pathLength={100} />
+          <path className="oc-loader__runner" d={d} pathLength={100} />
         </svg>
       </span>
     );
   }
   if (type === 'hourglass') {
     return (
-      <span className={cx('nw-loader__art', 'nw-loader__art--hourglass', className)} aria-hidden="true">
+      <span className={cx('oc-loader__art', 'oc-loader__art--hourglass', className)} aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false">
-          <path className="nw-loader__frame" d="M6 2.75h12M6 21.25h12M7.25 2.75c0 5 4.75 6.4 4.75 9.25S7.25 16.25 7.25 21.25M16.75 2.75c0 5-4.75 6.4-4.75 9.25s4.75 4.25 4.75 9.25" />
-          <path className="nw-loader__sand nw-loader__sand--top" d="M9.2 6.4h5.6L12 10.4z" />
-          <path className="nw-loader__sand nw-loader__sand--bottom" d="M8.6 19.6h6.8L12 15.4z" />
+          <path className="oc-loader__frame" d="M6 2.75h12M6 21.25h12M7.25 2.75c0 5 4.75 6.4 4.75 9.25S7.25 16.25 7.25 21.25M16.75 2.75c0 5-4.75 6.4-4.75 9.25s4.75 4.25 4.75 9.25" />
+          <path className="oc-loader__sand oc-loader__sand--top" d="M9.2 6.4h5.6L12 10.4z" />
+          <path className="oc-loader__sand oc-loader__sand--bottom" d="M8.6 19.6h6.8L12 15.4z" />
         </svg>
       </span>
     );
@@ -1248,7 +1248,7 @@ function LoaderArt({ type, value, className, label }: { type: LoaderType; value?
     const pct = determinate ? clampPct(value) : 30;
     return (
       <span
-        className={cx('nw-loader__art', 'nw-loader__art--progress-ring', !determinate && 'is-indeterminate', className)}
+        className={cx('oc-loader__art', 'oc-loader__art--progress-ring', !determinate && 'is-indeterminate', className)}
         role={determinate ? 'progressbar' : undefined}
         aria-label={determinate ? label : undefined}
         aria-valuemin={determinate ? 0 : undefined}
@@ -1257,11 +1257,11 @@ function LoaderArt({ type, value, className, label }: { type: LoaderType; value?
         aria-hidden={determinate ? undefined : true}
       >
         <svg viewBox="0 0 36 36" focusable="false" aria-hidden="true">
-          <circle className="nw-loader__track" cx="18" cy="18" r="15.5" />
-          <circle className="nw-loader__value-arc" cx="18" cy="18" r="15.5" pathLength={100} style={{ strokeDashoffset: 100 - pct }} />
+          <circle className="oc-loader__track" cx="18" cy="18" r="15.5" />
+          <circle className="oc-loader__value-arc" cx="18" cy="18" r="15.5" pathLength={100} style={{ strokeDashoffset: 100 - pct }} />
         </svg>
         {determinate && (
-          <span className="nw-loader__value" aria-hidden="true">
+          <span className="oc-loader__value" aria-hidden="true">
             {Math.round(pct)}%
           </span>
         )}
@@ -1270,9 +1270,9 @@ function LoaderArt({ type, value, className, label }: { type: LoaderType; value?
   }
   const n = LOADER_PARTS[type] ?? 1;
   return (
-    <span className={cx('nw-loader__art', `nw-loader__art--${type}`, className)} aria-hidden="true">
+    <span className={cx('oc-loader__art', `oc-loader__art--${type}`, className)} aria-hidden="true">
       {Array.from({ length: n }, (_, i) => (
-        <span key={i} className="nw-loader__part" style={vars({ '--i': i })} />
+        <span key={i} className="oc-loader__part" style={vars({ '--i': i })} />
       ))}
     </span>
   );
@@ -1298,23 +1298,23 @@ export interface LoaderProps {
 
 /** Accessible loading indicator: role="status" with a (visually hidden by default) label. */
 export function Loader({ type = 'ring', size, label = 'Loading', showLabel = false, variant = 'inline', tone = 'primary', value, className, style }: LoaderProps) {
-  const sizeStyle = typeof size === 'number' ? vars({ '--nw-loader-size': `${size}px` }) : undefined;
+  const sizeStyle = typeof size === 'number' ? vars({ '--oc-loader-size': `${size}px` }) : undefined;
   return (
     <span
       role="status"
       className={cx(
-        'nw-loader',
-        `nw-loader--${type}`,
-        `nw-loader--${variant}`,
-        typeof size === 'string' && `nw-loader--${size}`,
-        tone !== 'primary' && `nw-loader--tone-${tone}`,
-        showLabel && 'nw-loader--labelled',
+        'oc-loader',
+        `oc-loader--${type}`,
+        `oc-loader--${variant}`,
+        typeof size === 'string' && `oc-loader--${size}`,
+        tone !== 'primary' && `oc-loader--tone-${tone}`,
+        showLabel && 'oc-loader--labelled',
         className,
       )}
       style={{ ...sizeStyle, ...style }}
     >
       <LoaderArt type={type} value={value} label={label} />
-      <span className={showLabel ? 'nw-loader__label' : 'nw-sr-only'}>{label}</span>
+      <span className={showLabel ? 'oc-loader__label' : 'oc-sr-only'}>{label}</span>
     </span>
   );
 }
@@ -1341,12 +1341,12 @@ export function LoaderOverlay({ active, children, blur = true, className, type =
     else el.removeAttribute('inert');
   }, [active]);
   return (
-    <div className={cx('nw-loader-overlay', active && 'is-active', className)} aria-busy={active}>
-      <div ref={contentRef} className="nw-loader-overlay__content">
+    <div className={cx('oc-loader-overlay', active && 'is-active', className)} aria-busy={active}>
+      <div ref={contentRef} className="oc-loader-overlay__content">
         {children}
       </div>
       {active && (
-        <div className={cx('nw-loader-overlay__scrim', blur && 'nw-loader-overlay__scrim--blur')}>
+        <div className={cx('oc-loader-overlay__scrim', blur && 'oc-loader-overlay__scrim--blur')}>
           <Loader {...loader} type={type} label={label} variant="block" />
         </div>
       )}
@@ -1391,9 +1391,9 @@ export function PageLoader({ active, brand, exitDuration = 450, type = 'orbit', 
 
   if (phase === 'gone' || !canUseDom()) return null;
   return createPortal(
-    <div className={cx('nw-page-loader', className)} data-state={phase} style={vars({ '--nw-page-loader-exit': `${exitDuration}ms` })} aria-hidden={phase === 'leaving' || undefined}>
-      <div className="nw-page-loader__inner">
-        {brand != null && <div className="nw-page-loader__brand">{brand}</div>}
+    <div className={cx('oc-page-loader', className)} data-state={phase} style={vars({ '--oc-page-loader-exit': `${exitDuration}ms` })} aria-hidden={phase === 'leaving' || undefined}>
+      <div className="oc-page-loader__inner">
+        {brand != null && <div className="oc-page-loader__brand">{brand}</div>}
         <Loader {...loader} type={type} label={label} showLabel={showLabel} size="lg" variant="block" />
       </div>
     </div>,
@@ -1473,16 +1473,16 @@ export function TopProgressBar({ label = 'Page loading', height = 3, className }
   if (value === null) return null;
   return (
     <div
-      className={cx('nw-top-progress', className)}
+      className={cx('oc-top-progress', className)}
       data-state={done ? 'done' : 'running'}
       role="progressbar"
       aria-label={label}
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={Math.round(value * 100)}
-      style={vars({ '--nw-top-progress-h': `${height}px` })}
+      style={vars({ '--oc-top-progress-h': `${height}px` })}
     >
-      <div className="nw-top-progress__bar" style={vars({ '--nw-top-progress-value': value })} />
+      <div className="oc-top-progress__bar" style={vars({ '--oc-top-progress-value': value })} />
     </div>
   );
 }

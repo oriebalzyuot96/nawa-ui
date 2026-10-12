@@ -1,10 +1,10 @@
 {
-  "name": "@nawa-ui/angular",
+  "name": "@orca-ui/angular",
   "version": "0.1.0",
-  "description": "Nawa UI for Angular — accessible, themeable standalone components built on signals (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Orca UI for Angular — accessible, themeable standalone components built on signals (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "scripts": {
-    "build": "ng build nawa-ui",
-    "test": "ng test nawa-ui --watch=false",
+    "build": "ng build orca-ui",
+    "test": "ng test orca-ui --watch=false",
     "typecheck": "ngc -p tsconfig.lib.json --noEmit && ngc -p tsconfig.spec.json --noEmit"
   },
   "peerDependencies": {
@@ -13,7 +13,7 @@
     "@angular/forms": "^20.0.0 || ^21.0.0 || ^22.0.0"
   },
   "dependencies": {
-    "@nawa-ui/core": "0.1.0",
+    "@orca-ui/core": "0.1.0",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "angular-ui",
     "angular-signals",
     "standalone-components",
-    "nawa-ui",
+    "orca-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -53,13 +53,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
     "directory": "packages/angular"
   },
-  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

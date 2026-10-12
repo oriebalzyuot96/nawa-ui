@@ -1,7 +1,7 @@
-// Apply and persist a Nawa UI theme on the web. Theming is pure CSS attributes,
+// Apply and persist an Orca UI theme on the web. Theming is pure CSS attributes,
 // so this works the same for React, Vue, Svelte, Astro or plain HTML.
 
-export const THEME_STORAGE_KEY = 'nawa-ui-theme';
+export const THEME_STORAGE_KEY = 'orca-ui-theme';
 
 /**
  * Set data-theme / data-accent / data-shape on `target` (default: <html>).

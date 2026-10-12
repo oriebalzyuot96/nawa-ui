@@ -19,8 +19,8 @@ export interface SegmentedOption {
 }
 
 function fieldMessage(id: string, error?: string, hint?: string): { describedBy?: string; node: VNode | null } {
-  if (error) return { describedBy: `${id}-err`, node: h('span', { id: `${id}-err`, class: 'nw-error-text' }, error) };
-  if (hint) return { describedBy: `${id}-hint`, node: h('span', { id: `${id}-hint`, class: 'nw-hint' }, hint) };
+  if (error) return { describedBy: `${id}-err`, node: h('span', { id: `${id}-err`, class: 'oc-error-text' }, error) };
+  if (hint) return { describedBy: `${id}-hint`, node: h('span', { id: `${id}-hint`, class: 'oc-hint' }, hint) };
   return { describedBy: undefined, node: null };
 }
 
@@ -32,7 +32,7 @@ const fieldProps = {
 
 /** Text input. Use with v-model. Extra attributes (placeholder, type, …) go to the <input>. */
 export const Input = defineComponent({
-  name: 'NwInput',
+  name: 'OcInput',
   inheritAttrs: false,
   props: {
     ...fieldProps,
@@ -40,15 +40,15 @@ export const Input = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { attrs, emit }) {
-    const id = (attrs.id as string | undefined) ?? nextId('nw-input');
+    const id = (attrs.id as string | undefined) ?? nextId('oc-input');
     return () => {
       const msg = fieldMessage(id, props.error, props.hint);
-      return h('div', { class: ['nw-field', props.error && 'nw-field--error'] }, [
-        props.label ? h('label', { class: 'nw-label', for: id }, props.label) : null,
+      return h('div', { class: ['oc-field', props.error && 'oc-field--error'] }, [
+        props.label ? h('label', { class: 'oc-label', for: id }, props.label) : null,
         h('input', {
           ...attrs,
           id,
-          class: ['nw-input', attrs.class as string],
+          class: ['oc-input', attrs.class as string],
           value: props.modelValue,
           'aria-invalid': props.error ? 'true' : undefined,
           'aria-describedby': msg.describedBy,
@@ -61,7 +61,7 @@ export const Input = defineComponent({
 });
 
 export const Textarea = defineComponent({
-  name: 'NwTextarea',
+  name: 'OcTextarea',
   inheritAttrs: false,
   props: {
     ...fieldProps,
@@ -69,15 +69,15 @@ export const Textarea = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { attrs, emit }) {
-    const id = (attrs.id as string | undefined) ?? nextId('nw-textarea');
+    const id = (attrs.id as string | undefined) ?? nextId('oc-textarea');
     return () => {
       const msg = fieldMessage(id, props.error, props.hint);
-      return h('div', { class: ['nw-field', props.error && 'nw-field--error'] }, [
-        props.label ? h('label', { class: 'nw-label', for: id }, props.label) : null,
+      return h('div', { class: ['oc-field', props.error && 'oc-field--error'] }, [
+        props.label ? h('label', { class: 'oc-label', for: id }, props.label) : null,
         h('textarea', {
           ...attrs,
           id,
-          class: ['nw-textarea', attrs.class as string],
+          class: ['oc-textarea', attrs.class as string],
           value: props.modelValue,
           'aria-invalid': props.error ? 'true' : undefined,
           'aria-describedby': msg.describedBy,
@@ -91,7 +91,7 @@ export const Textarea = defineComponent({
 
 /** Native select. Pass `options`, or put <option>-like content in the default slot. */
 export const Select = defineComponent({
-  name: 'NwSelect',
+  name: 'OcSelect',
   inheritAttrs: false,
   props: {
     ...fieldProps,
@@ -101,17 +101,17 @@ export const Select = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { attrs, emit, slots }) {
-    const id = (attrs.id as string | undefined) ?? nextId('nw-select');
+    const id = (attrs.id as string | undefined) ?? nextId('oc-select');
     return () => {
       const msg = fieldMessage(id, props.error, props.hint);
-      return h('div', { class: ['nw-field', props.error && 'nw-field--error'] }, [
-        props.label ? h('label', { class: 'nw-label', for: id }, props.label) : null,
+      return h('div', { class: ['oc-field', props.error && 'oc-field--error'] }, [
+        props.label ? h('label', { class: 'oc-label', for: id }, props.label) : null,
         h(
           'select',
           {
             ...attrs,
             id,
-            class: ['nw-select', attrs.class as string],
+            class: ['oc-select', attrs.class as string],
             value: props.modelValue,
             'aria-invalid': props.error ? 'true' : undefined,
             'aria-describedby': msg.describedBy,
@@ -130,7 +130,7 @@ export const Select = defineComponent({
 });
 
 export const Checkbox = defineComponent({
-  name: 'NwCheckbox',
+  name: 'OcCheckbox',
   props: {
     modelValue: Boolean,
     label: String,
@@ -139,7 +139,7 @@ export const Checkbox = defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit, slots }) {
     return () =>
-      h('label', { class: ['nw-check', props.disabled && 'nw-check--disabled'] }, [
+      h('label', { class: ['oc-check', props.disabled && 'oc-check--disabled'] }, [
         h('input', {
           type: 'checkbox',
           checked: props.modelValue,
@@ -152,7 +152,7 @@ export const Checkbox = defineComponent({
 });
 
 export const Switch = defineComponent({
-  name: 'NwSwitch',
+  name: 'OcSwitch',
   props: {
     modelValue: Boolean,
     /** Accessible name. */
@@ -170,14 +170,14 @@ export const Switch = defineComponent({
         'aria-checked': String(props.modelValue),
         'aria-label': props.label,
         disabled: props.disabled,
-        class: 'nw-switch',
+        class: 'oc-switch',
         onClick: () => emit('update:modelValue', !props.modelValue),
       });
   },
 });
 
 export const RadioGroup = defineComponent({
-  name: 'NwRadioGroup',
+  name: 'OcRadioGroup',
   props: {
     name: { type: String, required: true },
     options: { type: Array as PropType<RadioOption[]>, required: true },
@@ -190,9 +190,9 @@ export const RadioGroup = defineComponent({
     return () =>
       h(
         'div',
-        { role: 'radiogroup', 'aria-label': props.label, class: ['nw-radio-group', props.class] },
+        { role: 'radiogroup', 'aria-label': props.label, class: ['oc-radio-group', props.class] },
         props.options.map((o) =>
-          h('label', { class: ['nw-check', o.disabled && 'nw-check--disabled'] }, [
+          h('label', { class: ['oc-check', o.disabled && 'oc-check--disabled'] }, [
             h('input', {
               type: 'radio',
               name: props.name,
@@ -209,7 +209,7 @@ export const RadioGroup = defineComponent({
 });
 
 export const Slider = defineComponent({
-  name: 'NwSlider',
+  name: 'OcSlider',
   props: {
     modelValue: { type: Number, default: 0 },
     min: { type: Number, default: 0 },
@@ -221,16 +221,16 @@ export const Slider = defineComponent({
   },
   emits: ['update:modelValue'],
   setup(props, { emit }) {
-    const id = nextId('nw-slider');
+    const id = nextId('oc-slider');
     return () =>
-      h('div', { class: 'nw-field' }, [
+      h('div', { class: 'oc-field' }, [
         props.label
-          ? h('label', { class: 'nw-label', for: id }, [props.label, props.showValue ? h('span', { class: 'nw-hint' }, ` ${props.modelValue}`) : null])
+          ? h('label', { class: 'oc-label', for: id }, [props.label, props.showValue ? h('span', { class: 'oc-hint' }, ` ${props.modelValue}`) : null])
           : null,
         h('input', {
           id,
           type: 'range',
-          class: 'nw-slider',
+          class: 'oc-slider',
           min: props.min,
           max: props.max,
           step: props.step,
@@ -243,7 +243,7 @@ export const Slider = defineComponent({
 });
 
 export const Segmented = defineComponent({
-  name: 'NwSegmented',
+  name: 'OcSegmented',
   props: {
     options: { type: Array as PropType<SegmentedOption[]>, required: true },
     modelValue: { type: String, required: true },
@@ -263,7 +263,7 @@ export const Segmented = defineComponent({
     return () =>
       h(
         'div',
-        { role: 'radiogroup', 'aria-label': props.label, class: ['nw-segmented', props.class] },
+        { role: 'radiogroup', 'aria-label': props.label, class: ['oc-segmented', props.class] },
         props.options.map((o, i) => {
           const checked = o.value === props.modelValue;
           return h(
@@ -273,7 +273,7 @@ export const Segmented = defineComponent({
               role: 'radio',
               'aria-checked': String(checked),
               tabindex: checked ? 0 : -1,
-              class: 'nw-segmented__item',
+              class: 'oc-segmented__item',
               onClick: () => emit('update:modelValue', o.value),
               onKeydown: (e: KeyboardEvent) => onKeydown(e, i, e.currentTarget as HTMLElement),
             },

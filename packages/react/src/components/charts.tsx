@@ -1,5 +1,5 @@
 /**
- * Nawa UI Charts — dependency-free, accessible SVG charts.
+ * Orca UI Charts — dependency-free, accessible SVG charts.
  *
  * Two layers:
  *  1. Ready-made charts: BarChart, LineChart, AreaChart, PieChart, DonutChart, ScatterChart,
@@ -714,9 +714,9 @@ export function useChart(): ChartContextValue {
 }
 
 /** CSS class that binds the palette color (and pattern/dash/marker) of series `i`. */
-export const seriesClass = (i: number) => `nw-chart-s${mod8(i)}`;
+export const seriesClass = (i: number) => `oc-chart-s${mod8(i)}`;
 const colorStyle = (color?: string): CSSProperties | undefined =>
-  color ? ({ '--nw-chart-c': color } as CSSProperties) : undefined;
+  color ? ({ '--oc-chart-c': color } as CSSProperties) : undefined;
 /** `url(#…)` of the fill pattern for series `i` (series 0 is solid, so returns null). */
 export const patternFill = (uid: string, i: number) => (mod8(i) === 0 ? null : `url(#${uid}-pat-${mod8(i)})`);
 
@@ -740,12 +740,12 @@ const PATTERN_SHAPES: ReactNode[] = [
 /** Hatch/dot/stripe patterns (one per series) referenced by `url(#<uid>-pat-<n>)`. */
 export function PatternDefs({ uid }: { uid: string }) {
   return (
-    <svg className="nw-chart__defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <svg className="oc-chart__defs" width="0" height="0" aria-hidden="true" focusable="false">
       <defs>
         {PATTERN_SHAPES.map((shape, k) =>
           k === 0 ? null : (
             <pattern key={k} id={`${uid}-pat-${k}`} width="8" height="8" patternUnits="userSpaceOnUse">
-              <g className="nw-chart__hatch">{shape}</g>
+              <g className="oc-chart__hatch">{shape}</g>
             </pattern>
           ),
         )}
@@ -876,46 +876,46 @@ export function ChartContainer({
   const tableId = `${uid}-table`;
 
   const ctx: ChartContextValue = { frame, uid, locale, rtl, patterns: patternsOn, labels, titleId, descriptionId, summaryId, announce };
-  const legendNode = legend ? <div className="nw-chart__legend">{legend}</div> : null;
+  const legendNode = legend ? <div className="oc-chart__legend">{legend}</div> : null;
 
   return (
     <ChartContext.Provider value={ctx}>
       <figure
         ref={figureRef}
-        className={cx('nw-chart', patternsOn && 'nw-chart--patterns', patterns === false && 'nw-chart--no-patterns', className)}
+        className={cx('oc-chart', patternsOn && 'oc-chart--patterns', patterns === false && 'oc-chart--no-patterns', className)}
         aria-labelledby={titleId}
         dir={dir}
       >
         <PatternDefs uid={uid} />
-        <figcaption className="nw-chart__caption">
-          <span id={titleId} className="nw-chart__title">
+        <figcaption className="oc-chart__caption">
+          <span id={titleId} className="oc-chart__title">
             {title}
           </span>
           {description && (
-            <span id={descriptionId} className="nw-chart__desc">
+            <span id={descriptionId} className="oc-chart__desc">
               {description}
             </span>
           )}
         </figcaption>
         {summary && (
-          <p id={summaryId} className={showSummary ? 'nw-chart__summary' : 'nw-sr-only'}>
+          <p id={summaryId} className={showSummary ? 'oc-chart__summary' : 'oc-sr-only'}>
             {summary}
           </p>
         )}
         {legendPosition === 'top' && legendNode}
-        <div ref={bodyRef} className="nw-chart__body">
+        <div ref={bodyRef} className="oc-chart__body">
           {typeof children === 'function' ? children(frame) : children}
         </div>
         {legendPosition === 'bottom' && legendNode}
-        <div className="nw-sr-only" aria-live="polite" aria-atomic="true" data-chart-live="">
+        <div className="oc-sr-only" aria-live="polite" aria-atomic="true" data-chart-live="">
           {message}
         </div>
         {table !== 'none' && tableData && (
-          <div className="nw-chart__data">
+          <div className="oc-chart__data">
             {table === 'toggle' && (
               <button
                 type="button"
-                className="nw-btn nw-btn--ghost nw-btn--sm nw-chart__table-toggle"
+                className="oc-btn oc-btn--ghost oc-btn--sm oc-chart__table-toggle"
                 aria-expanded={tableOpen}
                 aria-controls={tableId}
                 onClick={() => setTableOpen((o) => !o)}
@@ -923,9 +923,16 @@ export function ChartContainer({
                 {tableOpen ? labels.hideTable : labels.showTable}
               </button>
             )}
-            <div id={tableId} className={cx('nw-chart__table nw-table-wrap', !tableOpen && 'nw-sr-only')}>
-              <table className="nw-table">
-                <caption className="nw-chart__table-caption">{tableData.caption ?? title}</caption>
+            {/* Focusable, named region so keyboard users can scroll a wide table (axe scrollable-region-focusable). */}
+            <div
+              id={tableId}
+              className={cx('oc-chart__table oc-table-wrap', !tableOpen && 'oc-sr-only')}
+              role="region"
+              aria-label={`${tableData.caption ?? title} data table`}
+              tabIndex={tableOpen ? 0 : -1}
+            >
+              <table className="oc-table">
+                <caption className="oc-chart__table-caption">{tableData.caption ?? title}</caption>
                 <thead>
                   <tr>
                     {tableData.columns.map((c, i) => (
@@ -940,7 +947,7 @@ export function ChartContainer({
                     <tr key={r}>
                       <th scope="row">{row.header}</th>
                       {row.cells.map((cell, c) => (
-                        <td key={c} className="nw-table__align-end">
+                        <td key={c} className="oc-table__align-end">
                           {cell}
                         </td>
                       ))}
@@ -951,7 +958,7 @@ export function ChartContainer({
             </div>
           </div>
         )}
-        {footer && <div className="nw-chart__footer">{footer}</div>}
+        {footer && <div className="oc-chart__footer">{footer}</div>}
       </figure>
     </ChartContext.Provider>
   );
@@ -1148,7 +1155,7 @@ export function ChartPlot({ points, navigation = 'x', hoverRadius = 64, classNam
   const svg = (
     <svg
       ref={svgRef}
-      className="nw-chart__svg"
+      className="oc-chart__svg"
       viewBox={`0 0 ${frame.width} ${frame.height}`}
       width={frame.width}
       height={frame.height}
@@ -1160,16 +1167,16 @@ export function ChartPlot({ points, navigation = 'x', hoverRadius = 64, classNam
       <g transform={`translate(${ox},${oy})`}>
         {children}
         {showRing && activePoint && (
-          <circle className="nw-chart__focus-ring" cx={activePoint.x} cy={activePoint.y} r={8} data-testid="chart-focus-ring" />
+          <circle className="oc-chart__focus-ring" cx={activePoint.x} cy={activePoint.y} r={8} data-testid="chart-focus-ring" />
         )}
-        {mode === 'pointer' && activePoint && <circle className="nw-chart__hover-dot" cx={activePoint.x} cy={activePoint.y} r={5} />}
+        {mode === 'pointer' && activePoint && <circle className="oc-chart__hover-dot" cx={activePoint.x} cy={activePoint.y} r={5} />}
       </g>
     </svg>
   );
 
   if (!interactive) {
     return (
-      <div className={cx('nw-chart__plot', className)} role="img" aria-labelledby={titleId || undefined} aria-describedby={describedBy}>
+      <div className={cx('oc-chart__plot', className)} role="img" aria-labelledby={titleId || undefined} aria-describedby={describedBy}>
         {svg}
       </div>
     );
@@ -1177,7 +1184,7 @@ export function ChartPlot({ points, navigation = 'x', hoverRadius = 64, classNam
 
   return (
     <div
-      className={cx('nw-chart__plot', className)}
+      className={cx('oc-chart__plot', className)}
       role="group"
       aria-roledescription="chart"
       aria-labelledby={titleId || undefined}
@@ -1198,7 +1205,7 @@ export function ChartPlot({ points, navigation = 'x', hoverRadius = 64, classNam
         <ChartTooltip x={activePoint.x + ox} y={activePoint.y + oy} width={frame.width} height={frame.height} title={activePoint.title}>
           {activePoint.series ? (
             <>
-              <span className="nw-chart-tooltip__series">{activePoint.series}</span> <strong>{activePoint.value}</strong>
+              <span className="oc-chart-tooltip__series">{activePoint.series}</span> <strong>{activePoint.value}</strong>
             </>
           ) : (
             <strong>{activePoint.value}</strong>
@@ -1229,13 +1236,13 @@ export function ChartTooltip({ x, y, width, height, title, children, className }
   const below = y < 56;
   return (
     <div
-      className={cx('nw-chart-tooltip', `nw-chart-tooltip--${align}`, below && 'nw-chart-tooltip--below', className)}
+      className={cx('oc-chart-tooltip', `oc-chart-tooltip--${align}`, below && 'oc-chart-tooltip--below', className)}
       style={{ left: `${(x / width) * 100}%`, top: `${(y / height) * 100}%` }}
       aria-hidden="true"
       data-testid="chart-tooltip"
     >
-      {title != null && <div className="nw-chart-tooltip__title">{title}</div>}
-      {children != null && <div className="nw-chart-tooltip__body">{children}</div>}
+      {title != null && <div className="oc-chart-tooltip__title">{title}</div>}
+      {children != null && <div className="oc-chart-tooltip__body">{children}</div>}
     </div>
   );
 }
@@ -1309,20 +1316,20 @@ export function Axis({ scale, position, ticks, tickValues, format, label, tickSi
   const sideMargin = horizontal ? (position === 'bottom' ? margin.bottom : margin.top) : position === 'start' ? margin.start : margin.end;
   return (
     <g
-      className={cx('nw-chart-axis', `nw-chart-axis--${position}`, className)}
+      className={cx('oc-chart-axis', `oc-chart-axis--${position}`, className)}
       transform={horizontal ? `translate(0,${r2(base)})` : `translate(${r2(base)},0)`}
     >
-      {horizontal ? <line className="nw-chart-axis__line" x1={0} x2={w} /> : <line className="nw-chart-axis__line" y1={0} y2={h} />}
+      {horizontal ? <line className="oc-chart-axis__line" x1={0} x2={w} /> : <line className="oc-chart-axis__line" y1={0} y2={h} />}
       {items.map((t) =>
         horizontal ? (
-          <g key={t.key} className="nw-chart-axis__tick" transform={`translate(${r2(t.pos)},0)`}>
+          <g key={t.key} className="oc-chart-axis__tick" transform={`translate(${r2(t.pos)},0)`}>
             <line y2={out * tickSize} />
             <text y={out * (tickSize + 3)} dy={out > 0 ? '0.71em' : '0'} textAnchor="middle">
               {t.text}
             </text>
           </g>
         ) : (
-          <g key={t.key} className="nw-chart-axis__tick" transform={`translate(0,${r2(t.pos)})`}>
+          <g key={t.key} className="oc-chart-axis__tick" transform={`translate(0,${r2(t.pos)})`}>
             <line x2={out * tickSize} />
             <text x={out * (tickSize + 3)} dy="0.32em" textAnchor={out > 0 ? 'start' : 'end'}>
               {t.text}
@@ -1332,12 +1339,12 @@ export function Axis({ scale, position, ticks, tickValues, format, label, tickSi
       )}
       {label != null &&
         (horizontal ? (
-          <text className="nw-chart-axis__label" x={w / 2} y={out * (sideMargin - 6)} textAnchor="middle">
+          <text className="oc-chart-axis__label" x={w / 2} y={out * (sideMargin - 6)} textAnchor="middle">
             {label}
           </text>
         ) : (
           <text
-            className="nw-chart-axis__label"
+            className="oc-chart-axis__label"
             transform={`translate(${out * (sideMargin - 12)},${h / 2}) rotate(-90)`}
             textAnchor="middle"
           >
@@ -1368,7 +1375,7 @@ export function Gridlines({ scale, orientation, ticks, tickValues, className }: 
     minSpacing: horizontal ? 22 : 64,
   });
   return (
-    <g className={cx('nw-chart-grid', className)}>
+    <g className={cx('oc-chart-grid', className)}>
       {items.map((t) =>
         horizontal ? (
           <line key={t.key} x1={0} x2={frame.innerWidth} y1={r2(t.pos)} y2={r2(t.pos)} />
@@ -1407,7 +1414,7 @@ export interface BarSeriesProps {
 export function BarSeries({ bars, seriesIndex = 0, color, radius = 2, className }: BarSeriesProps) {
   const { uid } = useChart();
   return (
-    <g className={cx('nw-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
+    <g className={cx('oc-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
       {bars.map((b, k) => {
         if (!b) return null;
         const si = b.seriesIndex ?? seriesIndex;
@@ -1415,9 +1422,9 @@ export function BarSeries({ bars, seriesIndex = 0, color, radius = 2, className 
         const rx = Math.min(radius, b.width / 2, b.height / 2);
         return (
           <g key={b.key ?? k} className={b.seriesIndex != null ? seriesClass(si) : undefined} style={colorStyle(b.color)}>
-            <rect className="nw-chart__bar" x={r2(b.x)} y={r2(b.y)} width={r2(Math.max(0, b.width))} height={r2(Math.max(0, b.height))} rx={rx} />
+            <rect className="oc-chart__bar" x={r2(b.x)} y={r2(b.y)} width={r2(Math.max(0, b.width))} height={r2(Math.max(0, b.height))} rx={rx} />
             {fill && (
-              <rect className="nw-chart__pattern" x={r2(b.x)} y={r2(b.y)} width={r2(Math.max(0, b.width))} height={r2(Math.max(0, b.height))} rx={rx} fill={fill} />
+              <rect className="oc-chart__pattern" x={r2(b.x)} y={r2(b.y)} width={r2(Math.max(0, b.width))} height={r2(Math.max(0, b.height))} rx={rx} fill={fill} />
             )}
           </g>
         );
@@ -1441,14 +1448,14 @@ export interface LineSeriesProps {
 export function LineSeries({ points, seriesIndex = 0, color, curve = 'linear', markers = 'auto', markerSize = 3.5, className }: LineSeriesProps) {
   const shape = markerShapeFor(seriesIndex);
   return (
-    <g className={cx('nw-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
-      <path className="nw-chart__line" d={linePath(points, curve)} />
+    <g className={cx('oc-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
+      <path className="oc-chart__line" d={linePath(points, curve)} />
       {markers !== false &&
         points.map((p, k) =>
           p ? (
             <path
               key={k}
-              className={cx('nw-chart__marker', markers === 'auto' && 'nw-chart__marker--auto')}
+              className={cx('oc-chart__marker', markers === 'auto' && 'oc-chart__marker--auto')}
               d={markerPath(shape, p.x, p.y, markerSize)}
               data-shape={shape}
             />
@@ -1476,18 +1483,18 @@ export function AreaSeries({ points, seriesIndex = 0, color, curve = 'linear', g
   const fill = patternFill(uid, seriesIndex);
   const d = areaPath(points, curve);
   return (
-    <g className={cx('nw-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
+    <g className={cx('oc-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
       {gradient && (
         <defs>
           <linearGradient id={gid} x1="0" y1="0" x2="0" y2="1" className={seriesClass(seriesIndex)} style={colorStyle(color)}>
-            <stop offset="0%" className="nw-chart__stop nw-chart__stop--top" />
-            <stop offset="100%" className="nw-chart__stop nw-chart__stop--bottom" />
+            <stop offset="0%" className="oc-chart__stop oc-chart__stop--top" />
+            <stop offset="100%" className="oc-chart__stop oc-chart__stop--bottom" />
           </linearGradient>
         </defs>
       )}
-      <path className={cx('nw-chart__area', gradient && 'nw-chart__area--gradient')} d={d} style={gradient ? { fill: `url(#${gid})` } : undefined} />
-      {fill && <path className="nw-chart__pattern nw-chart__pattern--area" d={d} fill={fill} />}
-      {line && <path className="nw-chart__line" d={linePath(points.map((p) => (p ? { x: p.x, y: p.y1 } : null)), curve)} />}
+      <path className={cx('oc-chart__area', gradient && 'oc-chart__area--gradient')} d={d} style={gradient ? { fill: `url(#${gid})` } : undefined} />
+      {fill && <path className="oc-chart__pattern oc-chart__pattern--area" d={d} fill={fill} />}
+      {line && <path className="oc-chart__line" d={linePath(points.map((p) => (p ? { x: p.x, y: p.y1 } : null)), curve)} />}
     </g>
   );
 }
@@ -1505,9 +1512,9 @@ export interface PointSeriesProps {
 export function PointSeries({ points, seriesIndex = 0, color, shape, radius = 4.5, className }: PointSeriesProps) {
   const sh = shape ?? markerShapeFor(seriesIndex);
   return (
-    <g className={cx('nw-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
+    <g className={cx('oc-chart__series', seriesClass(seriesIndex), className)} style={colorStyle(color)}>
       {points.map((p, k) =>
-        p ? <path key={p.key ?? k} className="nw-chart__point" d={markerPath(sh, p.x, p.y, p.r ?? radius)} data-shape={sh} /> : null,
+        p ? <path key={p.key ?? k} className="oc-chart__point" d={markerPath(sh, p.x, p.y, p.r ?? radius)} data-shape={sh} /> : null,
       )}
     </g>
   );
@@ -1536,7 +1543,7 @@ export interface ArcSeriesProps {
 export function ArcSeries({ cx: x, cy: y, innerRadius = 0, outerRadius, arcs, padAngle = 0, className }: ArcSeriesProps) {
   const { uid } = useChart();
   return (
-    <g className={cx('nw-chart__series', className)}>
+    <g className={cx('oc-chart__series', className)}>
       {arcs.map((a, k) => {
         const si = a.seriesIndex ?? k;
         const pad = arcs.length > 1 ? Math.min(padAngle, Math.abs(a.endAngle - a.startAngle) / 3) / 2 : 0;
@@ -1546,8 +1553,8 @@ export function ArcSeries({ cx: x, cy: y, innerRadius = 0, outerRadius, arcs, pa
         const fill = patternFill(uid, si);
         return (
           <g key={a.key ?? k} className={seriesClass(si)} style={colorStyle(a.color)}>
-            <path className="nw-chart__arc" d={d} fillRule="evenodd" />
-            {fill && <path className="nw-chart__pattern" d={d} fill={fill} fillRule="evenodd" />}
+            <path className="oc-chart__arc" d={d} fillRule="evenodd" />
+            {fill && <path className="oc-chart__pattern" d={d} fill={fill} fillRule="evenodd" />}
           </g>
         );
       })}
@@ -1572,13 +1579,13 @@ export interface ReferenceLineProps {
 export function ReferenceLine({ x, y, label, tone = 'neutral', dashed = true, className }: ReferenceLineProps) {
   const { frame } = useChart();
   const { innerWidth: w, innerHeight: h, rtl } = frame;
-  const cls = cx('nw-chart-ref', `nw-chart-ref--${tone}`, dashed && 'nw-chart-ref--dashed', className);
+  const cls = cx('oc-chart-ref', `oc-chart-ref--${tone}`, dashed && 'oc-chart-ref--dashed', className);
   if (y != null) {
     return (
       <g className={cls}>
         <line x1={0} x2={w} y1={r2(y)} y2={r2(y)} />
         {label != null && (
-          <text x={rtl ? 4 : w - 4} y={r2(y) - 5} textAnchor={rtl ? 'start' : 'end'} className="nw-chart-ref__label">
+          <text x={rtl ? 4 : w - 4} y={r2(y) - 5} textAnchor={rtl ? 'start' : 'end'} className="oc-chart-ref__label">
             {label}
           </text>
         )}
@@ -1590,7 +1597,7 @@ export function ReferenceLine({ x, y, label, tone = 'neutral', dashed = true, cl
       <g className={cls}>
         <line x1={r2(x)} x2={r2(x)} y1={0} y2={h} />
         {label != null && (
-          <text x={r2(x) + (rtl ? -4 : 4)} y={12} textAnchor={rtl ? 'end' : 'start'} className="nw-chart-ref__label">
+          <text x={r2(x) + (rtl ? -4 : 4)} y={12} textAnchor={rtl ? 'end' : 'start'} className="oc-chart-ref__label">
             {label}
           </text>
         )}
@@ -1617,7 +1624,7 @@ export function Annotation({ x, y, dx = 0, dy = -28, label, className }: Annotat
   const ty = y + dy;
   const anchor = dx > 4 ? 'start' : dx < -4 ? 'end' : 'middle';
   return (
-    <g className={cx('nw-chart-annotation', className)}>
+    <g className={cx('oc-chart-annotation', className)}>
       <line x1={r2(x)} y1={r2(y)} x2={r2(tx)} y2={r2(ty + (dy < 0 ? 4 : -4))} />
       <circle cx={r2(x)} cy={r2(y)} r={3} />
       <text x={r2(tx)} y={r2(ty)} textAnchor={anchor} dy={dy < 0 ? '-0.2em' : '0.9em'}>
@@ -1650,29 +1657,29 @@ export interface LegendProps {
 export function Legend({ items, title, className }: LegendProps) {
   const { uid, labels } = useChart();
   return (
-    <div className={cx('nw-chart-legend', className)}>
-      {title && <span className="nw-chart-legend__title">{title}</span>}
-      <ul className="nw-chart-legend__list" aria-label={typeof title === 'string' ? title : labels.legend}>
+    <div className={cx('oc-chart-legend', className)}>
+      {title && <span className="oc-chart-legend__title">{title}</span>}
+      <ul className="oc-chart-legend__list" aria-label={typeof title === 'string' ? title : labels.legend}>
         {items.map((item, k) => {
           const fill = patternFill(uid, item.seriesIndex);
           const shape = markerShapeFor(item.seriesIndex);
           return (
-            <li key={k} className={cx('nw-chart-legend__item', seriesClass(item.seriesIndex))} style={colorStyle(item.color)}>
-              <svg className="nw-chart-legend__swatch" width="18" height="12" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
+            <li key={k} className={cx('oc-chart-legend__item', seriesClass(item.seriesIndex))} style={colorStyle(item.color)}>
+              <svg className="oc-chart-legend__swatch" width="18" height="12" viewBox="0 0 18 12" aria-hidden="true" focusable="false">
                 {item.kind === 'line' || item.kind === 'point' ? (
                   <>
-                    {item.kind === 'line' && <path className="nw-chart__line" d="M1,6H17" />}
-                    <path className={item.kind === 'line' ? 'nw-chart__marker' : 'nw-chart__point'} d={markerPath(shape, 9, 6, 3.5)} data-shape={shape} />
+                    {item.kind === 'line' && <path className="oc-chart__line" d="M1,6H17" />}
+                    <path className={item.kind === 'line' ? 'oc-chart__marker' : 'oc-chart__point'} d={markerPath(shape, 9, 6, 3.5)} data-shape={shape} />
                   </>
                 ) : (
                   <>
-                    <rect className="nw-chart__bar" x="1" y="1" width="16" height="10" rx="2" />
-                    {fill && <rect className="nw-chart__pattern" x="1" y="1" width="16" height="10" rx="2" fill={fill} />}
+                    <rect className="oc-chart__bar" x="1" y="1" width="16" height="10" rx="2" />
+                    {fill && <rect className="oc-chart__pattern" x="1" y="1" width="16" height="10" rx="2" fill={fill} />}
                   </>
                 )}
               </svg>
-              <span className="nw-chart-legend__label">{item.label}</span>
-              {item.value != null && <span className="nw-chart-legend__value">{item.value}</span>}
+              <span className="oc-chart-legend__label">{item.label}</span>
+              {item.value != null && <span className="oc-chart-legend__value">{item.value}</span>}
             </li>
           );
         })}
@@ -1921,7 +1928,7 @@ export function BarChart<T>(props: BarChartProps<T>) {
               texts.push(
                 <text
                   key={`${si}-${i}`}
-                  className="nw-chart__label"
+                  className="oc-chart__label"
                   x={horizontal ? point.x + outward * 4 : point.x}
                   y={horizontal ? point.y : point.y + outward * 4}
                   dy={horizontal ? '0.32em' : outward > 0 ? '0.8em' : '0'}
@@ -1940,9 +1947,9 @@ export function BarChart<T>(props: BarChartProps<T>) {
               <BarSeries key={s.key} bars={bars[s.index]} seriesIndex={s.index} color={s.color} />
             ))}
             {horizontal ? (
-              <ReferenceLine x={val(0)} dashed={false} className="nw-chart-ref--baseline" />
+              <ReferenceLine x={val(0)} dashed={false} className="oc-chart-ref--baseline" />
             ) : (
-              <ReferenceLine y={val(0)} dashed={false} className="nw-chart-ref--baseline" />
+              <ReferenceLine y={val(0)} dashed={false} className="oc-chart-ref--baseline" />
             )}
             <Axis scale={band} position={horizontal ? 'start' : 'bottom'} format={(k: string) => model.categories[Number(k)] ?? k} label={xLabel} />
             <Axis scale={val} position={horizontal ? 'bottom' : 'start'} label={yLabel} />
@@ -2088,7 +2095,7 @@ function LinesImpl<T>(props: AreaChartProps<T> & { kind: 'line' | 'area' }) {
               return last ? (
                 <text
                   key={s.key}
-                  className={cx('nw-chart__label nw-chart__label--series', seriesClass(s.index))}
+                  className={cx('oc-chart__label oc-chart__label--series', seriesClass(s.index))}
                   x={last.x + (frame.rtl ? -8 : 8)}
                   y={last.y}
                   dy="0.32em"
@@ -2219,7 +2226,7 @@ export function ComboChart<T>(props: ComboChartProps<T>) {
           <ChartPlot points={pts}>
             <Gridlines scale={y1} orientation="horizontal" />
             {order.map(({ i }) => marks[i])}
-            <ReferenceLine y={y1(0)} dashed={false} className="nw-chart-ref--baseline" />
+            <ReferenceLine y={y1(0)} dashed={false} className="oc-chart-ref--baseline" />
             <Axis scale={band} position="bottom" format={(k: string) => model.categories[Number(k)] ?? k} />
             <Axis scale={y1} position="start" label={primaryLabel} />
             {hasSecondary && (
@@ -2353,7 +2360,7 @@ export function PieChart<T>(props: PieChartProps<T>) {
           row.push({ ...c, title: s.label, series: '', value: `${fmt(s.value)} (${pctFmt.format(share(s.value))})` });
           if (directLabels && share(s.value) >= 0.06) {
             texts.push(
-              <text key={i} className="nw-chart__label nw-chart__label--inside" x={c.x} y={c.y} dy="0.32em" textAnchor="middle">
+              <text key={i} className="oc-chart__label oc-chart__label--inside" x={c.x} y={c.y} dy="0.32em" textAnchor="middle">
                 {pctFmt.format(share(s.value))}
               </text>,
             );
@@ -2364,12 +2371,12 @@ export function PieChart<T>(props: PieChartProps<T>) {
             <ArcSeries cx={cxp} cy={cyp} innerRadius={r0} outerRadius={r} arcs={arcs} padAngle={0.012} />
             {texts}
             {r0 > 0 && (
-              <g className="nw-chart__center">
-                <text x={cxp} y={cyp} className="nw-chart__center-value" textAnchor="middle" dy={props.centerSubLabel === null ? '0.32em' : '0.1em'}>
+              <g className="oc-chart__center">
+                <text x={cxp} y={cyp} className="oc-chart__center-value" textAnchor="middle" dy={props.centerSubLabel === null ? '0.32em' : '0.1em'}>
                   {props.centerLabel ?? compactFormatter(locale)(total)}
                 </text>
                 {props.centerSubLabel !== null && (
-                  <text x={cxp} y={cyp} className="nw-chart__center-sub" textAnchor="middle" dy="1.5em">
+                  <text x={cxp} y={cyp} className="oc-chart__center-sub" textAnchor="middle" dy="1.5em">
                     {props.centerSubLabel ?? labels.total}
                   </text>
                 )}
@@ -2514,7 +2521,7 @@ export function ScatterChart<T>(props: ScatterChartProps<T>) {
               <PointSeries
                 key={k}
                 seriesIndex={k}
-                className={size ? 'nw-chart__series--bubble' : undefined}
+                className={size ? 'oc-chart__series--bubble' : undefined}
                 points={g.map((r) => ({ x: sx(r.x), y: sy(r.y), r: radius(r.size), key: r.i }))}
               />
             ))}
@@ -2590,19 +2597,19 @@ export function RadarChart<T>(props: RadarChartProps<T>) {
         );
         return (
           <ChartPlot points={pts}>
-            <g className="nw-chart-grid">
+            <g className="oc-chart-grid">
               {rs.ticks(4).filter((t) => t > 0).map((t) => <path key={t} d={ring(t)} fill="none" />)}
               {model.keys.map((k, i) => {
                 const p = polar(cxp, cyp, R, ang(i));
                 return <line key={k} x1={cxp} y1={cyp} x2={r2(p.x)} y2={r2(p.y)} />;
               })}
             </g>
-            <g className="nw-chart-axis">
+            <g className="oc-chart-axis">
               {model.keys.map((k, i) => {
                 const p = polar(cxp, cyp, R + 12, ang(i));
                 const sx = Math.sin(ang(i));
                 return (
-                  <g key={k} className="nw-chart-axis__tick">
+                  <g key={k} className="oc-chart-axis__tick">
                     <text x={r2(p.x)} y={r2(p.y)} dy="0.32em" textAnchor={Math.abs(sx) < 0.2 ? 'middle' : sx > 0 ? 'start' : 'end'}>
                       {model.categories[i]}
                     </text>
@@ -2610,7 +2617,7 @@ export function RadarChart<T>(props: RadarChartProps<T>) {
                 );
               })}
               {rs.ticks(4).filter((t) => t > 0).map((t) => (
-                <text key={t} className="nw-chart-axis__ring-label" x={cxp + 3} y={cyp - rs(t)} dy="-0.2em">
+                <text key={t} className="oc-chart-axis__ring-label" x={cxp + 3} y={cyp - rs(t)} dy="-0.2em">
                   {compactFormatter(locale)(t)}
                 </text>
               ))}
@@ -2619,11 +2626,11 @@ export function RadarChart<T>(props: RadarChartProps<T>) {
               const poly = s.values.map((v, i) => polar(cxp, cyp, rs(v ?? 0), ang(i)));
               const d = `M${poly.map((p) => `${r2(p.x)},${r2(p.y)}`).join('L')}Z`;
               return (
-                <g key={s.key} className={cx('nw-chart__series', seriesClass(s.index))} style={colorStyle(s.color)}>
-                  <path className="nw-chart__area nw-chart__area--radar" d={d} />
-                  <path className="nw-chart__line" d={d} />
+                <g key={s.key} className={cx('oc-chart__series', seriesClass(s.index))} style={colorStyle(s.color)}>
+                  <path className="oc-chart__area oc-chart__area--radar" d={d} />
+                  <path className="oc-chart__line" d={d} />
                   {s.values.map((v, i) =>
-                    v == null ? null : <path key={i} className="nw-chart__marker" d={markerPath(markerShapeFor(s.index), poly[i].x, poly[i].y, 3.5)} />,
+                    v == null ? null : <path key={i} className="oc-chart__marker" d={markerPath(markerShapeFor(s.index), poly[i].x, poly[i].y, 3.5)} />,
                   )}
                 </g>
               );
@@ -2686,25 +2693,25 @@ export function Sparkline({
   const lastIdx = pts.map((p, i) => (p ? i : -1)).filter((i) => i >= 0).pop();
   const last = lastIdx != null ? pts[lastIdx] : null;
   return (
-    <span className={cx('nw-sparkline', `nw-sparkline--${tone}`, className)} role="img" aria-label={text} title={text}>
+    <span className={cx('oc-sparkline', `oc-sparkline--${tone}`, className)} role="img" aria-label={text} title={text}>
       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" focusable="false">
         {area && (
           <>
             <defs>
               <linearGradient id={`${uid}-g`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" className="nw-chart__stop nw-chart__stop--top" />
-                <stop offset="100%" className="nw-chart__stop nw-chart__stop--bottom" />
+                <stop offset="0%" className="oc-chart__stop oc-chart__stop--top" />
+                <stop offset="100%" className="oc-chart__stop oc-chart__stop--bottom" />
               </linearGradient>
             </defs>
             <path
-              className="nw-chart__area nw-chart__area--gradient"
+              className="oc-chart__area oc-chart__area--gradient"
               style={{ fill: `url(#${uid}-g)` }}
               d={areaPath(pts.map((p) => (p ? { x: p.x, y1: p.y, y0: height - pad } : null)), curve)}
             />
           </>
         )}
-        <path className="nw-chart__line" d={linePath(pts, curve)} />
-        {showEnd && last && <circle className="nw-sparkline__end" cx={last.x} cy={last.y} r={2.5} />}
+        <path className="oc-chart__line" d={linePath(pts, curve)} />
+        {showEnd && last && <circle className="oc-sparkline__end" cx={last.x} cy={last.y} r={2.5} />}
       </svg>
     </span>
   );
@@ -2787,7 +2794,7 @@ function GaugeBody({
   const tp = target != null ? [polar(cxp, cyp, r - 3, ang(target)), polar(cxp, cyp, R + 3, ang(target))] : null;
   return (
     <div
-      className={cx('nw-chart-gauge', `nw-chart-gauge--${variant}`)}
+      className={cx('oc-chart-gauge', `oc-chart-gauge--${variant}`)}
       role="meter"
       aria-labelledby={titleId}
       aria-describedby={[descriptionId, summaryId].filter(Boolean).join(' ') || undefined}
@@ -2796,21 +2803,21 @@ function GaugeBody({
       aria-valuenow={value}
       aria-valuetext={valueText}
     >
-      <svg className="nw-chart__svg nw-chart-gauge__svg" width={size} height={h} viewBox={`0 0 ${size} ${h}`} aria-hidden="true" focusable="false">
-        <path className="nw-chart-gauge__track" d={arcPath(cxp, cyp, r, R, trackA0, trackA1)} fillRule="evenodd" />
+      <svg className="oc-chart__svg oc-chart-gauge__svg" width={size} height={h} viewBox={`0 0 ${size} ${h}`} aria-hidden="true" focusable="false">
+        <path className="oc-chart-gauge__track" d={arcPath(cxp, cyp, r, R, trackA0, trackA1)} fillRule="evenodd" />
         {frac(value) > 0 && (
-          <path className={cx('nw-chart-gauge__value', `nw-chart-gauge__value--${tone}`)} d={arcPath(cxp, cyp, r, R, valueA0, ang(value))} fillRule="evenodd" />
+          <path className={cx('oc-chart-gauge__value', `oc-chart-gauge__value--${tone}`)} d={arcPath(cxp, cyp, r, R, valueA0, ang(value))} fillRule="evenodd" />
         )}
         {tp && (
-          <g className="nw-chart-gauge__target">
+          <g className="oc-chart-gauge__target">
             <line x1={r2(tp[0].x)} y1={r2(tp[0].y)} x2={r2(tp[1].x)} y2={r2(tp[1].y)} />
           </g>
         )}
-        <text className="nw-chart-gauge__text" x={cxp} y={semi ? cyp - 6 : cyp} dy={semi ? 0 : '0.32em'} textAnchor="middle">
+        <text className="oc-chart-gauge__text" x={cxp} y={semi ? cyp - 6 : cyp} dy={semi ? 0 : '0.32em'} textAnchor="middle">
           {fmt(value)}
         </text>
         {target != null && semi && (
-          <text className="nw-chart-gauge__sub" x={cxp} y={cyp + 2} dy="0.9em" textAnchor="middle">
+          <text className="oc-chart-gauge__sub" x={cxp} y={cyp + 2} dy="0.9em" textAnchor="middle">
             {targetLabel} {fmt(target)}
           </text>
         )}
@@ -2864,7 +2871,7 @@ export function GaugeChart({
       patterns={patterns}
       table={table}
       labels={labels}
-      className={cx('nw-chart--gauge', className)}
+      className={cx('oc-chart--gauge', className)}
       width={s}
       height={variant === 'semi' ? s / 2 + 8 : s}
       tableData={{
@@ -2951,21 +2958,21 @@ export function Heatmap<T>(props: HeatmapProps<T>) {
   };
   const legend =
     props.legend === false ? undefined : (
-      <div className="nw-chart-legend nw-chart-legend--scale">
-        <span className="nw-chart-legend__label">{lessLabel}</span>
-        <ul className="nw-chart-legend__list" aria-label={labels.legend}>
+      <div className="oc-chart-legend oc-chart-legend--scale">
+        <span className="oc-chart-legend__label">{lessLabel}</span>
+        <ul className="oc-chart-legend__list" aria-label={labels.legend}>
           {bounds.map(([a, b], k) => (
-            <li key={k} className="nw-chart-legend__item">
-              <svg className="nw-chart-legend__swatch" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
-                <rect className={cx('nw-chart__cell', `nw-chart__cell--${k + 1}`)} width="12" height="12" rx="2" />
+            <li key={k} className="oc-chart-legend__item">
+              <svg className="oc-chart-legend__swatch" width="12" height="12" viewBox="0 0 12 12" aria-hidden="true" focusable="false">
+                <rect className={cx('oc-chart__cell', `oc-chart__cell--${k + 1}`)} width="12" height="12" rx="2" />
               </svg>
-              <span className="nw-sr-only">
+              <span className="oc-sr-only">
                 {fmt(a)}–{fmt(b)}
               </span>
             </li>
           ))}
         </ul>
-        <span className="nw-chart-legend__label">{moreLabel}</span>
+        <span className="oc-chart-legend__label">{moreLabel}</span>
       </div>
     );
   return (
@@ -2996,7 +3003,7 @@ export function Heatmap<T>(props: HeatmapProps<T>) {
         );
         return (
           <ChartPlot points={pts}>
-            <g className="nw-chart__heat">
+            <g className="oc-chart__heat">
               {ys.map((row) =>
                 xs.map((col) => {
                   const c = lookup.get(`${row}\u0000${col}`);
@@ -3006,9 +3013,9 @@ export function Heatmap<T>(props: HeatmapProps<T>) {
                   const h = Math.max(1, by.bandwidth - gap);
                   return (
                     <g key={`${row}-${col}`}>
-                      <rect className={cx('nw-chart__cell', k > 0 && `nw-chart__cell--${k}`)} x={r2(bx(col) + gap / 2)} y={r2(by(row) + gap / 2)} width={r2(w)} height={r2(h)} rx={2} />
+                      <rect className={cx('oc-chart__cell', k > 0 && `oc-chart__cell--${k}`)} x={r2(bx(col) + gap / 2)} y={r2(by(row) + gap / 2)} width={r2(w)} height={r2(h)} rx={2} />
                       {showValues && c.v != null && w > 18 && h > 12 && (
-                        <text className={cx('nw-chart__cell-text', k >= 4 && 'nw-chart__cell-text--on')} x={bx.center(col)} y={by.center(row)} dy="0.32em" textAnchor="middle">
+                        <text className={cx('oc-chart__cell-text', k >= 4 && 'oc-chart__cell-text--on')} x={bx.center(col)} y={by.center(row)} dy="0.32em" textAnchor="middle">
                           {compactFormatter(locale)(c.v)}
                         </text>
                       )}
@@ -3017,8 +3024,8 @@ export function Heatmap<T>(props: HeatmapProps<T>) {
                 }),
               )}
             </g>
-            <Axis scale={bx} position="bottom" tickSize={0} className="nw-chart-axis--bare" />
-            <Axis scale={by} position="start" tickSize={0} className="nw-chart-axis--bare" />
+            <Axis scale={bx} position="bottom" tickSize={0} className="oc-chart-axis--bare" />
+            <Axis scale={by} position="start" tickSize={0} className="oc-chart-axis--bare" />
           </ChartPlot>
         );
       }}
@@ -3142,7 +3149,7 @@ export function WaterfallChart({
     columns: ['Step', 'Change', 'Running total'],
     rows: steps.map((s) => ({ header: s.label, cells: [s.kind === 'total' ? kindText.total : fmt(s.value), fmt(s.to)] })),
   };
-  const palette = { total: { si: 0 }, up: { si: 1, color: 'var(--nw-success)' }, down: { si: 2, color: 'var(--nw-danger)' } };
+  const palette = { total: { si: 0 }, up: { si: 1, color: 'var(--oc-success)' }, down: { si: 2, color: 'var(--oc-danger)' } };
   return (
     <ChartContainer
       title={title}
@@ -3197,7 +3204,7 @@ export function WaterfallChart({
               return (
                 <line
                   key={`c${i}`}
-                  className="nw-chart__connector"
+                  className="oc-chart__connector"
                   x1={frame.rtl ? a : a + x.bandwidth}
                   x2={frame.rtl ? b + x.bandwidth : b}
                   y1={y(s.to)}
@@ -3206,7 +3213,7 @@ export function WaterfallChart({
               );
             })}
             <BarSeries bars={bars} />
-            <ReferenceLine y={y(0)} dashed={false} className="nw-chart-ref--baseline" />
+            <ReferenceLine y={y(0)} dashed={false} className="oc-chart-ref--baseline" />
             <Axis scale={x} position="bottom" format={(k: string) => steps[Number(k)]?.label ?? k} />
             <Axis scale={y} position="start" />
           </ChartPlot>

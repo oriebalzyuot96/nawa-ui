@@ -2,4 +2,4 @@
   let { label }: { label?: string } = $props();
 </script>
 
-<hr class="nw-divider" aria-label={label} />
+<hr class="oc-divider" aria-label={label} />

@@ -4,9 +4,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nawa_ui/nawa_ui.dart';
+import 'package:orca_ui/orca_ui.dart';
 
-final ThemeData _theme = NawaThemeData.build();
+final ThemeData _theme = OrcaThemeData.build();
 
 Widget _wrap(Widget child, {TextDirection direction = TextDirection.ltr}) {
   return MaterialApp(
@@ -25,40 +25,40 @@ Widget _wrap(Widget child, {TextDirection direction = TextDirection.ltr}) {
 typedef _Person = ({String name, int age});
 
 void main() {
-  testWidgets('NawaButton exposes the loading state to semantics', (WidgetTester tester) async {
+  testWidgets('OrcaButton exposes the loading state to semantics', (WidgetTester tester) async {
     final handle = tester.ensureSemantics();
     int taps = 0;
 
-    await tester.pumpWidget(_wrap(NawaButton(label: 'Save', loading: true, onPressed: () => taps++)));
+    await tester.pumpWidget(_wrap(OrcaButton(label: 'Save', loading: true, onPressed: () => taps++)));
     expect(
-      tester.getSemantics(find.byType(NawaButton)),
+      tester.getSemantics(find.byType(OrcaButton)),
       containsSemantics(label: 'Save', value: 'Loading', isButton: true, hasEnabledState: true, isEnabled: false),
     );
-    await tester.tap(find.byType(NawaButton), warnIfMissed: false);
+    await tester.tap(find.byType(OrcaButton), warnIfMissed: false);
     await tester.pump();
     expect(taps, 0);
 
-    await tester.pumpWidget(_wrap(NawaButton(label: 'Save', onPressed: () => taps++)));
+    await tester.pumpWidget(_wrap(OrcaButton(label: 'Save', onPressed: () => taps++)));
     expect(
-      tester.getSemantics(find.byType(NawaButton)),
+      tester.getSemantics(find.byType(OrcaButton)),
       containsSemantics(label: 'Save', isButton: true, hasEnabledState: true, isEnabled: true),
     );
-    await tester.tap(find.byType(NawaButton));
+    await tester.tap(find.byType(OrcaButton));
     await tester.pump();
     expect(taps, 1);
 
     // Hit area is at least 48x48 even for the small size.
-    await tester.pumpWidget(_wrap(NawaButton(label: 'S', size: NawaButtonSize.sm, onPressed: () {})));
-    final Size size = tester.getSize(find.byType(NawaButton));
+    await tester.pumpWidget(_wrap(OrcaButton(label: 'S', size: OrcaButtonSize.sm, onPressed: () {})));
+    final Size size = tester.getSize(find.byType(OrcaButton));
     expect(size.width, greaterThanOrEqualTo(48));
     expect(size.height, greaterThanOrEqualTo(48));
     handle.dispose();
   });
 
-  testWidgets('NawaInput exposes label and error to semantics', (WidgetTester tester) async {
+  testWidgets('OrcaInput exposes label and error to semantics', (WidgetTester tester) async {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
-      _wrap(const NawaInput(label: 'Email', hint: 'We never share it', error: 'Enter a valid email')),
+      _wrap(const OrcaInput(label: 'Email', hint: 'We never share it', error: 'Enter a valid email')),
     );
     final data = tester.getSemantics(find.bySemanticsLabel(RegExp('Email')).first).getSemanticsData();
     expect(data.label, contains('Email'));
@@ -66,20 +66,20 @@ void main() {
     // The visible error text is rendered (and is a live region).
     expect(find.text('Enter a valid email'), findsOneWidget);
     // Without an error, the hint describes the field.
-    await tester.pumpWidget(_wrap(const NawaInput(label: 'Email', hint: 'We never share it')));
+    await tester.pumpWidget(_wrap(const OrcaInput(label: 'Email', hint: 'We never share it')));
     final plain = tester.getSemantics(find.bySemanticsLabel(RegExp('Email')).first).getSemanticsData();
     expect(plain.hint, contains('We never share it'));
     expect(find.text('Enter a valid email'), findsNothing);
     handle.dispose();
   });
 
-  testWidgets('NawaSwitch toggles and reports its state', (WidgetTester tester) async {
+  testWidgets('OrcaSwitch toggles and reports its state', (WidgetTester tester) async {
     final handle = tester.ensureSemantics();
     bool value = false;
     await tester.pumpWidget(
       _wrap(
         StatefulBuilder(
-          builder: (BuildContext context, StateSetter setState) => NawaSwitch(
+          builder: (BuildContext context, StateSetter setState) => OrcaSwitch(
             label: 'Wi-Fi',
             value: value,
             onChanged: (bool v) => setState(() => value = v),
@@ -88,14 +88,14 @@ void main() {
       ),
     );
     expect(
-      tester.getSemantics(find.byType(NawaSwitch)),
+      tester.getSemantics(find.byType(OrcaSwitch)),
       containsSemantics(label: 'Wi-Fi', hasToggledState: true, isToggled: false),
     );
-    await tester.tap(find.byType(NawaSwitch));
+    await tester.tap(find.byType(OrcaSwitch));
     await tester.pumpAndSettle();
     expect(value, isTrue);
     expect(
-      tester.getSemantics(find.byType(NawaSwitch)),
+      tester.getSemantics(find.byType(OrcaSwitch)),
       containsSemantics(label: 'Wi-Fi', hasToggledState: true, isToggled: true),
     );
     await tester.tap(find.text('Wi-Fi'));
@@ -104,17 +104,17 @@ void main() {
     handle.dispose();
   });
 
-  group('NawaTabs keyboard navigation', () {
-    const List<NawaTabItem> tabs = <NawaTabItem>[
-      NawaTabItem(id: 'one', label: 'One', content: Text('Panel one')),
-      NawaTabItem(id: 'two', label: 'Two', content: Text('Panel two')),
-      NawaTabItem(id: 'skip', label: 'Skip', disabled: true, content: Text('Panel skip')),
-      NawaTabItem(id: 'three', label: 'Three', content: Text('Panel three')),
+  group('OrcaTabs keyboard navigation', () {
+    const List<OrcaTabItem> tabs = <OrcaTabItem>[
+      OrcaTabItem(id: 'one', label: 'One', content: Text('Panel one')),
+      OrcaTabItem(id: 'two', label: 'Two', content: Text('Panel two')),
+      OrcaTabItem(id: 'skip', label: 'Skip', disabled: true, content: Text('Panel skip')),
+      OrcaTabItem(id: 'three', label: 'Three', content: Text('Panel three')),
     ];
 
     testWidgets('arrows, Home and End move and select', (WidgetTester tester) async {
       final List<String> changes = <String>[];
-      await tester.pumpWidget(_wrap(NawaTabs(tabs: tabs, onChanged: changes.add)));
+      await tester.pumpWidget(_wrap(OrcaTabs(tabs: tabs, onChanged: changes.add)));
       expect(find.text('Panel one'), findsOneWidget);
 
       await tester.tap(find.text('One'));
@@ -148,7 +148,7 @@ void main() {
 
     testWidgets('arrows are mirrored in RTL', (WidgetTester tester) async {
       final List<String> changes = <String>[];
-      await tester.pumpWidget(_wrap(NawaTabs(tabs: tabs, onChanged: changes.add), direction: TextDirection.rtl));
+      await tester.pumpWidget(_wrap(OrcaTabs(tabs: tabs, onChanged: changes.add), direction: TextDirection.rtl));
       await tester.tap(find.text('One'));
       await tester.pump();
       await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
@@ -157,10 +157,10 @@ void main() {
     });
   });
 
-  testWidgets('NawaPagination calls back with the requested page', (WidgetTester tester) async {
+  testWidgets('OrcaPagination calls back with the requested page', (WidgetTester tester) async {
     final handle = tester.ensureSemantics();
     final List<int> pages = <int>[];
-    await tester.pumpWidget(_wrap(NawaPagination(page: 1, pageCount: 10, onChanged: pages.add)));
+    await tester.pumpWidget(_wrap(OrcaPagination(page: 1, pageCount: 10, onChanged: pages.add)));
 
     // Previous is disabled on the first page.
     expect(
@@ -197,27 +197,27 @@ void main() {
     handle.dispose();
   });
 
-  group('NawaDataTable', () {
+  group('OrcaDataTable', () {
     const List<_Person> people = <_Person>[
       (name: 'Charlie', age: 30),
       (name: 'alice', age: 25),
       (name: 'Bob', age: 35),
     ];
-    final List<NawaDataColumn<_Person>> columns = <NawaDataColumn<_Person>>[
-      NawaDataColumn<_Person>(key: 'name', label: 'Name', sortable: true, value: (_Person p) => p.name),
-      NawaDataColumn<_Person>(
+    final List<OrcaDataColumn<_Person>> columns = <OrcaDataColumn<_Person>>[
+      OrcaDataColumn<_Person>(key: 'name', label: 'Name', sortable: true, value: (_Person p) => p.name),
+      OrcaDataColumn<_Person>(
         key: 'age',
         label: 'Age',
         sortable: true,
-        align: NawaColumnAlign.end,
+        align: OrcaColumnAlign.end,
         value: (_Person p) => p.age,
       ),
     ];
 
     testWidgets('sorts by column and reports the sort', (WidgetTester tester) async {
-      final List<NawaSort> sorts = <NawaSort>[];
+      final List<OrcaSort> sorts = <OrcaSort>[];
       await tester.pumpWidget(
-        _wrap(NawaDataTable<_Person>(columns: columns, rows: people, onSortChanged: sorts.add)),
+        _wrap(OrcaDataTable<_Person>(columns: columns, rows: people, onSortChanged: sorts.add)),
       );
       double y(String text) => tester.getTopLeft(find.text(text)).dy;
 
@@ -226,50 +226,50 @@ void main() {
 
       await tester.tap(find.text('Name'));
       await tester.pump();
-      expect(sorts.last, const NawaSort('name', NawaSortDirection.ascending));
+      expect(sorts.last, const OrcaSort('name', OrcaSortDirection.ascending));
       expect(y('alice'), lessThan(y('Bob')));
       expect(y('Bob'), lessThan(y('Charlie')));
 
       await tester.tap(find.text('Name'));
       await tester.pump();
-      expect(sorts.last, const NawaSort('name', NawaSortDirection.descending));
+      expect(sorts.last, const OrcaSort('name', OrcaSortDirection.descending));
       expect(y('Charlie'), lessThan(y('Bob')));
       expect(y('Bob'), lessThan(y('alice')));
 
       await tester.tap(find.text('Age'));
       await tester.pump();
-      expect(sorts.last, const NawaSort('age', NawaSortDirection.ascending));
+      expect(sorts.last, const OrcaSort('age', OrcaSortDirection.ascending));
       expect(y('25'), lessThan(y('30')));
       expect(y('30'), lessThan(y('35')));
     });
 
     testWidgets('remote tables only report the sort', (WidgetTester tester) async {
-      final List<NawaSort> sorts = <NawaSort>[];
+      final List<OrcaSort> sorts = <OrcaSort>[];
       await tester.pumpWidget(
-        _wrap(NawaDataTable<_Person>(columns: columns, rows: people, remote: true, onSortChanged: sorts.add)),
+        _wrap(OrcaDataTable<_Person>(columns: columns, rows: people, remote: true, onSortChanged: sorts.add)),
       );
       await tester.tap(find.text('Name'));
       await tester.pump();
-      expect(sorts.single, const NawaSort('name', NawaSortDirection.ascending));
+      expect(sorts.single, const OrcaSort('name', OrcaSortDirection.ascending));
       expect(tester.getTopLeft(find.text('Charlie')).dy, lessThan(tester.getTopLeft(find.text('alice')).dy));
     });
 
     testWidgets('shows skeleton rows while loading and an empty state', (WidgetTester tester) async {
       await tester.pumpWidget(
-        _wrap(NawaDataTable<_Person>(columns: columns, rows: const <_Person>[], loading: true, loadingRows: 2)),
+        _wrap(OrcaDataTable<_Person>(columns: columns, rows: const <_Person>[], loading: true, loadingRows: 2)),
       );
-      expect(find.byType(NawaSkeleton), findsNWidgets(4));
+      expect(find.byType(OrcaSkeleton), findsNWidgets(4));
       expect(find.text('No data'), findsNothing);
 
       await tester.pumpWidget(
-        _wrap(NawaDataTable<_Person>(columns: columns, rows: const <_Person>[], emptyTitle: 'No people')),
+        _wrap(OrcaDataTable<_Person>(columns: columns, rows: const <_Person>[], emptyTitle: 'No people')),
       );
-      expect(find.byType(NawaSkeleton), findsNothing);
+      expect(find.byType(OrcaSkeleton), findsNothing);
       expect(find.text('No people'), findsOneWidget);
     });
   });
 
-  testWidgets('showNawaDialog dismisses with close, backdrop, Escape and actions', (WidgetTester tester) async {
+  testWidgets('showOrcaDialog dismisses with close, backdrop, Escape and actions', (WidgetTester tester) async {
     Future<bool?>? result;
     await tester.pumpWidget(
       MaterialApp(
@@ -277,17 +277,17 @@ void main() {
         home: Scaffold(
           body: Builder(
             builder: (BuildContext context) => Center(
-              child: NawaButton(
+              child: OrcaButton(
                 label: 'Open',
                 onPressed: () {
-                  result = showNawaDialog<bool>(
+                  result = showOrcaDialog<bool>(
                     context: context,
                     title: 'Delete file?',
                     builder: (BuildContext context) => const Text('This cannot be undone.'),
                     actionsBuilder: (BuildContext dialogContext) => <Widget>[
-                      NawaButton(
+                      OrcaButton(
                         label: 'Delete',
-                        variant: NawaButtonVariant.danger,
+                        variant: OrcaButtonVariant.danger,
                         onPressed: () => Navigator.of(dialogContext).pop(true),
                       ),
                     ],
@@ -333,9 +333,9 @@ void main() {
     expect(await result, isTrue);
   });
 
-  group('NawaSkeleton', () {
+  group('OrcaSkeleton', () {
     testWidgets('shimmers by default', (WidgetTester tester) async {
-      await tester.pumpWidget(_wrap(const NawaSkeleton(width: 120)));
+      await tester.pumpWidget(_wrap(const OrcaSkeleton(width: 120)));
       expect(tester.hasRunningAnimations, isTrue);
     });
 
@@ -345,34 +345,34 @@ void main() {
           Builder(
             builder: (BuildContext context) => MediaQuery(
               data: MediaQuery.of(context).copyWith(disableAnimations: true),
-              child: const SizedBox(width: 300, child: NawaSkeletonText()),
+              child: const SizedBox(width: 300, child: OrcaSkeletonText()),
             ),
           ),
         ),
       );
       await tester.pump();
-      expect(find.byType(NawaSkeleton), findsNWidgets(3));
+      expect(find.byType(OrcaSkeleton), findsNWidgets(3));
       expect(tester.hasRunningAnimations, isFalse);
     });
 
     testWidgets('skeleton text is announced once', (WidgetTester tester) async {
       final handle = tester.ensureSemantics();
-      await tester.pumpWidget(_wrap(const SizedBox(width: 300, child: NawaSkeletonText(label: 'Loading article'))));
+      await tester.pumpWidget(_wrap(const SizedBox(width: 300, child: OrcaSkeletonText(label: 'Loading article'))));
       expect(find.bySemanticsLabel('Loading article'), findsOneWidget);
       handle.dispose();
     });
   });
 
-  testWidgets('NawaToast auto-dismisses and announces', (WidgetTester tester) async {
+  testWidgets('OrcaToast auto-dismisses and announces', (WidgetTester tester) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: _theme,
         home: Scaffold(
           body: Builder(
             builder: (BuildContext context) => Center(
-              child: NawaButton(
+              child: OrcaButton(
                 label: 'Notify',
-                onPressed: () => showNawaToast(context, message: 'Saved', duration: const Duration(seconds: 2)),
+                onPressed: () => showOrcaToast(context, message: 'Saved', duration: const Duration(seconds: 2)),
               ),
             ),
           ),
@@ -384,5 +384,47 @@ void main() {
     expect(find.text('Saved'), findsOneWidget);
     await tester.pump(const Duration(seconds: 3));
     expect(find.text('Saved'), findsNothing);
+  });
+
+  group('OrcaEmptyState', () {
+    testWidgets('title is a header, illustration is decorative, actions render in order', (WidgetTester tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(_wrap(OrcaEmptyState(
+        title: 'No results',
+        description: 'Try another search',
+        illustration: const SizedBox(key: Key('art'), height: 40, child: Text('ART')),
+        primaryAction: OrcaButton(label: 'Clear filters', onPressed: () {}),
+        secondaryAction: OrcaButton(label: 'Help', onPressed: () {}),
+        tone: OrcaTone.danger,
+      )));
+      expect(find.text('No results'), findsOneWidget);
+      expect(find.text('Try another search'), findsOneWidget);
+      expect(tester.getSemantics(find.text('No results')), containsSemantics(isHeader: true));
+      expect(find.bySemanticsLabel('ART'), findsNothing);
+      expect(tester.getTopLeft(find.text('Clear filters')).dx, lessThan(tester.getTopLeft(find.text('Help')).dx));
+      handle.dispose();
+    });
+
+    testWidgets('split places the illustration beside the text when wide', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1200, 800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_wrap(const SizedBox(
+        width: 800,
+        child: OrcaEmptyState(title: 'Inbox zero', split: true, illustration: SizedBox(key: Key('art'), width: 200, height: 150)),
+      )));
+      final Offset art = tester.getCenter(find.byKey(const Key('art')));
+      final Offset title = tester.getCenter(find.text('Inbox zero'));
+      expect(title.dx, greaterThan(art.dx));
+      expect((title.dy - art.dy).abs(), lessThan(80));
+    });
+
+    testWidgets('legacy action and isHeader false still work', (WidgetTester tester) async {
+      final handle = tester.ensureSemantics();
+      await tester.pumpWidget(_wrap(OrcaEmptyState(title: 'Empty', size: OrcaEmptyStateSize.compact, isHeader: false, action: OrcaButton(label: 'Add', onPressed: () {}))));
+      expect(find.text('Add'), findsOneWidget);
+      expect(tester.getSemantics(find.text('Empty')), containsSemantics(isHeader: false));
+      handle.dispose();
+    });
   });
 }

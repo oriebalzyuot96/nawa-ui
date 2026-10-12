@@ -2,18 +2,18 @@
 import Base from '../layouts/Base.astro';
 import CodeTabs from '../components/CodeTabs.astro';
 import { install, snippets } from '../data/snippets';
-import Alert from '@nawa-ui/astro/components/Alert';
+import Alert from '@orca-ui/astro/components/Alert';
 ---
 
 <Base
   title="Get started"
-  description="Install Nawa UI in React, Vue, Svelte, Astro or React Native in under a minute: one package, one stylesheet import, and 18 accessible themes."
+  description="Install Orca UI in React, Vue, Svelte, Astro or React Native in under a minute: one package, one stylesheet import, and 21 accessible themes."
 >
   <section class="section">
     <div class="container" style="max-width:52rem">
       <p class="eyebrow">Get started</p>
-      <h1>Install Nawa UI</h1>
-      <p class="lead">One package for your framework plus <code>@nawa-ui/core</code> for the styles and tokens.</p>
+      <h1>Install Orca UI</h1>
+      <p class="lead">One package for your framework plus <code>@orca-ui/core</code> for the styles and tokens.</p>
 
       <h2 style="margin-top:2rem">1. Install and import the styles</h2>
       <CodeTabs label="Install" code={install} />
@@ -22,7 +22,7 @@ import Alert from '@nawa-ui/astro/components/Alert';
       <CodeTabs label="Button" code={snippets.button} />
 
       <h2 style="margin-top:2rem">3. Pick a theme</h2>
-      <p class="muted">By default Nawa UI follows the operating system: light, dark, or high contrast. Override it any time.</p>
+      <p class="muted">By default Orca UI follows the operating system: light, dark, or high contrast. Override it any time.</p>
       <CodeTabs label="Theme" code={snippets.theme} />
 
       <div style="margin-top:2rem">

@@ -1,17 +1,17 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 
-/// Low-level accessible pressable surface used by every Nawa control.
+/// Low-level accessible pressable surface used by every Orca control.
 ///
 /// - Activates with tap, Enter and Space (through [ActivateIntent]).
 /// - Shows a focus ring only for keyboard focus, and a hover/pressed state layer.
 /// - Enforces a minimum tap target ([minSize], 48x48 by default).
 /// - Exposes one semantics node with the given flags.
-class NawaPressable extends StatefulWidget {
+class OrcaPressable extends StatefulWidget {
   /// Creates a pressable.
-  const NawaPressable({
+  const OrcaPressable({
     super.key,
     this.child,
     this.builder,
@@ -20,7 +20,7 @@ class NawaPressable extends StatefulWidget {
     this.autofocus = false,
     this.requestFocusOnTap = false,
     this.borderRadius = BorderRadius.zero,
-    this.minSize = const Size(nawaMinTapTarget, nawaMinTapTarget),
+    this.minSize = const Size(orcaMinTapTarget, orcaMinTapTarget),
     this.stateLayerColor,
     this.semanticLabel,
     this.semanticHint,
@@ -102,16 +102,16 @@ class NawaPressable extends StatefulWidget {
   final MouseCursor? mouseCursor;
 
   @override
-  State<NawaPressable> createState() => _NawaPressableState();
+  State<OrcaPressable> createState() => _OrcaPressableState();
 }
 
-class _NawaPressableState extends State<NawaPressable> {
+class _OrcaPressableState extends State<OrcaPressable> {
   FocusNode? _ownNode;
   bool _focused = false;
   bool _hovered = false;
   bool _pressed = false;
 
-  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode(debugLabel: 'NawaPressable'));
+  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode(debugLabel: 'OrcaPressable'));
 
   bool get _enabled => widget.onPressed != null;
 
@@ -129,8 +129,8 @@ class _NawaPressableState extends State<NawaPressable> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme nawa = NawaTheme.of(context);
-    final Color layer = widget.stateLayerColor ?? nawa.colors.text;
+    final OrcaTheme orca = OrcaTheme.of(context);
+    final Color layer = widget.stateLayerColor ?? orca.colors.text;
     final bool layered = widget.builder == null;
     final int alpha = !_enabled || !layered ? 0 : (_pressed ? 0x24 : (_hovered ? 0x12 : 0));
     final Set<WidgetState> states = <WidgetState>{
@@ -151,7 +151,7 @@ class _NawaPressableState extends State<NawaPressable> {
       decoration: BoxDecoration(
         color: alpha == 0 ? null : layer.withAlpha(alpha),
         borderRadius: radius,
-        border: _focused ? Border.all(color: nawa.colors.focus, width: 2) : null,
+        border: _focused ? Border.all(color: orca.colors.focus, width: 2) : null,
       ),
       child: content,
     );
@@ -225,9 +225,9 @@ class _EdgeIntent extends Intent {
 /// Left / Right (and Up / Down when [vertical]) call [onMove] with a logical
 /// delta: +1 is "next" in reading order, so Right means previous in RTL.
 /// Home / End call [onEdge].
-class NawaArrowKeys extends StatelessWidget {
+class OrcaArrowKeys extends StatelessWidget {
   /// Creates the keyboard handler.
-  const NawaArrowKeys({
+  const OrcaArrowKeys({
     super.key,
     required this.onMove,
     this.onEdge,

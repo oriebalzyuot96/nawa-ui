@@ -23,7 +23,7 @@ import {
   type RefObject,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { lockScroll, trapFocus } from '@nawa-ui/core/a11y';
+import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
 import { cx, getPageItems } from '../utils';
 import { ProgressBar, Skeleton } from './display';
 
@@ -76,7 +76,7 @@ function useAnnouncer() {
 
 function LiveRegion({ message }: { message: string }) {
   return (
-    <div className="nw-sr-only" role="status" aria-live="polite" aria-atomic="true">
+    <div className="oc-sr-only" role="status" aria-live="polite" aria-atomic="true">
       {message}
     </div>
   );
@@ -108,11 +108,15 @@ function useModal(open: boolean, onClose: () => void, panelRef: RefObject<HTMLDi
 
 /** Interval autoplay that pauses while hovered or focused, never starts under reduced motion, and cleans up its timer. */
 function useAutoplay(interval: number | undefined, canPlay: boolean, advance: () => void) {
-  const [playing, setPlaying] = useState(() => !!interval && interval > 0 && !prefersReducedMotion());
+  // Initial state must not read matchMedia, so server and first client render agree; reduced motion is applied after mount.
+  const [playing, setPlaying] = useState(() => !!interval && interval > 0);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
   const advanceRef = useRef(advance);
   advanceRef.current = advance;
+  useEffect(() => {
+    if (prefersReducedMotion()) setPlaying(false);
+  }, []);
   useEffect(() => {
     if (!interval || !playing || hovered || focused || !canPlay) return;
     const id = window.setInterval(() => advanceRef.current(), interval);
@@ -379,13 +383,13 @@ export function Tree({
           aria-disabled={n.disabled || undefined}
           aria-busy={busy || undefined}
           tabIndex={n.key === tabKey ? 0 : -1}
-          className="nw-tree__item"
+          className="oc-tree__item"
           onFocus={(e) => {
             if (e.target === e.currentTarget) setFocusKey(n.key);
           }}
         >
           <div
-            className={cx('nw-tree__row', (isSelected || check === 'true') && selectionMode !== 'checkbox' && 'is-selected')}
+            className={cx('oc-tree__row', (isSelected || check === 'true') && selectionMode !== 'checkbox' && 'is-selected')}
             style={{ paddingInlineStart: `${(level - 1) * 1.25 + 0.25}rem` }}
             onClick={() => {
               focusItem(n.key);
@@ -393,7 +397,7 @@ export function Tree({
             }}
           >
             <span
-              className="nw-tree__toggle"
+              className="oc-tree__toggle"
               aria-hidden="true"
               onClick={(e) => {
                 e.stopPropagation();
@@ -401,18 +405,18 @@ export function Tree({
                 focusItem(n.key);
               }}
             >
-              {busy ? <span className="nw-spinner" /> : expandable ? '›' : null}
+              {busy ? <span className="oc-spinner" /> : expandable ? '›' : null}
             </span>
-            {selectionMode === 'checkbox' && <span className="nw-tree__checkbox" data-state={check} aria-hidden="true" />}
+            {selectionMode === 'checkbox' && <span className="oc-tree__checkbox" data-state={check} aria-hidden="true" />}
             {n.icon && (
-              <span className="nw-tree__icon" aria-hidden="true">
+              <span className="oc-tree__icon" aria-hidden="true">
                 {n.icon}
               </span>
             )}
-            <span className="nw-tree__label">{nodeTemplate ? nodeTemplate(n) : n.label}</span>
+            <span className="oc-tree__label">{nodeTemplate ? nodeTemplate(n) : n.label}</span>
           </div>
           {open && kids.length > 0 && (
-            <ul role="group" className="nw-tree__group">
+            <ul role="group" className="oc-tree__group">
               {renderNodes(kids, level + 1)}
             </ul>
           )}
@@ -421,11 +425,11 @@ export function Tree({
     });
 
   return (
-    <div className={cx('nw-tree', className)}>
+    <div className={cx('oc-tree', className)}>
       {filter && (
         <input
           type="search"
-          className="nw-input nw-tree__filter"
+          className="oc-input oc-tree__filter"
           aria-label={filterLabel}
           placeholder={filterPlaceholder}
           value={query}
@@ -433,13 +437,13 @@ export function Tree({
         />
       )}
       {tree.length === 0 ? (
-        <div className="nw-tree__empty">{emptyMessage}</div>
+        <div className="oc-tree__empty">{emptyMessage}</div>
       ) : (
         <ul
           role="tree"
           aria-label={label}
           aria-multiselectable={selectionMode === 'multiple' || selectionMode === 'checkbox' || undefined}
-          className="nw-tree__root"
+          className="oc-tree__root"
           onKeyDown={onKeyDown}
         >
           {renderNodes(tree, 1)}
@@ -557,11 +561,11 @@ export function TreeTable<T extends Record<string, unknown>>({
     if (handled) e.preventDefault();
   };
 
-  const alignClass = (a?: string) => (a === 'end' ? 'nw-table__align-end' : a === 'center' ? 'nw-table__align-center' : undefined);
+  const alignClass = (a?: string) => (a === 'end' ? 'oc-table__align-end' : a === 'center' ? 'oc-table__align-center' : undefined);
 
   return (
-    <div className={cx('nw-table-wrap', 'nw-treetable', className)}>
-      <table className="nw-table" role="treegrid" aria-label={captionVisible ? undefined : caption}>
+    <div className={cx('oc-table-wrap', 'oc-treetable', className)}>
+      <table className="oc-table" role="treegrid" aria-label={captionVisible ? undefined : caption}>
         {captionVisible && <caption>{caption}</caption>}
         <thead>
           <tr role="row">
@@ -575,7 +579,7 @@ export function TreeTable<T extends Record<string, unknown>>({
                   aria-sort={col.sortable && active ? (sort!.direction === 'asc' ? 'ascending' : 'descending') : undefined}
                 >
                   {col.sortable ? (
-                    <button type="button" className="nw-table__sort" onClick={() => toggleSort(col.key)}>
+                    <button type="button" className="oc-table__sort" onClick={() => toggleSort(col.key)}>
                       {col.label}
                       <span aria-hidden="true">{active ? (sort!.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
                     </button>
@@ -590,7 +594,7 @@ export function TreeTable<T extends Record<string, unknown>>({
         <tbody onKeyDown={onKeyDown}>
           {rows.length === 0 ? (
             <tr role="row">
-              <td role="gridcell" className="nw-table__empty" colSpan={columns.length}>
+              <td role="gridcell" className="oc-table__empty" colSpan={columns.length}>
                 {emptyMessage}
               </td>
             </tr>
@@ -611,18 +615,18 @@ export function TreeTable<T extends Record<string, unknown>>({
                   aria-setsize={size}
                   aria-expanded={hasKids ? open : undefined}
                   tabIndex={node.key === tabKey ? 0 : -1}
-                  className="nw-treetable__row"
+                  className="oc-treetable__row"
                   onFocus={(e) => e.target === e.currentTarget && setFocusKey(node.key)}
                 >
                   {columns.map((col, ci) => (
                     <td key={col.key} role="gridcell" className={alignClass(col.align)}>
                       {ci === 0 ? (
-                        <span className="nw-treetable__cell" style={{ paddingInlineStart: `${(level - 1) * 1.5}rem` }}>
+                        <span className="oc-treetable__cell" style={{ paddingInlineStart: `${(level - 1) * 1.5}rem` }}>
                           {hasKids ? (
                             <button
                               type="button"
                               tabIndex={-1}
-                              className="nw-treetable__toggle"
+                              className="oc-treetable__toggle"
                               aria-label={open ? 'Collapse row' : 'Expand row'}
                               aria-expanded={open}
                               onClick={(e) => {
@@ -633,7 +637,7 @@ export function TreeTable<T extends Record<string, unknown>>({
                               <span aria-hidden="true">›</span>
                             </button>
                           ) : (
-                            <span className="nw-treetable__spacer" aria-hidden="true" />
+                            <span className="oc-treetable__spacer" aria-hidden="true" />
                           )}
                           {col.render ? col.render(node.data, node) : (node.data[col.key] as ReactNode)}
                         </span>
@@ -735,31 +739,31 @@ export function Paginator({
   };
 
   return (
-    <nav aria-label={label} className={cx('nw-paginator', className)}>
+    <nav aria-label={label} className={cx('oc-paginator', className)}>
       {showCurrentPageReport && (
-        <span id={reportId} className="nw-paginator__report" role="status" aria-live="polite">
+        <span id={reportId} className="oc-paginator__report" role="status" aria-live="polite">
           {report}
         </span>
       )}
-      <div className="nw-paginator__pages">
+      <div className="oc-paginator__pages">
         {showFirstLast && (
-          <button type="button" className="nw-pagination__btn" aria-label="First page" disabled={page === 0} onClick={() => goPage(0)}>
-            <span className="nw-paginator__icon" aria-hidden="true">«</span>
+          <button type="button" className="oc-pagination__btn" aria-label="First page" disabled={page === 0} onClick={() => goPage(0)}>
+            <span className="oc-paginator__icon" aria-hidden="true">«</span>
           </button>
         )}
-        <button type="button" className="nw-pagination__btn" aria-label="Previous page" disabled={page === 0} onClick={() => goPage(page - 1)}>
-          <span className="nw-paginator__icon" aria-hidden="true">‹</span>
+        <button type="button" className="oc-pagination__btn" aria-label="Previous page" disabled={page === 0} onClick={() => goPage(page - 1)}>
+          <span className="oc-paginator__icon" aria-hidden="true">‹</span>
         </button>
         {getPageItems(page + 1, pageCount).map((item, i) =>
           item === 'ellipsis' ? (
-            <span key={`e${i}`} className="nw-pagination__ellipsis" aria-hidden="true">
+            <span key={`e${i}`} className="oc-pagination__ellipsis" aria-hidden="true">
               …
             </span>
           ) : (
             <button
               key={item}
               type="button"
-              className="nw-pagination__btn"
+              className="oc-pagination__btn"
               aria-label={`Page ${item}`}
               aria-current={item === page + 1 ? 'page' : undefined}
               onClick={() => goPage(item - 1)}
@@ -768,19 +772,19 @@ export function Paginator({
             </button>
           ),
         )}
-        <button type="button" className="nw-pagination__btn" aria-label="Next page" disabled={page >= pageCount - 1} onClick={() => goPage(page + 1)}>
-          <span className="nw-paginator__icon" aria-hidden="true">›</span>
+        <button type="button" className="oc-pagination__btn" aria-label="Next page" disabled={page >= pageCount - 1} onClick={() => goPage(page + 1)}>
+          <span className="oc-paginator__icon" aria-hidden="true">›</span>
         </button>
         {showFirstLast && (
-          <button type="button" className="nw-pagination__btn" aria-label="Last page" disabled={page >= pageCount - 1} onClick={() => goPage(pageCount - 1)}>
-            <span className="nw-paginator__icon" aria-hidden="true">»</span>
+          <button type="button" className="oc-pagination__btn" aria-label="Last page" disabled={page >= pageCount - 1} onClick={() => goPage(pageCount - 1)}>
+            <span className="oc-paginator__icon" aria-hidden="true">»</span>
           </button>
         )}
       </div>
       {rowsPerPageOptions && rowsPerPageOptions.length > 0 && (
-        <label className="nw-paginator__field">
-          <span className="nw-paginator__field-label">Rows per page</span>
-          <select className="nw-select nw-paginator__select" value={curRows} onChange={(e) => change(curFirst, Number(e.target.value))}>
+        <label className="oc-paginator__field">
+          <span className="oc-paginator__field-label">Rows per page</span>
+          <select className="oc-select oc-paginator__select" value={curRows} onChange={(e) => change(curFirst, Number(e.target.value))}>
             {rowsPerPageOptions.map((o) => (
               <option key={o} value={o}>
                 {o}
@@ -790,12 +794,12 @@ export function Paginator({
         </label>
       )}
       {showJumpToPage && (
-        <label className="nw-paginator__field">
-          <span className="nw-paginator__field-label">Go to page</span>
+        <label className="oc-paginator__field">
+          <span className="oc-paginator__field-label">Go to page</span>
           <input
             type="number"
             inputMode="numeric"
-            className="nw-input nw-paginator__jump"
+            className="oc-input oc-paginator__jump"
             min={1}
             max={pageCount}
             value={draft}
@@ -876,14 +880,14 @@ export function DataView<T>({
   const visible = paginator ? sorted.slice(first, first + page.rows) : sorted;
 
   return (
-    <div className={cx('nw-dataview', className)}>
+    <div className={cx('oc-dataview', className)}>
       {(header || showLayoutToggle) && (
-        <div className="nw-dataview__header">
-          <div className="nw-dataview__header-content">{header}</div>
+        <div className="oc-dataview__header">
+          <div className="oc-dataview__header-content">{header}</div>
           {showLayoutToggle && (
-            <div role="group" aria-label="Layout" className="nw-segmented">
+            <div role="group" aria-label="Layout" className="oc-segmented">
               {(['list', 'grid'] as const).map((l) => (
-                <button key={l} type="button" className="nw-segmented__item nw-dataview__layout-btn" aria-pressed={mode === l} onClick={() => setMode(l)}>
+                <button key={l} type="button" className="oc-segmented__item oc-dataview__layout-btn" aria-pressed={mode === l} onClick={() => setMode(l)}>
                   {l === 'list' ? 'List' : 'Grid'}
                 </button>
               ))}
@@ -892,17 +896,17 @@ export function DataView<T>({
         </div>
       )}
       {loading ? (
-        <div className={cx('nw-dataview__content', `nw-dataview__content--${mode}`)} aria-busy="true">
+        <div className={cx('oc-dataview__content', `oc-dataview__content--${mode}`)} aria-busy="true">
           {Array.from({ length: 3 }, (_, i) => (
             <Skeleton key={i} height={64} />
           ))}
         </div>
       ) : visible.length === 0 ? (
-        <div className="nw-dataview__empty">{emptyMessage}</div>
+        <div className="oc-dataview__empty">{emptyMessage}</div>
       ) : (
-        <ul aria-label={label} className={cx('nw-dataview__content', `nw-dataview__content--${mode}`)}>
+        <ul aria-label={label} className={cx('oc-dataview__content', `oc-dataview__content--${mode}`)}>
           {visible.map((item, i) => (
-            <li key={getKey ? getKey(item, first + i) : first + i} className="nw-dataview__item">
+            <li key={getKey ? getKey(item, first + i) : first + i} className="oc-dataview__item">
               {itemTemplate(item, mode, first + i)}
             </li>
           ))}
@@ -918,7 +922,7 @@ export function DataView<T>({
           label={`${label} pages`}
         />
       )}
-      {footer && <div className="nw-dataview__footer">{footer}</div>}
+      {footer && <div className="oc-dataview__footer">{footer}</div>}
     </div>
   );
 }
@@ -988,7 +992,7 @@ export function VirtualScroller<T>({
         aria-setsize={total}
         aria-posinset={i + 1}
         aria-busy={item === undefined || undefined}
-        className="nw-vscroller__item"
+        className="oc-vscroller__item"
         style={{ top: i * itemSize, height: itemSize }}
       >
         {item === undefined ? <Skeleton height={Math.min(16, itemSize - 8)} /> : itemTemplate(item, i)}
@@ -1002,11 +1006,11 @@ export function VirtualScroller<T>({
       tabIndex={0}
       role="region"
       aria-label={label}
-      className={cx('nw-vscroller', className)}
+      className={cx('oc-vscroller', className)}
       style={{ height }}
       onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
     >
-      <div role="list" aria-label={label} className="nw-vscroller__spacer" style={{ height: total * itemSize }}>
+      <div role="list" aria-label={label} className="oc-vscroller__spacer" style={{ height: total * itemSize }}>
         {rendered}
       </div>
     </div>
@@ -1077,14 +1081,14 @@ function SelectList<T>({ id, labelledBy, items, getKey, getLabel, itemTemplate, 
       aria-labelledby={labelledBy}
       aria-multiselectable={multiple || undefined}
       aria-activedescendant={activeKey !== null && activeIndex >= 0 ? optId(activeKey) : undefined}
-      className="nw-selectlist"
+      className="oc-selectlist"
       onKeyDown={onKeyDown}
       onFocus={() => {
         if (activeIndex < 0 && keys.length) setActiveKey(selected.find((k) => keys.includes(k)) ?? keys[0]);
       }}
     >
       {items.length === 0 && (
-        <li role="presentation" className="nw-selectlist__empty">
+        <li role="presentation" className="oc-selectlist__empty">
           {emptyMessage}
         </li>
       )}
@@ -1097,7 +1101,7 @@ function SelectList<T>({ id, labelledBy, items, getKey, getLabel, itemTemplate, 
             id={optId(k)}
             role="option"
             aria-selected={isSel}
-            className={cx('nw-selectlist__option', k === activeKey && 'is-active')}
+            className={cx('oc-selectlist__option', k === activeKey && 'is-active')}
             onClick={() => {
               setActiveKey(k);
               toggle(k);
@@ -1158,23 +1162,23 @@ export function OrderList<T>({ value, defaultValue = [], onChange, getKey, getLa
 
   const none = index < 0;
   return (
-    <div className={cx('nw-orderlist', className)}>
-      <div className="nw-orderlist__controls" role="group" aria-label="Reorder">
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--icon nw-btn--sm" aria-label="Move to top" aria-controls={id} disabled={none || index === 0} onClick={() => move(0)}>
+    <div className={cx('oc-orderlist', className)}>
+      <div className="oc-orderlist__controls" role="group" aria-label="Reorder">
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--icon oc-btn--sm" aria-label="Move to top" aria-controls={id} disabled={none || index === 0} onClick={() => move(0)}>
           <span aria-hidden="true">⤒</span>
         </button>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--icon nw-btn--sm" aria-label="Move up" aria-controls={id} disabled={none || index === 0} onClick={() => move(index - 1)}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--icon oc-btn--sm" aria-label="Move up" aria-controls={id} disabled={none || index === 0} onClick={() => move(index - 1)}>
           <span aria-hidden="true">↑</span>
         </button>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--icon nw-btn--sm" aria-label="Move down" aria-controls={id} disabled={none || index === items.length - 1} onClick={() => move(index + 1)}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--icon oc-btn--sm" aria-label="Move down" aria-controls={id} disabled={none || index === items.length - 1} onClick={() => move(index + 1)}>
           <span aria-hidden="true">↓</span>
         </button>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--icon nw-btn--sm" aria-label="Move to bottom" aria-controls={id} disabled={none || index === items.length - 1} onClick={() => move(items.length - 1)}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--icon oc-btn--sm" aria-label="Move to bottom" aria-controls={id} disabled={none || index === items.length - 1} onClick={() => move(items.length - 1)}>
           <span aria-hidden="true">⤓</span>
         </button>
       </div>
-      <div className="nw-orderlist__panel">
-        <div id={`${id}-label`} className="nw-orderlist__header">
+      <div className="oc-orderlist__panel">
+        <div id={`${id}-label`} className="oc-orderlist__header">
           {header}
         </div>
         <SelectList
@@ -1189,7 +1193,7 @@ export function OrderList<T>({ value, defaultValue = [], onChange, getKey, getLa
           onSelectedChange={setSelected}
           onExtraKey={onExtraKey}
         />
-        <p className="nw-orderlist__hint nw-sr-only" id={`${id}-hint`}>
+        <p className="oc-orderlist__hint oc-sr-only" id={`${id}-hint`}>
           Use Alt with arrow keys, Home or End to move the selected item.
         </p>
       </div>
@@ -1245,11 +1249,11 @@ export function PickList<T>({
     announce(moving.length === 1 ? `Moved ${getLabel(moving[0])} to ${where}` : `Moved ${moving.length} items to ${where}`);
   };
 
-  const btn = 'nw-btn nw-btn--secondary nw-btn--icon nw-btn--sm';
+  const btn = 'oc-btn oc-btn--secondary oc-btn--icon oc-btn--sm';
   const panel = (side: 'source' | 'target', header: string) => (
-    <div className="nw-picklist__panel">
-      <div id={`${id}-${side}-label`} className="nw-orderlist__header">
-        {header} <span className="nw-picklist__count">({lists[side].length})</span>
+    <div className="oc-picklist__panel">
+      <div id={`${id}-${side}-label`} className="oc-orderlist__header">
+        {header} <span className="oc-picklist__count">({lists[side].length})</span>
       </div>
       <SelectList
         id={`${id}-${side}`}
@@ -1267,20 +1271,20 @@ export function PickList<T>({
   );
 
   return (
-    <div className={cx('nw-picklist', className)}>
+    <div className={cx('oc-picklist', className)}>
       {panel('source', sourceHeader)}
-      <div className="nw-picklist__controls" role="group" aria-label="Transfer">
+      <div className="oc-picklist__controls" role="group" aria-label="Transfer">
         <button type="button" className={btn} aria-label={`Move selected to ${targetHeader}`} disabled={!sel.source.length} onClick={() => transfer('source', sel.source)}>
-          <span className="nw-picklist__icon" aria-hidden="true">›</span>
+          <span className="oc-picklist__icon" aria-hidden="true">›</span>
         </button>
         <button type="button" className={btn} aria-label={`Move all to ${targetHeader}`} disabled={!lists.source.length} onClick={() => transfer('source', lists.source.map(getKey))}>
-          <span className="nw-picklist__icon" aria-hidden="true">»</span>
+          <span className="oc-picklist__icon" aria-hidden="true">»</span>
         </button>
         <button type="button" className={btn} aria-label={`Move selected to ${sourceHeader}`} disabled={!sel.target.length} onClick={() => transfer('target', sel.target)}>
-          <span className="nw-picklist__icon" aria-hidden="true">‹</span>
+          <span className="oc-picklist__icon" aria-hidden="true">‹</span>
         </button>
         <button type="button" className={btn} aria-label={`Move all to ${sourceHeader}`} disabled={!lists.target.length} onClick={() => transfer('target', lists.target.map(getKey))}>
-          <span className="nw-picklist__icon" aria-hidden="true">«</span>
+          <span className="oc-picklist__icon" aria-hidden="true">«</span>
         </button>
       </div>
       {panel('target', targetHeader)}
@@ -1344,19 +1348,19 @@ export function OrganizationChart({
     const isSel = selected.includes(n.key);
     const content = nodeTemplate ? nodeTemplate(n) : n.label;
     return (
-      <li key={n.key} className="nw-orgchart__item">
-        <div className={cx('nw-orgchart__node', isSel && 'is-selected')}>
+      <li key={n.key} className="oc-orgchart__item">
+        <div className={cx('oc-orgchart__node', isSel && 'is-selected')}>
           {selectionMode && n.selectable !== false ? (
-            <button type="button" className="nw-orgchart__select" aria-pressed={isSel} onClick={() => select(n.key)}>
+            <button type="button" className="oc-orgchart__select" aria-pressed={isSel} onClick={() => select(n.key)}>
               {content}
             </button>
           ) : (
-            <div className="nw-orgchart__content">{content}</div>
+            <div className="oc-orgchart__content">{content}</div>
           )}
           {collapsible && kids.length > 0 && (
             <button
               type="button"
-              className="nw-orgchart__toggle"
+              className="oc-orgchart__toggle"
               aria-expanded={open}
               aria-controls={groupId}
               aria-label={`${open ? 'Collapse' : 'Expand'} ${text(n)}`}
@@ -1367,7 +1371,7 @@ export function OrganizationChart({
           )}
         </div>
         {kids.length > 0 && (
-          <ul id={groupId} className="nw-orgchart__group" hidden={!open}>
+          <ul id={groupId} className="oc-orgchart__group" hidden={!open}>
             {kids.map(renderNode)}
           </ul>
         )}
@@ -1376,8 +1380,8 @@ export function OrganizationChart({
   };
 
   return (
-    <div className={cx('nw-orgchart', className)} role="group" aria-label={label}>
-      <ul className="nw-orgchart__group nw-orgchart__root">{renderNode(value)}</ul>
+    <div className={cx('oc-orgchart', className)} role="group" aria-label={label}>
+      <ul className="oc-orgchart__group oc-orgchart__root">{renderNode(value)}</ul>
     </div>
   );
 }
@@ -1406,17 +1410,17 @@ export function Panel({ header, toggleable = false, collapsed, defaultCollapsed 
   const Heading = `h${headingLevel}` as 'h3';
   const hidden = toggleable && isCollapsed;
   return (
-    <section className={cx('nw-panel', className)} aria-labelledby={`${id}-title`}>
-      <div className="nw-panel__header">
-        <Heading id={`${id}-title`} className="nw-panel__title">
+    <section className={cx('oc-panel', className)} aria-labelledby={`${id}-title`}>
+      <div className="oc-panel__header">
+        <Heading id={`${id}-title`} className="oc-panel__title">
           {header}
         </Heading>
-        <div className="nw-panel__actions">
+        <div className="oc-panel__actions">
           {actions}
           {toggleable && (
             <button
               type="button"
-              className="nw-close nw-panel__toggle"
+              className="oc-close oc-panel__toggle"
               aria-expanded={!isCollapsed}
               aria-controls={`${id}-content`}
               aria-label={isCollapsed ? 'Expand' : 'Collapse'}
@@ -1428,10 +1432,10 @@ export function Panel({ header, toggleable = false, collapsed, defaultCollapsed 
           )}
         </div>
       </div>
-      <div id={`${id}-content`} className="nw-panel__content" hidden={hidden}>
+      <div id={`${id}-content`} className="oc-panel__content" hidden={hidden}>
         {children}
       </div>
-      {footer && !hidden && <div className="nw-panel__footer">{footer}</div>}
+      {footer && !hidden && <div className="oc-panel__footer">{footer}</div>}
     </section>
   );
 }
@@ -1450,11 +1454,11 @@ export function Fieldset({ legend, toggleable = false, collapsed, defaultCollaps
   const [isCollapsed, setCollapsed] = useControlled(collapsed, defaultCollapsed, onToggle);
   const id = useId();
   return (
-    <fieldset className={cx('nw-fieldset', className)}>
-      <legend className="nw-fieldset__legend">
+    <fieldset className={cx('oc-fieldset', className)}>
+      <legend className="oc-fieldset__legend">
         {toggleable ? (
-          <button type="button" className="nw-fieldset__toggle" aria-expanded={!isCollapsed} aria-controls={id} onClick={() => setCollapsed(!isCollapsed)}>
-            <span className="nw-fieldset__icon" aria-hidden="true">
+          <button type="button" className="oc-fieldset__toggle" aria-expanded={!isCollapsed} aria-controls={id} onClick={() => setCollapsed(!isCollapsed)}>
+            <span className="oc-fieldset__icon" aria-hidden="true">
               {isCollapsed ? '+' : '−'}
             </span>
             {legend}
@@ -1463,7 +1467,7 @@ export function Fieldset({ legend, toggleable = false, collapsed, defaultCollaps
           legend
         )}
       </legend>
-      <div id={id} className="nw-fieldset__content" hidden={toggleable && isCollapsed}>
+      <div id={id} className="oc-fieldset__content" hidden={toggleable && isCollapsed}>
         {children}
       </div>
     </fieldset>
@@ -1496,13 +1500,13 @@ export function ScrollPanel({ label, height, children, className, style }: Scrol
   return (
     <div
       ref={ref}
-      className={cx('nw-scrollpanel', className)}
+      className={cx('oc-scrollpanel', className)}
       style={{ ...style, height }}
       tabIndex={scrollable ? 0 : undefined}
       role={scrollable ? 'region' : undefined}
       aria-label={scrollable ? label : undefined}
     >
-      <div className="nw-scrollpanel__content">{children}</div>
+      <div className="oc-scrollpanel__content">{children}</div>
     </div>
   );
 }
@@ -1522,7 +1526,7 @@ export interface SplitterPanelProps {
 
 /** Declares a pane of a Splitter; rendered by the Splitter. */
 export function SplitterPanel({ children, className }: SplitterPanelProps) {
-  return <div className={cx('nw-splitter__panel', className)}>{children}</div>;
+  return <div className={cx('oc-splitter__panel', className)}>{children}</div>;
 }
 
 export interface SplitterProps {
@@ -1643,12 +1647,12 @@ export function Splitter({ layout = 'horizontal', defaultSizes, stateKey, step =
 
   const gutterShare = (gutterSize * (n - 1)) / Math.max(1, n);
   return (
-    <div ref={containerRef} className={cx('nw-splitter', `nw-splitter--${layout}`, className)}>
+    <div ref={containerRef} className={cx('oc-splitter', `oc-splitter--${layout}`, className)}>
       {panels.map((p, i) => (
         <Fragment key={p.key ?? i}>
           <div
             id={`${id}-p${i}`}
-            className={cx('nw-splitter__panel', p.props.className)}
+            className={cx('oc-splitter__panel', p.props.className)}
             style={{ flexBasis: `calc(${sizes[i]}% - ${gutterShare}px)` }}
           >
             {p.props.children}
@@ -1663,12 +1667,12 @@ export function Splitter({ layout = 'horizontal', defaultSizes, stateKey, step =
               aria-valuenow={Math.round(sizes[i])}
               aria-valuemin={Math.round(mins[i])}
               aria-valuemax={Math.round(sizes[i] + sizes[i + 1] - mins[i + 1])}
-              className="nw-splitter__gutter"
+              className="oc-splitter__gutter"
               style={{ [horizontal ? 'width' : 'height']: gutterSize }}
               onKeyDown={(e) => onGutterKey(e, i)}
               onPointerDown={(e) => onPointerDown(e, i)}
             >
-              <span className="nw-splitter__handle" aria-hidden="true" />
+              <span className="oc-splitter__handle" aria-hidden="true" />
             </div>
           )}
         </Fragment>
@@ -1739,7 +1743,7 @@ export function Toolbar({ label, start, center, end, children, orientation = 'ho
       role="toolbar"
       aria-label={label}
       aria-orientation={orientation}
-      className={cx('nw-toolbar', orientation === 'vertical' && 'nw-toolbar--vertical', className)}
+      className={cx('oc-toolbar', orientation === 'vertical' && 'oc-toolbar--vertical', className)}
       onKeyDown={onKeyDown}
       onFocus={(e) => {
         const i = controls().indexOf(e.target as HTMLElement);
@@ -1749,10 +1753,10 @@ export function Toolbar({ label, start, center, end, children, orientation = 'ho
         }
       }}
     >
-      {start && <div className="nw-toolbar__group nw-toolbar__start">{start}</div>}
+      {start && <div className="oc-toolbar__group oc-toolbar__start">{start}</div>}
       {children}
-      {center && <div className="nw-toolbar__group nw-toolbar__center">{center}</div>}
-      {end && <div className="nw-toolbar__group nw-toolbar__end">{end}</div>}
+      {center && <div className="oc-toolbar__group oc-toolbar__center">{center}</div>}
+      {end && <div className="oc-toolbar__group oc-toolbar__end">{end}</div>}
     </div>
   );
 }
@@ -1848,16 +1852,16 @@ export function Carousel<T>({
   const slideWord = vis === 1 ? 'Slide' : 'Page';
   return (
     <section
-      className={cx('nw-carousel', className)}
+      className={cx('oc-carousel', className)}
       aria-roledescription="carousel"
       aria-label={label}
       {...auto.handlers}
     >
-      <div className="nw-carousel__controls">
+      <div className="oc-carousel__controls">
         {auto.enabled && (
           <button
             type="button"
-            className="nw-carousel__rotation nw-btn nw-btn--secondary nw-btn--sm"
+            className="oc-carousel__rotation oc-btn oc-btn--secondary oc-btn--sm"
             aria-label={auto.playing ? 'Pause automatic slide show' : 'Start automatic slide show'}
             onClick={() => auto.setPlaying(!auto.playing)}
           >
@@ -1866,18 +1870,18 @@ export function Carousel<T>({
           </button>
         )}
       </div>
-      <div className="nw-carousel__body">
+      <div className="oc-carousel__body">
         {showNavigators && (
-          <button type="button" className="nw-carousel__nav nw-carousel__nav--prev" aria-label="Previous slide" aria-controls={trackId} disabled={!loop && current === 0} onClick={() => go(current - 1)}>
+          <button type="button" className="oc-carousel__nav oc-carousel__nav--prev" aria-label="Previous slide" aria-controls={trackId} disabled={!loop && current === 0} onClick={() => go(current - 1)}>
             <span aria-hidden="true">‹</span>
           </button>
         )}
-        <div className="nw-carousel__viewport">
+        <div className="oc-carousel__viewport">
           <div
             id={trackId}
-            className="nw-carousel__track"
+            className="oc-carousel__track"
             aria-live={auto.rotating ? 'off' : 'polite'}
-            style={{ '--nw-carousel-offset': `${(first * 100) / vis}%` } as CSSProperties}
+            style={{ '--oc-carousel-offset': `${(first * 100) / vis}%` } as CSSProperties}
           >
             {items.map((item, i) => (
               <div
@@ -1889,7 +1893,7 @@ export function Carousel<T>({
                 aria-roledescription="slide"
                 aria-label={`Slide ${i + 1} of ${count}`}
                 aria-hidden={i < first || i >= first + vis ? true : undefined}
-                className="nw-carousel__slide"
+                className="oc-carousel__slide"
                 style={{ flexBasis: `${100 / vis}%` }}
               >
                 {itemTemplate(item, i)}
@@ -1898,18 +1902,18 @@ export function Carousel<T>({
           </div>
         </div>
         {showNavigators && (
-          <button type="button" className="nw-carousel__nav nw-carousel__nav--next" aria-label="Next slide" aria-controls={trackId} disabled={!loop && current === pageCount - 1} onClick={() => go(current + 1)}>
+          <button type="button" className="oc-carousel__nav oc-carousel__nav--next" aria-label="Next slide" aria-controls={trackId} disabled={!loop && current === pageCount - 1} onClick={() => go(current + 1)}>
             <span aria-hidden="true">›</span>
           </button>
         )}
       </div>
       {showIndicators && pageCount > 1 && (
-        <div className="nw-carousel__indicators" role="group" aria-label={`Choose ${slideWord.toLowerCase()} to display`}>
+        <div className="oc-carousel__indicators" role="group" aria-label={`Choose ${slideWord.toLowerCase()} to display`}>
           {Array.from({ length: pageCount }, (_, p) => (
             <button
               key={p}
               type="button"
-              className="nw-carousel__dot"
+              className="oc-carousel__dot"
               aria-label={`${slideWord} ${p + 1}`}
               aria-current={p === current ? 'true' : undefined}
               aria-controls={trackId}
@@ -1975,26 +1979,26 @@ export function Galleria({
 
   const viewer = (large: boolean) => (
     <>
-      <figure className={cx('nw-galleria__figure', large && 'nw-galleria__figure--full')}>
-        <div className="nw-galleria__stage">
-          <button type="button" className="nw-carousel__nav nw-galleria__nav nw-galleria__nav--prev" aria-label="Previous image" disabled={!loop && index === 0} onClick={() => go(index - 1)}>
+      <figure className={cx('oc-galleria__figure', large && 'oc-galleria__figure--full')}>
+        <div className="oc-galleria__stage">
+          <button type="button" className="oc-carousel__nav oc-galleria__nav oc-galleria__nav--prev" aria-label="Previous image" disabled={!loop && index === 0} onClick={() => go(index - 1)}>
             <span aria-hidden="true">‹</span>
           </button>
-          <img className="nw-galleria__image" src={item.src} alt={item.alt} />
-          <button type="button" className="nw-carousel__nav nw-galleria__nav nw-galleria__nav--next" aria-label="Next image" disabled={!loop && index === count - 1} onClick={() => go(index + 1)}>
+          <img className="oc-galleria__image" src={item.src} alt={item.alt} />
+          <button type="button" className="oc-carousel__nav oc-galleria__nav oc-galleria__nav--next" aria-label="Next image" disabled={!loop && index === count - 1} onClick={() => go(index + 1)}>
             <span aria-hidden="true">›</span>
           </button>
         </div>
-        {showCaptions && item.caption && <figcaption className="nw-galleria__caption">{item.caption}</figcaption>}
+        {showCaptions && item.caption && <figcaption className="oc-galleria__caption">{item.caption}</figcaption>}
       </figure>
-      <p className="nw-sr-only" aria-live={auto.rotating ? 'off' : 'polite'}>
+      <p className="oc-sr-only" aria-live={auto.rotating ? 'off' : 'polite'}>
         Image {index + 1} of {count}
       </p>
       {showThumbnails && (
-        <ul className="nw-galleria__thumbs">
+        <ul className="oc-galleria__thumbs">
           {items.map((it, i) => (
             <li key={i}>
-              <button type="button" className="nw-galleria__thumb" aria-label={`Show image ${i + 1}: ${it.alt}`} aria-current={i === index ? 'true' : undefined} onClick={() => setIndex(i)}>
+              <button type="button" className="oc-galleria__thumb" aria-label={`Show image ${i + 1}: ${it.alt}`} aria-current={i === index ? 'true' : undefined} onClick={() => setIndex(i)}>
                 <img src={it.thumbnailSrc ?? it.src} alt="" />
               </button>
             </li>
@@ -2005,17 +2009,17 @@ export function Galleria({
   );
 
   return (
-    <section className={cx('nw-galleria', className)} aria-roledescription="gallery" aria-label={label} {...auto.handlers}>
+    <section className={cx('oc-galleria', className)} aria-roledescription="gallery" aria-label={label} {...auto.handlers}>
       {(auto.enabled || fullScreen) && (
-        <div className="nw-galleria__toolbar">
+        <div className="oc-galleria__toolbar">
           {auto.enabled && (
-            <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm" aria-label={auto.playing ? 'Pause slide show' : 'Start slide show'} onClick={() => auto.setPlaying(!auto.playing)}>
+            <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" aria-label={auto.playing ? 'Pause slide show' : 'Start slide show'} onClick={() => auto.setPlaying(!auto.playing)}>
               <span aria-hidden="true">{auto.playing ? '❚❚' : '▶'}</span>
               <span>{auto.playing ? 'Pause' : 'Play'}</span>
             </button>
           )}
           {fullScreen && (
-            <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm" onClick={() => setOpen(true)}>
+            <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setOpen(true)}>
               Full screen
             </button>
           )}
@@ -2025,10 +2029,10 @@ export function Galleria({
       {open &&
         typeof document !== 'undefined' &&
         createPortal(
-          <div className="nw-overlay nw-galleria__overlay">
-            <div ref={panelRef} role="dialog" aria-modal="true" aria-label={label} tabIndex={-1} className="nw-galleria nw-galleria--full">
-              <div className="nw-galleria__toolbar">
-                <button type="button" className="nw-close nw-galleria__close" aria-label="Close full screen" onClick={() => setOpen(false)}>
+          <div className="oc-overlay oc-galleria__overlay">
+            <div ref={panelRef} role="dialog" aria-modal="true" aria-label={label} tabIndex={-1} className="oc-galleria oc-galleria--full">
+              <div className="oc-galleria__toolbar">
+                <button type="button" className="oc-close oc-galleria__close" aria-label="Close full screen" onClick={() => setOpen(false)}>
                   ×
                 </button>
               </div>
@@ -2064,15 +2068,15 @@ export function Image({ alt, preview = false, previewSrc, className, ...img }: I
     setRotate(0);
   };
   useModal(open, close, panelRef);
-  const image = <img {...img} alt={alt} className="nw-image__img" />;
-  if (!preview) return <span className={cx('nw-image', className)}>{image}</span>;
+  const image = <img {...img} alt={alt} className="oc-image__img" />;
+  if (!preview) return <span className={cx('oc-image', className)}>{image}</span>;
   const name = alt || 'image';
-  const tool = 'nw-btn nw-btn--ghost nw-btn--icon nw-btn--sm nw-image__tool';
+  const tool = 'oc-btn oc-btn--ghost oc-btn--icon oc-btn--sm oc-image__tool';
   return (
-    <span className={cx('nw-image', 'nw-image--preview', className)}>
-      <button type="button" className="nw-image__trigger" aria-label={`Preview ${name}`} aria-haspopup="dialog" onClick={() => setOpen(true)}>
+    <span className={cx('oc-image', 'oc-image--preview', className)}>
+      <button type="button" className="oc-image__trigger" aria-label={`Preview ${name}`} aria-haspopup="dialog" onClick={() => setOpen(true)}>
         {image}
-        <span className="nw-image__badge" aria-hidden="true">
+        <span className="oc-image__badge" aria-hidden="true">
           ⤢
         </span>
       </button>
@@ -2080,13 +2084,13 @@ export function Image({ alt, preview = false, previewSrc, className, ...img }: I
         typeof document !== 'undefined' &&
         createPortal(
           <div
-            className="nw-overlay nw-image__overlay"
+            className="oc-overlay oc-image__overlay"
             onMouseDown={(e: MouseEvent<HTMLDivElement>) => {
               if (e.target === e.currentTarget) close();
             }}
           >
-            <div ref={panelRef} role="dialog" aria-modal="true" aria-label={`Preview: ${name}`} tabIndex={-1} className="nw-image__dialog">
-              <div className="nw-image__toolbar" role="toolbar" aria-label="Image tools">
+            <div ref={panelRef} role="dialog" aria-modal="true" aria-label={`Preview: ${name}`} tabIndex={-1} className="oc-image__dialog">
+              <div className="oc-image__toolbar" role="toolbar" aria-label="Image tools">
                 <button type="button" className={tool} aria-label="Rotate left" onClick={() => setRotate((r) => r - 90)}>
                   <span aria-hidden="true">↺</span>
                 </button>
@@ -2103,8 +2107,8 @@ export function Image({ alt, preview = false, previewSrc, className, ...img }: I
                   <span aria-hidden="true">×</span>
                 </button>
               </div>
-              <img className="nw-image__preview" src={previewSrc ?? img.src} alt={alt} style={{ transform: `rotate(${rotate}deg) scale(${scale})` }} />
-              <p className="nw-sr-only" aria-live="polite">
+              <img className="oc-image__preview" src={previewSrc ?? img.src} alt={alt} style={{ transform: `rotate(${rotate}deg) scale(${scale})` }} />
+              <p className="oc-sr-only" aria-live="polite">
                 Zoom {Math.round(scale * 100)}%, rotated {((rotate % 360) + 360) % 360} degrees
               </p>
             </div>
@@ -2129,12 +2133,12 @@ export interface ImageCompareProps {
 export function ImageCompare({ before, after, value, defaultValue = 50, onChange, label = 'Comparison slider', className }: ImageCompareProps) {
   const [pos, setPos] = useControlled(value, defaultValue, onChange);
   return (
-    <div className={cx('nw-image-compare', className)} style={{ '--nw-ic-pos': `${pos}%` } as CSSProperties}>
-      <img className="nw-image-compare__img nw-image-compare__after" src={after.src} alt={after.alt} />
-      <img className="nw-image-compare__img nw-image-compare__before" src={before.src} alt={before.alt} />
+    <div className={cx('oc-image-compare', className)} style={{ '--oc-ic-pos': `${pos}%` } as CSSProperties}>
+      <img className="oc-image-compare__img oc-image-compare__after" src={after.src} alt={after.alt} />
+      <img className="oc-image-compare__img oc-image-compare__before" src={before.src} alt={before.alt} />
       <input
         type="range"
-        className="nw-image-compare__range"
+        className="oc-image-compare__range"
         min={0}
         max={100}
         step={1}
@@ -2143,7 +2147,7 @@ export function ImageCompare({ before, after, value, defaultValue = 50, onChange
         aria-valuetext={`${Math.round(pos)}% ${before.alt || 'before'}, ${Math.round(100 - pos)}% ${after.alt || 'after'}`}
         onChange={(e) => setPos(Number(e.target.value))}
       />
-      <span className="nw-image-compare__handle" aria-hidden="true" />
+      <span className="oc-image-compare__handle" aria-hidden="true" />
     </div>
   );
 }
@@ -2177,8 +2181,8 @@ export function MeterGroup({ value, label, min = 0, max = 100, showLegend = true
   const fmt = (item: MeterItem) => (formatValue ? formatValue(item.value, item) : `${Math.round(((item.value - min) / range) * 100)}%`);
   const colorOf = (item: MeterItem, i: number) => item.color ?? METER_COLORS[i % METER_COLORS.length];
   return (
-    <div role="group" aria-label={label} className={cx('nw-meter-group', className)}>
-      <div className="nw-meter-group__bar">
+    <div role="group" aria-label={label} className={cx('oc-meter-group', className)}>
+      <div className="oc-meter-group__bar">
         {value.map((item, i) => (
           <div
             key={item.label}
@@ -2188,18 +2192,18 @@ export function MeterGroup({ value, label, min = 0, max = 100, showLegend = true
             aria-valuemax={max}
             aria-valuenow={item.value}
             aria-valuetext={fmt(item)}
-            className={cx('nw-meter-group__seg', `nw-meter-group--${colorOf(item, i)}`, `nw-meter-group__pattern--${i % 4}`)}
+            className={cx('oc-meter-group__seg', `oc-meter-group--${colorOf(item, i)}`, `oc-meter-group__pattern--${i % 4}`)}
             style={{ width: `${clamp(((item.value - min) / range) * 100, 0, 100)}%` }}
           />
         ))}
       </div>
       {showLegend && (
-        <ul className="nw-meter-group__legend" aria-hidden="true">
+        <ul className="oc-meter-group__legend" aria-hidden="true">
           {value.map((item, i) => (
-            <li key={item.label} className="nw-meter-group__legend-item">
-              <span className={cx('nw-meter-group__swatch', `nw-meter-group--${colorOf(item, i)}`, `nw-meter-group__pattern--${i % 4}`)} />
+            <li key={item.label} className="oc-meter-group__legend-item">
+              <span className={cx('oc-meter-group__swatch', `oc-meter-group--${colorOf(item, i)}`, `oc-meter-group__pattern--${i % 4}`)} />
               <span>{item.label}</span>
-              <span className="nw-meter-group__value">{fmt(item)}</span>
+              <span className="oc-meter-group__value">{fmt(item)}</span>
             </li>
           ))}
         </ul>
@@ -2224,18 +2228,18 @@ export function Chip({ label, image, imageAlt = '', icon, removable = false, onR
   const [removed, setRemoved] = useState(false);
   if (removed) return null;
   return (
-    <span className={cx('nw-chip', image && 'nw-chip--image', className)}>
-      {image && <img className="nw-chip__image" src={image} alt={imageAlt} />}
+    <span className={cx('oc-chip', image && 'oc-chip--image', className)}>
+      {image && <img className="oc-chip__image" src={image} alt={imageAlt} />}
       {!image && icon && (
-        <span className="nw-chip__icon" aria-hidden="true">
+        <span className="oc-chip__icon" aria-hidden="true">
           {icon}
         </span>
       )}
-      <span className="nw-chip__label">{label}</span>
+      <span className="oc-chip__label">{label}</span>
       {removable && (
         <button
           type="button"
-          className="nw-chip__remove"
+          className="oc-chip__remove"
           aria-label={removeLabel ?? `Remove ${label}`}
           onClick={() => {
             if (onRemove) onRemove();
@@ -2270,18 +2274,18 @@ export function Message({ severity = 'info', text, children, icon, closable = fa
   const [visible, setVisible] = useState(true);
   if (!visible) return null;
   return (
-    <div role={severity === 'error' || severity === 'warn' ? 'alert' : 'status'} className={cx('nw-message', `nw-message--${severity}`, className)}>
+    <div role={severity === 'error' || severity === 'warn' ? 'alert' : 'status'} className={cx('oc-message', `oc-message--${severity}`, className)}>
       {icon !== false && (
-        <span className="nw-message__icon" aria-hidden="true">
+        <span className="oc-message__icon" aria-hidden="true">
           {icon ?? MESSAGE_ICONS[severity]}
         </span>
       )}
-      <span className="nw-sr-only">{MESSAGE_NAMES[severity]}: </span>
-      <span className="nw-message__text">{text ?? children}</span>
+      <span className="oc-sr-only">{MESSAGE_NAMES[severity]}: </span>
+      <span className="oc-message__text">{text ?? children}</span>
       {closable && (
         <button
           type="button"
-          className="nw-message__close"
+          className="oc-message__close"
           aria-label="Dismiss message"
           onClick={() => {
             setVisible(false);
@@ -2465,7 +2469,7 @@ export function FileUpload({
     />
   );
   const errorList = errors.length > 0 && (
-    <ul id={errorId} role="alert" className="nw-fileupload__errors">
+    <ul id={errorId} role="alert" className="oc-fileupload__errors">
       {errors.map((err) => (
         <li key={err}>{err}</li>
       ))}
@@ -2475,13 +2479,13 @@ export function FileUpload({
   if (mode === 'basic') {
     const entry = entries[0];
     return (
-      <div className={cx('nw-fileupload', 'nw-fileupload--basic', className)}>
+      <div className={cx('oc-fileupload', 'oc-fileupload--basic', className)}>
         {input}
-        <button type="button" className="nw-btn nw-btn--primary" disabled={disabled} aria-describedby={errors.length ? errorId : undefined} onClick={() => inputRef.current?.click()}>
+        <button type="button" className="oc-btn oc-btn--primary" disabled={disabled} aria-describedby={errors.length ? errorId : undefined} onClick={() => inputRef.current?.click()}>
           {chooseLabel}
         </button>
         {entry && (
-          <span className="nw-fileupload__basic-name">
+          <span className="oc-fileupload__basic-name">
             {entry.file.name} ({formatFileSize(entry.file.size)})
           </span>
         )}
@@ -2499,20 +2503,20 @@ export function FileUpload({
   };
 
   return (
-    <div className={cx('nw-fileupload', className)}>
+    <div className={cx('oc-fileupload', className)}>
       {input}
-      <div className="nw-fileupload__bar">
-        <button type="button" className="nw-btn nw-btn--primary" disabled={disabled} aria-describedby={errors.length ? errorId : undefined} onClick={() => inputRef.current?.click()}>
+      <div className="oc-fileupload__bar">
+        <button type="button" className="oc-btn oc-btn--primary" disabled={disabled} aria-describedby={errors.length ? errorId : undefined} onClick={() => inputRef.current?.click()}>
           {chooseLabel}
         </button>
         {!auto && onUpload && (
-          <button type="button" className="nw-btn nw-btn--secondary" disabled={disabled || !pending.length} onClick={() => void upload(pending)}>
+          <button type="button" className="oc-btn oc-btn--secondary" disabled={disabled || !pending.length} onClick={() => void upload(pending)}>
             {uploadLabel}
           </button>
         )}
         <button
           type="button"
-          className="nw-btn nw-btn--ghost"
+          className="oc-btn oc-btn--ghost"
           disabled={disabled || !entries.length}
           onClick={() => {
             setEntries([]);
@@ -2526,7 +2530,7 @@ export function FileUpload({
       <div
         role="group"
         aria-label={label}
-        className={cx('nw-fileupload__zone', dragging && 'is-dragging')}
+        className={cx('oc-fileupload__zone', dragging && 'is-dragging')}
         onDragOver={(e) => {
           e.preventDefault();
           if (!disabled) setDragging(true);
@@ -2536,20 +2540,20 @@ export function FileUpload({
       >
         {errorList}
         {entries.length === 0 ? (
-          <p className="nw-fileupload__empty">{emptyMessage}</p>
+          <p className="oc-fileupload__empty">{emptyMessage}</p>
         ) : (
-          <ul className="nw-fileupload__list" aria-label="Selected files">
+          <ul className="oc-fileupload__list" aria-label="Selected files">
             {entries.map((entry) => (
-              <li key={entry.id} className="nw-fileupload__file">
-                <div className="nw-fileupload__meta">
-                  <span className="nw-fileupload__name">{entry.file.name}</span>
-                  <span className="nw-fileupload__size">{formatFileSize(entry.file.size)}</span>
-                  <span className={cx('nw-fileupload__status', `nw-fileupload__status--${entry.status}`)}>
+              <li key={entry.id} className="oc-fileupload__file">
+                <div className="oc-fileupload__meta">
+                  <span className="oc-fileupload__name">{entry.file.name}</span>
+                  <span className="oc-fileupload__size">{formatFileSize(entry.file.size)}</span>
+                  <span className={cx('oc-fileupload__status', `oc-fileupload__status--${entry.status}`)}>
                     {entry.status === 'done' ? 'Uploaded' : entry.status === 'error' ? 'Failed' : entry.status === 'uploading' ? `${Math.round(entry.progress)}%` : 'Pending'}
                   </span>
                 </div>
                 {entry.status !== 'pending' && <ProgressBar value={entry.progress} label={`Upload progress for ${entry.file.name}`} />}
-                <button type="button" className="nw-close nw-fileupload__remove" aria-label={`Remove ${entry.file.name}`} disabled={entry.status === 'uploading'} onClick={() => remove(entry)}>
+                <button type="button" className="oc-close oc-fileupload__remove" aria-label={`Remove ${entry.file.name}`} disabled={entry.status === 'uploading'} onClick={() => remove(entry)}>
                   ×
                 </button>
               </li>
@@ -2633,31 +2637,31 @@ export function Terminal({ welcomeMessage, prompt = '$', onCommand, label = 'Ter
   };
 
   return (
-    <div className={cx('nw-terminal', className)} dir="ltr" onClick={() => window.getSelection()?.toString() || inputRef.current?.focus()}>
-      <div className="nw-terminal__scroll">
-        {welcomeMessage && <div className="nw-terminal__welcome">{welcomeMessage}</div>}
-        <div ref={logRef} role="log" aria-live="polite" aria-label={`${label} output`} className="nw-terminal__log">
+    <div className={cx('oc-terminal', className)} dir="ltr" onClick={() => window.getSelection()?.toString() || inputRef.current?.focus()}>
+      <div className="oc-terminal__scroll">
+        {welcomeMessage && <div className="oc-terminal__welcome">{welcomeMessage}</div>}
+        <div ref={logRef} role="log" aria-live="polite" aria-label={`${label} output`} className="oc-terminal__log">
           {entries.map((e) => (
-            <div key={e.id} className="nw-terminal__entry">
-              <div className="nw-terminal__command">
-                <span className="nw-terminal__prompt" aria-hidden="true">
+            <div key={e.id} className="oc-terminal__entry">
+              <div className="oc-terminal__command">
+                <span className="oc-terminal__prompt" aria-hidden="true">
                   {prompt}
                 </span>{' '}
                 {e.command}
               </div>
-              <div className="nw-terminal__response">{e.pending ? '…' : e.response}</div>
+              <div className="oc-terminal__response">{e.pending ? '…' : e.response}</div>
             </div>
           ))}
         </div>
-        <div className="nw-terminal__input-row">
-          <label htmlFor={inputId} className="nw-terminal__prompt">
+        <div className="oc-terminal__input-row">
+          <label htmlFor={inputId} className="oc-terminal__prompt">
             <span aria-hidden="true">{prompt}</span>
-            <span className="nw-sr-only">{label} command</span>
+            <span className="oc-sr-only">{label} command</span>
           </label>
           <input
             ref={inputRef}
             id={inputId}
-            className="nw-terminal__input"
+            className="oc-terminal__input"
             autoComplete="off"
             autoCapitalize="off"
             spellCheck={false}

@@ -13,9 +13,9 @@ export const threeD: CategoryDoc = {
   title: '3D components — CSS 3D cards and accessible Three.js Globe, Particles, Chart3D',
   h1: '3D & effects',
   description:
-    'Accessible 3D components with live demos: CSS 3D TiltCard, FlipCard, CubeCarousel, ParallaxLayers, Text3D, plus WebGL Globe3D, ParticlesField, FloatingShapes, Chart3D and ModelViewer from @nawa-ui/three.',
+    'Accessible 3D components with live demos: CSS 3D TiltCard, FlipCard, CubeCarousel, ParallaxLayers, Text3D, plus WebGL Globe3D, ParticlesField, FloatingShapes, Chart3D and ModelViewer from @orca-ui/three.',
   intro:
-    'Two layers of depth. CSS 3D effects ship in @nawa-ui/react and cost no JavaScript beyond the component. WebGL scenes live in @nawa-ui/three: they follow the theme, pause off-screen, render a single still frame under reduced motion and fall back gracefully without WebGL. Three.js is only downloaded when a 3D scene scrolls into view.',
+    'Two layers of depth. CSS 3D effects ship in @orca-ui/react and cost no JavaScript beyond the component. WebGL scenes live in @orca-ui/three: they follow the theme, pause off-screen, render a single still frame under reduced motion and fall back gracefully without WebGL. Three.js is only downloaded when a 3D scene scrolls into view.',
   entries: [
     {
       id: 'tiltcard',
@@ -100,7 +100,7 @@ export const threeD: CategoryDoc = {
       ],
       a11y: 'Real text, so it is selectable, translatable and read normally.',
       code: {
-        react: `<Text3D as="h2" depth={8}>Nawa UI</Text3D>`,
+        react: `<Text3D as="h2" depth={8}>Orca UI</Text3D>`,
       },
     },
     {
@@ -154,7 +154,7 @@ export const threeD: CategoryDoc = {
       a11y: 'role="img" with your label; the canvas itself is aria-hidden. Animation is limited to one frame under reduced motion and pauses off-screen.',
       demo: 'three',
       code: {
-        react: `import { Scene3D } from '@nawa-ui/three';
+        react: `import { Scene3D } from '@orca-ui/three';
 import { Mesh, TorusKnotGeometry, MeshStandardMaterial, DirectionalLight } from 'three';
 
 <Scene3D label="Rotating torus knot" interactive setup={({ scene, colors }) => {
@@ -179,7 +179,7 @@ import { Mesh, TorusKnotGeometry, MeshStandardMaterial, DirectionalLight } from 
       a11y: 'Markers and connections are also rendered as lists, so the data is never locked inside the canvas.',
       demo: 'three',
       code: {
-        react: `import { Globe3D } from '@nawa-ui/three';
+        react: `import { Globe3D } from '@orca-ui/three';
 
 <Globe3D label="Our offices" showList
   markers={[{ lat: 31.95, lng: 35.93, label: 'Amman' }, { lat: 51.5, lng: -0.12, label: 'London' }]}
@@ -251,7 +251,7 @@ import { Mesh, TorusKnotGeometry, MeshStandardMaterial, DirectionalLight } from 
       note: 'The demo builds a small model in your browser with GLTFExporter and loads it from a blob URL — no external file.',
       demo: 'three',
       code: {
-        react: `import { ModelViewer } from '@nawa-ui/three';
+        react: `import { ModelViewer } from '@orca-ui/three';
 
 <ModelViewer src="/models/chair.glb" alt="Walnut lounge chair" autoRotate height="22rem" />`,
       },

@@ -4,7 +4,7 @@
 
 <script is:inline>
   try {
-    var t = JSON.parse(localStorage.getItem('nawa-ui-theme') || 'null');
+    var t = JSON.parse(localStorage.getItem('orca-ui-theme') || 'null');
     if (t) {
       var r = document.documentElement;
       if (t.mode && t.mode !== 'system') r.setAttribute('data-theme', t.mode);

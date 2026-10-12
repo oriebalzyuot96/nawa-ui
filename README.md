@@ -1,33 +1,33 @@
 <div align="center">
 
-# Nawa UI
+# Orca UI
 
 **Accessible, themeable UI components for React, Vue, Svelte, Astro and React Native.**
 
 WCAG 2.2 AA · 21 themes · Dark mode & high contrast · Skeleton loaders · RTL / Arabic · MIT
 
-[Docs & live preview](https://oriebalzyuot96.github.io/nawa-ui/) · [Components](https://oriebalzyuot96.github.io/nawa-ui/components/) · [Themes](https://oriebalzyuot96.github.io/nawa-ui/themes/) · [العربية](https://oriebalzyuot96.github.io/nawa-ui/ar/)
+[Docs & live preview](https://oriebalzyuot96.github.io/orca-ui/) · [Components](https://oriebalzyuot96.github.io/orca-ui/components/) · [Themes](https://oriebalzyuot96.github.io/orca-ui/themes/) · [العربية](https://oriebalzyuot96.github.io/orca-ui/ar/)
 
 </div>
 
 ---
 
-Nawa (نواة, "nucleus") is one design system shipped as native packages for five frameworks. Same component names, same props, same look — and accessibility that is tested on every build, not promised in a README.
+Orca (أوركا, "nucleus") is one design system shipped as native packages for five frameworks. Same component names, same props, same look — and accessibility that is tested on every build, not promised in a README.
 
 | Package | Framework | Install |
 |---|---|---|
-| [`@nawa-ui/react`](packages/react) | React 18 / 19 | `npm i @nawa-ui/react @nawa-ui/core` |
-| [`@nawa-ui/vue`](packages/vue) | Vue 3 | `npm i @nawa-ui/vue @nawa-ui/core` |
-| [`@nawa-ui/svelte`](packages/svelte) | Svelte 5 | `npm i @nawa-ui/svelte @nawa-ui/core` |
-| [`@nawa-ui/astro`](packages/astro) | Astro 5 (zero JS by default) | `npm i @nawa-ui/astro @nawa-ui/core` |
-| [`@nawa-ui/react-native`](packages/react-native) | React Native / Expo | `npm i @nawa-ui/react-native @nawa-ui/core` |
-| [`@nawa-ui/core`](packages/core) | Tokens, CSS, theme + a11y helpers | `npm i @nawa-ui/core` |
+| [`@orca-ui/react`](packages/react) | React 18 / 19 | `npm i @orca-ui/react @orca-ui/core` |
+| [`@orca-ui/vue`](packages/vue) | Vue 3 | `npm i @orca-ui/vue @orca-ui/core` |
+| [`@orca-ui/svelte`](packages/svelte) | Svelte 5 | `npm i @orca-ui/svelte @orca-ui/core` |
+| [`@orca-ui/astro`](packages/astro) | Astro 5 (zero JS by default) | `npm i @orca-ui/astro @orca-ui/core` |
+| [`@orca-ui/react-native`](packages/react-native) | React Native / Expo | `npm i @orca-ui/react-native @orca-ui/core` |
+| [`@orca-ui/core`](packages/core) | Tokens, CSS, theme + a11y helpers | `npm i @orca-ui/core` |
 
 ## Quick start
 
 ```tsx
-import '@nawa-ui/core/style.css';
-import { Button, DataTable, applyTheme } from '@nawa-ui/react';
+import '@orca-ui/core/style.css';
+import { Button, DataTable, applyTheme } from '@orca-ui/react';
 
 applyTheme({ mode: 'system', accent: 'indigo', shape: 'round' });
 
@@ -48,7 +48,7 @@ Themes are CSS attributes, so they work in every framework and can be scoped to 
 | `data-accent` | `teal` · `indigo` · `rose` · `amber` · `emerald` · `slate` |
 | `data-shape` | `sharp` · `default` · `round` |
 
-All theme colors come from one file, [`packages/core/src/themes.mjs`](packages/core/src/themes.mjs). The build generates the CSS and the React Native tokens from it, and `npm test -w @nawa-ui/core` checks **525 WCAG contrast pairs** (every mode × accent).
+All theme colors come from one file, [`packages/core/src/themes.mjs`](packages/core/src/themes.mjs). The build generates the CSS and the React Native tokens from it, and `npm test -w @orca-ui/core` checks **525 WCAG contrast pairs** (every mode × accent).
 
 ## Accessibility
 
@@ -79,7 +79,7 @@ All theme colors come from one file, [`packages/core/src/themes.mjs`](packages/c
 | Breadcrumb / Pagination | ✓ | ✓ | ✓ | ✓ | ✓ |
 | DataTable (sort, loading, caption) | ✓ | ✓ | ✓ | ✓ (server sort) | ✓ |
 | Dialog / Drawer | ✓ | ✓ | ✓ | ✓ (native `<dialog>`) | ✓ |
-| Toast | ✓ | ✓ | ✓ | ✓ (`<Toaster>` + `nawaToast()`) | ✓ |
+| Toast | ✓ | ✓ | ✓ | ✓ (`<Toaster>` + `orcaToast()`) | ✓ |
 | Tooltip | ✓ | ✓ | ✓ | ✓ | – (no hover on touch) |
 
 Roadmap (PrimeNG parity): AutoComplete, MultiSelect, DatePicker, Menu, Tree, virtual-scrolling DataTable.
@@ -88,7 +88,7 @@ Roadmap (PrimeNG parity): AutoComplete, MultiSelect, DatePicker, Menu, Tree, vir
 
 ```bash
 npm install
-npm run build -w @nawa-ui/core   # generate CSS + tokens from themes.mjs
+npm run build -w @orca-ui/core   # generate CSS + tokens from themes.mjs
 npm test                          # contrast checks + React + Vue tests
 npm run typecheck                 # all packages
 npm run docs:dev                  # docs site with live preview

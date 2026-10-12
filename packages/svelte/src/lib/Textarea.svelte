@@ -11,23 +11,23 @@
 
   let { label, hint, error, value = $bindable(''), id, class: className, ...rest }: Props = $props();
 
-  const inputId = id ?? nextId('nw-textarea');
+  const inputId = id ?? nextId('oc-textarea');
   const describedBy = $derived(error ? `${inputId}-err` : hint ? `${inputId}-hint` : undefined);
 </script>
 
-<div class={['nw-field', error && 'nw-field--error']}>
-  {#if label}<label class="nw-label" for={inputId}>{label}</label>{/if}
+<div class={['oc-field', error && 'oc-field--error']}>
+  {#if label}<label class="oc-label" for={inputId}>{label}</label>{/if}
   <textarea
     id={inputId}
-    class={['nw-textarea', className]}
+    class={['oc-textarea', className]}
     bind:value
     aria-invalid={error ? true : undefined}
     aria-describedby={describedBy}
     {...rest}
   ></textarea>
   {#if error}
-    <span id="{inputId}-err" class="nw-error-text">{error}</span>
+    <span id="{inputId}-err" class="oc-error-text">{error}</span>
   {:else if hint}
-    <span id="{inputId}-hint" class="nw-hint">{hint}</span>
+    <span id="{inputId}-hint" class="oc-hint">{hint}</span>
   {/if}
 </div>

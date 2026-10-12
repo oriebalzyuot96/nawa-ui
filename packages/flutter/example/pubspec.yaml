@@ -1,5 +1,5 @@
-name: nawa_ui_example
-description: Gallery of every Nawa UI widget with a theme switcher.
+name: orca_ui_example
+description: Gallery of every Orca UI widget with a theme switcher.
 publish_to: none
 version: 1.0.0
 
@@ -10,7 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  nawa_ui:
+  orca_ui:
     path: ../
 
 dev_dependencies:

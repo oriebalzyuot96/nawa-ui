@@ -7,12 +7,12 @@ interface Props {
 }
 
 const { text, placement = 'top' } = Astro.props;
-const id = `nw-tip-${Math.random().toString(36).slice(2, 8)}`;
+const id = `oc-tip-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<span class:list={['nw-tooltip', placement === 'bottom' && 'nw-tooltip--bottom']} data-nw-tooltip>
+<span class:list={['oc-tooltip', placement === 'bottom' && 'oc-tooltip--bottom']} data-oc-tooltip>
   <slot />
-  <span role="tooltip" id={id} class="nw-tooltip__bubble">{text}</span>
+  <span role="tooltip" id={id} class="oc-tooltip__bubble">{text}</span>
 </span>
 
 <script>

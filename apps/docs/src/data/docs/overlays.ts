@@ -51,7 +51,7 @@ export const overlays: CategoryDoc = {
 </Drawer>`,
         vue: `<Drawer :open="open" title="Filters" @close="open = false">…</Drawer>`,
         svelte: `<Drawer {open} title="Filters" onclose={() => (open = false)}>…</Drawer>`,
-        astro: `<Button data-nw-open="filters">Filters</Button>
+        astro: `<Button data-oc-open="filters">Filters</Button>
 <Drawer id="filters" title="Filters">…</Drawer>`,
         rn: `<Drawer visible={open} title="Filters" onClose={() => setOpen(false)}>…</Drawer>`,
       },
@@ -262,7 +262,7 @@ const color = await open(PickColor, { header: 'Pick a colour' }).result;`,
       ],
       a11y: 'Purely decorative (aria-hidden) and disabled under prefers-reduced-motion.',
       code: {
-        react: `<button className="nw-btn nw-btn--primary">Save<Ripple /></button>
+        react: `<button className="oc-btn oc-btn--primary">Save<Ripple /></button>
 
 const ref = useRipple<HTMLDivElement>();
 <div ref={ref} className="tile">Click me</div>`,

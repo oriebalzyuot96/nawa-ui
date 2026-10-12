@@ -28,11 +28,11 @@
 
 <button
   {type}
-  class={['nw-btn', `nw-btn--${variant}`, size !== 'md' && `nw-btn--${size}`, block && 'nw-btn--block', iconOnly && 'nw-btn--icon', className]}
+  class={['oc-btn', `oc-btn--${variant}`, size !== 'md' && `oc-btn--${size}`, block && 'oc-btn--block', iconOnly && 'oc-btn--icon', className]}
   disabled={disabled || loading}
   aria-busy={loading || undefined}
   {...rest}
 >
-  {#if loading}<span class="nw-spinner" aria-hidden="true"></span>{/if}
+  {#if loading}<span class="oc-spinner" aria-hidden="true"></span>{/if}
   {@render children?.()}
 </button>

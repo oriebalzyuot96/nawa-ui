@@ -77,7 +77,7 @@ export function TiltCard({ children, maxTilt = 10, glare = true, padded = true, 
     const el = ref.current;
     if (!el) return;
     el.removeAttribute('data-active');
-    for (const prop of ['--nw-tilt-x', '--nw-tilt-y', '--nw-glare-x', '--nw-glare-y', '--nw-glare-o']) el.style.removeProperty(prop);
+    for (const prop of ['--oc-tilt-x', '--oc-tilt-y', '--oc-glare-x', '--oc-glare-y', '--oc-glare-o']) el.style.removeProperty(prop);
   }, []);
 
   const onPointerMove = (event: ReactPointerEvent<HTMLDivElement>) => {
@@ -92,12 +92,12 @@ export function TiltCard({ children, maxTilt = 10, glare = true, padded = true, 
       const px = clamp((clientX - rect.left) / rect.width, 0, 1);
       const py = clamp((clientY - rect.top) / rect.height, 0, 1);
       el.setAttribute('data-active', '');
-      el.style.setProperty('--nw-tilt-x', `${((0.5 - py) * 2 * maxTilt).toFixed(2)}deg`);
-      el.style.setProperty('--nw-tilt-y', `${((px - 0.5) * 2 * maxTilt).toFixed(2)}deg`);
+      el.style.setProperty('--oc-tilt-x', `${((0.5 - py) * 2 * maxTilt).toFixed(2)}deg`);
+      el.style.setProperty('--oc-tilt-y', `${((px - 0.5) * 2 * maxTilt).toFixed(2)}deg`);
       if (glare) {
-        el.style.setProperty('--nw-glare-x', `${(px * 100).toFixed(1)}%`);
-        el.style.setProperty('--nw-glare-y', `${(py * 100).toFixed(1)}%`);
-        el.style.setProperty('--nw-glare-o', '1');
+        el.style.setProperty('--oc-glare-x', `${(px * 100).toFixed(1)}%`);
+        el.style.setProperty('--oc-glare-y', `${(py * 100).toFixed(1)}%`);
+        el.style.setProperty('--oc-glare-o', '1');
       }
     });
   };
@@ -107,10 +107,10 @@ export function TiltCard({ children, maxTilt = 10, glare = true, padded = true, 
   }, [reduced, reset]);
 
   return (
-    <div ref={ref} className={cx('nw-tilt', className)} style={style} onPointerMove={onPointerMove} onPointerLeave={reset} onPointerCancel={reset}>
-      <div className="nw-tilt__inner">
-        {padded ? <div className="nw-tilt__body">{children}</div> : children}
-        {glare && <span className="nw-tilt__glare" aria-hidden="true" />}
+    <div ref={ref} className={cx('oc-tilt', className)} style={style} onPointerMove={onPointerMove} onPointerLeave={reset} onPointerCancel={reset}>
+      <div className="oc-tilt__inner">
+        {padded ? <div className="oc-tilt__body">{children}</div> : children}
+        {glare && <span className="oc-tilt__glare" aria-hidden="true" />}
       </div>
     </div>
   );
@@ -154,21 +154,21 @@ export function FlipCard({
   };
   return (
     <div
-      className={cx('nw-flip', className)}
+      className={cx('oc-flip', className)}
       data-flipped={isFlipped ? '' : undefined}
-      style={height ? ({ '--nw-flip-height': height } as CSSProperties) : undefined}
+      style={height ? ({ '--oc-flip-height': height } as CSSProperties) : undefined}
     >
-      <div className="nw-flip__inner" id={`${id}-faces`}>
-        <div ref={frontRef} className="nw-flip__face nw-flip__face--front" aria-hidden={isFlipped || undefined}>
+      <div className="oc-flip__inner" id={`${id}-faces`}>
+        <div ref={frontRef} className="oc-flip__face oc-flip__face--front" aria-hidden={isFlipped || undefined}>
           {front}
         </div>
-        <div ref={backRef} className="nw-flip__face nw-flip__face--back" aria-hidden={!isFlipped || undefined}>
+        <div ref={backRef} className="oc-flip__face oc-flip__face--back" aria-hidden={!isFlipped || undefined}>
           {back}
         </div>
       </div>
       <button
         type="button"
-        className="nw-btn nw-btn--secondary nw-btn--sm nw-flip__toggle"
+        className="oc-btn oc-btn--secondary oc-btn--sm oc-flip__toggle"
         aria-pressed={isFlipped}
         aria-controls={`${id}-faces`}
         onClick={toggle}
@@ -263,16 +263,16 @@ export function CubeCarousel({
   };
 
   const style = {
-    '--nw-cube-n': Math.max(count, 3),
-    '--nw-cube-index': current,
-    ...(width ? { '--nw-cube-size': width } : {}),
-    ...(height ? { '--nw-cube-h': height } : {}),
+    '--oc-cube-n': Math.max(count, 3),
+    '--oc-cube-index': current,
+    ...(width ? { '--oc-cube-size': width } : {}),
+    ...(height ? { '--oc-cube-h': height } : {}),
   } as CSSProperties;
 
   return (
     <section
       ref={rootRef}
-      className={cx('nw-cube', className)}
+      className={cx('oc-cube', className)}
       aria-roledescription="carousel"
       aria-label={label}
       style={style}
@@ -284,29 +284,29 @@ export function CubeCarousel({
         if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHold(false);
       }}
     >
-      <div className="nw-cube__controls">
+      <div className="oc-cube__controls">
         {autoplay ? (
           <button
             type="button"
-            className="nw-btn nw-btn--ghost nw-btn--sm"
+            className="oc-btn oc-btn--ghost oc-btn--sm"
             onClick={() => setPlaying((p) => !p)}
             aria-label={playing ? 'Stop automatic slide show' : 'Start automatic slide show'}
           >
             {playing ? '❚❚' : '▶'}
           </button>
         ) : null}
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm nw-btn--icon" aria-controls={`${id}-slides`} aria-label={prevLabel} onClick={() => go(current - 1)}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={prevLabel} onClick={() => go(current - 1)}>
           <span aria-hidden="true">{rtl ? '›' : '‹'}</span>
         </button>
-        <span className="nw-cube__status" aria-hidden="true">
+        <span className="oc-cube__status" aria-hidden="true">
           {count ? current + 1 : 0} / {count}
         </span>
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm nw-btn--icon" aria-controls={`${id}-slides`} aria-label={nextLabel} onClick={() => go(current + 1)}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={nextLabel} onClick={() => go(current + 1)}>
           <span aria-hidden="true">{rtl ? '‹' : '›'}</span>
         </button>
       </div>
-      <div className="nw-cube__viewport" id={`${id}-slides`} aria-live={rotating ? 'off' : 'polite'}>
-        <div className="nw-cube__stage">
+      <div className="oc-cube__viewport" id={`${id}-slides`} aria-live={rotating ? 'off' : 'polite'}>
+        <div className="oc-cube__stage">
           {slides.map((slide, i) => (
             <CubeSlidePanel key={i} i={i} count={count} active={i === current} title={slide.title}>
               {slide.content}
@@ -323,12 +323,12 @@ function CubeSlidePanel({ i, count, active, title, children }: { i: number; coun
   return (
     <div
       ref={ref}
-      className="nw-cube__slide"
+      className="oc-cube__slide"
       role="group"
       aria-roledescription="slide"
       aria-label={`Slide ${i + 1} of ${count}${title ? `: ${title}` : ''}`}
       aria-hidden={!active || undefined}
-      style={{ '--nw-cube-i': i } as CSSProperties}
+      style={{ '--oc-cube-i': i } as CSSProperties}
     >
       {children}
     </div>
@@ -366,14 +366,14 @@ export function ParallaxLayers({ layers, trigger = 'pointer', className, style }
     const set = (x: number, y: number) => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        el.style.setProperty('--nw-px', x.toFixed(3));
-        el.style.setProperty('--nw-py', y.toFixed(3));
+        el.style.setProperty('--oc-px', x.toFixed(3));
+        el.style.setProperty('--oc-py', y.toFixed(3));
       });
     };
     const clear = () => {
       cancelAnimationFrame(frame);
-      el.style.removeProperty('--nw-px');
-      el.style.removeProperty('--nw-py');
+      el.style.removeProperty('--oc-px');
+      el.style.removeProperty('--oc-py');
     };
     if (trigger === 'pointer') {
       const move = (e: PointerEvent) => {
@@ -406,13 +406,13 @@ export function ParallaxLayers({ layers, trigger = 'pointer', className, style }
   }, [trigger, reduced]);
 
   return (
-    <div ref={ref} className={cx('nw-parallax', className)} style={style}>
+    <div ref={ref} className={cx('oc-parallax', className)} style={style}>
       {layers.map((layer, i) => (
         <div
           key={i}
-          className={cx('nw-parallax__layer', layer.className)}
+          className={cx('oc-parallax__layer', layer.className)}
           aria-hidden={layer.decorative || undefined}
-          style={{ '--nw-depth': layer.depth } as CSSProperties}
+          style={{ '--oc-depth': layer.depth } as CSSProperties}
         >
           {layer.content}
         </div>
@@ -438,10 +438,10 @@ export interface Text3DProps {
 /** Heading with a layered text-shadow extrusion. The real text stays selectable; the effect is purely visual. */
 export function Text3D({ children, as: Tag = 'h2', depth = 6, tone = 'primary', className, style }: Text3DProps) {
   const n = clamp(Math.round(depth), 1, 16);
-  const layers = Array.from({ length: n }, (_, i) => `calc(var(--nw-dir3d) * ${i + 1}px) ${i + 1}px 0 var(--nw-text3d-side)`);
-  layers.push(`calc(var(--nw-dir3d) * ${n + 2}px) ${n + 4}px ${n + 4}px color-mix(in srgb, var(--nw-text) 25%, transparent)`);
+  const layers = Array.from({ length: n }, (_, i) => `calc(var(--oc-dir3d) * ${i + 1}px) ${i + 1}px 0 var(--oc-text3d-side)`);
+  layers.push(`calc(var(--oc-dir3d) * ${n + 2}px) ${n + 4}px ${n + 4}px color-mix(in srgb, var(--oc-text) 25%, transparent)`);
   return (
-    <Tag className={cx('nw-text3d', tone === 'surface' && 'nw-text3d--surface', className)} style={{ textShadow: layers.join(', '), ...style }}>
+    <Tag className={cx('oc-text3d', tone === 'surface' && 'oc-text3d--surface', className)} style={{ textShadow: layers.join(', '), ...style }}>
       {children}
     </Tag>
   );
@@ -462,8 +462,8 @@ export interface Floating3DIconProps {
 /** Decorative floating 3D tile (aria-hidden). */
 export function Floating3DIcon({ icon, size, className }: Floating3DIconProps) {
   return (
-    <span className={cx('nw-float3d', className)} aria-hidden="true" style={size ? ({ '--nw-float-size': size } as CSSProperties) : undefined}>
-      <span className="nw-float3d__body">{icon}</span>
+    <span className={cx('oc-float3d', className)} aria-hidden="true" style={size ? ({ '--oc-float-size': size } as CSSProperties) : undefined}>
+      <span className="oc-float3d__body">{icon}</span>
     </span>
   );
 }
@@ -478,12 +478,12 @@ export interface OrbitBadgeProps {
 /** Decorative badge with satellites orbiting on a tilted ring (aria-hidden). */
 export function OrbitBadge({ children, size, className }: OrbitBadgeProps) {
   return (
-    <span className={cx('nw-orbit', className)} aria-hidden="true" style={size ? ({ '--nw-orbit-size': size } as CSSProperties) : undefined}>
-      <span className="nw-orbit__ring">
-        <span className="nw-orbit__dot" />
-        <span className="nw-orbit__dot" />
+    <span className={cx('oc-orbit', className)} aria-hidden="true" style={size ? ({ '--oc-orbit-size': size } as CSSProperties) : undefined}>
+      <span className="oc-orbit__ring">
+        <span className="oc-orbit__dot" />
+        <span className="oc-orbit__dot" />
       </span>
-      <span className="nw-orbit__core">{children}</span>
+      <span className="oc-orbit__core">{children}</span>
     </span>
   );
 }
@@ -505,9 +505,9 @@ export interface Perspective3DStackProps {
 export function Perspective3DStack({ items, children, label, open = false, className }: Perspective3DStackProps) {
   const list = items ?? Children.toArray(children);
   return (
-    <ul className={cx('nw-stack3d', className)} aria-label={label} data-open={open ? '' : undefined}>
+    <ul className={cx('oc-stack3d', className)} aria-label={label} data-open={open ? '' : undefined}>
       {list.map((item, i) => (
-        <li key={i} className="nw-stack3d__item" style={{ '--nw-i': i } as CSSProperties}>
+        <li key={i} className="oc-stack3d__item" style={{ '--oc-i': i } as CSSProperties}>
           {item}
         </li>
       ))}

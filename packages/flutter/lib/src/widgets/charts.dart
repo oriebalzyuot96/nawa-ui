@@ -3,15 +3,15 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 import 'button.dart';
 import 'data_table.dart';
 
 /// One labelled value of a chart.
 @immutable
-class NawaChartPoint {
+class OrcaChartPoint {
   /// Creates a point.
-  const NawaChartPoint(this.label, this.value);
+  const OrcaChartPoint(this.label, this.value);
 
   /// Category / x label.
   final String label;
@@ -38,11 +38,11 @@ String _defaultFormat(double v) {
 
 /// Text summary of a series for screen readers, e.g.
 /// "Revenue. 6 values. Highest: Jun, 42. Lowest: Jan, 12."
-String nawaDescribeSeries(String title, List<NawaChartPoint> data, String Function(double) format) {
+String orcaDescribeSeries(String title, List<OrcaChartPoint> data, String Function(double) format) {
   if (data.isEmpty) return '$title. No data.';
-  NawaChartPoint hi = data.first;
-  NawaChartPoint lo = data.first;
-  for (final NawaChartPoint p in data) {
+  OrcaChartPoint hi = data.first;
+  OrcaChartPoint lo = data.first;
+  for (final OrcaChartPoint p in data) {
     if (p.value > hi.value) hi = p;
     if (p.value < lo.value) lo = p;
   }
@@ -51,10 +51,10 @@ String nawaDescribeSeries(String title, List<NawaChartPoint> data, String Functi
 }
 
 /// Trend sentence for a line chart: "From Jan 12 to Jun 42, up 250%."
-String nawaTrendSummary(List<NawaChartPoint> data, String Function(double) format) {
+String orcaTrendSummary(List<OrcaChartPoint> data, String Function(double) format) {
   if (data.length < 2) return '';
-  final NawaChartPoint first = data.first;
-  final NawaChartPoint last = data.last;
+  final OrcaChartPoint first = data.first;
+  final OrcaChartPoint last = data.last;
   final double diff = last.value - first.value;
   final String direction = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'unchanged');
   final String pct = first.value == 0 ? '' : ' ${(diff.abs() / first.value.abs() * 100).round()}%';
@@ -80,7 +80,7 @@ abstract class _ChartPainter extends CustomPainter {
     required this.textScaler,
   });
 
-  final List<NawaChartPoint> data;
+  final List<OrcaChartPoint> data;
   final _ChartColors colors;
   final String Function(double) format;
   final TextDirection textDirection;
@@ -160,7 +160,7 @@ class _BarPainter extends _ChartPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (data.isEmpty) return;
-    final double maxValue = data.map((NawaChartPoint p) => p.value).reduce(math.max);
+    final double maxValue = data.map((OrcaChartPoint p) => p.value).reduce(math.max);
     final ({double max, double step}) scale = _niceScale(maxValue);
     final Rect plot = drawFrame(canvas, size, scale);
     final double slot = plot.width / data.length;
@@ -191,7 +191,7 @@ class _LinePainter extends _ChartPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (data.isEmpty) return;
-    final double maxValue = data.map((NawaChartPoint p) => p.value).reduce(math.max);
+    final double maxValue = data.map((OrcaChartPoint p) => p.value).reduce(math.max);
     final ({double max, double step}) scale = _niceScale(maxValue);
     final Rect plot = drawFrame(canvas, size, scale);
     final List<Offset> points = <Offset>[
@@ -248,7 +248,7 @@ class _ChartFrame extends StatefulWidget {
   final String title;
   final String? description;
   final String summary;
-  final List<NawaChartPoint> data;
+  final List<OrcaChartPoint> data;
   final double height;
   final String Function(double) format;
   final String valueLabel;
@@ -266,7 +266,7 @@ class _ChartFrameState extends State<_ChartFrame> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -282,23 +282,23 @@ class _ChartFrameState extends State<_ChartFrame> {
                     header: true,
                     child: Text(
                       widget.title,
-                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.md),
+                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
                     ),
                   ),
                   if (widget.description != null)
-                    Text(widget.description!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+                    Text(widget.description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
                 ],
               ),
             ),
-            NawaButton(
+            OrcaButton(
               label: _table ? widget.hideTableLabel : widget.showTableLabel,
-              variant: NawaButtonVariant.ghost,
-              size: NawaButtonSize.sm,
+              variant: OrcaButtonVariant.ghost,
+              size: OrcaButtonSize.sm,
               onPressed: () => setState(() => _table = !_table),
             ),
           ],
         ),
-        const SizedBox(height: NawaSpace.sm),
+        const SizedBox(height: OrcaSpace.sm),
         Semantics(
           container: true,
           image: true,
@@ -311,24 +311,24 @@ class _ChartFrameState extends State<_ChartFrame> {
           ),
         ),
         if (_table) ...<Widget>[
-          const SizedBox(height: NawaSpace.md),
-          NawaDataTable<NawaChartPoint>(
+          const SizedBox(height: OrcaSpace.md),
+          OrcaDataTable<OrcaChartPoint>(
             caption: widget.title,
             rows: widget.data,
-            columns: <NawaDataColumn<NawaChartPoint>>[
-              NawaDataColumn<NawaChartPoint>(
+            columns: <OrcaDataColumn<OrcaChartPoint>>[
+              OrcaDataColumn<OrcaChartPoint>(
                 key: 'label',
                 label: widget.title,
-                value: (NawaChartPoint p) => p.label,
+                value: (OrcaChartPoint p) => p.label,
               ),
-              NawaDataColumn<NawaChartPoint>(
+              OrcaDataColumn<OrcaChartPoint>(
                 key: 'value',
                 label: widget.valueLabel,
-                align: NawaColumnAlign.end,
-                value: (NawaChartPoint p) => p.value,
-                cellBuilder: (BuildContext context, NawaChartPoint p) => Text(
+                align: OrcaColumnAlign.end,
+                value: (OrcaChartPoint p) => p.value,
+                cellBuilder: (BuildContext context, OrcaChartPoint p) => Text(
                   widget.format(p.value),
-                  style: TextStyle(color: c.text, fontSize: NawaFontSize.sm),
+                  style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm),
                 ),
               ),
             ],
@@ -340,7 +340,7 @@ class _ChartFrameState extends State<_ChartFrame> {
 }
 
 _ChartColors _chartColors(BuildContext context, Color? color) {
-  final NawaColors c = NawaTheme.of(context).colors;
+  final OrcaColors c = OrcaTheme.of(context).colors;
   final Color series = color ?? c.primary;
   return _ChartColors(
     series: series,
@@ -354,9 +354,9 @@ _ChartColors _chartColors(BuildContext context, Color? color) {
 ///
 /// Screen readers get a text summary (count, highest, lowest). A button shows
 /// the same data as a table.
-class NawaBarChart extends StatelessWidget {
+class OrcaBarChart extends StatelessWidget {
   /// Creates a bar chart.
-  const NawaBarChart({
+  const OrcaBarChart({
     super.key,
     required this.title,
     required this.data,
@@ -375,7 +375,7 @@ class NawaBarChart extends StatelessWidget {
   final String title;
 
   /// Points.
-  final List<NawaChartPoint> data;
+  final List<OrcaChartPoint> data;
 
   /// Subtitle.
   final String? description;
@@ -406,11 +406,11 @@ class NawaBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     return _ChartFrame(
       title: title,
       description: description,
-      summary: semanticSummary ?? 'Bar chart. ${nawaDescribeSeries(title, data, format)}',
+      summary: semanticSummary ?? 'Bar chart. ${orcaDescribeSeries(title, data, format)}',
       data: data,
       height: height,
       format: format,
@@ -434,9 +434,9 @@ class NawaBarChart extends StatelessWidget {
 ///
 /// Screen readers get a summary with the trend. A button shows the same data
 /// as a table.
-class NawaLineChart extends StatelessWidget {
+class OrcaLineChart extends StatelessWidget {
   /// Creates a line chart.
-  const NawaLineChart({
+  const OrcaLineChart({
     super.key,
     required this.title,
     required this.data,
@@ -455,7 +455,7 @@ class NawaLineChart extends StatelessWidget {
   final String title;
 
   /// Points in order.
-  final List<NawaChartPoint> data;
+  final List<OrcaChartPoint> data;
 
   /// Subtitle.
   final String? description;
@@ -490,7 +490,7 @@ class NawaLineChart extends StatelessWidget {
       title: title,
       description: description,
       summary: semanticSummary ??
-          'Line chart. ${nawaDescribeSeries(title, data, format)} ${nawaTrendSummary(data, format)}'.trim(),
+          'Line chart. ${orcaDescribeSeries(title, data, format)} ${orcaTrendSummary(data, format)}'.trim(),
       data: data,
       height: height,
       format: format,

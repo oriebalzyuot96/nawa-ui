@@ -1,16 +1,16 @@
-// Generates nawa-ui.css and tokens.ts from src/themes.mjs. Run: node scripts/build.mjs
+// Generates orca-ui.css and tokens.ts from src/themes.mjs. Run: node scripts/build.mjs
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { accents, defaultAccent, defaultShape, modes, shapes, softMix } from '../src/themes.mjs';
+import { accents, defaultAccent, defaultShape, modes, shapes, softMix, tint } from '../src/themes.mjs';
 import { accentNames, modeNames, resolveTheme } from './resolve.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const kebab = (s) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 const block = (selector, vars) =>
-  `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --nw-${kebab(k)}: ${v};`).join('\n')}\n}\n`;
+  `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --oc-${kebab(k)}: ${v};`).join('\n')}\n}\n`;
 
-// Accent palettes: every accent carries its light, dark and hc values as --nw-a-<mode>-<key>.
+// Accent palettes: every accent carries its light, dark and hc values as --oc-a-<mode>-<key>.
 function accentVars(accent) {
   const vars = {};
   for (const mode of modeNames) {
@@ -22,10 +22,34 @@ function accentVars(accent) {
 // Binding: pick the accent values for the current mode.
 function bindingVars(mode) {
   const vars = {};
-  for (const key of ['primary', 'primaryHover', 'primaryInk', 'onPrimary']) vars[key] = `var(--nw-a-${mode}-${kebab(key)})`;
-  vars.primarySoft = `color-mix(in srgb, var(--nw-primary) ${softMix.primary * 100}%, var(--nw-surface))`;
-  vars.focus = 'var(--nw-primary)';
+  for (const key of ['primary', 'primaryHover', 'primaryInk', 'onPrimary']) vars[key] = `var(--oc-a-${mode}-${kebab(key)})`;
+  vars.primarySoft = `color-mix(in srgb, var(--oc-primary) ${softMix.primary * 100}%, var(--oc-surface))`;
+  vars.focus = 'var(--oc-primary)';
+  // Accent-tinted roles of the Orca design language (see DESIGN.md). They live in the binding blocks
+  // so nested data-theme / data-accent scopes recompute them. Same math as scripts/resolve.mjs.
+  vars.tintHover = `color-mix(in srgb, var(--oc-primary) ${tint.hover * 100}%, var(--oc-surface))`;
+  vars.tintPress = `color-mix(in srgb, var(--oc-primary) ${tint.press * 100}%, var(--oc-surface))`;
+  vars.canvas = `color-mix(in srgb, var(--oc-primary) ${tint.canvas * 100}%, var(--oc-surface-alt))`;
+  vars.borderSubtle = `color-mix(in srgb, var(--oc-primary) ${tint.border * 100}%, var(--oc-border))`;
+  vars.borderStrong = 'color-mix(in srgb, var(--oc-control-border) 55%, var(--oc-border))';
+  vars.ring = 'color-mix(in srgb, var(--oc-focus) 24%, transparent)';
   return vars;
+}
+
+/** Elevation scale: soft, multi-layer shadows. Dark mode needs denser shadows to read at all. */
+function shadows(mode) {
+  const c = modes[mode].shadowRgb;
+  const k = mode === 'dark' ? 3.2 : 1;
+  const a = (v) => Math.min(0.9, +(v * k).toFixed(3));
+  return {
+    shadowXs: `0 1px 1px rgba(${c}, ${a(0.04)}), 0 1px 2px rgba(${c}, ${a(0.05)})`,
+    shadowSm: `0 1px 2px rgba(${c}, ${a(0.05)}), 0 2px 6px -2px rgba(${c}, ${a(0.08)})`,
+    shadowMd: `0 2px 4px -2px rgba(${c}, ${a(0.06)}), 0 10px 24px -8px rgba(${c}, ${a(0.16)})`,
+    shadowLg: `0 4px 8px -4px rgba(${c}, ${a(0.08)}), 0 24px 48px -16px rgba(${c}, ${a(0.22)})`,
+    shadowXl: `0 8px 16px -8px rgba(${c}, ${a(0.1)}), 0 40px 80px -24px rgba(${c}, ${a(0.26)})`,
+    /** 1px inner top highlight that makes raised surfaces read as layered. */
+    highlight: mode === 'dark' ? 'rgba(255, 255, 255, 0.05)' : mode === 'hc' ? 'transparent' : 'rgba(255, 255, 255, 0.8)',
+  };
 }
 
 function modeVars(mode) {
@@ -44,20 +68,29 @@ function modeVars(mode) {
     danger: m.danger,
     info: m.info,
     onDanger: m.onDanger,
-    successSoft: `color-mix(in srgb, var(--nw-success) ${pct}%, var(--nw-surface))`,
-    warningSoft: `color-mix(in srgb, var(--nw-warning) ${pct}%, var(--nw-surface))`,
-    dangerSoft: `color-mix(in srgb, var(--nw-danger) ${pct}%, var(--nw-surface))`,
-    infoSoft: `color-mix(in srgb, var(--nw-info) ${pct}%, var(--nw-surface))`,
+    successSoft: `color-mix(in srgb, var(--oc-success) ${pct}%, var(--oc-surface))`,
+    warningSoft: `color-mix(in srgb, var(--oc-warning) ${pct}%, var(--oc-surface))`,
+    dangerSoft: `color-mix(in srgb, var(--oc-danger) ${pct}%, var(--oc-surface))`,
+    infoSoft: `color-mix(in srgb, var(--oc-info) ${pct}%, var(--oc-surface))`,
     overlay: m.overlay,
-    shadowSm: `0 1px 2px rgba(${m.shadowRgb}, ${mode === 'dark' ? 0.4 : 0.06})`,
-    shadowMd: `0 4px 14px -6px rgba(${m.shadowRgb}, ${mode === 'dark' ? 0.6 : 0.16}), 0 1px 3px rgba(${m.shadowRgb}, 0.06)`,
-    shadowLg: `0 14px 32px -16px rgba(${m.shadowRgb}, ${mode === 'dark' ? 0.7 : 0.22}), 0 2px 6px rgba(${m.shadowRgb}, 0.06)`,
+    /** Floating layers (menus, popovers, dialogs): lifted one step above the page in dark mode. */
+    surfaceRaised: mode === 'dark' ? 'var(--oc-surface-alt)' : 'var(--oc-surface)',
+    ...shadows(mode),
   };
 }
 
-const shapeVars = (name) => ({ radiusSm: `${shapes[name].sm}px`, radius: `${shapes[name].md}px`, radiusLg: `${shapes[name].lg}px` });
+const shapeVars = (name) => {
+  const s = shapes[name];
+  return {
+    radiusXs: `${Math.max(2, Math.round(s.sm / 2))}px`,
+    radiusSm: `${s.sm}px`,
+    radius: `${s.md}px`,
+    radiusLg: `${s.lg}px`,
+    radiusXl: `${s.lg + Math.round(s.lg / 3)}px`,
+  };
+};
 
-let css = `/* Nawa UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
+let css = `/* Orca UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
  * Theme with attributes on <html> (or any container):
  *   data-theme="light | dark | hc"   (default: follows prefers-color-scheme / prefers-contrast)
  *   data-accent="${accentNames.join(' | ')}"
@@ -102,7 +135,7 @@ if (existsSync(partsDir)) {
     css += `\n/* ===== ${file} ===== */\n` + readFileSync(join(partsDir, file), 'utf8');
   }
 }
-writeFileSync(join(root, 'nawa-ui.css'), css);
+writeFileSync(join(root, 'orca-ui.css'), css);
 
 // ---------- tokens.ts for React Native and other JS consumers ----------
 const themes = {};
@@ -115,7 +148,7 @@ for (const mode of modeNames) {
 }
 const keys = Object.keys(themes.light[defaultAccent]);
 
-const header = '/* Nawa UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
+const header = '/* Orca UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
 
 const js = `${header}
 export const themes = ${JSON.stringify(themes, null, 2)};
@@ -142,21 +175,21 @@ export type ThemeShape = ${Object.keys(shapes).map((s) => `'${s}'`).join(' | ')}
 /** @deprecated use ThemeMode */
 export type ThemeName = ThemeMode;
 
-export interface NawaTheme {
+export interface OrcaTheme {
 ${keys.map((k) => `  ${k}: string;`).join('\n')}
 }
 
-export declare const themes: Record<ThemeMode, Record<ThemeAccent, NawaTheme>>;
+export declare const themes: Record<ThemeMode, Record<ThemeAccent, OrcaTheme>>;
 export declare const shapes: Record<ThemeShape, { sm: number; md: number; lg: number }>;
-export declare const lightTheme: NawaTheme;
-export declare const darkTheme: NawaTheme;
-export declare const highContrastTheme: NawaTheme;
+export declare const lightTheme: OrcaTheme;
+export declare const darkTheme: OrcaTheme;
+export declare const highContrastTheme: OrcaTheme;
 export declare const radius: { readonly sm: number; readonly md: number; readonly lg: number; readonly pill: 999 };
 export declare const spacing: { readonly xs: 4; readonly sm: 8; readonly md: 12; readonly lg: 16; readonly xl: 24 };
 export declare const fontSize: { readonly xs: 11; readonly sm: 13; readonly md: 15; readonly lg: 17; readonly xl: 20 };
-export declare function getTheme(mode?: ThemeMode, accent?: ThemeAccent): NawaTheme;
+export declare function getTheme(mode?: ThemeMode, accent?: ThemeAccent): OrcaTheme;
 `;
 writeFileSync(join(root, 'tokens.js'), js);
 writeFileSync(join(root, 'tokens.d.ts'), dts);
 
-console.log(`Built nawa-ui.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes.`);
+console.log(`Built orca-ui.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes.`);

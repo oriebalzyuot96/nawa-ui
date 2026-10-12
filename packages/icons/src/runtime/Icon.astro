@@ -1,0 +1,39 @@
+---
+// @orca-ui/icons — Astro component (renders static, zero-JS inline SVG).
+// <Icon name="search" />  <Icon name="bell" variant="duotone" size={20} title="Notifications" />
+import { iconToSvg } from '../icons.js';
+import type { IconName, IconVariant } from '../icons.js';
+
+interface Props {
+  name: IconName;
+  variant?: IconVariant;
+  size?: number | string;
+  /** Accessible name; without it the icon is decorative (aria-hidden). */
+  title?: string;
+  label?: string;
+  strokeWidth?: number | string;
+  flipRtl?: boolean;
+  spin?: boolean;
+  class?: string;
+  /** Stable id prefix for <title>/<mask> references. */
+  id?: string;
+  [attr: string]: unknown;
+}
+
+const {
+  name, variant = 'outline', size = 24, title, label, strokeWidth, flipRtl, spin, class: className, id,
+  'aria-label': ariaLabel, ...rest
+} = Astro.props;
+
+const attrs: Record<string, string | number | boolean | null | undefined> = {};
+for (const [k, v] of Object.entries(rest)) {
+  if (v == null || typeof v === 'object' || typeof v === 'function') continue;
+  attrs[k] = v as string | number | boolean;
+}
+
+const svg = iconToSvg(name, {
+  variant, size, title: title ?? label ?? (ariaLabel as string | undefined), strokeWidth, flipRtl, spin,
+  className, id, attrs,
+});
+---
+<Fragment set:html={svg} />

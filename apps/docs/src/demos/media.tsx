@@ -12,7 +12,7 @@ import {
   Tag,
   Terminal,
   type GalleriaItem,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Output, scene } from './shared';
 
 const places = [
@@ -39,7 +39,7 @@ function CarouselDemo() {
       ]}
       getKey={(p) => p.name}
       itemTemplate={(p) => (
-        <figure style={{ margin: '0.25rem', border: '1px solid var(--nw-border)', borderRadius: 'var(--nw-radius-lg)', overflow: 'hidden', background: 'var(--nw-surface)' }}>
+        <figure style={{ margin: '0.25rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius-lg)', overflow: 'hidden', background: 'var(--oc-surface)' }}>
           <img src={scene(p.name, p.hue, p.variant)} alt={`Landscape illustration of ${p.name}`} style={{ display: 'block', width: '100%', aspectRatio: '3 / 2', objectFit: 'cover' }} />
           <figcaption style={{ display: 'flex', justifyContent: 'space-between', padding: '0.6rem 0.75rem' }}>
             <strong>{p.name}</strong>
@@ -132,7 +132,7 @@ function TagDemo() {
         </Tag>
       ))}
       {tags.length === 0 && (
-        <button type="button" className="nw-btn nw-btn--secondary nw-btn--sm" onClick={() => setTags(['Design system', 'Accessibility', 'RTL', 'Charts'])}>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setTags(['Design system', 'Accessibility', 'RTL', 'Charts'])}>
           Reset tags
         </button>
       )}
@@ -201,7 +201,7 @@ function UploadDemo() {
 
 const commands: Record<string, string> = {
   help: 'Commands: help, date, whoami, components, theme',
-  whoami: 'guest@nawa-ui',
+  whoami: 'guest@orca-ui',
   components: 'Forms, Advanced inputs, Data, Panels, Overlays, Menus, Media, Feedback, Charts, 3D',
   theme: 'Use the Mode / Accent / Shape menus in the header.',
 };
@@ -211,8 +211,8 @@ function TerminalDemo() {
     <div className="demo-col">
       <Terminal
         label="Demo shell"
-        prompt="nawa $"
-        welcomeMessage="Welcome to the Nawa UI demo shell. Type help and press Enter."
+        prompt="orca $"
+        welcomeMessage="Welcome to the Orca UI demo shell. Type help and press Enter."
         onCommand={(cmd) => {
           const c = cmd.trim().toLowerCase();
           if (c === 'date') return new Date().toString();

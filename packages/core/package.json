@@ -1,10 +1,10 @@
 {
-  "name": "@nawa-ui/core",
+  "name": "@orca-ui/core",
   "version": "0.1.0",
-  "description": "Nawa UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
+  "description": "Orca UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
   "type": "module",
   "files": [
-    "nawa-ui.css",
+    "orca-ui.css",
     "tokens.js",
     "tokens.d.ts",
     "src/themes.mjs",
@@ -14,12 +14,12 @@
     "src/theme.d.ts",
     "README.md"
   ],
-  "style": "nawa-ui.css",
+  "style": "orca-ui.css",
   "main": "tokens.js",
   "types": "tokens.d.ts",
   "exports": {
-    "./style.css": "./nawa-ui.css",
-    "./nawa-ui.css": "./nawa-ui.css",
+    "./style.css": "./orca-ui.css",
+    "./orca-ui.css": "./orca-ui.css",
     "./tokens": {
       "types": "./tokens.d.ts",
       "default": "./tokens.js"
@@ -39,11 +39,12 @@
   ],
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node scripts/check-contrast.mjs",
-    "prepublishOnly": "node scripts/build.mjs && node scripts/check-contrast.mjs"
+    "test": "vitest run",
+    "prepublishOnly": "node scripts/build.mjs && node scripts/check-contrast.mjs",
+    "test:contrast": "node scripts/check-contrast.mjs"
   },
   "keywords": [
-    "nawa-ui",
+    "orca-ui",
     "ui-library",
     "design-system",
     "design-tokens",
@@ -56,16 +57,20 @@
     "rtl",
     "arabic"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
     "directory": "packages/core"
   },
-  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "jsdom": "25.0.1",
+    "vitest": "2.1.8"
+  }
 }

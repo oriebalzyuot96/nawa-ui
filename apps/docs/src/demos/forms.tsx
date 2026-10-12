@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, Checkbox, Input, RadioGroup, Segmented, Select, Slider, Textarea } from '@nawa-ui/react';
+import { Button, Checkbox, Input, RadioGroup, Segmented, Select, Slider, Textarea } from '@orca-ui/react';
 import { createDemoIsland, Output, SwitchField } from './shared';
 
 function ButtonDemo() {

@@ -36,10 +36,10 @@ const s = cat.slug;
 
 <DocsLayout title={cat.title} description={cat.description} current={cat.slug} toc={cat.entries.map((e) => ({ id: e.id, name: e.name }))}>
   <nav aria-label="Breadcrumb">
-    <ol class="nw-breadcrumb">
-      <li class="nw-breadcrumb__item"><a href={`${base}/`}>Home</a></li>
-      <li class="nw-breadcrumb__item"><a href={`${base}/components/`}>Components</a></li>
-      <li class="nw-breadcrumb__item"><span aria-current="page">{cat.nav}</span></li>
+    <ol class="oc-breadcrumb">
+      <li class="oc-breadcrumb__item"><a href={`${base}/`}>Home</a></li>
+      <li class="oc-breadcrumb__item"><a href={`${base}/components/`}>Components</a></li>
+      <li class="oc-breadcrumb__item"><span aria-current="page">{cat.nav}</span></li>
     </ol>
   </nav>
   <h1>{cat.h1}</h1>

@@ -23,7 +23,7 @@ export function getPageItems(page: number, pageCount: number): PageItem[] {
 let nextId = 0;
 
 /** Unique DOM id for label/description wiring. */
-export function nwId(prefix = 'nw'): string {
+export function ocId(prefix = 'oc'): string {
   nextId += 1;
   return `${prefix}-${nextId}`;
 }

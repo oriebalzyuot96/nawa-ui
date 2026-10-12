@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../foundation/group_focus.dart';
 import '../foundation/pressable.dart';
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
-/// An option of [NawaSelect], [NawaRadioGroup] and [NawaSegmented].
+/// An option of [OrcaSelect], [OrcaRadioGroup] and [OrcaSegmented].
 @immutable
-class NawaOption<T> {
+class OrcaOption<T> {
   /// Creates an option.
-  const NawaOption({required this.value, required this.label, this.disabled = false});
+  const OrcaOption({required this.value, required this.label, this.disabled = false});
 
   /// Value.
   final T value;
@@ -36,14 +36,14 @@ class _FieldFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (label != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: NawaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.xs),
             child: ExcludeSemantics(
               child: Text.rich(
                 TextSpan(
@@ -52,14 +52,14 @@ class _FieldFrame extends StatelessWidget {
                     if (isRequired) TextSpan(text: ' *', style: TextStyle(color: c.danger)),
                   ],
                 ),
-                style: TextStyle(color: c.text, fontSize: NawaFontSize.sm, fontWeight: FontWeight.w600),
+                style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600),
               ),
             ),
           ),
         child,
         if (error != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(top: NawaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(top: OrcaSpace.xs),
             child: Semantics(
               liveRegion: true,
               child: Row(
@@ -67,20 +67,20 @@ class _FieldFrame extends StatelessWidget {
                 children: <Widget>[
                   ExcludeSemantics(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.only(end: NawaSpace.xs, top: 1),
+                      padding: const EdgeInsetsDirectional.only(end: OrcaSpace.xs, top: 1),
                       child: Icon(Icons.error_outline, size: 16, color: c.danger),
                     ),
                   ),
-                  Expanded(child: Text(error!, style: TextStyle(color: c.danger, fontSize: NawaFontSize.sm))),
+                  Expanded(child: Text(error!, style: TextStyle(color: c.danger, fontSize: OrcaFontSize.sm))),
                 ],
               ),
             ),
           )
         else if (hint != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(top: NawaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(top: OrcaSpace.xs),
             child: ExcludeSemantics(
-              child: Text(hint!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+              child: Text(hint!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
             ),
           ),
       ],
@@ -97,9 +97,9 @@ String? _fieldHint(String? hint, String? error) => error != null ? 'Error: $erro
 ///
 /// Screen readers get the label as the field name and the error (or hint) as
 /// its description; a new error is also announced (live region).
-class NawaInput extends StatelessWidget {
+class OrcaInput extends StatelessWidget {
   /// Creates a text input.
-  const NawaInput({
+  const OrcaInput({
     super.key,
     this.label,
     this.hint,
@@ -189,8 +189,8 @@ class NawaInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final bool hasError = error != null;
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
           borderRadius: BorderRadius.circular(t.radii.md),
@@ -223,7 +223,7 @@ class NawaInput extends StatelessWidget {
             maxLines: obscureText ? 1 : maxLines,
             minLines: minLines,
             maxLength: maxLength,
-            style: TextStyle(color: c.text, fontSize: NawaFontSize.md),
+            style: TextStyle(color: c.text, fontSize: OrcaFontSize.md),
             cursorColor: c.primary,
             decoration: InputDecoration(
               hintText: placeholder,
@@ -231,8 +231,8 @@ class NawaInput extends StatelessWidget {
               filled: true,
               fillColor: enabled ? c.surface : c.surfaceAlt,
               isDense: false,
-              constraints: const BoxConstraints(minHeight: nawaMinTapTarget),
-              contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.md, vertical: NawaSpace.md),
+              constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
+              contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md, vertical: OrcaSpace.md),
               prefixIcon: prefixIcon == null ? null : ExcludeSemantics(child: prefixIcon),
               suffixIcon: suffixIcon,
               border: border(c.controlBorder, t.borderWidth),
@@ -247,10 +247,10 @@ class NawaInput extends StatelessWidget {
   }
 }
 
-/// Multi-line [NawaInput].
-class NawaTextarea extends StatelessWidget {
+/// Multi-line [OrcaInput].
+class OrcaTextarea extends StatelessWidget {
   /// Creates a textarea.
-  const NawaTextarea({
+  const OrcaTextarea({
     super.key,
     this.label,
     this.hint,
@@ -266,16 +266,16 @@ class NawaTextarea extends StatelessWidget {
     this.maxLength,
   });
 
-  /// See [NawaInput.label].
+  /// See [OrcaInput.label].
   final String? label;
 
-  /// See [NawaInput.hint].
+  /// See [OrcaInput.hint].
   final String? hint;
 
-  /// See [NawaInput.error].
+  /// See [OrcaInput.error].
   final String? error;
 
-  /// See [NawaInput.placeholder].
+  /// See [OrcaInput.placeholder].
   final String? placeholder;
 
   /// Controller.
@@ -304,7 +304,7 @@ class NawaTextarea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NawaInput(
+    return OrcaInput(
       label: label,
       hint: hint,
       error: error,
@@ -324,9 +324,9 @@ class NawaTextarea extends StatelessWidget {
 }
 
 /// Picker that opens a bottom sheet of options (the mobile pattern for a dropdown).
-class NawaSelect<T> extends StatelessWidget {
+class OrcaSelect<T> extends StatelessWidget {
   /// Creates a select.
-  const NawaSelect({
+  const OrcaSelect({
     super.key,
     required this.options,
     required this.onChanged,
@@ -340,7 +340,7 @@ class NawaSelect<T> extends StatelessWidget {
   });
 
   /// Options.
-  final List<NawaOption<T>> options;
+  final List<OrcaOption<T>> options;
 
   /// Selection callback.
   final ValueChanged<T> onChanged;
@@ -366,15 +366,15 @@ class NawaSelect<T> extends StatelessWidget {
   /// Enabled.
   final bool enabled;
 
-  NawaOption<T>? get _selected {
-    for (final NawaOption<T> o in options) {
+  OrcaOption<T>? get _selected {
+    for (final OrcaOption<T> o in options) {
       if (o.value == value) return o;
     }
     return null;
   }
 
   Future<void> _open(BuildContext context) async {
-    final NawaColors c = NawaTheme.of(context).colors;
+    final OrcaColors c = OrcaTheme.of(context).colors;
     final T? result = await showModalBottomSheet<T>(
       context: context,
       backgroundColor: c.surface,
@@ -393,16 +393,16 @@ class NawaSelect<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
-    final NawaOption<T>? selected = _selected;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
+    final OrcaOption<T>? selected = _selected;
     final bool hasError = error != null;
     return _FieldFrame(
       label: label,
       hint: hint,
       error: error,
       isRequired: isRequired,
-      child: NawaPressable(
+      child: OrcaPressable(
         onPressed: enabled ? () => _open(context) : null,
         borderRadius: BorderRadius.circular(t.radii.md),
         semanticLabel: _fieldLabel(label ?? placeholder, isRequired),
@@ -410,8 +410,8 @@ class NawaSelect<T> extends StatelessWidget {
         semanticHint: _fieldHint(hint, error),
         excludeChildSemantics: true,
         child: Container(
-          constraints: const BoxConstraints(minHeight: nawaMinTapTarget),
-          padding: const EdgeInsetsDirectional.only(start: NawaSpace.md, end: NawaSpace.sm),
+          constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
+          padding: const EdgeInsetsDirectional.only(start: OrcaSpace.md, end: OrcaSpace.sm),
           decoration: BoxDecoration(
             color: enabled ? c.surface : c.surfaceAlt,
             borderRadius: BorderRadius.circular(t.radii.md),
@@ -425,7 +425,7 @@ class NawaSelect<T> extends StatelessWidget {
               Expanded(
                 child: Text(
                   selected?.label ?? placeholder,
-                  style: TextStyle(color: selected == null ? c.textMuted : c.text, fontSize: NawaFontSize.md),
+                  style: TextStyle(color: selected == null ? c.textMuted : c.text, fontSize: OrcaFontSize.md),
                 ),
               ),
               Icon(Icons.expand_more, color: c.textMuted),
@@ -441,13 +441,13 @@ class _SelectSheet<T> extends StatelessWidget {
   const _SelectSheet({required this.title, required this.options, required this.value});
 
   final String title;
-  final List<NawaOption<T>> options;
+  final List<OrcaOption<T>> options;
   final T? value;
 
   @override
   Widget build(BuildContext context) {
-    final NawaColors c = NawaTheme.of(context).colors;
-    final int selectedIndex = options.indexWhere((NawaOption<T> o) => o.value == value);
+    final OrcaColors c = OrcaTheme.of(context).colors;
+    final int selectedIndex = options.indexWhere((OrcaOption<T> o) => o.value == value);
     return Semantics(
       scopesRoute: true,
       namesRoute: true,
@@ -460,21 +460,21 @@ class _SelectSheet<T> extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(NawaSpace.lg, 0, NawaSpace.lg, NawaSpace.sm),
+              padding: const EdgeInsetsDirectional.fromSTEB(OrcaSpace.lg, 0, OrcaSpace.lg, OrcaSpace.sm),
               child: Semantics(
                 header: true,
-                child: Text(title, style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.lg)),
+                child: Text(title, style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.lg)),
               ),
             ),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
-                padding: const EdgeInsetsDirectional.only(bottom: NawaSpace.lg),
+                padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.lg),
                 itemCount: options.length,
                 itemBuilder: (BuildContext context, int i) {
-                  final NawaOption<T> o = options[i];
+                  final OrcaOption<T> o = options[i];
                   final bool selected = i == selectedIndex;
-                  return NawaPressable(
+                  return OrcaPressable(
                     autofocus: selected || (selectedIndex < 0 && i == 0),
                     onPressed: o.disabled ? null : () => Navigator.of(context).pop<T>(o.value),
                     selected: selected,
@@ -482,7 +482,7 @@ class _SelectSheet<T> extends StatelessWidget {
                     semanticHint: 'Item ${i + 1} of ${options.length}',
                     child: Container(
                       color: selected ? c.primarySoft : null,
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.lg, vertical: NawaSpace.md),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.lg, vertical: OrcaSpace.md),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -491,7 +491,7 @@ class _SelectSheet<T> extends StatelessWidget {
                               style: TextStyle(
                                 color: o.disabled ? c.textMuted : (selected ? c.primaryInk : c.text),
                                 fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-                                fontSize: NawaFontSize.md,
+                                fontSize: OrcaFontSize.md,
                               ),
                             ),
                           ),
@@ -511,9 +511,9 @@ class _SelectSheet<T> extends StatelessWidget {
 }
 
 /// Checkbox with a label. The whole row is the hit target.
-class NawaCheckbox extends StatelessWidget {
+class OrcaCheckbox extends StatelessWidget {
   /// Creates a checkbox.
-  const NawaCheckbox({super.key, required this.value, required this.onChanged, this.label, this.description, this.semanticLabel});
+  const OrcaCheckbox({super.key, required this.value, required this.onChanged, this.label, this.description, this.semanticLabel});
 
   /// Checked state. Null shows the indeterminate (mixed) state.
   final bool? value;
@@ -532,12 +532,12 @@ class NawaCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final bool on = value ?? false;
     final bool filled = value != false;
     final bool enabled = onChanged != null;
-    return NawaPressable(
+    return OrcaPressable(
       button: false,
       checked: value ?? false,
       onPressed: enabled ? () => onChanged!(!on) : null,
@@ -547,7 +547,7 @@ class NawaCheckbox extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1 : 0.55,
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.xs, vertical: NawaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,15 +567,15 @@ class NawaCheckbox extends StatelessWidget {
                       : null,
                 ),
               ),
-              if (label != null || description != null) const SizedBox(width: NawaSpace.sm),
+              if (label != null || description != null) const SizedBox(width: OrcaSpace.sm),
               if (label != null || description != null)
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (label != null) Text(label!, style: TextStyle(color: c.text, fontSize: NawaFontSize.md)),
+                      if (label != null) Text(label!, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md)),
                       if (description != null)
-                        Text(description!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+                        Text(description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
                     ],
                   ),
                 ),
@@ -588,9 +588,9 @@ class NawaCheckbox extends StatelessWidget {
 }
 
 /// On/off switch with a label. The whole row toggles.
-class NawaSwitch extends StatelessWidget {
+class OrcaSwitch extends StatelessWidget {
   /// Creates a switch.
-  const NawaSwitch({super.key, required this.value, required this.onChanged, required this.label, this.description});
+  const OrcaSwitch({super.key, required this.value, required this.onChanged, required this.label, this.description});
 
   /// On.
   final bool value;
@@ -606,11 +606,11 @@ class NawaSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final bool enabled = onChanged != null;
     final Duration duration = _reduceMotion(context) ? Duration.zero : const Duration(milliseconds: 160);
-    return NawaPressable(
+    return OrcaPressable(
       button: false,
       toggled: value,
       onPressed: enabled ? () => onChanged!(!value) : null,
@@ -618,20 +618,20 @@ class NawaSwitch extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1 : 0.55,
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.xs, vertical: NawaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
           child: Row(
             children: <Widget>[
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(label, style: TextStyle(color: c.text, fontSize: NawaFontSize.md)),
+                    Text(label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md)),
                     if (description != null)
-                      Text(description!, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+                      Text(description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
                   ],
                 ),
               ),
-              const SizedBox(width: NawaSpace.md),
+              const SizedBox(width: OrcaSpace.md),
               ExcludeSemantics(
                 child: AnimatedContainer(
                   duration: duration,
@@ -666,12 +666,12 @@ class NawaSwitch extends StatelessWidget {
 }
 
 /// Group of radio buttons. Arrow keys move the selection (like the web).
-class NawaRadioGroup<T> extends StatefulWidget {
+class OrcaRadioGroup<T> extends StatefulWidget {
   /// Creates a radio group.
-  const NawaRadioGroup({super.key, required this.options, required this.value, required this.onChanged, this.label});
+  const OrcaRadioGroup({super.key, required this.options, required this.value, required this.onChanged, this.label});
 
   /// Options.
-  final List<NawaOption<T>> options;
+  final List<OrcaOption<T>> options;
 
   /// Selected value.
   final T? value;
@@ -683,11 +683,11 @@ class NawaRadioGroup<T> extends StatefulWidget {
   final String? label;
 
   @override
-  State<NawaRadioGroup<T>> createState() => _NawaRadioGroupState<T>();
+  State<OrcaRadioGroup<T>> createState() => _OrcaRadioGroupState<T>();
 }
 
-class _NawaRadioGroupState<T> extends State<NawaRadioGroup<T>> {
-  final NawaGroupFocus _focus = NawaGroupFocus('NawaRadio');
+class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
+  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaRadio');
 
   @override
   void dispose() {
@@ -705,42 +705,42 @@ class _NawaRadioGroupState<T> extends State<NawaRadioGroup<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
-    final int selectedIndex = widget.options.indexWhere((NawaOption<T> o) => o.value == widget.value);
-    final int tabStop = selectedIndex >= 0 ? selectedIndex : nawaEdgeEnabled(false, widget.options.length, _enabled);
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
+    final int selectedIndex = widget.options.indexWhere((OrcaOption<T> o) => o.value == widget.value);
+    final int tabStop = selectedIndex >= 0 ? selectedIndex : orcaEdgeEnabled(false, widget.options.length, _enabled);
     final int length = widget.options.length;
     return Semantics(
       container: true,
       explicitChildNodes: true,
       label: widget.label,
-      child: NawaArrowKeys(
+      child: OrcaArrowKeys(
         vertical: true,
         onMove: (int delta) {
           final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-          _select(nawaNextEnabled(from, delta, length, _enabled));
+          _select(orcaNextEnabled(from, delta, length, _enabled));
         },
-        onEdge: (bool last) => _select(nawaEdgeEnabled(last, length, _enabled)),
+        onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (widget.label != null)
               Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: NawaSpace.xs),
+                padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.xs),
                 child: ExcludeSemantics(
                   child: Text(
                     widget.label!,
-                    style: TextStyle(color: c.text, fontSize: NawaFontSize.sm, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
             for (int i = 0; i < length; i++)
               Builder(builder: (BuildContext context) {
-                final NawaOption<T> o = widget.options[i];
+                final OrcaOption<T> o = widget.options[i];
                 final bool selected = i == selectedIndex;
                 final FocusNode node = _focus[i]..skipTraversal = i != tabStop;
-                return NawaPressable(
+                return OrcaPressable(
                   button: false,
                   focusNode: node,
                   checked: selected,
@@ -751,7 +751,7 @@ class _NawaRadioGroupState<T> extends State<NawaRadioGroup<T>> {
                   child: Opacity(
                     opacity: _enabled(i) ? 1 : 0.55,
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.xs, vertical: NawaSpace.sm),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -776,8 +776,8 @@ class _NawaRadioGroupState<T> extends State<NawaRadioGroup<T>> {
                                   : null,
                             ),
                           ),
-                          const SizedBox(width: NawaSpace.sm),
-                          Flexible(child: Text(o.label, style: TextStyle(color: c.text, fontSize: NawaFontSize.md))),
+                          const SizedBox(width: OrcaSpace.sm),
+                          Flexible(child: Text(o.label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md))),
                         ],
                       ),
                     ),
@@ -792,12 +792,12 @@ class _NawaRadioGroupState<T> extends State<NawaRadioGroup<T>> {
 }
 
 /// Segmented control: a compact single choice. Arrow keys move the selection.
-class NawaSegmented<T> extends StatefulWidget {
+class OrcaSegmented<T> extends StatefulWidget {
   /// Creates a segmented control.
-  const NawaSegmented({super.key, required this.options, required this.value, required this.onChanged, this.label});
+  const OrcaSegmented({super.key, required this.options, required this.value, required this.onChanged, this.label});
 
   /// Options.
-  final List<NawaOption<T>> options;
+  final List<OrcaOption<T>> options;
 
   /// Selected value.
   final T value;
@@ -809,11 +809,11 @@ class NawaSegmented<T> extends StatefulWidget {
   final String? label;
 
   @override
-  State<NawaSegmented<T>> createState() => _NawaSegmentedState<T>();
+  State<OrcaSegmented<T>> createState() => _OrcaSegmentedState<T>();
 }
 
-class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
-  final NawaGroupFocus _focus = NawaGroupFocus('NawaSegment');
+class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
+  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaSegment');
 
   @override
   void dispose() {
@@ -831,21 +831,21 @@ class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final int length = widget.options.length;
-    final int selectedIndex = widget.options.indexWhere((NawaOption<T> o) => o.value == widget.value);
-    final int tabStop = selectedIndex >= 0 ? selectedIndex : nawaEdgeEnabled(false, length, _enabled);
+    final int selectedIndex = widget.options.indexWhere((OrcaOption<T> o) => o.value == widget.value);
+    final int tabStop = selectedIndex >= 0 ? selectedIndex : orcaEdgeEnabled(false, length, _enabled);
     return Semantics(
       container: true,
       explicitChildNodes: true,
       label: widget.label,
-      child: NawaArrowKeys(
+      child: OrcaArrowKeys(
         onMove: (int delta) {
           final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-          _select(nawaNextEnabled(from, delta, length, _enabled));
+          _select(orcaNextEnabled(from, delta, length, _enabled));
         },
-        onEdge: (bool last) => _select(nawaEdgeEnabled(last, length, _enabled)),
+        onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
         child: Container(
           decoration: BoxDecoration(
             color: c.surfaceMuted,
@@ -856,7 +856,7 @@ class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
             children: <Widget>[
               for (int i = 0; i < length; i++)
                 Expanded(
-                  child: NawaPressable(
+                  child: OrcaPressable(
                     focusNode: _focus[i]..skipTraversal = i != tabStop,
                     requestFocusOnTap: true,
                     selected: i == selectedIndex,
@@ -867,7 +867,7 @@ class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
                     child: Container(
                       alignment: Alignment.center,
                       margin: const EdgeInsets.all(3),
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.sm, vertical: NawaSpace.xs),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: OrcaSpace.xs),
                       decoration: BoxDecoration(
                         color: i == selectedIndex ? c.surface : null,
                         borderRadius: BorderRadius.circular(t.radii.sm),
@@ -879,7 +879,7 @@ class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
                         style: TextStyle(
                           color: i == selectedIndex ? c.text : (_enabled(i) ? c.textMuted : c.border),
                           fontWeight: FontWeight.w600,
-                          fontSize: NawaFontSize.sm,
+                          fontSize: OrcaFontSize.sm,
                         ),
                       ),
                     ),
@@ -894,9 +894,9 @@ class _NawaSegmentedState<T> extends State<NawaSegmented<T>> {
 }
 
 /// Slider with a visible label and value.
-class NawaSlider extends StatelessWidget {
+class OrcaSlider extends StatelessWidget {
   /// Creates a slider.
-  const NawaSlider({
+  const OrcaSlider({
     super.key,
     required this.value,
     required this.onChanged,
@@ -937,8 +937,8 @@ class NawaSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -947,9 +947,9 @@ class NawaSlider extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Text(label, style: TextStyle(color: c.text, fontSize: NawaFontSize.sm, fontWeight: FontWeight.w600)),
+                child: Text(label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600)),
               ),
-              if (showValue) Text(_format(value), style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+              if (showValue) Text(_format(value), style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
             ],
           ),
         ),

@@ -1,0 +1,51 @@
+/* @orca-ui/icons — base styles for inline SVG and sprite icons. */
+.oc-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  color: inherit;
+  overflow: visible;
+}
+
+/* Size helpers (the width/height attributes win unless these classes are used). */
+.oc-icon--1em { width: 1em; height: 1em; }
+.oc-icon--xs { width: 12px; height: 12px; }
+.oc-icon--sm { width: 16px; height: 16px; }
+.oc-icon--md { width: 20px; height: 20px; }
+.oc-icon--lg { width: 24px; height: 24px; }
+.oc-icon--xl { width: 32px; height: 32px; }
+.oc-icon--2xl { width: 48px; height: 48px; }
+
+/* Duotone layer: soft secondary fill. Customise per theme or per icon:
+   --oc-icon-duotone: colour of the layer (defaults to currentColor)
+   --oc-icon-duotone-opacity: strength of the layer (defaults to 0.22) */
+.oc-icon__duo {
+  fill: var(--oc-icon-duotone, currentColor);
+  fill-opacity: var(--oc-icon-duotone-opacity, 0.22);
+}
+
+/* Optional stroke override for inline icons. */
+.oc-icon[data-stroke='thin'] { stroke-width: 1.5; }
+.oc-icon[data-stroke='bold'] { stroke-width: 2; }
+
+/* Spin (loader, refresh). Respect reduced motion: slow and steady, never removed silently. */
+.oc-icon--spin {
+  animation: oc-icon-spin 0.9s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes oc-icon-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .oc-icon--spin { animation-duration: 2.4s; }
+}
+
+/* RTL mirroring for directional icons (arrows, undo/redo, send…). */
+[dir='rtl'] .oc-icon--flip-rtl { transform: scaleX(-1); }
+/* Separate rule: an unsupported :dir() must not invalidate the rule above. */
+.oc-icon--flip-rtl:dir(rtl) { transform: scaleX(-1); }
+[dir='rtl'] [dir='ltr'] .oc-icon--flip-rtl { transform: none; }
+
+/* Forced colours: strokes follow currentColor (the system colour); the duotone
+   layer stays a faint, non-essential tint. */
+@media (forced-colors: active) {
+  .oc-icon__duo { fill: currentColor; fill-opacity: 0.18; }
+}

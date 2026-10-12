@@ -13,7 +13,7 @@ import {
   TieredMenu,
   type MenuHandle,
   type MenuItem,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { ClientOnly, createDemoIsland, Output } from './shared';
 
 /** Each demo logs the last command so the menus visibly do something. */
@@ -100,7 +100,7 @@ function ContextDemo() {
         ref={area}
         tabIndex={0}
         aria-label="report.pdf — right-click or press Shift+F10 for actions"
-        style={{ display: 'grid', placeItems: 'center', minHeight: 120, border: '2px dashed var(--nw-border)', borderRadius: 'var(--nw-radius-lg)', background: 'var(--nw-surface)', cursor: 'context-menu' }}
+        style={{ display: 'grid', placeItems: 'center', minHeight: 120, border: '2px dashed var(--oc-border)', borderRadius: 'var(--oc-radius-lg)', background: 'var(--oc-surface)', cursor: 'context-menu' }}
       >
         📄 report.pdf — right-click here (or focus and press Shift+F10)
       </div>
@@ -220,7 +220,7 @@ function SpeedDialDemo() {
 }
 
 function BreadcrumbDemo() {
-  return <Breadcrumb items={[{ label: 'Home', href: '#breadcrumb' }, { label: 'Projects', href: '#breadcrumb' }, { label: 'Website redesign', href: '#breadcrumb' }, { label: 'Settings' }]} />;
+  return <Breadcrumb label="Breadcrumb demo" items={[{ label: 'Home', href: '#breadcrumb' }, { label: 'Projects', href: '#breadcrumb' }, { label: 'Website redesign', href: '#breadcrumb' }, { label: 'Settings' }]} />;
 }
 
 export default createDemoIsland(

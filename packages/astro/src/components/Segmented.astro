@@ -17,10 +17,10 @@ interface Props {
 const { name, options, value = options[0]?.value, label } = Astro.props;
 ---
 
-<div role="radiogroup" aria-label={label} class="nw-segmented">
+<div role="radiogroup" aria-label={label} class="oc-segmented">
   {options.map((o) => (
-    <label class="nw-segmented__item">
-      <input type="radio" class="nw-sr-only" name={name} value={o.value} checked={o.value === value} />
+    <label class="oc-segmented__item">
+      <input type="radio" class="oc-sr-only" name={name} value={o.value} checked={o.value === value} />
       {o.label}
     </label>
   ))}

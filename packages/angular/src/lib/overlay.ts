@@ -15,12 +15,12 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { lockScroll, trapFocus } from '@nawa-ui/core/a11y';
-import { cx, nwId } from './utils';
+import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { cx, ocId } from './utils';
 
-/** Footer content for a dialog or drawer: `<div nwDialogFooter>…</div>`. */
-@Directive({ selector: '[nwDialogFooter]' })
-export class NwDialogFooter {}
+/** Footer content for a dialog or drawer: `<div ocDialogFooter>…</div>`. */
+@Directive({ selector: '[ocDialogFooter]' })
+export class OcDialogFooter {}
 
 /**
  * Shared modal behavior: Escape closes, focus moves into the panel and is trapped there,
@@ -28,7 +28,7 @@ export class NwDialogFooter {}
  * The overlay is moved to <body> while open (no CDK needed) unless `appendToBody` is false.
  */
 @Directive()
-export abstract class NwModalBase {
+export abstract class OcModalBase {
   /** Two-way bindable: `[(open)]`. */
   readonly open = model(false);
   readonly title = input.required<string>();
@@ -44,8 +44,8 @@ export abstract class NwModalBase {
   /** Emitted whenever the modal requests to close (Escape, backdrop, × button). */
   readonly closed = output<void>();
 
-  protected readonly titleId = nwId('nw-dialog-title');
-  protected readonly footer = contentChild(NwDialogFooter);
+  protected readonly titleId = ocId('oc-dialog-title');
+  protected readonly footer = contentChild(OcDialogFooter);
   protected readonly overlayRef = viewChild<ElementRef<HTMLElement>>('overlay');
   protected readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
   private readonly document = inject(DOCUMENT);
@@ -89,34 +89,34 @@ export abstract class NwModalBase {
 }
 
 const PANEL_CONTENT = `
-  <header class="nw-dialog__header">
-    <h2 class="nw-dialog__title" [id]="titleId">{{ title() }}</h2>
+  <header class="oc-dialog__header">
+    <h2 class="oc-dialog__title" [id]="titleId">{{ title() }}</h2>
     @if (closable()) {
-      <button type="button" class="nw-close" [attr.aria-label]="closeLabel()" (click)="close()">×</button>
+      <button type="button" class="oc-close" [attr.aria-label]="closeLabel()" (click)="close()">×</button>
     }
   </header>
-  <div class="nw-dialog__body"><ng-content /></div>
+  <div class="oc-dialog__body"><ng-content /></div>
   @if (footer()) {
-    <footer class="nw-dialog__footer"><ng-content select="[nwDialogFooter]" /></footer>
+    <footer class="oc-dialog__footer"><ng-content select="[ocDialogFooter]" /></footer>
   }`;
 
 /**
  * Modal dialog.
  *
  * ```html
- * <nw-dialog [(open)]="editing" title="Edit profile">
+ * <oc-dialog [(open)]="editing" title="Edit profile">
  *   …
- *   <div nwDialogFooter><button nwButton (click)="editing.set(false)">Done</button></div>
- * </nw-dialog>
+ *   <div ocDialogFooter><button ocButton (click)="editing.set(false)">Done</button></div>
+ * </oc-dialog>
  * ```
  */
 @Component({
-  selector: 'nw-dialog',
+  selector: 'oc-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents', '[attr.title]': 'null' },
   template: `
     @if (open()) {
-      <div #overlay class="nw-overlay" (mousedown)="onBackdrop($event)">
+      <div #overlay class="oc-overlay" (mousedown)="onBackdrop($event)">
         <div
           #panel
           role="dialog"
@@ -131,14 +131,14 @@ const PANEL_CONTENT = `
     }
   `,
 })
-export class NwDialog extends NwModalBase {
+export class OcDialog extends OcModalBase {
   readonly size = input<'sm' | 'md' | 'lg'>('md');
-  protected readonly panelClass = computed(() => cx('nw-dialog', this.size() !== 'md' && `nw-dialog--${this.size()}`));
+  protected readonly panelClass = computed(() => cx('oc-dialog', this.size() !== 'md' && `oc-dialog--${this.size()}`));
 }
 
-/** Side sheet with the same modal behavior as `nw-dialog`. */
+/** Side sheet with the same modal behavior as `oc-dialog`. */
 @Component({
-  selector: 'nw-drawer',
+  selector: 'oc-drawer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents', '[attr.title]': 'null' },
   template: `
@@ -158,10 +158,10 @@ export class NwDialog extends NwModalBase {
     }
   `,
 })
-export class NwDrawer extends NwModalBase {
+export class OcDrawer extends OcModalBase {
   readonly side = input<'left' | 'right'>('right');
   protected readonly overlayClass = computed(() =>
-    cx('nw-overlay', 'nw-overlay--drawer', this.side() === 'right' && 'nw-overlay--right'),
+    cx('oc-overlay', 'oc-overlay--drawer', this.side() === 'right' && 'oc-overlay--right'),
   );
-  protected readonly panelClass = computed(() => cx('nw-drawer', this.side() === 'right' && 'nw-drawer--right'));
+  protected readonly panelClass = computed(() => cx('oc-drawer', this.side() === 'right' && 'oc-drawer--right'));
 }

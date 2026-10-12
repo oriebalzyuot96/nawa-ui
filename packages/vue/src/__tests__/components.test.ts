@@ -60,7 +60,7 @@ describe('accessibility', () => {
 describe('Button', () => {
   it('applies variant and size classes', () => {
     const wrapper = mount(Button, { props: { variant: 'outline', size: 'lg' }, slots: { default: 'Save' } });
-    expect(wrapper.classes()).toEqual(expect.arrayContaining(['nw-btn', 'nw-btn--outline', 'nw-btn--lg']));
+    expect(wrapper.classes()).toEqual(expect.arrayContaining(['oc-btn', 'oc-btn--outline', 'oc-btn--lg']));
     expect(wrapper.attributes('type')).toBe('button');
   });
 
@@ -77,7 +77,7 @@ describe('Input', () => {
     const input = wrapper.find('input');
     expect(input.attributes('aria-invalid')).toBe('true');
     expect(input.attributes('aria-describedby')).toMatch(/-err$/);
-    expect(wrapper.find('.nw-error-text').text()).toBe('Required');
+    expect(wrapper.find('.oc-error-text').text()).toBe('Required');
   });
 
   it('emits update:modelValue on input', async () => {
@@ -141,7 +141,7 @@ describe('DataTable', () => {
 
   it('sorts numerically and toggles direction on repeated clicks', async () => {
     const wrapper = mount(DataTable, { props: { columns, rows } });
-    const qtyButton = () => wrapper.findAll('.nw-table__sort')[1];
+    const qtyButton = () => wrapper.findAll('.oc-table__sort')[1];
     await qtyButton().trigger('click');
     expect(wrapper.findAll('tbody tr')[0].text()).toContain('Cherry');
     await qtyButton().trigger('click');
@@ -176,7 +176,7 @@ describe('Dialog', () => {
 describe('Tag and Alert', () => {
   it('emits remove from the remove button', async () => {
     const wrapper = mount(Tag, { props: { removable: true }, slots: { default: 'Vue' } });
-    await wrapper.find('.nw-tag__remove').trigger('click');
+    await wrapper.find('.oc-tag__remove').trigger('click');
     expect(wrapper.emitted('remove')).toBeTruthy();
   });
 

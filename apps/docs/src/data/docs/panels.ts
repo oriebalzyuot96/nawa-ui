@@ -57,12 +57,12 @@ export const panels: CategoryDoc = {
       a11y: 'Each header is a <button> inside a heading with aria-expanded and aria-controls.',
       code: {
         react: `<Accordion defaultOpen={['free']} items={[
-  { key: 'free', title: 'Is Nawa UI free?', content: 'Yes, MIT licensed.' },
+  { key: 'free', title: 'Is Orca UI free?', content: 'Yes, MIT licensed.' },
   { key: 'rtl', title: 'Does it support RTL?', content: 'Yes, it mirrors automatically.' },
 ]} />`,
         vue: `<Accordion :items="faq" :default-open="['free']" />`,
         svelte: `<Accordion items={faq} defaultOpen={['free']} />`,
-        astro: `<Accordion exclusive items={[{ title: 'Is Nawa UI free?', content: 'Yes.', open: true }]} />`,
+        astro: `<Accordion exclusive items={[{ title: 'Is Orca UI free?', content: 'Yes.', open: true }]} />`,
         rn: `<Accordion items={faq} defaultOpen={['free']} />`,
       },
     },

@@ -26,7 +26,7 @@ import {
   type LoaderType,
   type ToastItem,
   type ToasterPosition,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Output, Row, SwitchField } from './shared';
 
 const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
@@ -126,7 +126,7 @@ function SwalDemo() {
       <Button variant="secondary" onClick={triple}>
         Save / Don’t save / Cancel
       </Button>
-      <Button variant="secondary" onClick={() => void swal.info('Did you know?', 'All Nawa UI dialogs return focus to the button that opened them.')}>
+      <Button variant="secondary" onClick={() => void swal.info('Did you know?', 'All Orca UI dialogs return focus to the button that opened them.')}>
         Info
       </Button>
       <Button variant="ghost" onClick={toastMode}>
@@ -210,7 +210,7 @@ function LoaderDemo() {
     <div className="demo-col">
       <div style={{ display: 'grid', gap: '1rem', gridTemplateColumns: 'repeat(auto-fill, minmax(7.5rem, 1fr))' }}>
         {LOADER_TYPES.map((type: LoaderType) => (
-          <div key={type} style={{ display: 'grid', justifyItems: 'center', gap: '0.5rem', padding: '1rem 0.5rem', border: '1px solid var(--nw-border)', borderRadius: 'var(--nw-radius)', background: 'var(--nw-surface)' }}>
+          <div key={type} style={{ display: 'grid', justifyItems: 'center', gap: '0.5rem', padding: '1rem 0.5rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius)', background: 'var(--oc-surface)' }}>
             <Loader type={type} label={`${type} loader`} value={type === 'progress-ring' ? value : undefined} />
             <code style={{ fontSize: '0.75rem' }}>{type}</code>
           </div>
@@ -260,7 +260,7 @@ function PageLoaderDemo() {
   return (
     <>
       <Button onClick={show}>Show page loader (2 s)</Button>
-      <PageLoader active={active} brand={<strong style={{ fontSize: '1.5rem' }}>Nawa UI</strong>} label="Loading dashboard" />
+      <PageLoader active={active} brand={<strong style={{ fontSize: '1.5rem' }}>Orca UI</strong>} label="Loading dashboard" />
     </>
   );
 }

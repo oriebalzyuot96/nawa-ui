@@ -15,7 +15,7 @@ import {
   Switch,
   Toast,
   type ToastItem,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 
 interface Member extends Record<string, unknown> {
   id: number;
@@ -38,7 +38,7 @@ const seed: Member[] = [
 
 const PAGE_SIZE = 5;
 
-/** A small working app built only from @nawa-ui/react components. */
+/** A small working app built only from @orca-ui/react components. */
 export default function Playground() {
   const [members, setMembers] = useState(seed);
   const [query, setQuery] = useState('');

@@ -17,20 +17,20 @@ interface Props {
 const { items, exclusive = false } = Astro.props;
 ---
 
-<div class="nw-accordion" data-nw-exclusive={exclusive ? '' : undefined}>
+<div class="oc-accordion" data-oc-exclusive={exclusive ? '' : undefined}>
   {items.map((item) => (
-    <details class="nw-accordion__item" open={item.open} name={exclusive ? 'nw-accordion' : undefined}>
-      <summary class="nw-accordion__trigger">
+    <details class="oc-accordion__item" open={item.open} name={exclusive ? 'oc-accordion' : undefined}>
+      <summary class="oc-accordion__trigger">
         {item.title}
-        <span class="nw-accordion__icon" aria-hidden="true">▾</span>
+        <span class="oc-accordion__icon" aria-hidden="true">▾</span>
       </summary>
-      <div class="nw-accordion__panel">{item.content}</div>
+      <div class="oc-accordion__panel">{item.content}</div>
     </details>
   ))}
 </div>
 
 <style is:global>
-  details.nw-accordion__item > summary { list-style: none; }
-  details.nw-accordion__item > summary::-webkit-details-marker { display: none; }
-  details.nw-accordion__item[open] .nw-accordion__icon { transform: rotate(180deg); }
+  details.oc-accordion__item > summary { list-style: none; }
+  details.oc-accordion__item > summary::-webkit-details-marker { display: none; }
+  details.oc-accordion__item[open] .oc-accordion__icon { transform: rotate(180deg); }
 </style>

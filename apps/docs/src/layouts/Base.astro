@@ -1,8 +1,8 @@
 ---
-import '@nawa-ui/core/style.css';
+import '@orca-ui/core/style.css';
 import '../styles/site.css';
-import ThemeScript from '@nawa-ui/astro/components/ThemeScript';
-import Toaster from '@nawa-ui/astro/components/Toaster';
+import ThemeScript from '@orca-ui/astro/components/ThemeScript';
+import Toaster from '@orca-ui/astro/components/Toaster';
 import Logo from '../components/Logo.astro';
 import { categories } from '../data/catalog';
 
@@ -19,8 +19,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(`${base}/og.png`, site).href;
-const repo = 'https://github.com/oriebalzyuot96/nawa-ui';
-const fullTitle = title.includes('Nawa UI') ? title : `${title} — Nawa UI`;
+const repo = 'https://github.com/oriebalzyuot96/orca-ui';
+const fullTitle = title.includes('Orca UI') ? title : `${title} — Orca UI`;
 const path = Astro.url.pathname;
 const isAr = lang === 'ar';
 
@@ -44,8 +44,8 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareSourceCode',
-    name: 'Nawa UI',
-    alternateName: ['nawa-ui', 'نواة UI'],
+    name: 'Orca UI',
+    alternateName: ['orca-ui', 'أوركا UI'],
     description:
       'Accessible, themeable UI component library for React, Vue, Svelte, Astro and React Native. WCAG 2.2 AA, 21 themes, dark mode, high contrast, skeleton loaders, RTL.',
     url: new URL(`${base}/`, site).href,
@@ -58,7 +58,7 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Nawa UI',
+    name: 'Orca UI',
     url: new URL(`${base}/`, site).href,
     inLanguage: ['en', 'ar'],
   },
@@ -82,7 +82,7 @@ const jsonLd = [
     {alternate?.en && <link rel="alternate" hreflang="x-default" href={new URL(`${base}${alternate.en}`, site).href} />}
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Nawa UI" />
+    <meta property="og:site_name" content="Orca UI" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -99,12 +99,12 @@ const jsonLd = [
     <ThemeScript />
   </head>
   <body>
-    <a class="nw-skip-link" href="#main">{isAr ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
+    <a class="oc-skip-link" href="#main">{isAr ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
     <header class="site-header">
       <div class="container site-header__inner">
         <a class="brand" href={isAr ? `${base}/ar/` : `${base}/`}>
           <Logo />
-          <span>Nawa UI</span>
+          <span>Orca UI</span>
         </a>
         <nav class="site-nav" aria-label={isAr ? 'التنقل الرئيسي' : 'Main'}>
           {nav.map((item) => (
@@ -157,9 +157,9 @@ const jsonLd = [
             {categories.map((c) => <li><a href={`${base}/components/${c.slug}/`}>{c.h1}</a></li>)}
           </ul>
         </nav>
-        <span>Nawa UI · MIT License · {isAr ? 'مكتبة واجهات مفتوحة المصدر' : 'Open-source UI library'}</span>
+        <span>Orca UI · MIT License · {isAr ? 'مكتبة واجهات مفتوحة المصدر' : 'Open-source UI library'}</span>
         <span>
-          <a href={repo}>GitHub</a> · <a href="https://www.npmjs.com/org/nawa-ui">npm</a> · <a href={`${base}/accessibility/`}>{isAr ? 'إمكانية الوصول' : 'Accessibility'}</a>
+          <a href={repo}>GitHub</a> · <a href="https://www.npmjs.com/org/orca-ui">npm</a> · <a href={`${base}/accessibility/`}>{isAr ? 'إمكانية الوصول' : 'Accessibility'}</a>
         </span>
       </div>
     </footer>
@@ -167,7 +167,7 @@ const jsonLd = [
     <Toaster />
 
     <script>
-      import { applyTheme, loadTheme, saveTheme } from '@nawa-ui/core/theme';
+      import { applyTheme, loadTheme, saveTheme } from '@orca-ui/core/theme';
       type Choice = { mode?: 'system' | 'light' | 'dark' | 'hc'; accent?: string; shape?: string };
       const saved: Choice = loadTheme() ?? {};
       const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'violet', shape: saved.shape ?? 'default' };

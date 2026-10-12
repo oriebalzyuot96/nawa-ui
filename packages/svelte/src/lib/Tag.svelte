@@ -4,9 +4,9 @@
   let { removable = false, onremove, children }: { removable?: boolean; onremove?: () => void; children?: Snippet } = $props();
 </script>
 
-<span class="nw-tag">
+<span class="oc-tag">
   {@render children?.()}
   {#if removable}
-    <button type="button" class="nw-tag__remove" aria-label="Remove" onclick={onremove}>×</button>
+    <button type="button" class="oc-tag__remove" aria-label="Remove" onclick={onremove}>×</button>
   {/if}
 </span>

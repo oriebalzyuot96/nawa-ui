@@ -14,6 +14,6 @@
   aria-checked={checked}
   aria-label={label}
   {disabled}
-  class="nw-switch"
+  class="oc-switch"
   onclick={() => (checked = !checked)}
 ></button>

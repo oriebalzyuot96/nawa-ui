@@ -8,12 +8,12 @@
   let { steps, current = 0 }: { steps: Step[]; current?: number } = $props();
 </script>
 
-<ol class="nw-stepper">
+<ol class="oc-stepper">
   {#each steps as s, i (i)}
     {@const state = i < current ? 'complete' : i === current ? 'current' : 'upcoming'}
-    <li class="nw-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
+    <li class="oc-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
       <span>{s.label}</span>
-      {#if s.description}<span class="nw-stepper__desc">{s.description}</span>{/if}
+      {#if s.description}<span class="oc-stepper__desc">{s.description}</span>{/if}
     </li>
   {/each}
 </ol>

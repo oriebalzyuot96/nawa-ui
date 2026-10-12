@@ -1,14 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AccessibilityInfo, useColorScheme } from 'react-native';
-import { getTheme, type NawaTheme, type ThemeAccent, type ThemeMode } from '@nawa-ui/core/tokens';
+import { getTheme, type OrcaTheme, type ThemeAccent, type ThemeMode } from '@orca-ui/core/tokens';
 
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24 } as const;
 export const radius = { sm: 8, md: 12, lg: 16, pill: 999 } as const;
 export const fontSize = { xs: 11, sm: 13, md: 15, lg: 17, xl: 20 } as const;
 
-const ThemeContext = createContext<NawaTheme | null>(null);
+const ThemeContext = createContext<OrcaTheme | null>(null);
 
-export interface NawaProviderProps {
+export interface OrcaProviderProps {
   /** 'system' (default) follows the device: dark mode, and high contrast on iOS when "Increase Contrast" is on. */
   mode?: ThemeMode | 'system';
   accent?: ThemeAccent;
@@ -30,7 +30,7 @@ function useHighContrast(): boolean {
   return on;
 }
 
-export function NawaProvider({ mode = 'system', accent = 'teal', children }: NawaProviderProps) {
+export function OrcaProvider({ mode = 'system', accent = 'teal', children }: OrcaProviderProps) {
   const scheme = useColorScheme();
   const highContrast = useHighContrast();
   const resolved: ThemeMode = mode !== 'system' ? mode : highContrast ? 'hc' : scheme === 'dark' ? 'dark' : 'light';
@@ -39,7 +39,7 @@ export function NawaProvider({ mode = 'system', accent = 'teal', children }: Naw
 }
 
 /** Current theme tokens. Works without a provider (falls back to the device color scheme). */
-export function useNawaTheme(): NawaTheme {
+export function useOrcaTheme(): OrcaTheme {
   const fromContext = useContext(ThemeContext);
   const scheme = useColorScheme();
   return fromContext ?? getTheme(scheme === 'dark' ? 'dark' : 'light');

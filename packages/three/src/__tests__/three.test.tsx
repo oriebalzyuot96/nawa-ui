@@ -67,17 +67,17 @@ describe('WebGL unavailable', () => {
     expect(screen.getByRole('img', { name: 'Spinning logo' })).toHaveAttribute('data-status', 'fallback');
     expect(screen.getByText('Spinning logo')).toBeInTheDocument();
     expect(screen.getByRole('img', { name: 'Oak chair with curved back' })).toBeInTheDocument();
-    expect(document.querySelector('.nw-three--bg')).toHaveAttribute('aria-hidden', 'true');
+    expect(document.querySelector('.oc-three--bg')).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('shows the Chart3D data table visibly', () => {
     render(<Chart3D title="Sales by region" data={[{ label: 'North', value: 1200 }, { label: 'South', value: 800 }]} />);
     const table = screen.getByRole('table', { name: 'Sales by region' });
-    expect(table.parentElement).toHaveClass('nw-table-wrap');
+    expect(table.parentElement).toHaveClass('oc-table-wrap');
     expect(screen.getByRole('rowheader', { name: 'North' })).toBeInTheDocument();
     expect(screen.getByRole('cell', { name: (1200).toLocaleString() })).toBeInTheDocument();
     expect(screen.getByRole('figure')).toContainElement(screen.getByText('Sales by region', { selector: 'figcaption' }));
-    expect(document.querySelector('.nw-three')).toHaveAttribute('hidden');
+    expect(document.querySelector('.oc-three')).toHaveAttribute('hidden');
   });
 });
 
@@ -152,7 +152,7 @@ describe('WebGL available (mocked renderer)', () => {
   it('keeps the Chart3D table for screen readers and labels the canvas', () => {
     mockMatchMedia(true);
     render(<Chart3D title="Visitors" data={[{ label: 'Mon', value: 3 }]} />);
-    expect(screen.getByRole('table', { name: 'Visitors' }).parentElement).toHaveClass('nw-sr-only');
+    expect(screen.getByRole('table', { name: 'Visitors' }).parentElement).toHaveClass('oc-sr-only');
     expect(screen.getByRole('img', { name: /Visitors: 3D bar chart/ })).toBeInTheDocument();
   });
 
@@ -176,7 +176,7 @@ describe('WebGL available (mocked renderer)', () => {
 describe('readThemeColors', () => {
   it('reads CSS custom properties with fallbacks', () => {
     const el = document.createElement('div');
-    el.style.setProperty('--nw-primary', '#ff0000');
+    el.style.setProperty('--oc-primary', '#ff0000');
     document.body.appendChild(el);
     const colors = readThemeColors(el);
     expect(colors.primary.getHexString()).toBe('ff0000');

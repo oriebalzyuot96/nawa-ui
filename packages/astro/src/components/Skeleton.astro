@@ -10,4 +10,4 @@ const css = (v?: number | string) => (typeof v === 'number' ? `${v}px` : v);
 const w = circle ? (height ?? width) : width;
 ---
 
-<span aria-hidden="true" class:list={['nw-skeleton', circle && 'nw-skeleton--circle']} style={`${w !== undefined ? `width:${css(w)};` : ''}${height !== undefined ? `height:${css(height)};` : ''}`}></span>
+<span aria-hidden="true" class:list={['oc-skeleton', circle && 'oc-skeleton--circle']} style={`${w !== undefined ? `width:${css(w)};` : ''}${height !== undefined ? `height:${css(height)};` : ''}`}></span>

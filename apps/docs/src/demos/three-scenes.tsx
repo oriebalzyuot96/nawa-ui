@@ -1,6 +1,6 @@
 // Heavy module: imports three.js. Only loaded (via React.lazy in ./three.tsx) when a WebGL demo scrolls into view.
 import { useEffect, useState } from 'react';
-import { Chart3D, FloatingShapes, Globe3D, ModelViewer, ParticlesField, Scene3D } from '@nawa-ui/three';
+import { Chart3D, FloatingShapes, Globe3D, ModelViewer, ParticlesField, Scene3D } from '@orca-ui/three';
 import {
   CylinderGeometry,
   DirectionalLight,
@@ -53,7 +53,7 @@ const amman = offices[0]!;
 function GlobeDemo() {
   return (
     <Globe3D
-      label="Nawa UI community offices"
+      label="Orca UI community offices"
       height="22rem"
       showList
       markers={offices}
@@ -64,7 +64,7 @@ function GlobeDemo() {
 
 function ParticlesDemo() {
   return (
-    <div style={{ position: 'relative', height: '16rem', width: '100%', borderRadius: 'var(--nw-radius-lg)', overflow: 'hidden', background: 'var(--nw-surface)' }}>
+    <div style={{ position: 'relative', height: '16rem', width: '100%', borderRadius: 'var(--oc-radius-lg)', overflow: 'hidden', background: 'var(--oc-surface)' }}>
       <ParticlesField count={700} />
       <div style={{ position: 'relative', display: 'grid', placeItems: 'center', height: '100%', textAlign: 'center', padding: '1rem' }}>
         <div>
@@ -78,7 +78,7 @@ function ParticlesDemo() {
 
 function ShapesDemo() {
   return (
-    <div style={{ position: 'relative', height: '18rem', width: '100%', borderRadius: 'var(--nw-radius-lg)', overflow: 'hidden', background: 'var(--nw-surface-alt)' }}>
+    <div style={{ position: 'relative', height: '18rem', width: '100%', borderRadius: 'var(--oc-radius-lg)', overflow: 'hidden', background: 'var(--oc-surface-alt)' }}>
       <FloatingShapes count={6} />
       <div style={{ position: 'relative', display: 'grid', placeItems: 'center', height: '100%', textAlign: 'center' }}>
         <h3 style={{ fontSize: '1.8rem', margin: 0 }}>Hero background</h3>

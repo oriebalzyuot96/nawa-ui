@@ -5,14 +5,14 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
- * Native button (or link) styled as a Nawa UI button.
+ * Native button (or link) styled as an Orca UI button.
  *
  * ```html
- * <button nwButton variant="outline" [loading]="saving()">Save</button>
+ * <button ocButton variant="outline" [loading]="saving()">Save</button>
  * ```
  */
 @Component({
-  selector: 'button[nwButton], a[nwButton]',
+  selector: 'button[ocButton], a[ocButton]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'classes()',
@@ -21,9 +21,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     '[attr.aria-disabled]': 'isDisabled() && isAnchor ? "true" : null',
     '[attr.aria-busy]': 'loading() ? "true" : null',
   },
-  template: `@if (loading()) {<span class="nw-spinner" aria-hidden="true"></span>}<ng-content />`,
+  template: `@if (loading()) {<span class="oc-spinner" aria-hidden="true"></span>}<ng-content />`,
 })
-export class NwButton {
+export class OcButton {
   readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
   /** Shows a spinner and disables the button. */
@@ -38,11 +38,11 @@ export class NwButton {
   protected readonly isDisabled = computed(() => this.disabled() || this.loading());
   protected readonly classes = computed(() =>
     cx(
-      'nw-btn',
-      `nw-btn--${this.variant()}`,
-      this.size() !== 'md' && `nw-btn--${this.size()}`,
-      this.block() && 'nw-btn--block',
-      this.iconOnly() && 'nw-btn--icon',
+      'oc-btn',
+      `oc-btn--${this.variant()}`,
+      this.size() !== 'md' && `oc-btn--${this.size()}`,
+      this.block() && 'oc-btn--block',
+      this.iconOnly() && 'oc-btn--icon',
     ),
   );
 }

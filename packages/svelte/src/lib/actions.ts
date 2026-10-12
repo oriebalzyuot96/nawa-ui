@@ -1,4 +1,4 @@
-import { lockScroll, trapFocus } from '@nawa-ui/core/a11y';
+import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
 
 /**
  * Modal behavior for a panel that exists only while open:

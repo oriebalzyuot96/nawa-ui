@@ -2,11 +2,11 @@ import 'package:flutter/widgets.dart';
 
 import '../foundation/pressable.dart';
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 import 'display.dart';
 
-/// Visual style of a [NawaButton].
-enum NawaButtonVariant {
+/// Visual style of a [OrcaButton].
+enum OrcaButtonVariant {
   /// Filled accent.
   primary,
 
@@ -23,8 +23,8 @@ enum NawaButtonVariant {
   danger,
 }
 
-/// Size of a [NawaButton]. The hit area is always at least 48x48.
-enum NawaButtonSize {
+/// Size of a [OrcaButton]. The hit area is always at least 48x48.
+enum OrcaButtonSize {
   /// Compact (36 visual height).
   sm,
 
@@ -39,14 +39,14 @@ enum NawaButtonSize {
 ///
 /// While [loading], the button is disabled, shows a spinner and exposes the
 /// value "Loading" ([loadingLabel]) to screen readers.
-class NawaButton extends StatelessWidget {
+class OrcaButton extends StatelessWidget {
   /// Creates a button.
-  const NawaButton({
+  const OrcaButton({
     super.key,
     required this.label,
     this.onPressed,
-    this.variant = NawaButtonVariant.primary,
-    this.size = NawaButtonSize.md,
+    this.variant = OrcaButtonVariant.primary,
+    this.size = OrcaButtonSize.md,
     this.loading = false,
     this.block = false,
     this.icon,
@@ -64,10 +64,10 @@ class NawaButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   /// Style.
-  final NawaButtonVariant variant;
+  final OrcaButtonVariant variant;
 
   /// Size.
-  final NawaButtonSize size;
+  final OrcaButtonSize size;
 
   /// Shows a spinner and disables the button.
   final bool loading;
@@ -95,23 +95,23 @@ class NawaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
     final bool enabled = onPressed != null && !loading;
     final double height = switch (size) {
-      NawaButtonSize.sm => 36.0,
-      NawaButtonSize.md => 44.0,
-      NawaButtonSize.lg => 52.0,
+      OrcaButtonSize.sm => 36.0,
+      OrcaButtonSize.md => 44.0,
+      OrcaButtonSize.lg => 52.0,
     };
     final double fontSize = switch (size) {
-      NawaButtonSize.sm => NawaFontSize.sm,
-      NawaButtonSize.md => NawaFontSize.md,
-      NawaButtonSize.lg => NawaFontSize.lg,
+      OrcaButtonSize.sm => OrcaFontSize.sm,
+      OrcaButtonSize.md => OrcaFontSize.md,
+      OrcaButtonSize.lg => OrcaFontSize.lg,
     };
-    final double hPad = size == NawaButtonSize.lg ? NawaSpace.xl : NawaSpace.lg;
+    final double hPad = size == OrcaButtonSize.lg ? OrcaSpace.xl : OrcaSpace.lg;
     final BorderRadius radius = BorderRadius.circular(t.radii.md);
 
-    return NawaPressable(
+    return OrcaPressable(
       onPressed: enabled ? onPressed : null,
       focusNode: focusNode,
       autofocus: autofocus,
@@ -122,19 +122,19 @@ class NawaButton extends StatelessWidget {
       builder: (BuildContext context, Set<WidgetState> states) {
         final bool active = states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed);
         final (Color bg, Color fg, Color border) = switch (variant) {
-          NawaButtonVariant.primary => (active ? c.primaryHover : c.primary, c.onPrimary, const Color(0x00000000)),
-          NawaButtonVariant.secondary => (
+          OrcaButtonVariant.primary => (active ? c.primaryHover : c.primary, c.onPrimary, const Color(0x00000000)),
+          OrcaButtonVariant.secondary => (
               active ? c.surfaceMuted : c.surfaceAlt,
               c.text,
               t.isHighContrast ? c.controlBorder : c.border,
             ),
-          NawaButtonVariant.outline => (active ? c.primarySoft : const Color(0x00000000), c.primaryInk, c.primary),
-          NawaButtonVariant.ghost => (
+          OrcaButtonVariant.outline => (active ? c.primarySoft : const Color(0x00000000), c.primaryInk, c.primary),
+          OrcaButtonVariant.ghost => (
               active ? c.surfaceMuted : const Color(0x00000000),
               c.text,
               t.isHighContrast && active ? c.controlBorder : const Color(0x00000000),
             ),
-          NawaButtonVariant.danger => (
+          OrcaButtonVariant.danger => (
               active ? Color.alphaBlend(c.text.withAlpha(0x26), c.danger) : c.danger,
               c.onDanger,
               const Color(0x00000000),
@@ -142,7 +142,7 @@ class NawaButton extends StatelessWidget {
         };
         final Widget face = Container(
           constraints: BoxConstraints(minHeight: height),
-          padding: EdgeInsetsDirectional.symmetric(horizontal: hPad, vertical: NawaSpace.xs),
+          padding: EdgeInsetsDirectional.symmetric(horizontal: hPad, vertical: OrcaSpace.xs),
           decoration: BoxDecoration(
             color: bg,
             borderRadius: radius,
@@ -155,11 +155,11 @@ class NawaButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 if (loading) ...<Widget>[
-                  NawaSpinner(size: NawaSpinnerSize.sm, color: fg, label: null),
-                  const SizedBox(width: NawaSpace.sm),
+                  OrcaSpinner(size: OrcaSpinnerSize.sm, color: fg, label: null),
+                  const SizedBox(width: OrcaSpace.sm),
                 ] else if (icon != null) ...<Widget>[
                   ExcludeSemantics(child: icon),
-                  const SizedBox(width: NawaSpace.sm),
+                  const SizedBox(width: OrcaSpace.sm),
                 ],
                 Flexible(
                   child: Text(
@@ -169,7 +169,7 @@ class NawaButton extends StatelessWidget {
                   ),
                 ),
                 if (trailingIcon != null) ...<Widget>[
-                  const SizedBox(width: NawaSpace.sm),
+                  const SizedBox(width: OrcaSpace.sm),
                   ExcludeSemantics(child: trailingIcon),
                 ],
               ],

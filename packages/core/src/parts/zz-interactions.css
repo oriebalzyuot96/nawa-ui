@@ -1,46 +1,125 @@
-/* ---------- Nawa interaction language ----------
- * Focus: a crisp 2px outline (kept in forced-colors mode) plus a soft accent halo.
- * Hover: tonal lift. Press: a short squeeze. All motion is neutralised by the reduced-motion block above. */
-[class*='nw-']:focus-visible {
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--nw-focus) 22%, transparent);
+/* ==========================================================================
+ * Orca interaction layer — loaded last so the state model is identical everywhere (DESIGN.md §States).
+ *   rest → hover (accent-tinted wash, --oc-tint-hover) → pressed (--oc-tint-press / squeeze)
+ *   focus-visible: 2px outline (survives forced colors) + soft halo (--oc-halo)
+ *   selected: --oc-primary-soft + the 3px "notch" · disabled: 0.45–0.5 opacity, no hover
+ *   invalid: danger border + inline-start bar + message · loading: aria-busy, progress cursor
+ * Reduced motion and forced colors neutralise everything below.
+ * ======================================================================== */
+
+/* ---------- Focus: outline + halo ---------- */
+[class*='oc-']:focus-visible { box-shadow: var(--oc-halo); }
+.oc-option:focus-visible,
+.oc-menu__link:focus-visible,
+.oc-tree__item:focus-visible,
+.oc-tabs__tab:focus-visible { box-shadow: none; }
+
+/* ---------- Hover washes (accent-tinted, never plain grey) ---------- */
+.oc-input:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
+.oc-textarea:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
+.oc-select:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']) { border-color: var(--oc-text-muted); }
+.oc-field--error .oc-input:hover,
+.oc-field--error .oc-textarea:hover,
+.oc-field--error .oc-select:hover { border-color: var(--oc-danger); }
+
+.oc-tabs__tab:hover:not(:disabled):not([aria-selected='true']),
+.oc-pagination__btn:hover:not(:disabled):not([aria-current='page']),
+.oc-accordion__trigger:hover,
+.oc-close:hover { background: var(--oc-tint-hover); color: var(--oc-primary-ink); }
+.oc-pagination__btn[aria-current='page']:hover { background: var(--oc-primary-hover); }
+.oc-accordion__trigger:hover .oc-accordion__icon { background: var(--oc-tint-press); color: var(--oc-primary-ink); }
+
+/* ---------- Pressed ---------- */
+.oc-tabs__tab:active:not(:disabled),
+.oc-pagination__btn:active:not(:disabled):not([aria-current='page']),
+.oc-accordion__trigger:active,
+.oc-close:active,
+.oc-segmented__item:active { background: var(--oc-tint-press); }
+
+/* ---------- Interactive cards lift (only where hover exists) ---------- */
+a.oc-card,
+button.oc-card,
+.oc-card[data-interactive] {
+  color: inherit;
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+  transition: transform var(--oc-dur-2) var(--oc-ease), box-shadow var(--oc-dur-2) var(--oc-ease), border-color var(--oc-dur-2) var(--oc-ease);
 }
-.nw-btn {
-  transition: background 160ms var(--nw-ease), box-shadow 200ms var(--nw-ease), transform 160ms var(--nw-ease), border-color 160ms var(--nw-ease);
+@media (hover: hover) {
+  a.oc-card:hover,
+  button.oc-card:hover,
+  .oc-card[data-interactive]:hover {
+    transform: translateY(-2px);
+    border-color: color-mix(in srgb, var(--oc-primary) 32%, var(--oc-border));
+    box-shadow: var(--oc-sheen), var(--oc-shadow-lg);
+  }
 }
-.nw-btn--primary,
-.nw-btn--danger {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 20%, transparent), 0 1px 2px color-mix(in srgb, var(--nw-primary) 30%, transparent);
-}
-.nw-btn:hover:not(:disabled) { transform: translateY(-1px); }
-.nw-btn--primary:hover:not(:disabled) {
-  box-shadow: inset 0 1px 0 color-mix(in srgb, #ffffff 24%, transparent), 0 8px 20px -8px color-mix(in srgb, var(--nw-primary) 65%, transparent);
-}
-.nw-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
-.nw-btn--primary:focus-visible,
-.nw-btn--danger:focus-visible {
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--nw-focus) 22%, transparent);
+a.oc-card:active,
+button.oc-card:active,
+.oc-card[data-interactive]:active { transform: translateY(0) scale(0.995); box-shadow: var(--oc-elev-1); }
+
+/* ---------- Disabled & loading are uniform ---------- */
+[class*='oc-'][aria-disabled='true'] { cursor: not-allowed; }
+[class*='oc-'][aria-busy='true'] { cursor: progress; }
+
+/* ---------- Touch: 44px targets, no sticky hover transforms ---------- */
+@media (pointer: coarse) {
+  .oc-tabs__tab,
+  .oc-pagination__btn,
+  .oc-menu__link,
+  .oc-menubar__link,
+  .oc-megamenu__top,
+  .oc-megamenu__link,
+  .oc-panelmenu__link,
+  .oc-option,
+  .oc-selectlist__option,
+  .oc-segmented__item,
+  .oc-selectbutton__item,
+  .oc-togglebutton,
+  .oc-inplace__display,
+  .oc-tree__row { min-height: 2.75rem; }
+  .oc-pagination__btn { min-width: 2.75rem; }
+  .oc-close,
+  .oc-carousel__nav,
+  .oc-datepicker__nav,
+  .oc-datepicker__trigger,
+  .oc-password__toggle { min-width: 2.75rem; min-height: 2.75rem; }
+  .oc-datepicker__day { width: 2.75rem; height: 2.75rem; }
+  .oc-rating__star { min-width: 2.75rem; min-height: 2.75rem; }
+  .oc-check { min-height: 2.75rem; }
+  .oc-check input[type='checkbox'],
+  .oc-check input[type='radio'] { width: 1.375rem; height: 1.375rem; }
+  .oc-switch { --oc-switch-w: 3rem; --oc-switch-h: 1.75rem; }
+  .oc-switch::before { content: ''; position: absolute; inset: -0.5rem -0.25rem; }
+  .oc-carousel__dot { width: 2.75rem; height: 2.75rem; }
+  .oc-carousel__dot[aria-current='true'] { width: 3.25rem; }
+  .oc-carousel__dot::after { inset: 1.125rem 1rem; }
+  .oc-carousel__dot[aria-current='true']::after { inset: 1.0625rem 0.875rem; }
 }
 
-/* Fields: borders warm up on hover, accent on focus. */
-.nw-input:hover:not(:disabled):not(:focus),
-.nw-textarea:hover:not(:disabled):not(:focus),
-.nw-select:hover:not(:disabled):not(:focus) { border-color: var(--nw-text-muted); }
+/* ---------- Reduced motion: keep state changes, drop movement ---------- */
+@media (prefers-reduced-motion: reduce) {
+  a.oc-card:hover,
+  button.oc-card:hover,
+  .oc-card[data-interactive]:hover,
+  .oc-btn:active:not(:disabled) { transform: none; }
+  /* Scroll-driven edge fades are not motion; keep them working. */
+  .oc-tabs__list,
+  .oc-segmented,
+  .oc-galleria__thumbs { animation-duration: auto !important; }
+}
 
-/* Interactive surfaces get an accent-tinted hover instead of plain grey. */
-.nw-tabs__tab:hover:not(:disabled):not([aria-selected='true']),
-.nw-pagination__btn:hover:not(:disabled):not([aria-current='page']),
-.nw-accordion__trigger:hover,
-.nw-close:hover { background: var(--nw-primary-soft); color: var(--nw-primary-ink); }
-.nw-tabs__tab { border-radius: var(--nw-radius-sm) var(--nw-radius-sm) 0 0; transition: background 160ms var(--nw-ease), color 160ms var(--nw-ease); }
-
-/* Cards that are links or buttons lift on hover. */
-a.nw-card:hover,
-button.nw-card:hover,
-.nw-card[data-interactive]:hover { transform: translateY(-2px); box-shadow: var(--nw-shadow-lg); border-color: color-mix(in srgb, var(--nw-primary) 35%, var(--nw-border)); }
-a.nw-card,
-button.nw-card,
-.nw-card[data-interactive] { transition: transform 200ms var(--nw-ease), box-shadow 200ms var(--nw-ease), border-color 200ms var(--nw-ease); }
-
+/* ---------- Forced colors ---------- */
 @media (forced-colors: active) {
-  [class*='nw-']:focus-visible { outline: 2px solid Highlight; }
+  [class*='oc-']:focus-visible { outline: 2px solid Highlight; }
+  .oc-check input[type='checkbox'],
+  .oc-check input[type='radio'] { appearance: auto; }
+  .oc-error-text::before { background: CanvasText; }
+  .oc-alert::before,
+  .oc-toast::before,
+  .oc-toaster__toast::before { background: CanvasText; forced-color-adjust: none; }
+  .oc-stepper__step[data-state='complete']::before,
+  .oc-stepper__step[data-state='current']::before { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
+  .oc-stepper__step::after { background: CanvasText; }
 }

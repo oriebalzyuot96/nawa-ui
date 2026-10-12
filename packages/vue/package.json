@@ -1,7 +1,7 @@
 {
-  "name": "@nawa-ui/vue",
+  "name": "@orca-ui/vue",
   "version": "0.1.0",
-  "description": "Nawa UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Orca UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -29,10 +29,11 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
-    "@nawa-ui/core": "0.1.0"
+    "@orca-ui/core": "0.1.0"
   },
   "devDependencies": {
     "@vue/test-utils": "2.4.6",
+    "axe-core": "4.10.3",
     "jsdom": "25.0.1",
     "typescript": "5.6.3",
     "vitest": "2.1.8",
@@ -43,7 +44,7 @@
     "vue3",
     "vue-components",
     "vue-ui",
-    "nawa-ui",
+    "orca-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -59,13 +60,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
     "directory": "packages/vue"
   },
-  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

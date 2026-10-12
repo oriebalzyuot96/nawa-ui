@@ -8,9 +8,9 @@ const { variant = 'info', title } = Astro.props;
 const urgent = variant === 'danger' || variant === 'warning';
 ---
 
-<div role={urgent ? 'alert' : 'status'} class:list={['nw-alert', variant !== 'info' && `nw-alert--${variant}`]}>
-  <div class="nw-alert__body">
-    {title && <div class="nw-alert__title">{title}</div>}
+<div role={urgent ? 'alert' : 'status'} class:list={['oc-alert', variant !== 'info' && `oc-alert--${variant}`]}>
+  <div class="oc-alert__body">
+    {title && <div class="oc-alert__title">{title}</div>}
     <slot />
   </div>
 </div>

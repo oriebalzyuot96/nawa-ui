@@ -1,7 +1,7 @@
 {
-  "name": "@nawa-ui/react-native",
+  "name": "@orca-ui/react-native",
   "version": "0.1.0",
-  "description": "Nawa UI for React Native — accessible, themeable mobile components with the same API as the web packages.",
+  "description": "Orca UI for React Native — accessible, themeable mobile components with the same API as the web packages.",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "files": [
@@ -9,19 +9,25 @@
     "README.md"
   ],
   "scripts": {
-    "typecheck": "tsc --noEmit -p tsconfig.json"
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "jest"
   },
   "peerDependencies": {
     "react": "*",
     "react-native": ">=0.74.0"
   },
   "dependencies": {
-    "@nawa-ui/core": "0.1.0"
+    "@orca-ui/core": "0.1.0"
   },
   "devDependencies": {
+    "@babel/core": "7.29.7",
+    "@react-native/babel-preset": "0.76.5",
+    "@testing-library/react-native": "12.9.0",
     "@types/react": "18.3.12",
+    "jest": "29.7.0",
     "react": "18.3.1",
     "react-native": "0.76.5",
+    "react-test-renderer": "18.3.1",
     "typescript": "5.6.3"
   },
   "keywords": [
@@ -30,7 +36,7 @@
     "mobile",
     "ios",
     "android",
-    "nawa-ui",
+    "orca-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -46,13 +52,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/nawa-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/nawa-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
     "directory": "packages/react-native"
   },
-  "bugs": "https://github.com/oriebalzyuot96/nawa-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

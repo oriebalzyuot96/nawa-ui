@@ -1,5 +1,5 @@
 import { useEffect, useState, type ComponentType, type CSSProperties, type ReactNode } from 'react';
-import { Switch } from '@nawa-ui/react';
+import { Switch } from '@orca-ui/react';
 
 /**
  * Wraps every live demo: a labelled surface with an LTR/RTL switch.

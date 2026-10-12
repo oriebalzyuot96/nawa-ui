@@ -13,7 +13,7 @@ import {
   numberAttribute,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { getPageItems, nwId } from './utils';
+import { getPageItems, ocId } from './utils';
 
 export interface TabItem {
   key: string;
@@ -21,10 +21,10 @@ export interface TabItem {
   disabled?: boolean;
 }
 
-/** Panel content for a tab: `<ng-template nwTabPanel="profile">…</ng-template>`. */
-@Directive({ selector: 'ng-template[nwTabPanel]' })
-export class NwTabPanel {
-  readonly key = input.required<string>({ alias: 'nwTabPanel' });
+/** Panel content for a tab: `<ng-template ocTabPanel="profile">…</ng-template>`. */
+@Directive({ selector: 'ng-template[ocTabPanel]' })
+export class OcTabPanel {
+  readonly key = input.required<string>({ alias: 'ocTabPanel' });
   readonly template = inject<TemplateRef<unknown>>(TemplateRef);
 }
 
@@ -33,17 +33,17 @@ export class NwTabPanel {
  * select; only the selected tab is in the tab order (roving tabindex).
  */
 @Component({
-  selector: 'nw-tabs',
+  selector: 'oc-tabs',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
-  host: { class: 'nw-tabs' },
+  host: { class: 'oc-tabs' },
   template: `
-    <div role="tablist" class="nw-tabs__list" [attr.aria-label]="label() ?? null">
+    <div role="tablist" class="oc-tabs__list" [attr.aria-label]="label() ?? null">
       @for (t of tabs(); track t.key; let i = $index) {
         <button
           type="button"
           role="tab"
-          class="nw-tabs__tab"
+          class="oc-tabs__tab"
           [id]="baseId + '-tab-' + t.key"
           [attr.aria-selected]="t.key === active() ? 'true' : 'false'"
           [attr.aria-controls]="baseId + '-panel-' + t.key"
@@ -59,7 +59,7 @@ export class NwTabPanel {
     @if (activeTab(); as tab) {
       <div
         role="tabpanel"
-        class="nw-tabs__panel"
+        class="oc-tabs__panel"
         tabindex="0"
         [id]="baseId + '-panel-' + tab.key"
         [attr.aria-labelledby]="baseId + '-tab-' + tab.key"
@@ -71,15 +71,15 @@ export class NwTabPanel {
     }
   `,
 })
-export class NwTabs {
+export class OcTabs {
   readonly tabs = input<TabItem[]>([]);
   /** Selected tab key. Two-way bindable: `[(value)]`. Defaults to the first enabled tab. */
   readonly value = model<string | undefined>(undefined);
   /** Accessible name for the tab list. */
   readonly label = input<string>();
 
-  protected readonly baseId = nwId('nw-tabs');
-  protected readonly panels = contentChildren(NwTabPanel);
+  protected readonly baseId = ocId('oc-tabs');
+  protected readonly panels = contentChildren(OcTabPanel);
 
   readonly active = computed(() => this.value() ?? this.tabs().find((t) => !t.disabled)?.key);
   protected readonly activeTab = computed(() => this.tabs().find((t) => t.key === this.active()));
@@ -110,42 +110,42 @@ export class NwTabs {
 export interface AccordionItem {
   key: string;
   title: string;
-  /** Plain-text content. For rich content use `<ng-template nwAccordionPanel="key">`. */
+  /** Plain-text content. For rich content use `<ng-template ocAccordionPanel="key">`. */
   content?: string;
 }
 
-/** Rich content for an accordion item: `<ng-template nwAccordionPanel="faq-1">…</ng-template>`. */
-@Directive({ selector: 'ng-template[nwAccordionPanel]' })
-export class NwAccordionPanel {
-  readonly key = input.required<string>({ alias: 'nwAccordionPanel' });
+/** Rich content for an accordion item: `<ng-template ocAccordionPanel="faq-1">…</ng-template>`. */
+@Directive({ selector: 'ng-template[ocAccordionPanel]' })
+export class OcAccordionPanel {
+  readonly key = input.required<string>({ alias: 'ocAccordionPanel' });
   readonly template = inject<TemplateRef<unknown>>(TemplateRef);
 }
 
 @Component({
-  selector: 'nw-accordion',
+  selector: 'oc-accordion',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgTemplateOutlet],
-  host: { class: 'nw-accordion' },
+  host: { class: 'oc-accordion' },
   template: `
     @for (item of items(); track item.key) {
-      <div class="nw-accordion__item">
+      <div class="oc-accordion__item">
         <h3 [style.margin]="0">
           <button
             type="button"
-            class="nw-accordion__trigger"
+            class="oc-accordion__trigger"
             [id]="baseId + '-' + item.key + '-trigger'"
             [attr.aria-expanded]="isOpen(item.key) ? 'true' : 'false'"
             [attr.aria-controls]="baseId + '-' + item.key + '-panel'"
             (click)="toggle(item.key)"
           >
             {{ item.title }}
-            <span class="nw-accordion__icon" aria-hidden="true">▾</span>
+            <span class="oc-accordion__icon" aria-hidden="true">▾</span>
           </button>
         </h3>
         @if (isOpen(item.key)) {
           <div
             role="region"
-            class="nw-accordion__panel"
+            class="oc-accordion__panel"
             [id]="baseId + '-' + item.key + '-panel'"
             [attr.aria-labelledby]="baseId + '-' + item.key + '-trigger'"
           >
@@ -160,7 +160,7 @@ export class NwAccordionPanel {
     }
   `,
 })
-export class NwAccordion {
+export class OcAccordion {
   readonly items = input<AccordionItem[]>([]);
   /** Allow more than one panel open at once. */
   readonly multiple = input(false, { transform: booleanAttribute });
@@ -169,14 +169,14 @@ export class NwAccordion {
   /** Open keys. Two-way bindable: `[(open)]`. */
   readonly open = model<string[] | undefined>(undefined);
 
-  protected readonly baseId = nwId('nw-accordion');
-  protected readonly panels = contentChildren(NwAccordionPanel);
+  protected readonly baseId = ocId('oc-accordion');
+  protected readonly panels = contentChildren(OcAccordionPanel);
   private readonly openKeys = linkedSignal(() => this.open() ?? this.defaultOpen());
 
   protected isOpen(key: string): boolean {
     return this.openKeys().includes(key);
   }
-  protected panelFor(key: string): NwAccordionPanel | undefined {
+  protected panelFor(key: string): OcAccordionPanel | undefined {
     return this.panels().find((p) => p.key() === key);
   }
 
@@ -194,14 +194,14 @@ export interface BreadcrumbItem {
 }
 
 @Component({
-  selector: 'nw-breadcrumb',
+  selector: 'oc-breadcrumb',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents' },
   template: `
     <nav [attr.aria-label]="label()">
-      <ol class="nw-breadcrumb">
+      <ol class="oc-breadcrumb">
         @for (item of items(); track $index; let last = $last) {
-          <li class="nw-breadcrumb__item" [attr.aria-current]="last ? 'page' : null">
+          <li class="oc-breadcrumb__item" [attr.aria-current]="last ? 'page' : null">
             @if (item.href && !last) {
               <a [href]="item.href">{{ item.label }}</a>
             } @else {
@@ -213,21 +213,21 @@ export interface BreadcrumbItem {
     </nav>
   `,
 })
-export class NwBreadcrumb {
+export class OcBreadcrumb {
   readonly items = input<BreadcrumbItem[]>([]);
   readonly label = input('Breadcrumb');
 }
 
 /** Page navigation. `page` is 1-based and two-way bindable: `[(page)]` / `(pageChange)`. */
 @Component({
-  selector: 'nw-pagination',
+  selector: 'oc-pagination',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents' },
   template: `
-    <nav class="nw-pagination" [attr.aria-label]="label()">
+    <nav class="oc-pagination" [attr.aria-label]="label()">
       <button
         type="button"
-        class="nw-pagination__btn"
+        class="oc-pagination__btn"
         aria-label="Previous page"
         [disabled]="page() <= 1"
         (click)="go(page() - 1)"
@@ -236,11 +236,11 @@ export class NwBreadcrumb {
       </button>
       @for (item of items(); track $index) {
         @if (item === 'ellipsis') {
-          <span class="nw-pagination__ellipsis" aria-hidden="true">…</span>
+          <span class="oc-pagination__ellipsis" aria-hidden="true">…</span>
         } @else {
           <button
             type="button"
-            class="nw-pagination__btn"
+            class="oc-pagination__btn"
             [attr.aria-current]="item === page() ? 'page' : null"
             [attr.aria-label]="'Page ' + item"
             (click)="go(item)"
@@ -251,7 +251,7 @@ export class NwBreadcrumb {
       }
       <button
         type="button"
-        class="nw-pagination__btn"
+        class="oc-pagination__btn"
         aria-label="Next page"
         [disabled]="page() >= pageCount()"
         (click)="go(page() + 1)"
@@ -261,7 +261,7 @@ export class NwBreadcrumb {
     </nav>
   `,
 })
-export class NwPagination {
+export class OcPagination {
   readonly page = model(1);
   readonly pageCount = input.required({ transform: numberAttribute });
   readonly label = input('Pagination');

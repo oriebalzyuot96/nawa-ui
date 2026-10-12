@@ -26,7 +26,7 @@ import {
   useKeyFilter,
   type DatePickerValue,
   type FormOption,
-} from '@nawa-ui/react';
+} from '@orca-ui/react';
 import { createDemoIsland, Output } from './shared';
 
 const countries: FormOption[] = [
@@ -223,7 +223,7 @@ function ColorDemo() {
           { value: '#334155', label: 'Slate' },
         ]}
       />
-      <span aria-hidden="true" style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: color, border: '2px solid var(--nw-border)' }} />
+      <span aria-hidden="true" style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: color, border: '2px solid var(--oc-border)' }} />
     </>
   );
 }
@@ -285,13 +285,13 @@ function FloatLabelDemo() {
   return (
     <>
       <FloatLabel label="Username">
-        <input className="nw-input" value={user} onChange={(e) => setUser(e.target.value)} />
+        <input className="oc-input" value={user} onChange={(e) => setUser(e.target.value)} />
       </FloatLabel>
       <FloatLabel label="City (in)" variant="in">
-        <input className="nw-input" />
+        <input className="oc-input" />
       </FloatLabel>
       <FloatLabel label="Company (on)" variant="on">
-        <input className="nw-input" />
+        <input className="oc-input" />
       </FloatLabel>
     </>
   );
@@ -301,10 +301,10 @@ function IftaDemo() {
   return (
     <>
       <IftaLabel label="Email">
-        <input className="nw-input" type="email" autoComplete="email" />
+        <input className="oc-input" type="email" autoComplete="email" />
       </IftaLabel>
       <IftaLabel label="Amount">
-        <input className="nw-input" inputMode="decimal" defaultValue="250.00" />
+        <input className="oc-input" inputMode="decimal" defaultValue="250.00" />
       </IftaLabel>
     </>
   );
@@ -315,12 +315,12 @@ function InputGroupDemo() {
     <div className="demo-col" style={{ maxWidth: '28rem' }}>
       <InputGroup>
         <InputGroupAddon>https://</InputGroupAddon>
-        <input className="nw-input" aria-label="Website address" placeholder="nawa-ui.dev" />
+        <input className="oc-input" aria-label="Website address" placeholder="orca-ui.dev" />
         <Button>Go</Button>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>$</InputGroupAddon>
-        <input className="nw-input" aria-label="Price in US dollars" inputMode="decimal" defaultValue="49" />
+        <input className="oc-input" aria-label="Price in US dollars" inputMode="decimal" defaultValue="49" />
         <InputGroupAddon>.00</InputGroupAddon>
       </InputGroup>
     </div>
@@ -332,11 +332,11 @@ function IconFieldDemo() {
     <>
       <IconField iconPosition="start">
         <InputIcon>🔍</InputIcon>
-        <input className="nw-input" type="search" aria-label="Search components" placeholder="Search" />
+        <input className="oc-input" type="search" aria-label="Search components" placeholder="Search" />
       </IconField>
       <IconField iconPosition="end">
         <InputIcon>✉️</InputIcon>
-        <input className="nw-input" type="email" aria-label="Email" placeholder="you@example.com" />
+        <input className="oc-input" type="email" aria-label="Email" placeholder="you@example.com" />
       </IconField>
     </>
   );

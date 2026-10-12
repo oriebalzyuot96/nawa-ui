@@ -1,17 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import { FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { NwButton } from './button';
-import { NwInput, NwSegmented, NwSwitch } from './forms';
+import { OcButton } from './button';
+import { OcInput, OcSegmented, OcSwitch } from './forms';
 
-describe('NwButton', () => {
+describe('OcButton', () => {
   @Component({
-    imports: [NwButton],
+    imports: [OcButton],
     template: `
-      <button nwButton id="primary">Save</button>
-      <button nwButton id="outline" variant="outline" size="sm" block iconOnly aria-label="x">x</button>
-      <button nwButton id="loading" [loading]="loading()" (click)="clicks = clicks + 1">Go</button>
-      <a nwButton id="link" href="/home" variant="ghost">Home</a>
+      <button ocButton id="primary">Save</button>
+      <button ocButton id="outline" variant="outline" size="sm" block iconOnly aria-label="x">x</button>
+      <button ocButton id="loading" [loading]="loading()" (click)="clicks = clicks + 1">Go</button>
+      <a ocButton id="link" href="/home" variant="ghost">Home</a>
     `,
   })
   class Host {
@@ -24,15 +24,15 @@ describe('NwButton', () => {
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
     const primary = el.querySelector('#primary') as HTMLButtonElement;
-    expect(primary.className).toBe('nw-btn nw-btn--primary');
+    expect(primary.className).toBe('oc-btn oc-btn--primary');
     expect(primary.type).toBe('button');
     const outline = el.querySelector('#outline')!;
-    expect(outline.classList).toContain('nw-btn--outline');
-    expect(outline.classList).toContain('nw-btn--sm');
-    expect(outline.classList).toContain('nw-btn--block');
-    expect(outline.classList).toContain('nw-btn--icon');
+    expect(outline.classList).toContain('oc-btn--outline');
+    expect(outline.classList).toContain('oc-btn--sm');
+    expect(outline.classList).toContain('oc-btn--block');
+    expect(outline.classList).toContain('oc-btn--icon');
     const link = el.querySelector('#link')!;
-    expect(link.className).toBe('nw-btn nw-btn--ghost');
+    expect(link.className).toBe('oc-btn oc-btn--ghost');
     expect(link.hasAttribute('type')).toBe(false);
   });
 
@@ -41,22 +41,22 @@ describe('NwButton', () => {
     await fixture.whenStable();
     const button = fixture.nativeElement.querySelector('#loading') as HTMLButtonElement;
     expect(button.disabled).toBe(false);
-    expect(button.querySelector('.nw-spinner')).toBeNull();
+    expect(button.querySelector('.oc-spinner')).toBeNull();
 
     fixture.componentInstance.loading.set(true);
     await fixture.whenStable();
     expect(button.disabled).toBe(true);
     expect(button.getAttribute('aria-busy')).toBe('true');
-    expect(button.querySelector('.nw-spinner')?.getAttribute('aria-hidden')).toBe('true');
+    expect(button.querySelector('.oc-spinner')?.getAttribute('aria-hidden')).toBe('true');
     button.click();
     expect(fixture.componentInstance.clicks).toBe(0);
   });
 });
 
-describe('NwInput', () => {
+describe('OcInput', () => {
   @Component({
-    imports: [NwInput, ReactiveFormsModule],
-    template: `<nw-input label="Email" hint="We never share it" [error]="error()" [formControl]="control" />`,
+    imports: [OcInput, ReactiveFormsModule],
+    template: `<oc-input label="Email" hint="We never share it" [error]="error()" [formControl]="control" />`,
   })
   class ReactiveHost {
     control = new FormControl('a@b.co', { nonNullable: true });
@@ -66,8 +66,8 @@ describe('NwInput', () => {
   it('writes, reads and disables through a reactive FormControl', async () => {
     const fixture = TestBed.createComponent(ReactiveHost);
     await fixture.whenStable();
-    const input = fixture.nativeElement.querySelector('input.nw-input') as HTMLInputElement;
-    const label = fixture.nativeElement.querySelector('label.nw-label') as HTMLLabelElement;
+    const input = fixture.nativeElement.querySelector('input.oc-input') as HTMLInputElement;
+    const label = fixture.nativeElement.querySelector('label.oc-label') as HTMLLabelElement;
     expect(label.htmlFor).toBe(input.id);
     expect(input.value).toBe('a@b.co');
 
@@ -90,7 +90,7 @@ describe('NwInput', () => {
   it('wires hint and error with aria-describedby and aria-invalid', async () => {
     const fixture = TestBed.createComponent(ReactiveHost);
     await fixture.whenStable();
-    const host = fixture.nativeElement.querySelector('nw-input') as HTMLElement;
+    const host = fixture.nativeElement.querySelector('oc-input') as HTMLElement;
     const input = host.querySelector('input') as HTMLInputElement;
     expect(input.getAttribute('aria-invalid')).toBeNull();
     const hintId = input.getAttribute('aria-describedby')!;
@@ -99,18 +99,18 @@ describe('NwInput', () => {
     fixture.componentInstance.error.set('Enter a valid email');
     await fixture.whenStable();
     expect(input.getAttribute('aria-invalid')).toBe('true');
-    expect(host.classList).toContain('nw-field--error');
+    expect(host.classList).toContain('oc-field--error');
     const errId = input.getAttribute('aria-describedby')!;
     expect(errId).toMatch(/-err$/);
     const err = fixture.nativeElement.querySelector(`#${errId}`) as HTMLElement;
-    expect(err.className).toBe('nw-error-text');
+    expect(err.className).toBe('oc-error-text');
     expect(err.textContent).toContain('Enter a valid email');
-    expect(fixture.nativeElement.querySelector('.nw-hint')).toBeNull();
+    expect(fixture.nativeElement.querySelector('.oc-hint')).toBeNull();
   });
 
   @Component({
-    imports: [NwInput, FormsModule],
-    template: `<nw-input label="Name" [(ngModel)]="name" />`,
+    imports: [OcInput, FormsModule],
+    template: `<oc-input label="Name" [(ngModel)]="name" />`,
   })
   class TemplateHost {
     name = 'Ada';
@@ -127,12 +127,12 @@ describe('NwInput', () => {
   });
 });
 
-describe('NwSwitch', () => {
+describe('OcSwitch', () => {
   @Component({
-    imports: [NwSwitch, ReactiveFormsModule, FormsModule],
+    imports: [OcSwitch, ReactiveFormsModule, FormsModule],
     template: `
-      <nw-switch id="a" label="Wi-Fi" [formControl]="control" />
-      <nw-switch id="b" label="Dark mode" [(value)]="dark" />
+      <oc-switch id="a" label="Wi-Fi" [formControl]="control" />
+      <oc-switch id="b" label="Dark mode" [(value)]="dark" />
     `,
   })
   class Host {
@@ -173,10 +173,10 @@ describe('NwSwitch', () => {
   });
 });
 
-describe('NwSegmented', () => {
+describe('OcSegmented', () => {
   @Component({
-    imports: [NwSegmented, FormsModule],
-    template: `<nw-segmented label="View" [options]="options" [(ngModel)]="view" />`,
+    imports: [OcSegmented, FormsModule],
+    template: `<oc-segmented label="View" [options]="options" [(ngModel)]="view" />`,
   })
   class Host {
     options = [

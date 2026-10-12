@@ -24,7 +24,7 @@ function compareValues(a: unknown, b: unknown): number {
  * Sortable table. Custom cell content: slot `cell-<key>` receives `{ row, value }`.
  */
 export const DataTable = defineComponent({
-  name: 'NwDataTable',
+  name: 'OcDataTable',
   props: {
     columns: { type: Array as PropType<DataColumn[]>, required: true },
     rows: { type: Array as PropType<Record<string, unknown>[]>, required: true },
@@ -60,12 +60,12 @@ export const DataTable = defineComponent({
     };
 
     const alignClass = (align?: DataColumn['align']) =>
-      align === 'end' ? 'nw-table__align-end' : align === 'center' ? 'nw-table__align-center' : undefined;
+      align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
 
     return () =>
-      h('div', { class: 'nw-table-wrap' }, [
-        h('table', { class: 'nw-table', 'aria-busy': props.loading ? 'true' : undefined }, [
-          props.caption ? h('caption', { class: props.captionVisible ? undefined : 'nw-sr-only' }, props.caption) : null,
+      h('div', { class: 'oc-table-wrap', 'data-responsive': 'stack' }, [
+        h('table', { class: 'oc-table', 'aria-busy': props.loading ? 'true' : undefined }, [
+          props.caption ? h('caption', { class: props.captionVisible ? undefined : 'oc-sr-only' }, props.caption) : null,
           h(
             'thead',
             null,
@@ -82,7 +82,7 @@ export const DataTable = defineComponent({
                       col.sortable && active ? (sort.value?.direction === 'asc' ? 'ascending' : 'descending') : undefined,
                   },
                   col.sortable
-                    ? h('button', { type: 'button', class: 'nw-table__sort', onClick: () => toggleSort(col.key) }, [
+                    ? h('button', { type: 'button', class: 'oc-table__sort', onClick: () => toggleSort(col.key) }, [
                         col.label,
                         h('span', { 'aria-hidden': 'true' }, active ? (sort.value?.direction === 'asc' ? '▲' : '▼') : '↕'),
                       ])
@@ -103,7 +103,7 @@ export const DataTable = defineComponent({
                   ),
                 )
               : sortedRows.value.length === 0
-                ? [h('tr', null, [h('td', { class: 'nw-table__empty', colspan: props.columns.length }, props.emptyMessage)])]
+                ? [h('tr', null, [h('td', { class: 'oc-table__empty', colspan: props.columns.length }, props.emptyMessage)])]
                 : sortedRows.value.map((row, i) =>
                     h(
                       'tr',
@@ -113,7 +113,7 @@ export const DataTable = defineComponent({
                         const cellSlot = slots[`cell-${col.key}`];
                         return h(
                           'td',
-                          { key: col.key, class: alignClass(col.align) },
+                          { key: col.key, class: alignClass(col.align), 'data-label': typeof col.label === 'string' ? col.label : undefined },
                           cellSlot ? cellSlot({ row, value }) : (value as string | number | null | undefined) ?? '',
                         );
                       }),

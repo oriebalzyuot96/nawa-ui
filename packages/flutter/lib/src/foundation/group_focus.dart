@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 ///
 /// Nodes are created on demand and only disposed with the owner, so a node is
 /// never disposed while a widget still uses it.
-class NawaGroupFocus {
+class OrcaGroupFocus {
   /// Creates a node pool.
-  NawaGroupFocus(this.debugLabel);
+  OrcaGroupFocus(this.debugLabel);
 
   /// Prefix of node debug labels.
   final String debugLabel;
@@ -33,7 +33,7 @@ class NawaGroupFocus {
 }
 
 /// Next enabled index from [from] by [delta], wrapping. Returns [from] when none is enabled.
-int nawaNextEnabled(int from, int delta, int length, bool Function(int index) enabled) {
+int orcaNextEnabled(int from, int delta, int length, bool Function(int index) enabled) {
   if (length == 0) return from;
   int i = from < 0 ? (delta > 0 ? -1 : length) : from;
   for (int step = 0; step < length; step++) {
@@ -45,7 +45,7 @@ int nawaNextEnabled(int from, int delta, int length, bool Function(int index) en
 }
 
 /// First (or [last]) enabled index, or -1.
-int nawaEdgeEnabled(bool last, int length, bool Function(int index) enabled) {
+int orcaEdgeEnabled(bool last, int length, bool Function(int index) enabled) {
   if (last) {
     for (int i = length - 1; i >= 0; i--) {
       if (enabled(i)) return i;

@@ -1,5 +1,6 @@
 // Verifies every mode × accent against WCAG 2.2 AA. Exits 1 on any failure.
-import { contrast } from './color.mjs';
+import { contrast, mix } from './color.mjs';
+import { tint } from '../src/themes.mjs';
 import { accentNames, modeNames, resolveTheme } from './resolve.mjs';
 
 const TEXT = 4.5; // 1.4.3 normal text
@@ -32,13 +33,40 @@ const pairs = [
   ['focus ring on surface', 'focus', 'surface', UI],
   ['focus ring on surface-alt', 'focus', 'surfaceAlt', UI],
   ['selected tab underline on surface', 'primary', 'surface', UI],
+  // Accent-tinted roles of the design language (computed below, same math as build.mjs).
+  ['body text on hover tint', 'text', 'tintHover', TEXT],
+  ['body text on pressed tint', 'text', 'tintPress', TEXT],
+  ['accent text on hover tint', 'primaryInk', 'tintHover', TEXT],
+  ['body text on canvas', 'text', 'canvas', TEXT],
+  ['muted text on canvas', 'textMuted', 'canvas', TEXT],
+  ['accent text on canvas', 'primaryInk', 'canvas', TEXT],
+  ['focus ring on canvas', 'focus', 'canvas', UI],
+  ['control border on canvas', 'controlBorder', 'canvas', UI],
+  ['body text on raised surface', 'text', 'surfaceRaised', TEXT],
+  ['muted text on raised surface', 'textMuted', 'surfaceRaised', TEXT],
+  ['danger text on raised surface (menu item)', 'danger', 'surfaceRaised', TEXT],
+  ['danger text on danger tint (menu hover)', 'danger', 'dangerSoft', TEXT],
+  ['muted text on surface-muted (segmented, chips)', 'textMuted', 'surfaceMuted', TEXT],
+  ['selected text on primary-soft (option, tree, row)', 'text', 'primarySoft', TEXT],
+  ['control border on surface-alt', 'controlBorder', 'surfaceAlt', UI],
 ];
+
+/** Resolved values of the accent-tinted roles (see build.mjs bindingVars / modeVars). */
+function extend(t, mode) {
+  return {
+    ...t,
+    tintHover: mix(t.primary, t.surface, tint.hover),
+    tintPress: mix(t.primary, t.surface, tint.press),
+    canvas: mix(t.primary, t.surfaceAlt, tint.canvas),
+    surfaceRaised: mode === 'dark' ? t.surfaceAlt : t.surface,
+  };
+}
 
 let failures = 0;
 let checks = 0;
 for (const mode of modeNames) {
   for (const accent of accentNames) {
-    const t = resolveTheme(mode, accent);
+    const t = extend(resolveTheme(mode, accent), mode);
     for (const [label, fg, bg, min] of pairs) {
       checks += 1;
       const ratio = contrast(t[fg], t[bg]);

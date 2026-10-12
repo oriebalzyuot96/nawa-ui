@@ -79,13 +79,17 @@ export function DataTable<T extends Record<string, unknown>>({
     return typeof v === 'string' || typeof v === 'number' ? v : i;
   };
 
+  /** Plain-text header used by the stacked (mobile) layout; non-text labels get none. */
+  const labelOf = (label: ReactNode): string | undefined =>
+    typeof label === 'string' || typeof label === 'number' ? String(label) : undefined;
+
   const alignClass = (align?: DataColumn<T>['align']) =>
-    align === 'end' ? 'nw-table__align-end' : align === 'center' ? 'nw-table__align-center' : undefined;
+    align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
 
   return (
-    <div className={cx('nw-table-wrap', className)}>
-      <table className="nw-table" aria-busy={loading || undefined}>
-        {caption && <caption className={captionVisible ? undefined : 'nw-sr-only'}>{caption}</caption>}
+    <div className={cx('oc-table-wrap', className)} data-responsive="stack">
+      <table className="oc-table" aria-busy={loading || undefined}>
+        {caption && <caption className={captionVisible ? undefined : 'oc-sr-only'}>{caption}</caption>}
         <thead>
           <tr>
             {columns.map((col) => {
@@ -97,7 +101,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   aria-sort={col.sortable && active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
                 >
                   {col.sortable ? (
-                    <button type="button" className="nw-table__sort" onClick={() => toggleSort(col.key)}>
+                    <button type="button" className="oc-table__sort" onClick={() => toggleSort(col.key)}>
                       {col.label}
                       <span aria-hidden="true">{active ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
                     </button>
@@ -122,7 +126,7 @@ export function DataTable<T extends Record<string, unknown>>({
             ))
           ) : sortedRows.length === 0 ? (
             <tr>
-              <td className="nw-table__empty" colSpan={columns.length}>
+              <td className="oc-table__empty" colSpan={columns.length}>
                 {emptyMessage}
               </td>
             </tr>
@@ -130,7 +134,7 @@ export function DataTable<T extends Record<string, unknown>>({
             sortedRows.map((row, i) => (
               <tr key={keyOf(row, i)}>
                 {columns.map((col) => (
-                  <td key={col.key} className={alignClass(col.align)}>
+                  <td key={col.key} className={alignClass(col.align)} data-label={labelOf(col.label)}>
                     {col.render ? col.render(row) : (row[col.key] as ReactNode)}
                   </td>
                 ))}

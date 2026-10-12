@@ -16,7 +16,7 @@ const clamped = indeterminate ? undefined : Math.min(100, Math.max(0, value as n
   aria-valuemin="0"
   aria-valuemax="100"
   aria-valuenow={clamped}
-  class:list={['nw-progress', indeterminate && 'nw-progress--indeterminate']}
+  class:list={['oc-progress', indeterminate && 'oc-progress--indeterminate']}
 >
-  <div class="nw-progress__bar" style={indeterminate ? undefined : `width:${clamped}%`}></div>
+  <div class="oc-progress__bar" style={indeterminate ? undefined : `width:${clamped}%`}></div>
 </div>

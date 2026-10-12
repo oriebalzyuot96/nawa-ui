@@ -6,37 +6,37 @@ import 'dart:ui' show Brightness, Color;
 import 'theme/colors.dart';
 
 /// Color mode of a resolved theme. `hc` is the high-contrast (light) mode.
-enum NawaMode { light, dark, hc }
+enum OrcaMode { light, dark, hc }
 
 /// Accent palette.
-enum NawaAccent { violet, teal, indigo, rose, amber, emerald, slate }
+enum OrcaAccent { violet, teal, indigo, rose, amber, emerald, slate }
 
 /// Corner radius preset. `standard` is the web `default` shape.
-enum NawaShape { sharp, standard, round }
+enum OrcaShape { sharp, standard, round }
 
 /// Default mode, accent and shape (same as the web defaults).
-const NawaMode nawaDefaultMode = NawaMode.light;
-const NawaAccent nawaDefaultAccent = NawaAccent.violet;
-const NawaShape nawaDefaultShape = NawaShape.standard;
+const OrcaMode orcaDefaultMode = OrcaMode.light;
+const OrcaAccent orcaDefaultAccent = OrcaAccent.violet;
+const OrcaShape orcaDefaultShape = OrcaShape.standard;
 
 /// Amount of the accent mixed into the surface for `primarySoft`.
-const double nawaSoftMixPrimary = 0.14;
+const double orcaSoftMixPrimary = 0.14;
 
 /// Amount of a status color mixed into the surface for `*Soft` tints.
-const double nawaSoftMixStatus = 0.12;
+const double orcaSoftMixStatus = 0.12;
 
 /// Corner radii per shape, in logical pixels.
-const Map<NawaShape, NawaRadii> nawaShapes = <NawaShape, NawaRadii>{
-  NawaShape.sharp: NawaRadii(sm: 2, md: 4, lg: 6),
-  NawaShape.standard: NawaRadii(sm: 8, md: 12, lg: 16),
-  NawaShape.round: NawaRadii(sm: 12, md: 18, lg: 24),
+const Map<OrcaShape, OrcaRadii> orcaShapes = <OrcaShape, OrcaRadii>{
+  OrcaShape.sharp: OrcaRadii(sm: 2, md: 4, lg: 6),
+  OrcaShape.standard: OrcaRadii(sm: 8, md: 12, lg: 16),
+  OrcaShape.round: OrcaRadii(sm: 12, md: 18, lg: 24),
 };
 
 /// All resolved color themes: mode x accent.
-const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
-    <NawaMode, Map<NawaAccent, NawaColors>>{
-  NawaMode.light: <NawaAccent, NawaColors>{
-    NawaAccent.violet: NawaColors(
+const Map<OrcaMode, Map<OrcaAccent, OrcaColors>> orcaColorThemes =
+    <OrcaMode, Map<OrcaAccent, OrcaColors>>{
+  OrcaMode.light: <OrcaAccent, OrcaColors>{
+    OrcaAccent.violet: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF5B34D6),
       primaryHover: Color(0xFF4925B8),
@@ -62,7 +62,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.teal: NawaColors(
+    OrcaAccent.teal: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF0D7377),
       primaryHover: Color(0xFF0A5C5F),
@@ -88,7 +88,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.indigo: NawaColors(
+    OrcaAccent.indigo: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF4338CA),
       primaryHover: Color(0xFF3730A3),
@@ -114,7 +114,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.rose: NawaColors(
+    OrcaAccent.rose: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFFBE123C),
       primaryHover: Color(0xFF9F1239),
@@ -140,7 +140,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.amber: NawaColors(
+    OrcaAccent.amber: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFFA34A06),
       primaryHover: Color(0xFF853C05),
@@ -166,7 +166,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.emerald: NawaColors(
+    OrcaAccent.emerald: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF047857),
       primaryHover: Color(0xFF065F46),
@@ -192,7 +192,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE3EBF6),
       overlay: Color(0x8C0D1418),
     ),
-    NawaAccent.slate: NawaColors(
+    OrcaAccent.slate: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF334155),
       primaryHover: Color(0xFF1E293B),
@@ -219,8 +219,8 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       overlay: Color(0x8C0D1418),
     ),
   },
-  NawaMode.dark: <NawaAccent, NawaColors>{
-    NawaAccent.violet: NawaColors(
+  OrcaMode.dark: <OrcaAccent, OrcaColors>{
+    OrcaAccent.violet: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFFB9A5FF),
       primaryHover: Color(0xFFD3C7FF),
@@ -246,7 +246,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.teal: NawaColors(
+    OrcaAccent.teal: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFF2FB8B8),
       primaryHover: Color(0xFF5FCACA),
@@ -272,7 +272,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.indigo: NawaColors(
+    OrcaAccent.indigo: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFFA5B4FC),
       primaryHover: Color(0xFFC7D2FE),
@@ -298,7 +298,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.rose: NawaColors(
+    OrcaAccent.rose: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFFFDA4AF),
       primaryHover: Color(0xFFFECDD3),
@@ -324,7 +324,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.amber: NawaColors(
+    OrcaAccent.amber: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFFFBBF24),
       primaryHover: Color(0xFFFCD34D),
@@ -350,7 +350,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.emerald: NawaColors(
+    OrcaAccent.emerald: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFF34D399),
       primaryHover: Color(0xFF6EE7B7),
@@ -376,7 +376,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFF1C2936),
       overlay: Color(0xA6000000),
     ),
-    NawaAccent.slate: NawaColors(
+    OrcaAccent.slate: OrcaColors(
       brightness: Brightness.dark,
       primary: Color(0xFFCBD5E1),
       primaryHover: Color(0xFFE2E8F0),
@@ -403,8 +403,8 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       overlay: Color(0xA6000000),
     ),
   },
-  NawaMode.hc: <NawaAccent, NawaColors>{
-    NawaAccent.violet: NawaColors(
+  OrcaMode.hc: <OrcaAccent, OrcaColors>{
+    OrcaAccent.violet: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF3A17A3),
       primaryHover: Color(0xFF2B0F80),
@@ -430,7 +430,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.teal: NawaColors(
+    OrcaAccent.teal: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF005252),
       primaryHover: Color(0xFF003D3D),
@@ -456,7 +456,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.indigo: NawaColors(
+    OrcaAccent.indigo: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF2A1B9C),
       primaryHover: Color(0xFF1F1478),
@@ -482,7 +482,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.rose: NawaColors(
+    OrcaAccent.rose: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF87001F),
       primaryHover: Color(0xFF6A0018),
@@ -508,7 +508,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.amber: NawaColors(
+    OrcaAccent.amber: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF5F2A00),
       primaryHover: Color(0xFF4A2100),
@@ -534,7 +534,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.emerald: NawaColors(
+    OrcaAccent.emerald: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF00503A),
       primaryHover: Color(0xFF003D2C),
@@ -560,7 +560,7 @@ const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =
       infoSoft: Color(0xFFE0E7F3),
       overlay: Color(0xBF000000),
     ),
-    NawaAccent.slate: NawaColors(
+    OrcaAccent.slate: OrcaColors(
       brightness: Brightness.light,
       primary: Color(0xFF000000),
       primaryHover: Color(0xFF262626),

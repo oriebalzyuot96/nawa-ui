@@ -9,22 +9,22 @@ import {
   signal,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import { applyTheme, loadTheme, saveTheme, type ThemeChoice } from '@nawa-ui/core/theme';
+import { applyTheme, loadTheme, saveTheme, type ThemeChoice } from '@orca-ui/core/theme';
 
-export type { ThemeChoice } from '@nawa-ui/core/theme';
-export type { ThemeMode, ThemeAccent, ThemeShape } from '@nawa-ui/core/tokens';
+export type { ThemeChoice } from '@orca-ui/core/theme';
+export type { ThemeMode, ThemeAccent, ThemeShape } from '@orca-ui/core/tokens';
 
-export interface NawaThemeOptions extends ThemeChoice {
+export interface OrcaThemeOptions extends ThemeChoice {
   /**
-   * When true (default), a choice saved earlier with `NawaThemeService.set(..., { persist: true })`
+   * When true (default), a choice saved earlier with `OrcaThemeService.set(..., { persist: true })`
    * takes precedence over these defaults.
    */
   restoreSaved?: boolean;
 }
 
-/** Applies and persists the Nawa UI theme (data-theme / data-accent / data-shape on <html>). */
+/** Applies and persists the Orca UI theme (data-theme / data-accent / data-shape on <html>). */
 @Injectable({ providedIn: 'root' })
-export class NawaThemeService {
+export class OrcaThemeService {
   private readonly document = inject(DOCUMENT);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private readonly current = signal<ThemeChoice>({});
@@ -58,11 +58,11 @@ export class NawaThemeService {
   }
 }
 
-/** Apply a Nawa UI theme when the application starts. */
-export function provideNawaTheme(options: NawaThemeOptions = {}): EnvironmentProviders {
+/** Apply an Orca UI theme when the application starts. */
+export function provideOrcaTheme(options: OrcaThemeOptions = {}): EnvironmentProviders {
   return makeEnvironmentProviders([
     provideEnvironmentInitializer(() => {
-      const service = inject(NawaThemeService);
+      const service = inject(OrcaThemeService);
       const { restoreSaved = true, ...defaults } = options;
       const saved = restoreSaved ? service.load() : null;
       service.set({ ...defaults, ...(saved ?? {}) });

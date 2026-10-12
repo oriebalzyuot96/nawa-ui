@@ -1,7 +1,7 @@
 let uid = 0;
 
 /** Unique DOM id for label/aria wiring. */
-export function nextId(prefix = 'nw'): string {
+export function nextId(prefix = 'oc'): string {
   uid += 1;
   return `${prefix}-${uid}`;
 }

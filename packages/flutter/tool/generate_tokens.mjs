@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generates lib/src/tokens.g.dart from the Nawa UI core theme source
+// Generates lib/src/tokens.g.dart from the Orca UI core theme source
 // (packages/core/src/themes.mjs) using the same resolver the web build uses
 // (packages/core/scripts/resolve.mjs), so Flutter colors match the CSS exactly.
 //
@@ -78,40 +78,40 @@ function generate() {
   w("import 'theme/colors.dart';");
   w();
   w('/// Color mode of a resolved theme. `hc` is the high-contrast (light) mode.');
-  w(`enum NawaMode { ${modeNames.join(', ')} }`);
+  w(`enum OrcaMode { ${modeNames.join(', ')} }`);
   w();
   w('/// Accent palette.');
-  w(`enum NawaAccent { ${accentNames.join(', ')} }`);
+  w(`enum OrcaAccent { ${accentNames.join(', ')} }`);
   w();
   w('/// Corner radius preset. `standard` is the web `default` shape.');
-  w(`enum NawaShape { ${Object.keys(shapes).map(shapeName).join(', ')} }`);
+  w(`enum OrcaShape { ${Object.keys(shapes).map(shapeName).join(', ')} }`);
   w();
   w('/// Default mode, accent and shape (same as the web defaults).');
-  w(`const NawaMode nawaDefaultMode = NawaMode.${defaultMode};`);
-  w(`const NawaAccent nawaDefaultAccent = NawaAccent.${defaultAccent};`);
-  w(`const NawaShape nawaDefaultShape = NawaShape.${shapeName(defaultShape)};`);
+  w(`const OrcaMode orcaDefaultMode = OrcaMode.${defaultMode};`);
+  w(`const OrcaAccent orcaDefaultAccent = OrcaAccent.${defaultAccent};`);
+  w(`const OrcaShape orcaDefaultShape = OrcaShape.${shapeName(defaultShape)};`);
   w();
   w('/// Amount of the accent mixed into the surface for `primarySoft`.');
-  w(`const double nawaSoftMixPrimary = ${softMix.primary};`);
+  w(`const double orcaSoftMixPrimary = ${softMix.primary};`);
   w();
   w('/// Amount of a status color mixed into the surface for `*Soft` tints.');
-  w(`const double nawaSoftMixStatus = ${softMix.status};`);
+  w(`const double orcaSoftMixStatus = ${softMix.status};`);
   w();
   w('/// Corner radii per shape, in logical pixels.');
-  w('const Map<NawaShape, NawaRadii> nawaShapes = <NawaShape, NawaRadii>{');
+  w('const Map<OrcaShape, OrcaRadii> orcaShapes = <OrcaShape, OrcaRadii>{');
   for (const [name, r] of Object.entries(shapes)) {
-    w(`  NawaShape.${shapeName(name)}: NawaRadii(sm: ${r.sm}, md: ${r.md}, lg: ${r.lg}),`);
+    w(`  OrcaShape.${shapeName(name)}: OrcaRadii(sm: ${r.sm}, md: ${r.md}, lg: ${r.lg}),`);
   }
   w('};');
   w();
   w('/// All resolved color themes: mode x accent.');
-  w('const Map<NawaMode, Map<NawaAccent, NawaColors>> nawaColorThemes =');
-  w('    <NawaMode, Map<NawaAccent, NawaColors>>{');
+  w('const Map<OrcaMode, Map<OrcaAccent, OrcaColors>> orcaColorThemes =');
+  w('    <OrcaMode, Map<OrcaAccent, OrcaColors>>{');
   for (const mode of modeNames) {
-    w(`  NawaMode.${mode}: <NawaAccent, NawaColors>{`);
+    w(`  OrcaMode.${mode}: <OrcaAccent, OrcaColors>{`);
     for (const accent of accentNames) {
       const t = resolveTheme(mode, accent);
-      w(`    NawaAccent.${accent}: NawaColors(`);
+      w(`    OrcaAccent.${accent}: OrcaColors(`);
       w(`      brightness: Brightness.${mode === 'dark' ? 'dark' : 'light'},`);
       for (const key of colorKeys) {
         if (!(key in t)) throw new Error(`resolveTheme(${mode}, ${accent}) is missing ${key}`);
@@ -137,9 +137,9 @@ async function crossCheck(dart) {
   let accent = null;
   for (const line of dart.split('\n')) {
     let m;
-    if ((m = line.match(/^ {2}NawaMode\.(\w+): /))) {
+    if ((m = line.match(/^ {2}OrcaMode\.(\w+): /))) {
       mode = m[1];
-    } else if ((m = line.match(/^ {4}NawaAccent\.(\w+): NawaColors\(/))) {
+    } else if ((m = line.match(/^ {4}OrcaAccent\.(\w+): OrcaColors\(/))) {
       accent = m[1];
       (parsed[mode] ??= {})[accent] = {};
     } else if ((m = line.match(/^ {6}(\w+): Color\(0x([0-9A-F]{8})\),/)) && mode && accent) {

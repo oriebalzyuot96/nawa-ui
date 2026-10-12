@@ -196,7 +196,7 @@ describe('DataView', () => {
     const grid = screen.getByRole('button', { name: 'Grid' });
     await user.click(grid);
     expect(grid).toHaveAttribute('aria-pressed', 'true');
-    expect(list).toHaveClass('nw-dataview__content--grid');
+    expect(list).toHaveClass('oc-dataview__content--grid');
     await user.click(screen.getByRole('button', { name: 'Page 3' }));
     expect(within(screen.getByRole('list', { name: 'Products' })).getAllByRole('listitem')).toHaveLength(2);
   });

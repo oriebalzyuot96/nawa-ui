@@ -5,13 +5,13 @@ import 'package:flutter/material.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/nawa_theme.dart';
+import '../theme/orca_theme.dart';
 import 'display.dart';
 
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
-/// Width preset of a [NawaDialog].
-enum NawaDialogSize {
+/// Width preset of a [OrcaDialog].
+enum OrcaDialogSize {
   /// 400
   sm,
 
@@ -30,8 +30,8 @@ class _CloseButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    return NawaPressable(
+    final OrcaTheme t = OrcaTheme.of(context);
+    return OrcaPressable(
       onPressed: onPressed,
       semanticLabel: label,
       excludeChildSemantics: true,
@@ -46,18 +46,18 @@ class _CloseButton extends StatelessWidget {
 }
 
 Widget _panelHeader(BuildContext context, String title, VoidCallback? onClose, String closeLabel) {
-  final NawaColors c = NawaTheme.of(context).colors;
+  final OrcaColors c = OrcaTheme.of(context).colors;
   return DecoratedBox(
     decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
     child: Padding(
       padding: EdgeInsetsDirectional.only(
-        start: NawaSpace.lg,
-        end: onClose == null ? NawaSpace.lg : NawaSpace.xs,
-        top: NawaSpace.xs,
-        bottom: NawaSpace.xs,
+        start: OrcaSpace.lg,
+        end: onClose == null ? OrcaSpace.lg : OrcaSpace.xs,
+        top: OrcaSpace.xs,
+        bottom: OrcaSpace.xs,
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: nawaMinTapTarget),
+        constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
         child: Row(
           children: <Widget>[
             Expanded(
@@ -65,7 +65,7 @@ Widget _panelHeader(BuildContext context, String title, VoidCallback? onClose, S
                 header: true,
                 child: Text(
                   title,
-                  style: TextStyle(color: c.text, fontSize: NawaFontSize.lg, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: c.text, fontSize: OrcaFontSize.lg, fontWeight: FontWeight.w700),
                 ),
               ),
             ),
@@ -78,35 +78,35 @@ Widget _panelHeader(BuildContext context, String title, VoidCallback? onClose, S
 }
 
 Widget _panelFooter(BuildContext context, List<Widget> actions) {
-  final NawaColors c = NawaTheme.of(context).colors;
+  final OrcaColors c = OrcaTheme.of(context).colors;
   return DecoratedBox(
     decoration: BoxDecoration(border: Border(top: BorderSide(color: c.border))),
     child: Padding(
-      padding: const EdgeInsetsDirectional.all(NawaSpace.md),
+      padding: const EdgeInsetsDirectional.all(OrcaSpace.md),
       child: Wrap(
         alignment: WrapAlignment.end,
-        spacing: NawaSpace.sm,
-        runSpacing: NawaSpace.sm,
+        spacing: OrcaSpace.sm,
+        runSpacing: OrcaSpace.sm,
         children: actions,
       ),
     ),
   );
 }
 
-/// Modal dialog panel. Show it with [showNawaDialog].
+/// Modal dialog panel. Show it with [showOrcaDialog].
 ///
 /// Focus moves into the dialog and is kept there (modal route), Escape and
 /// the close button dismiss it, and focus returns to the opener on close.
-class NawaDialog extends StatelessWidget {
+class OrcaDialog extends StatelessWidget {
   /// Creates a dialog panel.
-  const NawaDialog({
+  const OrcaDialog({
     super.key,
     required this.title,
     this.child,
     this.actions = const <Widget>[],
     this.onClose,
     this.closeLabel = 'Close',
-    this.size = NawaDialogSize.md,
+    this.size = OrcaDialogSize.md,
   });
 
   /// Title (announced as the dialog name).
@@ -125,20 +125,20 @@ class NawaDialog extends StatelessWidget {
   final String closeLabel;
 
   /// Width preset.
-  final NawaDialogSize size;
+  final OrcaDialogSize size;
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     final double maxWidth = switch (size) {
-      NawaDialogSize.sm => 400.0,
-      NawaDialogSize.md => 560.0,
-      NawaDialogSize.lg => 760.0,
+      OrcaDialogSize.sm => 400.0,
+      OrcaDialogSize.md => 560.0,
+      OrcaDialogSize.lg => 760.0,
     };
     return SafeArea(
       child: Center(
         child: Padding(
-          padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+          padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
           child: ConstrainedBox(
             constraints: BoxConstraints(maxWidth: maxWidth),
             child: Semantics(
@@ -163,7 +163,7 @@ class NawaDialog extends StatelessWidget {
                     if (child != null)
                       Flexible(
                         child: SingleChildScrollView(
-                          padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+                          padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
                           child: child,
                         ),
                       ),
@@ -179,12 +179,12 @@ class NawaDialog extends StatelessWidget {
   }
 }
 
-/// Shows a modal [NawaDialog] and returns the value it was popped with.
+/// Shows a modal [OrcaDialog] and returns the value it was popped with.
 ///
 /// The [builder] receives the dialog context; call `Navigator.pop(context, value)`
 /// from your actions. Tapping the backdrop or pressing Escape dismisses the
 /// dialog when [barrierDismissible] is true.
-Future<T?> showNawaDialog<T>({
+Future<T?> showOrcaDialog<T>({
   required BuildContext context,
   required String title,
   required WidgetBuilder builder,
@@ -193,17 +193,17 @@ Future<T?> showNawaDialog<T>({
   bool showCloseButton = true,
   String closeLabel = 'Close',
   String barrierLabel = 'Dismiss',
-  NawaDialogSize size = NawaDialogSize.md,
+  OrcaDialogSize size = OrcaDialogSize.md,
   bool useRootNavigator = true,
 }) {
-  final NawaColors c = NawaTheme.of(context).colors;
+  final OrcaColors c = OrcaTheme.of(context).colors;
   return showDialog<T>(
     context: context,
     barrierDismissible: barrierDismissible,
     barrierColor: c.overlay,
     barrierLabel: barrierLabel,
     useRootNavigator: useRootNavigator,
-    builder: (BuildContext dialogContext) => NawaDialog(
+    builder: (BuildContext dialogContext) => OrcaDialog(
       title: title,
       size: size,
       closeLabel: closeLabel,
@@ -214,8 +214,8 @@ Future<T?> showNawaDialog<T>({
   );
 }
 
-/// Side of a [NawaDrawer]. Logical: `end` is the right edge in LTR.
-enum NawaDrawerSide {
+/// Side of a [OrcaDrawer]. Logical: `end` is the right edge in LTR.
+enum OrcaDrawerSide {
   /// Leading edge.
   start,
 
@@ -223,10 +223,10 @@ enum NawaDrawerSide {
   end,
 }
 
-/// Side sheet panel. Show it with [showNawaDrawer].
-class NawaDrawer extends StatelessWidget {
+/// Side sheet panel. Show it with [showOrcaDrawer].
+class OrcaDrawer extends StatelessWidget {
   /// Creates a drawer panel.
-  const NawaDrawer({
+  const OrcaDrawer({
     super.key,
     required this.title,
     this.child,
@@ -256,7 +256,7 @@ class NawaDrawer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
+    final OrcaTheme t = OrcaTheme.of(context);
     final double screen = MediaQuery.sizeOf(context).width;
     return Semantics(
       scopesRoute: true,
@@ -276,7 +276,7 @@ class NawaDrawer extends StatelessWidget {
                 _panelHeader(context, title, onClose, closeLabel),
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+                    padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
                     child: child,
                   ),
                 ),
@@ -290,21 +290,21 @@ class NawaDrawer extends StatelessWidget {
   }
 }
 
-/// Shows a modal [NawaDrawer] sliding in from [side].
+/// Shows a modal [OrcaDrawer] sliding in from [side].
 ///
 /// The slide is skipped when animations are disabled.
-Future<T?> showNawaDrawer<T>({
+Future<T?> showOrcaDrawer<T>({
   required BuildContext context,
   required String title,
   required WidgetBuilder builder,
   List<Widget> Function(BuildContext context)? actionsBuilder,
-  NawaDrawerSide side = NawaDrawerSide.end,
+  OrcaDrawerSide side = OrcaDrawerSide.end,
   bool barrierDismissible = true,
   String closeLabel = 'Close',
   String barrierLabel = 'Dismiss',
   double width = 380,
 }) {
-  final NawaColors c = NawaTheme.of(context).colors;
+  final OrcaColors c = OrcaTheme.of(context).colors;
   final bool reduce = _reduceMotion(context);
   return showGeneralDialog<T>(
     context: context,
@@ -314,8 +314,8 @@ Future<T?> showNawaDrawer<T>({
     transitionDuration: reduce ? Duration.zero : const Duration(milliseconds: 220),
     pageBuilder: (BuildContext dialogContext, Animation<double> a, Animation<double> b) {
       return Align(
-        alignment: side == NawaDrawerSide.end ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
-        child: NawaDrawer(
+        alignment: side == OrcaDrawerSide.end ? AlignmentDirectional.centerEnd : AlignmentDirectional.centerStart,
+        child: OrcaDrawer(
           title: title,
           width: width,
           closeLabel: closeLabel,
@@ -327,7 +327,7 @@ Future<T?> showNawaDrawer<T>({
     },
     transitionBuilder: (BuildContext ctx, Animation<double> animation, Animation<double> secondary, Widget child) {
       final bool rtl = Directionality.of(ctx) == TextDirection.rtl;
-      final bool fromRight = (side == NawaDrawerSide.end) != rtl;
+      final bool fromRight = (side == OrcaDrawerSide.end) != rtl;
       return SlideTransition(
         position: Tween<Offset>(begin: Offset(fromRight ? 1 : -1, 0), end: Offset.zero)
             .chain(CurveTween(curve: Curves.easeOutCubic))
@@ -339,8 +339,8 @@ Future<T?> showNawaDrawer<T>({
 }
 
 /// Handle to a shown toast.
-class NawaToastHandle {
-  NawaToastHandle._(this._host, this._entry);
+class OrcaToastHandle {
+  OrcaToastHandle._(this._host, this._entry);
 
   final _ToastHost _host;
   final _ToastEntry _entry;
@@ -362,7 +362,7 @@ class _ToastEntry {
 
   final String message;
   final String? title;
-  final NawaTone tone;
+  final OrcaTone tone;
   final Duration? duration;
   final String dismissLabel;
   final String? actionLabel;
@@ -377,7 +377,7 @@ class _ToastHost {
   final ValueNotifier<List<_ToastEntry>> items = ValueNotifier<List<_ToastEntry>>(<_ToastEntry>[]);
   OverlayEntry? _entry;
 
-  static final Expando<_ToastHost> _hosts = Expando<_ToastHost>('NawaToastHost');
+  static final Expando<_ToastHost> _hosts = Expando<_ToastHost>('OrcaToastHost');
 
   static _ToastHost of(OverlayState overlay) => _hosts[overlay] ??= _ToastHost(overlay);
 
@@ -406,11 +406,11 @@ class _ToastHost {
 /// The toast is announced to screen readers. It disappears after [duration]
 /// (pass null to keep it until dismissed); the timer pauses while the toast has
 /// keyboard focus or the pointer hovers it, so people have time to read and act.
-NawaToastHandle showNawaToast(
+OrcaToastHandle showOrcaToast(
   BuildContext context, {
   required String message,
   String? title,
-  NawaTone tone = NawaTone.info,
+  OrcaTone tone = OrcaTone.info,
   Duration? duration = const Duration(seconds: 5),
   String dismissLabel = 'Dismiss',
   String? actionLabel,
@@ -429,8 +429,8 @@ NawaToastHandle showNawaToast(
     onAction: onAction,
   );
   host.add(entry, maxVisible);
-  nawaAnnounce(context, title == null ? message : '$title. $message');
-  return NawaToastHandle._(host, entry);
+  orcaAnnounce(context, title == null ? message : '$title. $message');
+  return OrcaToastHandle._(host, entry);
 }
 
 class _ToastStack extends StatelessWidget {
@@ -447,7 +447,7 @@ class _ToastStack extends StatelessWidget {
       child: SafeArea(
         top: false,
         child: Padding(
-          padding: const EdgeInsetsDirectional.all(NawaSpace.lg),
+          padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
           child: Align(
             alignment: AlignmentDirectional.bottomCenter,
             child: ConstrainedBox(
@@ -462,7 +462,7 @@ class _ToastStack extends StatelessWidget {
                       for (final _ToastEntry item in items)
                         Padding(
                           key: ObjectKey(item),
-                          padding: const EdgeInsetsDirectional.only(top: NawaSpace.sm),
+                          padding: const EdgeInsetsDirectional.only(top: OrcaSpace.sm),
                           child: _Toast(item: item, onDismiss: () => host.remove(item)),
                         ),
                     ],
@@ -534,9 +534,9 @@ class _ToastState extends State<_Toast> {
 
   @override
   Widget build(BuildContext context) {
-    final NawaTheme t = NawaTheme.of(context);
-    final NawaColors c = t.colors;
-    final ({Color fg, Color bg}) tone = nawaToneColors(c, widget.item.tone);
+    final OrcaTheme t = OrcaTheme.of(context);
+    final OrcaColors c = t.colors;
+    final ({Color fg, Color bg}) tone = orcaToneColors(c, widget.item.tone);
     return Focus(
       canRequestFocus: false,
       skipTraversal: true,
@@ -570,12 +570,12 @@ class _ToastState extends State<_Toast> {
                 border: BorderDirectional(start: BorderSide(color: tone.fg, width: 4)),
               ),
               child: Padding(
-                padding: const EdgeInsetsDirectional.only(start: NawaSpace.md, top: NawaSpace.xs, bottom: NawaSpace.xs),
+                padding: const EdgeInsetsDirectional.only(start: OrcaSpace.md, top: OrcaSpace.xs, bottom: OrcaSpace.xs),
                 child: Row(
                   children: <Widget>[
                     Expanded(
                       child: Padding(
-                        padding: const EdgeInsetsDirectional.symmetric(vertical: NawaSpace.sm),
+                        padding: const EdgeInsetsDirectional.symmetric(vertical: OrcaSpace.sm),
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -583,15 +583,15 @@ class _ToastState extends State<_Toast> {
                             if (widget.item.title != null)
                               Text(
                                 widget.item.title!,
-                                style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: NawaFontSize.sm),
+                                style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.sm),
                               ),
-                            Text(widget.item.message, style: TextStyle(color: c.textMuted, fontSize: NawaFontSize.sm)),
+                            Text(widget.item.message, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
                           ],
                         ),
                       ),
                     ),
                     if (widget.item.actionLabel != null)
-                      NawaPressable(
+                      OrcaPressable(
                         onPressed: () {
                           widget.item.onAction?.call();
                           widget.onDismiss();
@@ -601,10 +601,10 @@ class _ToastState extends State<_Toast> {
                           widthFactor: 1,
                           heightFactor: 1,
                           child: Padding(
-                            padding: const EdgeInsetsDirectional.symmetric(horizontal: NawaSpace.sm),
+                            padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm),
                             child: Text(
                               widget.item.actionLabel!,
-                              style: TextStyle(color: c.primaryInk, fontWeight: FontWeight.w700, fontSize: NawaFontSize.sm),
+                              style: TextStyle(color: c.primaryInk, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.sm),
                             ),
                           ),
                         ),

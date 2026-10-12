@@ -13,13 +13,13 @@ interface Props {
 const { steps, current = 0 } = Astro.props;
 ---
 
-<ol class="nw-stepper">
+<ol class="oc-stepper">
   {steps.map((s, i) => {
     const state = i < current ? 'complete' : i === current ? 'current' : 'upcoming';
     return (
-      <li class="nw-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
+      <li class="oc-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
         <span>{s.label}</span>
-        {s.description && <span class="nw-stepper__desc">{s.description}</span>}
+        {s.description && <span class="oc-stepper__desc">{s.description}</span>}
       </li>
     );
   })}

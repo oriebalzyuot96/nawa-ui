@@ -1,25 +1,25 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:nawa_ui/nawa_ui.dart';
+import 'package:orca_ui/orca_ui.dart';
 
 void main() {
-  test('nawaPageItems matches the web pagination', () {
-    expect(nawaPageItems(1, 5), <int?>[1, 2, 3, 4, 5]);
-    expect(nawaPageItems(1, 10), <int?>[1, 2, null, 10]);
-    expect(nawaPageItems(5, 10), <int?>[1, null, 4, 5, 6, null, 10]);
-    expect(nawaPageItems(10, 10), <int?>[1, null, 9, 10]);
+  test('orcaPageItems matches the web pagination', () {
+    expect(orcaPageItems(1, 5), <int?>[1, 2, 3, 4, 5]);
+    expect(orcaPageItems(1, 10), <int?>[1, 2, null, 10]);
+    expect(orcaPageItems(5, 10), <int?>[1, null, 4, 5, 6, null, 10]);
+    expect(orcaPageItems(10, 10), <int?>[1, null, 9, 10]);
   });
 
-  test('nawaInitials', () {
-    expect(nawaInitials('Lina Haddad'), 'LH');
-    expect(nawaInitials('  omar  '), 'O');
-    expect(nawaInitials('Sara Nasser Ali'), 'SN');
-    expect(nawaInitials(''), '');
+  test('orcaInitials', () {
+    expect(orcaInitials('Lina Haddad'), 'LH');
+    expect(orcaInitials('  omar  '), 'O');
+    expect(orcaInitials('Sara Nasser Ali'), 'SN');
+    expect(orcaInitials(''), '');
   });
 
-  test('nawaCompareValues sorts nulls last and numbers naturally', () {
+  test('orcaCompareValues sorts nulls last and numbers naturally', () {
     final List<Object?> values = <Object?>[null, 'item 10', 'Item 2', 'apple'];
-    values.sort(nawaCompareValues);
+    values.sort(orcaCompareValues);
     expect(values, <Object?>['apple', 'Item 2', 'item 10', null]);
-    expect(nawaCompareValues(2, 10), lessThan(0));
+    expect(orcaCompareValues(2, 10), lessThan(0));
   });
 }

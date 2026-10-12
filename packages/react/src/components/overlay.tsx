@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, type MouseEvent, type ReactNode, type RefObject } from 'react';
 import { createPortal } from 'react-dom';
-import { lockScroll, trapFocus } from '@nawa-ui/core/a11y';
+import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
 import { cx } from '../utils';
 import type { Variant } from './display';
 
@@ -55,20 +55,20 @@ export function Dialog({ open, title, onClose, footer, size = 'md', closeOnBackd
   };
 
   return createPortal(
-    <div className="nw-overlay" onMouseDown={onBackdrop}>
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('nw-dialog', size !== 'md' && `nw-dialog--${size}`, className)}>
-        <header className="nw-dialog__header">
-          <h2 id={titleId} className="nw-dialog__title">
+    <div className="oc-overlay" onMouseDown={onBackdrop}>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('oc-dialog', size !== 'md' && `oc-dialog--${size}`, className)}>
+        <header className="oc-dialog__header">
+          <h2 id={titleId} className="oc-dialog__title">
             {title}
           </h2>
           {onClose && (
-            <button type="button" className="nw-close" aria-label="Close" onClick={onClose}>
+            <button type="button" className="oc-close" aria-label="Close" onClick={onClose}>
               ×
             </button>
           )}
         </header>
-        <div className="nw-dialog__body">{children}</div>
-        {footer && <footer className="nw-dialog__footer">{footer}</footer>}
+        <div className="oc-dialog__body">{children}</div>
+        {footer && <footer className="oc-dialog__footer">{footer}</footer>}
       </div>
     </div>,
     document.body,
@@ -91,20 +91,20 @@ export function Drawer({ open, title, onClose, footer, side = 'right', closeOnBa
   };
 
   return createPortal(
-    <div className={cx('nw-overlay', 'nw-overlay--drawer', side === 'right' && 'nw-overlay--right')} onMouseDown={onBackdrop}>
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('nw-drawer', side === 'right' && 'nw-drawer--right', className)}>
-        <header className="nw-dialog__header">
-          <h2 id={titleId} className="nw-dialog__title">
+    <div className={cx('oc-overlay', 'oc-overlay--drawer', side === 'right' && 'oc-overlay--right')} onMouseDown={onBackdrop}>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('oc-drawer', side === 'right' && 'oc-drawer--right', className)}>
+        <header className="oc-dialog__header">
+          <h2 id={titleId} className="oc-dialog__title">
             {title}
           </h2>
           {onClose && (
-            <button type="button" className="nw-close" aria-label="Close" onClick={onClose}>
+            <button type="button" className="oc-close" aria-label="Close" onClick={onClose}>
               ×
             </button>
           )}
         </header>
-        <div className="nw-dialog__body">{children}</div>
-        {footer && <footer className="nw-dialog__footer">{footer}</footer>}
+        <div className="oc-dialog__body">{children}</div>
+        {footer && <footer className="oc-dialog__footer">{footer}</footer>}
       </div>
     </div>,
     document.body,
@@ -121,14 +121,14 @@ export interface ToastItem {
 /** Presentational toast stack. Keep the items list in your state and remove on `onDismiss`. */
 export function Toast({ items, onDismiss, className }: { items: ToastItem[]; onDismiss: (id: string | number) => void; className?: string }) {
   return (
-    <div role="status" aria-live="polite" className={cx('nw-toast-stack', className)}>
+    <div role="status" aria-live="polite" className={cx('oc-toast-stack', className)}>
       {items.map((t) => (
-        <div key={t.id} className={cx('nw-toast', t.variant && t.variant !== 'info' && `nw-toast--${t.variant}`)}>
-          <div className="nw-toast__body">
-            {t.title && <div className="nw-toast__title">{t.title}</div>}
-            <div className="nw-toast__message">{t.message}</div>
+        <div key={t.id} className={cx('oc-toast', t.variant && t.variant !== 'info' && `oc-toast--${t.variant}`)}>
+          <div className="oc-toast__body">
+            {t.title && <div className="oc-toast__title">{t.title}</div>}
+            <div className="oc-toast__message">{t.message}</div>
           </div>
-          <button type="button" className="nw-close" aria-label="Dismiss" onClick={() => onDismiss(t.id)}>
+          <button type="button" className="oc-close" aria-label="Dismiss" onClick={() => onDismiss(t.id)}>
             ×
           </button>
         </div>

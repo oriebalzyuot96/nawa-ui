@@ -66,12 +66,12 @@
   }
 
   const alignClass = (align?: Column['align']) =>
-    align === 'end' ? 'nw-table__align-end' : align === 'center' ? 'nw-table__align-center' : undefined;
+    align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
 </script>
 
-<div class="nw-table-wrap">
-  <table class="nw-table" aria-busy={loading || undefined}>
-    {#if caption}<caption class={captionVisible ? undefined : 'nw-sr-only'}>{caption}</caption>{/if}
+<div class="oc-table-wrap" data-responsive="stack">
+  <table class="oc-table" aria-busy={loading || undefined}>
+    {#if caption}<caption class={captionVisible ? undefined : 'oc-sr-only'}>{caption}</caption>{/if}
     <thead>
       <tr>
         {#each columns as col (col.key)}
@@ -80,7 +80,7 @@
             aria-sort={col.sortable && sort?.key === col.key ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
           >
             {#if col.sortable}
-              <button type="button" class="nw-table__sort" onclick={() => toggle(col.key)}>
+              <button type="button" class="oc-table__sort" onclick={() => toggle(col.key)}>
                 {col.label}
                 <span aria-hidden="true">{sort?.key === col.key ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
               </button>
@@ -96,17 +96,17 @@
         {#each Array.from({ length: loadingRows }) as _, r (r)}
           <tr>
             {#each columns as col (col.key)}
-              <td><span class="nw-skeleton" aria-hidden="true" style="height: 14px"></span></td>
+              <td><span class="oc-skeleton" aria-hidden="true" style="height: 14px"></span></td>
             {/each}
           </tr>
         {/each}
       {:else if sorted.length === 0}
-        <tr><td class="nw-table__empty" colspan={columns.length}>{emptyMessage}</td></tr>
+        <tr><td class="oc-table__empty" colspan={columns.length}>{emptyMessage}</td></tr>
       {:else}
         {#each sorted as row, i (String(row[rowKey] ?? i))}
           <tr>
             {#each columns as col (col.key)}
-              <td class={alignClass(col.align)}>
+              <td class={alignClass(col.align)} data-label={col.label}>
                 {#if cell}{@render cell({ row, key: col.key, value: row[col.key] })}{:else}{row[col.key] ?? ''}{/if}
               </td>
             {/each}

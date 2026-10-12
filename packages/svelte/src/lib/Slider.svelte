@@ -11,14 +11,14 @@
     disabled = false,
   }: { value?: number; min?: number; max?: number; step?: number; label?: string; showValue?: boolean; disabled?: boolean } = $props();
 
-  const id = nextId('nw-slider');
+  const id = nextId('oc-slider');
 </script>
 
-<div class="nw-field">
+<div class="oc-field">
   {#if label}
-    <label class="nw-label" for={id}>
-      {label}{#if showValue}<span class="nw-hint"> {value}</span>{/if}
+    <label class="oc-label" for={id}>
+      {label}{#if showValue}<span class="oc-hint"> {value}</span>{/if}
     </label>
   {/if}
-  <input {id} type="range" class="nw-slider" {min} {max} {step} {disabled} bind:value />
+  <input {id} type="range" class="oc-slider" {min} {max} {step} {disabled} bind:value />
 </div>

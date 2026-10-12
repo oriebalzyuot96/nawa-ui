@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "noEmit": true,
+    "skipLibCheck": false,
+    "lib": ["ES2022", "DOM"],
+    "types": []
+  },
+  "files": ["test/types.check.ts", "dist/icons.d.ts", "dist/element.d.ts", "dist/react/index.d.ts", "dist/vue/index.d.ts", "dist/icons/search.d.ts"]
+}

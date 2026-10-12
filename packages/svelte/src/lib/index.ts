@@ -1,4 +1,4 @@
-// Styles: import '@nawa-ui/core/style.css' once in your app entry.
+// Styles: import '@orca-ui/core/style.css' once in your app entry.
 export { default as Button } from './Button.svelte';
 export { default as Input } from './Input.svelte';
 export { default as Textarea } from './Textarea.svelte';
@@ -33,6 +33,6 @@ export { default as DataTable } from './DataTable.svelte';
 export { default as Toast } from './Toast.svelte';
 export { modal } from './actions';
 export { getPageItems } from './utils';
-export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@nawa-ui/core/theme';
-export type { ThemeChoice } from '@nawa-ui/core/theme';
-export type { ThemeMode, ThemeAccent, ThemeShape } from '@nawa-ui/core/tokens';
+export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@orca-ui/core/theme';
+export type { ThemeChoice } from '@orca-ui/core/theme';
+export type { ThemeMode, ThemeAccent, ThemeShape } from '@orca-ui/core/tokens';

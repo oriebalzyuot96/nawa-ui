@@ -8,12 +8,12 @@ interface Props extends HTMLAttributes<'input'> {
 }
 
 const { label, hint, error, id, class: className, ...rest } = Astro.props;
-const inputId = id ?? `nw-input-${Math.random().toString(36).slice(2, 8)}`;
+const inputId = id ?? `oc-input-${Math.random().toString(36).slice(2, 8)}`;
 const describedBy = error ? `${inputId}-err` : hint ? `${inputId}-hint` : undefined;
 ---
 
-<div class:list={['nw-field', error && 'nw-field--error']}>
-  {label && <label class="nw-label" for={inputId}>{label}</label>}
-  <input id={inputId} class:list={['nw-input', className]} aria-invalid={error ? 'true' : undefined} aria-describedby={describedBy} {...rest} />
-  {error ? <span id={`${inputId}-err`} class="nw-error-text">{error}</span> : hint ? <span id={`${inputId}-hint`} class="nw-hint">{hint}</span> : null}
+<div class:list={['oc-field', error && 'oc-field--error']}>
+  {label && <label class="oc-label" for={inputId}>{label}</label>}
+  <input id={inputId} class:list={['oc-input', className]} aria-invalid={error ? 'true' : undefined} aria-describedby={describedBy} {...rest} />
+  {error ? <span id={`${inputId}-err`} class="oc-error-text">{error}</span> : hint ? <span id={`${inputId}-hint`} class="oc-hint">{hint}</span> : null}
 </div>

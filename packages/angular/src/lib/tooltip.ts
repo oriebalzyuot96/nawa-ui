@@ -1,11 +1,11 @@
 import { DOCUMENT, Directive, ElementRef, OnDestroy, effect, inject, input } from '@angular/core';
-import { nwId } from './utils';
+import { ocId } from './utils';
 
 /**
  * Hover/focus tooltip for any element.
  *
  * ```html
- * <button nwButton nwTooltip="Copy link" aria-label="Copy">⧉</button>
+ * <button ocButton ocTooltip="Copy link" aria-label="Copy">⧉</button>
  * ```
  *
  * The bubble (role="tooltip") is rendered in <body> with fixed positioning so it is never
@@ -14,7 +14,7 @@ import { nwId } from './utils';
  * moves (WCAG 1.4.13).
  */
 @Directive({
-  selector: '[nwTooltip]',
+  selector: '[ocTooltip]',
   host: {
     '[attr.aria-describedby]': 'describedBy()',
     '(mouseenter)': 'show()',
@@ -24,13 +24,13 @@ import { nwId } from './utils';
     '(keydown.escape)': 'dismiss()',
   },
 })
-export class NwTooltip implements OnDestroy {
-  readonly text = input.required<string>({ alias: 'nwTooltip' });
-  readonly placement = input<'top' | 'bottom'>('top', { alias: 'nwTooltipPlacement' });
+export class OcTooltip implements OnDestroy {
+  readonly text = input.required<string>({ alias: 'ocTooltip' });
+  readonly placement = input<'top' | 'bottom'>('top', { alias: 'ocTooltipPlacement' });
   /** Existing aria-describedby ids on the host, kept alongside the tooltip id. */
   readonly ariaDescribedBy = input<string | null>(null, { alias: 'aria-describedby' });
 
-  readonly tooltipId = nwId('nw-tooltip');
+  readonly tooltipId = ocId('oc-tooltip');
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
   private readonly document = inject(DOCUMENT);
   private bubble: HTMLElement | null = null;
@@ -88,9 +88,9 @@ export class NwTooltip implements OnDestroy {
     const bubble = this.document.createElement('span');
     bubble.id = this.tooltipId;
     bubble.setAttribute('role', 'tooltip');
-    bubble.className = 'nw-tooltip__bubble';
+    bubble.className = 'oc-tooltip__bubble';
     bubble.setAttribute('data-hidden', '');
-    Object.assign(bubble.style, { position: 'fixed', opacity: '0', insetInlineStart: 'auto', bottom: 'auto', fontFamily: 'var(--nw-font)' });
+    Object.assign(bubble.style, { position: 'fixed', opacity: '0', insetInlineStart: 'auto', bottom: 'auto', fontFamily: 'var(--oc-font)' });
     this.document.body.appendChild(bubble);
     this.bubble = bubble;
     return bubble;

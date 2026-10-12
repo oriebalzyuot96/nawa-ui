@@ -1,0 +1,104 @@
+{
+  "name": "@orca-ui/illustrations",
+  "version": "0.1.0",
+  "description": "Orca UI illustrations — 24 original, themeable SVG empty-state scenes (no data, no results, offline, 404, …) that follow every Orca theme through CSS variables. Zero dependencies; React, Vue, Svelte, Angular, Astro, web component and React Native entry points.",
+  "type": "module",
+  "main": "./dist/illustrations.js",
+  "module": "./dist/illustrations.js",
+  "types": "./dist/illustrations.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/illustrations.d.ts",
+      "default": "./dist/illustrations.js"
+    },
+    "./react": {
+      "types": "./dist/react.d.ts",
+      "default": "./dist/react.js"
+    },
+    "./vue": {
+      "types": "./dist/vue.d.ts",
+      "default": "./dist/vue.js"
+    },
+    "./svelte": {
+      "types": "./dist/svelte/index.d.ts",
+      "svelte": "./dist/svelte/index.js",
+      "default": "./dist/svelte/index.js"
+    },
+    "./svelte/Illustration.svelte": "./dist/svelte/Illustration.svelte",
+    "./astro": "./dist/astro/Illustration.astro",
+    "./astro/Illustration.astro": "./dist/astro/Illustration.astro",
+    "./angular": {
+      "types": "./dist/angular.d.ts",
+      "default": "./dist/angular.js"
+    },
+    "./element": {
+      "types": "./dist/element.d.ts",
+      "default": "./dist/element.js"
+    },
+    "./native": {
+      "types": "./dist/native.d.ts",
+      "default": "./dist/native.js"
+    },
+    "./svg/*": "./dist/svg/*",
+    "./package.json": "./package.json"
+  },
+  "sideEffects": [
+    "./dist/element.js"
+  ],
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node scripts/build.mjs && node --test \"test/*.test.mjs\"",
+    "preview": "node scripts/build.mjs && node scripts/preview.mjs",
+    "prepublishOnly": "node scripts/build.mjs && node --test \"test/*.test.mjs\""
+  },
+  "peerDependencies": {
+    "@angular/core": ">=17.0.0",
+    "react": ">=18.0.0",
+    "react-native-svg": ">=13.0.0",
+    "svelte": ">=5.0.0",
+    "vue": ">=3.3.0"
+  },
+  "peerDependenciesMeta": {
+    "@angular/core": { "optional": true },
+    "react": { "optional": true },
+    "react-native-svg": { "optional": true },
+    "svelte": { "optional": true },
+    "vue": { "optional": true }
+  },
+  "keywords": [
+    "orca-ui",
+    "illustrations",
+    "empty-state",
+    "empty-states",
+    "svg",
+    "themeable",
+    "dark-mode",
+    "accessible",
+    "accessibility",
+    "a11y",
+    "react",
+    "vue",
+    "svelte",
+    "angular",
+    "astro",
+    "web-components",
+    "react-native",
+    "design-system"
+  ],
+  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "directory": "packages/illustrations"
+  },
+  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "author": "oriebalzyuot96",
+  "publishConfig": {
+    "access": "public"
+  },
+  "license": "MIT"
+}

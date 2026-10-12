@@ -15,35 +15,35 @@ export const frameworks: { key: Framework; label: string; lang: string }[] = [
 ];
 
 export const install: CodeSet = {
-  react: `npm i @nawa-ui/react @nawa-ui/core
+  react: `npm i @orca-ui/react @orca-ui/core
 
 // main.tsx
-import '@nawa-ui/core/style.css';`,
-  vue: `npm i @nawa-ui/vue @nawa-ui/core
+import '@orca-ui/core/style.css';`,
+  vue: `npm i @orca-ui/vue @orca-ui/core
 
 // main.ts
-import '@nawa-ui/core/style.css';`,
-  svelte: `npm i @nawa-ui/svelte @nawa-ui/core
+import '@orca-ui/core/style.css';`,
+  svelte: `npm i @orca-ui/svelte @orca-ui/core
 
 // +layout.svelte
-import '@nawa-ui/core/style.css';`,
-  astro: `npm i @nawa-ui/astro @nawa-ui/core
+import '@orca-ui/core/style.css';`,
+  astro: `npm i @orca-ui/astro @orca-ui/core
 
 ---
 // src/layouts/Layout.astro
-import '@nawa-ui/core/style.css';
-import ThemeScript from '@nawa-ui/astro/components/ThemeScript';
+import '@orca-ui/core/style.css';
+import ThemeScript from '@orca-ui/astro/components/ThemeScript';
 ---
 <head><ThemeScript /></head>`,
-  rn: `npm i @nawa-ui/react-native @nawa-ui/core
+  rn: `npm i @orca-ui/react-native @orca-ui/core
 
 // App.tsx
-import { NawaProvider } from '@nawa-ui/react-native';
-export default () => <NawaProvider mode="system" accent="teal">{/* app */}</NawaProvider>;`,
-  angular: `npm i @nawa-ui/angular @nawa-ui/core
+import { OrcaProvider } from '@orca-ui/react-native';
+export default () => <OrcaProvider mode="system" accent="teal">{/* app */}</OrcaProvider>;`,
+  angular: `npm i @orca-ui/angular @orca-ui/core
 
 /* src/styles.css */
-@import '@nawa-ui/core/style.css';`,
+@import '@orca-ui/core/style.css';`,
 };
 
 export const snippets: Record<string, CodeSet> = {
@@ -58,21 +58,21 @@ export const snippets: Record<string, CodeSet> = {
 <Button variant="outline">Preview</Button>
 <Button variant="danger" loading>Deleting</Button>`,
     astro: `---
-import Button from '@nawa-ui/astro/components/Button';
+import Button from '@orca-ui/astro/components/Button';
 ---
 <Button>Save</Button>
 <Button variant="outline">Preview</Button>`,
     rn: `<Button title="Save" />
 <Button title="Preview" variant="outline" />
 <Button title="Deleting" variant="danger" loading />`,
-    angular: `import { NwButton } from '@nawa-ui/angular';
+    angular: `import { OcButton } from '@orca-ui/angular';
 
 @Component({
-  imports: [NwButton],
+  imports: [OcButton],
   template: \`
-    <button nwButton>Save</button>
-    <button nwButton variant="outline">Preview</button>
-    <button nwButton variant="danger" [loading]="true">Deleting</button>\`,
+    <button ocButton>Save</button>
+    <button ocButton variant="outline">Preview</button>
+    <button ocButton variant="danger" [loading]="true">Deleting</button>\`,
 })
 export class Actions {}`,
   },
@@ -130,10 +130,10 @@ export class Actions {}`,
   This cannot be undone.
   {#snippet footer()}<Button variant="danger">Delete</Button>{/snippet}
 </Dialog>`,
-    astro: `<Button data-nw-open="confirm">Open</Button>
+    astro: `<Button data-oc-open="confirm">Open</Button>
 <Dialog id="confirm" title="Delete project?">
   This cannot be undone.
-  <Button slot="footer" variant="danger" data-nw-close>Delete</Button>
+  <Button slot="footer" variant="danger" data-oc-close>Delete</Button>
 </Dialog>`,
     rn: `<Dialog visible={open} title="Delete project?" onClose={() => setOpen(false)}
   footer={<Button title="Delete" variant="danger" />}>
@@ -181,21 +181,21 @@ export class Actions {}`,
     svelte: `<Toast items={toasts} ondismiss={(id) => (toasts = toasts.filter((t) => t.id !== id))} />`,
     astro: `<Toaster />
 <script>
-  window.nawaToast({ title: 'Saved', message: 'Changes are live', variant: 'success' });
+  window.orcaToast({ title: 'Saved', message: 'Changes are live', variant: 'success' });
 </script>`,
     rn: `<Toast items={toasts} onDismiss={(id) => setToasts((t) => t.filter((x) => x.id !== id))} />`,
   },
   theme: {
-    react: `import { applyTheme, saveTheme } from '@nawa-ui/react';
+    react: `import { applyTheme, saveTheme } from '@orca-ui/react';
 applyTheme({ mode: 'dark', accent: 'indigo', shape: 'round' });`,
-    vue: `import { applyTheme } from '@nawa-ui/vue';
+    vue: `import { applyTheme } from '@orca-ui/vue';
 applyTheme({ mode: 'hc' }); // high contrast`,
-    svelte: `import { applyTheme } from '@nawa-ui/svelte';
+    svelte: `import { applyTheme } from '@orca-ui/svelte';
 applyTheme({ mode: 'system', accent: 'rose' });`,
     astro: `<html data-theme="dark" data-accent="emerald" data-shape="sharp">
 <!-- or scope a section: <section data-theme="dark"> -->`,
-    rn: `<NawaProvider mode="system" accent="indigo">
+    rn: `<OrcaProvider mode="system" accent="indigo">
   <App />
-</NawaProvider>`,
+</OrcaProvider>`,
   },
 };
