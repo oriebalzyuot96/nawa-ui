@@ -1,0 +1,29 @@
+# Nawa UI
+
+> Open-source (MIT), accessible (WCAG 2.2 AA) UI component library with the same components and API for React, Vue 3, Svelte 5, Astro, Angular, React Native and Flutter. 21 themes (light, dark, high contrast × 7 accents), skeleton loaders, accessible charts, 3D components, RTL and Arabic support. A PrimeNG-style alternative for every framework.
+
+- Docs and live demos: https://oriebalzyuot96.github.io/nawa-ui/
+- Components: https://oriebalzyuot96.github.io/nawa-ui/components/
+- Source: https://github.com/oriebalzyuot96/nawa-ui
+- Install: `npm i @nawa-ui/react @nawa-ui/core` (or yarn add / pnpm add; also @nawa-ui/vue, @nawa-ui/svelte, @nawa-ui/astro, @nawa-ui/angular, @nawa-ui/react-native, @nawa-ui/three; Flutter: `flutter pub add nawa_ui`)
+
+## Component groups
+- Forms: Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Slider, Segmented
+- Advanced forms: AutoComplete, MultiSelect, Listbox, CascadeSelect, TreeSelect, InputNumber, InputMask, InputOtp, Password, Rating, Knob, ColorPicker, DatePicker, ToggleButton, SelectButton, FloatLabel, InputGroup, KeyFilter
+- Data: DataTable, Tree, TreeTable, DataView, Paginator, VirtualScroller, OrderList, PickList, OrganizationChart, Timeline
+- Panels: Card, Accordion, Tabs, Panel, Fieldset, ScrollPanel, Splitter, Toolbar, Stepper, Divider
+- Overlays: Dialog, Drawer, Tooltip, Popover, ConfirmDialog (useConfirm), DynamicDialog (useDialog), BlockUI, ScrollTop, Inplace
+- Menus: Menu, Menubar, TieredMenu, ContextMenu, MegaMenu, PanelMenu, Dock, SplitButton, SpeedDial, Breadcrumb
+- Media: Carousel, Galleria, Image, ImageCompare, Avatar, Badge, Tag, Chip, MeterGroup, FileUpload, Terminal
+- Feedback: swal-style alert dialogs, Toaster with toast() and promise toasts, 15 loader types, PageLoader, TopProgressBar, Skeleton presets
+- Charts (dependency-free SVG, keyboard navigable, data-table fallback): Bar, Line, Area, Pie, Donut, Scatter, Bubble, Radar, Sparkline, Gauge, Heatmap, Combo, Waterfall, plus primitives for custom charts
+- 3D: TiltCard, FlipCard, CubeCarousel, ParallaxLayers, Text3D; @nawa-ui/three: Scene3D, Globe3D, ParticlesField, FloatingShapes, ModelViewer, Chart3D
+
+## Theming
+Set attributes on <html> or any container: data-theme="light|dark|hc", data-accent="violet|teal|indigo|rose|amber|emerald|slate", data-shape="sharp|default|round". Defaults follow prefers-color-scheme and prefers-contrast. JS: applyTheme({ mode, accent, shape }).
+
+## Accessibility
+525 automated contrast checks across all themes, focus traps and focus return in modals, WAI-ARIA keyboard patterns, labelled fields with aria-describedby errors, reduced-motion and forced-colors support, 24px minimum targets, logical CSS for RTL.
+
+## Related
+Nawa Guard (self-hosted, accessible puzzle CAPTCHA): https://github.com/oriebalzyuot96/nawa-guard
