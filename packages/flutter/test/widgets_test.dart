@@ -1,3 +1,6 @@
+// containsSemantics is deprecated after Flutter 3.40 (isSemantics); kept so the tests also run on the 3.24 minimum.
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
