@@ -1,0 +1,78 @@
+---
+import CodeTabs from './CodeTabs.astro';
+import type { DocEntry } from '../data/docs/types';
+
+interface Props {
+  entry: DocEntry;
+}
+
+const { entry } = Astro.props;
+const headingId = `h-${entry.id}`;
+const hasDemo = entry.demo !== 'none';
+---
+
+<section class="doc" id={entry.id} aria-labelledby={headingId}>
+  <h2 id={headingId} class="doc__title">
+    {entry.name}
+    <a class="doc__anchor" href={`#${entry.id}`}><span aria-hidden="true">#</span><span class="nw-sr-only">Link to {entry.name}</span></a>
+  </h2>
+  <p class="doc__desc">{entry.description}</p>
+  {entry.note && <p class="muted doc__note">{entry.note}</p>}
+
+  {
+    hasDemo && (
+      <div class="demo-slot">
+        <slot />
+      </div>
+    )
+  }
+
+  <div class="doc__meta">
+    <div>
+      <h3>Props</h3>
+      <div class="table-scroll" role="region" aria-label={`${entry.name} props`} tabindex="0">
+        <table class="props-table">
+          <thead>
+            <tr><th scope="col">Prop</th><th scope="col">Type</th><th scope="col">Description</th></tr>
+          </thead>
+          <tbody>
+            {
+              entry.props.map(([name, type, desc]) => (
+                <tr>
+                  <th scope="row"><code>{name}</code></th>
+                  <td><code class="type">{type}</code></td>
+                  <td>{desc}</td>
+                </tr>
+              ))
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div>
+      <h3>Accessibility</h3>
+      {
+        entry.keys && entry.keys.length > 0 && (
+          <table class="keys-table">
+            <caption class="nw-sr-only">{entry.name} keyboard support</caption>
+            <thead>
+              <tr><th scope="col">Key</th><th scope="col">Action</th></tr>
+            </thead>
+            <tbody>
+              {entry.keys.map(([key, action]) => (
+                <tr>
+                  <th scope="row">{key.split(' / ').map((k, i) => <>{i > 0 && ' / '}<kbd>{k}</kbd></>)}</th>
+                  <td>{action}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )
+      }
+      {entry.a11y && <p class="muted a11y-note">{entry.a11y}</p>}
+    </div>
+  </div>
+
+  <h3 class="nw-sr-only">Code</h3>
+  <CodeTabs label={entry.name} code={entry.code} />
+</section>

@@ -91,7 +91,8 @@ function useControllable<T>(value: T | undefined, defaultValue: T, onChange?: (v
 }
 
 function useMediaQuery(query: string): boolean {
-  const [matches, setMatches] = useState(() => typeof window !== 'undefined' && !!window.matchMedia?.(query).matches);
+  // Start false so server and first client render agree (no hydration mismatch); the effect syncs it.
+  const [matches, setMatches] = useState(false);
   useEffect(() => {
     if (typeof window === 'undefined' || !window.matchMedia) return;
     const mql = window.matchMedia(query);

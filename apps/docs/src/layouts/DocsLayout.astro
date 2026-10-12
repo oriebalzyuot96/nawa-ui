@@ -1,0 +1,70 @@
+---
+import Base from './Base.astro';
+import { categories } from '../data/catalog';
+
+interface Props {
+  title: string;
+  description: string;
+  /** Slug of the current category, or undefined for the overview page. */
+  current?: string;
+  /** In-page links for the current page. */
+  toc?: { id: string; name: string }[];
+}
+
+const { title, description, current, toc = [] } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Base title={title} description={description}>
+  <div class="container doc-layout">
+    <aside class="docs-sidebar">
+      <nav aria-label="Component categories">
+        <p class="eyebrow" id="sidebar-cats">Components</p>
+        <ul class="docs-sidebar__cats" aria-labelledby="sidebar-cats">
+          <li>
+            <a href={`${base}/components/`} aria-current={current ? undefined : 'page'}>Overview</a>
+          </li>
+          {
+            categories.map((c) => (
+              <li>
+                <a href={`${base}/components/${c.slug}/`} aria-current={c.slug === current ? 'page' : undefined}>
+                  <span aria-hidden="true">{c.icon}</span> {c.nav}
+                  <span class="docs-sidebar__count">
+                    <span class="nw-sr-only">(</span>
+                    {c.entries.length}
+                    <span class="nw-sr-only"> components)</span>
+                  </span>
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+      {
+        toc.length > 0 && (
+          <details class="docs-sidebar__toc" open data-toc>
+            <summary>On this page</summary>
+            <nav aria-label="On this page">
+              <ul>
+                {toc.map((t) => (
+                  <li>
+                    <a href={`#${t.id}`}>{t.name}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </details>
+        )
+      }
+    </aside>
+    <div class="docs-content">
+      <slot />
+    </div>
+  </div>
+</Base>
+
+<script>
+  // On small screens the in-page list starts collapsed so the content is reachable quickly.
+  const toc = document.querySelector<HTMLDetailsElement>('[data-toc]');
+  if (toc && window.matchMedia('(max-width: 860px)').matches) toc.open = false;
+</script>

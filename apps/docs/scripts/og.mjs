@@ -21,21 +21,21 @@ const chips = ['React', 'Vue', 'Svelte', 'Astro', 'React Native']
 const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" font-family="Segoe UI, Helvetica, Arial, sans-serif">
   <defs>
     <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#0d7377"/>
-      <stop offset="1" stop-color="#0a3d45"/>
+      <stop offset="0" stop-color="#5b34d6"/>
+      <stop offset="1" stop-color="#1d0f4a"/>
     </linearGradient>
   </defs>
   <rect width="1200" height="630" fill="url(#g)"/>
   <circle cx="1030" cy="150" r="250" fill="#ffffff" fill-opacity="0.05"/>
   <g transform="translate(80 90)">
     <rect width="88" height="88" rx="24" fill="#ffffff"/>
-    <ellipse cx="44" cy="44" rx="30" ry="14" fill="none" stroke="#0d7377" stroke-width="5" transform="rotate(-30 44 44)"/>
-    <circle cx="44" cy="44" r="11" fill="#0d7377"/>
+    <ellipse cx="44" cy="44" rx="30" ry="14" fill="none" stroke="#5b34d6" stroke-width="5" transform="rotate(-30 44 44)"/>
+    <circle cx="44" cy="44" r="11" fill="#5b34d6"/>
   </g>
   <text x="196" y="152" font-size="56" font-weight="800" fill="#ffffff">Nawa UI</text>
   <text x="80" y="290" font-size="64" font-weight="800" fill="#ffffff">Accessible UI components</text>
-  <text x="80" y="370" font-size="64" font-weight="800" fill="#7fd4d4">for every framework.</text>
-  <text x="80" y="430" font-size="28" fill="#d4ecec">WCAG 2.2 AA · 18 themes · Dark &amp; high contrast · Skeletons · RTL</text>
+  <text x="80" y="370" font-size="64" font-weight="800" fill="#c4b5fd">for every framework.</text>
+  <text x="80" y="430" font-size="28" fill="#e4dcff">WCAG 2.2 AA · 21 themes · Dark &amp; high contrast · Skeletons · RTL</text>
   ${chips}
 </svg>`;
 

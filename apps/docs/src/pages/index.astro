@@ -9,22 +9,28 @@ import ProgressBar from '@nawa-ui/astro/components/ProgressBar';
 import Stepper from '@nawa-ui/astro/components/Stepper';
 import SkeletonCard from '@nawa-ui/astro/components/SkeletonCard';
 import Segmented from '@nawa-ui/astro/components/Segmented';
+import * as NawaReact from '@nawa-ui/react';
+import { categories, documentedCount } from '../data/catalog';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Real count of exported React components (PascalCase functions and forwardRef objects) in @nawa-ui/react.
+const componentCount = Object.entries(NawaReact).filter(
+  ([name, value]) => /^[A-Z][a-z]/.test(name) && (typeof value === 'function' || (typeof value === 'object' && value !== null && '$$typeof' in value)),
+).length;
 const frameworks = ['React', 'Vue', 'Svelte', 'Astro', 'React Native'];
 const features = [
-  { icon: '♿', title: 'Accessible by default', text: 'WCAG 2.2 AA. 450 automated contrast checks, focus traps, keyboard patterns, screen-reader labels, reduced motion and Windows High Contrast support.' },
-  { icon: '🎨', title: '18 themes, 3 shapes', text: 'Light, dark and high contrast × six accents. Switch with one attribute, scope a theme to any section, follow the OS automatically.' },
+  { icon: '♿', title: 'Accessible by default', text: 'WCAG 2.2 AA. 525 automated contrast checks, focus traps, keyboard patterns, screen-reader labels, reduced motion and Windows High Contrast support.' },
+  { icon: '🎨', title: '21 themes, 3 shapes', text: 'Light, dark and high contrast × seven accents. Switch with one attribute, scope a theme to any section, follow the OS automatically.' },
   { icon: '⚡', title: 'One design, five frameworks', text: 'React, Vue, Svelte, Astro and React Native share the same tokens, names and behavior. Learn once, ship everywhere.' },
   { icon: '🦴', title: 'Skeletons built in', text: 'Text, card and table loading states that screen readers announce once — not as a pile of empty boxes.' },
-  { icon: '📊', title: 'Data-ready', text: 'Sortable DataTable, pagination, tabs, dialogs, drawers, toasts, stepper and timeline — the PrimeNG essentials.' },
+  { icon: '📊', title: 'Data, charts and 3D', text: 'DataTable, Tree, TreeTable, VirtualScroller, 15 accessible chart types with data tables, and WebGL scenes with graceful fallbacks.' },
   { icon: '🌍', title: 'RTL and Arabic', text: 'Logical CSS properties throughout, so layouts mirror correctly in Arabic, Hebrew and Persian.' },
 ];
 ---
 
 <Base
   title="Nawa UI — Accessible UI component library for React, Vue, Svelte, Astro & React Native"
-  description="Nawa UI is an open-source, accessible (WCAG 2.2 AA) UI component library with 18 themes, dark mode, high contrast, skeleton loaders and RTL support for React, Vue, Svelte, Astro and React Native."
+  description="Nawa UI is an open-source, accessible (WCAG 2.2 AA) UI component library with 21 themes, dark mode, high contrast, skeleton loaders and RTL support for React, Vue, Svelte, Astro and React Native."
   alternate={{ en: '/', ar: '/ar/' }}
 >
   <section class="hero">
@@ -34,7 +40,7 @@ const features = [
         <h1>Nawa UI — the accessible component library for every framework</h1>
         <p class="lead">
           Beautiful, themeable components for <strong>React, Vue, Svelte, Astro and React Native</strong>. Accessible by default,
-          18 themes out of the box, and the same API everywhere.
+          21 themes out of the box, and the same API everywhere.
         </p>
         <div class="framework-row" aria-label="Supported frameworks">
           {frameworks.map((f) => <Badge variant="primary">{f}</Badge>)}
@@ -51,7 +57,7 @@ const features = [
           <div style="margin-top:1rem"><ProgressBar value={68} label="Launch progress" /></div>
           <div style="display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap">
             <Badge variant="success">WCAG 2.2 AA</Badge>
-            <Badge variant="info">18 themes</Badge>
+            <Badge variant="info">21 themes</Badge>
             <Badge variant="warning">RTL ready</Badge>
           </div>
           <div slot="footer" style="display:flex;gap:.5rem;justify-content:flex-end">
@@ -74,7 +80,31 @@ const features = [
     </div>
   </section>
 
-  <section class="section" aria-labelledby="features-title">
+  <section class="section" aria-labelledby="inside-title">
+    <div class="container">
+      <p class="eyebrow">What's inside</p>
+      <h2 id="inside-title">{componentCount} components in {categories.length} categories</h2>
+      <p class="lead">Every category page has live demos, props, keyboard support and copy-ready code.</p>
+      <div class="inside-grid">
+        {
+          categories.map((c) => (
+            <a class="inside-card" href={`${base}/components/${c.slug}/`}>
+              <span class="stat">{c.entries.length}</span>
+              <strong>
+                <span aria-hidden="true">{c.icon}</span> {c.h1}
+              </strong>
+              <span>{c.entries.slice(0, 4).map((e) => e.name).join(', ')}…</span>
+            </a>
+          ))
+        }
+      </div>
+      <p style="margin-top:1.5rem">
+        <a class="nw-btn nw-btn--secondary" href={`${base}/components/`} style="text-decoration:none">See all components</a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="features-title">
     <div class="container">
       <p class="eyebrow">Why Nawa UI</p>
       <h2 id="features-title">Senior-grade defaults, zero setup</h2>
@@ -89,13 +119,13 @@ const features = [
     </div>
   </section>
 
-  <section class="section section--alt" aria-labelledby="numbers-title">
+  <section class="section" aria-labelledby="numbers-title">
     <div class="container">
       <h2 id="numbers-title" class="nw-sr-only">Nawa UI in numbers</h2>
       <div class="grid grid--3">
         <div class="feature"><div class="stat">5</div><p>frameworks with one shared design system</p></div>
-        <div class="feature"><div class="stat">450</div><p>automated WCAG contrast checks on every build</p></div>
-        <div class="feature"><div class="stat">30+</div><p>components, from Button to DataTable</p></div>
+        <div class="feature"><div class="stat">525</div><p>automated WCAG contrast checks on every build</p></div>
+        <div class="feature"><div class="stat">{componentCount}</div><p>React components, from Button to 3D charts — {documentedCount} documented with live demos</p></div>
       </div>
       <div style="margin-top:1.5rem">
         <Alert variant="success" title="Free and open source">MIT licensed. Use it in personal and commercial projects.</Alert>

@@ -7,6 +7,8 @@ export default defineConfig({
   site: 'https://oriebalzyuot96.github.io',
   base: '/nawa-ui',
   trailingSlash: 'always',
+  // three.js (~550 KB) is a lazily imported chunk used only by the 3D page's WebGL demos.
+  vite: { build: { chunkSizeWarningLimit: 700 } },
   integrations: [
     react(),
     sitemap({

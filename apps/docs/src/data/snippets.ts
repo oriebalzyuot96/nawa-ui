@@ -1,6 +1,9 @@
 // Code examples shown in the docs, one per framework. Keep them short and copy-pasteable.
 
-export type Framework = 'react' | 'vue' | 'svelte' | 'astro' | 'rn';
+export type Framework = 'react' | 'vue' | 'svelte' | 'astro' | 'rn' | 'angular';
+
+/** Code for one example, keyed by framework. Frameworks that don't ship the component are left out. */
+export type CodeSet = Partial<Record<Framework, string>>;
 
 export const frameworks: { key: Framework; label: string; lang: string }[] = [
   { key: 'react', label: 'React', lang: 'tsx' },
@@ -8,9 +11,10 @@ export const frameworks: { key: Framework; label: string; lang: string }[] = [
   { key: 'svelte', label: 'Svelte', lang: 'svelte' },
   { key: 'astro', label: 'Astro', lang: 'astro' },
   { key: 'rn', label: 'React Native', lang: 'tsx' },
+  { key: 'angular', label: 'Angular', lang: 'ts' },
 ];
 
-export const install: Record<Framework, string> = {
+export const install: CodeSet = {
   react: `npm i @nawa-ui/react @nawa-ui/core
 
 // main.tsx
@@ -36,9 +40,13 @@ import ThemeScript from '@nawa-ui/astro/components/ThemeScript';
 // App.tsx
 import { NawaProvider } from '@nawa-ui/react-native';
 export default () => <NawaProvider mode="system" accent="teal">{/* app */}</NawaProvider>;`,
+  angular: `npm i @nawa-ui/angular @nawa-ui/core
+
+/* src/styles.css */
+@import '@nawa-ui/core/style.css';`,
 };
 
-export const snippets: Record<string, Record<Framework, string>> = {
+export const snippets: Record<string, CodeSet> = {
   button: {
     react: `<Button>Save</Button>
 <Button variant="outline">Preview</Button>
@@ -57,6 +65,16 @@ import Button from '@nawa-ui/astro/components/Button';
     rn: `<Button title="Save" />
 <Button title="Preview" variant="outline" />
 <Button title="Deleting" variant="danger" loading />`,
+    angular: `import { NwButton } from '@nawa-ui/angular';
+
+@Component({
+  imports: [NwButton],
+  template: \`
+    <button nwButton>Save</button>
+    <button nwButton variant="outline">Preview</button>
+    <button nwButton variant="danger" [loading]="true">Deleting</button>\`,
+})
+export class Actions {}`,
   },
   input: {
     react: `const [email, setEmail] = useState('');

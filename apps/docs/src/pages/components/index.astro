@@ -1,308 +1,47 @@
 ---
-import Base from '../layouts/Base.astro';
-import CodeTabs from '../components/CodeTabs.astro';
-import { snippets } from '../data/snippets';
-import Accordion from '@nawa-ui/astro/components/Accordion';
-import Alert from '@nawa-ui/astro/components/Alert';
-import Avatar from '@nawa-ui/astro/components/Avatar';
-import Badge from '@nawa-ui/astro/components/Badge';
-import Breadcrumb from '@nawa-ui/astro/components/Breadcrumb';
-import Button from '@nawa-ui/astro/components/Button';
-import Card from '@nawa-ui/astro/components/Card';
-import Checkbox from '@nawa-ui/astro/components/Checkbox';
-import DataTable from '@nawa-ui/astro/components/DataTable';
-import Dialog from '@nawa-ui/astro/components/Dialog';
-import Divider from '@nawa-ui/astro/components/Divider';
-import Drawer from '@nawa-ui/astro/components/Drawer';
-import EmptyState from '@nawa-ui/astro/components/EmptyState';
-import Input from '@nawa-ui/astro/components/Input';
-import Pagination from '@nawa-ui/astro/components/Pagination';
-import ProgressBar from '@nawa-ui/astro/components/ProgressBar';
-import RadioGroup from '@nawa-ui/astro/components/RadioGroup';
-import Segmented from '@nawa-ui/astro/components/Segmented';
-import Select from '@nawa-ui/astro/components/Select';
-import SkeletonCard from '@nawa-ui/astro/components/SkeletonCard';
-import SkeletonText from '@nawa-ui/astro/components/SkeletonText';
-import Slider from '@nawa-ui/astro/components/Slider';
-import Spinner from '@nawa-ui/astro/components/Spinner';
-import Stepper from '@nawa-ui/astro/components/Stepper';
-import Switch from '@nawa-ui/astro/components/Switch';
-import Tabs from '@nawa-ui/astro/components/Tabs';
-import Tag from '@nawa-ui/astro/components/Tag';
-import Textarea from '@nawa-ui/astro/components/Textarea';
-import Timeline from '@nawa-ui/astro/components/Timeline';
-import Tooltip from '@nawa-ui/astro/components/Tooltip';
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import CodeTabs from '../../components/CodeTabs.astro';
+import { snippets } from '../../data/snippets';
+import { categories, documentedCount } from '../../data/catalog';
 
-const sections = [
-  ['button', 'Button'],
-  ['form-fields', 'Input, Textarea, Select'],
-  ['choices', 'Checkbox, Radio, Switch, Segmented, Slider'],
-  ['badge', 'Badge, Tag, Avatar'],
-  ['card', 'Card'],
-  ['alert', 'Alert & EmptyState'],
-  ['loading', 'Spinner, Progress & Skeleton'],
-  ['stepper', 'Stepper & Timeline'],
-  ['tabs', 'Tabs'],
-  ['accordion', 'Accordion'],
-  ['navigation', 'Breadcrumb & Pagination'],
-  ['datatable', 'DataTable'],
-  ['overlays', 'Dialog & Drawer'],
-  ['toast', 'Toast'],
-  ['tooltip', 'Tooltip'],
-] as const;
-
-const members = [
-  { name: 'Lina Haddad', team: 'Design', projects: 7 },
-  { name: 'Omar Saleh', team: 'Engineering', projects: 12 },
-  { name: 'Sara Nasser', team: 'Product', projects: 4 },
-];
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
-<Base
-  title="Components"
-  description="Live demos and code for every Nawa UI component — Button, Input, Select, DataTable, Dialog, Drawer, Tabs, Toast, Tooltip, Skeleton and more — in React, Vue, Svelte, Astro and React Native."
+<DocsLayout
+  title="Components — every Nawa UI component with live demos"
+  description={`All ${documentedCount} Nawa UI components grouped by category: forms, advanced inputs, data, panels, overlays, menus, media, feedback, charts and 3D — each with a live demo, props and accessible code.`}
 >
-  <div class="container doc-layout" style="padding-block:2rem">
-    <nav class="toc" aria-label="Components">
-      <p class="eyebrow">Components</p>
-      <ul>
-        {sections.map(([id, label]) => <li><a href={`#${id}`}>{label}</a></li>)}
-      </ul>
-    </nav>
+  <h1>Components</h1>
+  <p class="lead">
+    {documentedCount} accessible components in {categories.length} categories. Each page has live demos, a props summary, keyboard support and code
+    you can copy. Change the theme from the header — every demo follows.
+  </p>
 
-    <div>
-      <h1>Components</h1>
-      <p class="lead">Every demo on this page is live. Change the theme from the header — all components follow. The same component names and props exist in each framework package.</p>
-
-      <section class="doc" id="button" aria-labelledby="h-button">
-        <h2 id="h-button">Button</h2>
-        <p class="muted">Five variants, three sizes, loading state with <code>aria-busy</code>, icon-only buttons with an accessible name.</p>
-        <div class="demo">
-          <Button>Primary</Button>
-          <Button variant="secondary">Secondary</Button>
-          <Button variant="outline">Outline</Button>
-          <Button variant="ghost">Ghost</Button>
-          <Button variant="danger">Danger</Button>
-          <Button loading>Saving</Button>
-          <Button size="sm">Small</Button>
-          <Button size="lg">Large</Button>
-          <Button iconOnly aria-label="Add item">＋</Button>
-        </div>
-        <CodeTabs label="Button" code={snippets.button} />
-      </section>
-
-      <section class="doc" id="form-fields" aria-labelledby="h-fields">
-        <h2 id="h-fields">Input, Textarea, Select</h2>
-        <p class="muted">Labels are always linked, hints and errors are announced through <code>aria-describedby</code>, and invalid fields set <code>aria-invalid</code>.</p>
-        <div class="demo">
-          <Input label="Full name" placeholder="Lina Haddad" hint="As it appears on your ID" />
-          <Input label="Email" type="email" value="lina@" error="Enter a valid email address" />
-          <Select label="Team" placeholder="Choose a team" options={[{ label: 'Design', value: 'd' }, { label: 'Engineering', value: 'e' }, { label: 'Product', value: 'p' }]} />
-        </div>
-        <div class="demo demo--stack">
-          <Textarea label="Project brief" placeholder="What are you building?" rows={3} />
-        </div>
-        <CodeTabs label="Input" code={snippets.input} />
-      </section>
-
-      <section class="doc" id="choices" aria-labelledby="h-choices">
-        <h2 id="h-choices">Checkbox, Radio, Switch, Segmented, Slider</h2>
-        <div class="demo">
-          <Checkbox label="Email me updates" checked />
-          <Switch label="Dark previews" checked />
-          <Segmented name="view" label="View" options={[{ label: 'Grid', value: 'grid' }, { label: 'List', value: 'list' }, { label: 'Board', value: 'board' }]} />
-        </div>
-        <div class="demo">
-          <RadioGroup name="plan" label="Plan" value="pro" options={[{ label: 'Free', value: 'free' }, { label: 'Pro', value: 'pro' }, { label: 'Enterprise', value: 'ent', disabled: true }]} />
-          <Slider label="Budget" value={40} showValue />
-        </div>
-      </section>
-
-      <section class="doc" id="badge" aria-labelledby="h-badge">
-        <h2 id="h-badge">Badge, Tag, Avatar</h2>
-        <div class="demo">
-          <Badge>Neutral</Badge>
-          <Badge variant="primary">Primary</Badge>
-          <Badge variant="success">Active</Badge>
-          <Badge variant="warning">Pending</Badge>
-          <Badge variant="danger">Overdue</Badge>
-          <Badge variant="info">Beta</Badge>
-          <Tag>Design system</Tag>
-          <Tag removeHref="#badge">Removable</Tag>
-          <Avatar name="Lina Haddad" size="sm" />
-          <Avatar name="Omar Saleh" />
-          <Avatar name="Sara Nasser" size="lg" />
-        </div>
-      </section>
-
-      <section class="doc" id="card" aria-labelledby="h-card">
-        <h2 id="h-card">Card</h2>
-        <div class="demo demo--stack">
-          <Card title="Quarterly report">
-            Revenue grew 24% with the new onboarding flow.
-            <div slot="footer" style="display:flex;gap:.5rem;justify-content:flex-end">
-              <Button variant="ghost" size="sm">Share</Button>
-              <Button size="sm">Open</Button>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      <section class="doc" id="alert" aria-labelledby="h-alert">
-        <h2 id="h-alert">Alert & EmptyState</h2>
-        <p class="muted">Danger and warning alerts use <code>role="alert"</code>; info and success use <code>role="status"</code> so they don't interrupt.</p>
-        <div class="demo demo--stack">
-          <Alert title="Heads up">Your trial ends in 3 days.</Alert>
-          <Alert variant="success" title="Published">Your site is live.</Alert>
-          <Alert variant="warning" title="Storage almost full">You have used 92% of your space.</Alert>
-          <Alert variant="danger" title="Payment failed">Update your card to keep your plan.</Alert>
-          <EmptyState title="No projects yet" description="Create your first project to see it here.">
-            <span slot="icon">📁</span>
-            <Button slot="action">New project</Button>
-          </EmptyState>
-        </div>
-      </section>
-
-      <section class="doc" id="loading" aria-labelledby="h-loading">
-        <h2 id="h-loading">Spinner, Progress & Skeleton</h2>
-        <p class="muted">Skeletons are announced once as a status ("Loading…"), the bars themselves are hidden from screen readers, and the shimmer stops when the user prefers reduced motion.</p>
-        <div class="demo">
-          <Spinner />
-          <Spinner size="lg" />
-          <div style="flex:1;min-width:12rem"><ProgressBar value={64} label="Upload progress" /></div>
-          <div style="flex:1;min-width:12rem"><ProgressBar label="Processing" /></div>
-        </div>
-        <div class="demo demo--stack">
-          <SkeletonCard label="Loading profile" />
-          <SkeletonText lines={4} label="Loading article" />
-        </div>
-        <CodeTabs label="Skeleton" code={snippets.skeleton} />
-      </section>
-
-      <section class="doc" id="stepper" aria-labelledby="h-stepper">
-        <h2 id="h-stepper">Stepper & Timeline</h2>
-        <div class="demo demo--stack">
-          <Stepper current={1} steps={[{ label: 'Account', description: 'Done' }, { label: 'Workspace', description: 'In progress' }, { label: 'Invite team' }, { label: 'Launch' }]} />
-          <Timeline
-            items={[
-              { title: 'Project created', time: 'Mon 09:12', description: 'Lina set up the workspace.' },
-              { title: 'Design approved', time: 'Tue 14:30', variant: 'success' },
-              { title: 'Review requested', time: 'Wed 10:05', variant: 'warning', description: 'Waiting on 2 reviewers.' },
-            ]}
-          />
-        </div>
-      </section>
-
-      <section class="doc" id="tabs" aria-labelledby="h-tabs">
-        <h2 id="h-tabs">Tabs</h2>
-        <p class="muted">Arrow keys, Home and End move between tabs (WAI-ARIA tabs pattern).</p>
-        <div class="demo demo--stack">
-          <Tabs label="Project sections" tabs={[{ key: 'overview', label: 'Overview' }, { key: 'activity', label: 'Activity' }, { key: 'settings', label: 'Settings' }]}>
-            <p slot="panel-overview">Overview: 12 tasks, 3 in review.</p>
-            <p slot="panel-activity">Activity: Omar merged “New onboarding”.</p>
-            <p slot="panel-settings">Settings: notifications are on.</p>
-          </Tabs>
-        </div>
-        <CodeTabs label="Tabs" code={snippets.tabs} />
-      </section>
-
-      <section class="doc" id="accordion" aria-labelledby="h-accordion">
-        <h2 id="h-accordion">Accordion</h2>
-        <div class="demo demo--stack">
-          <Accordion
-            exclusive
-            items={[
-              { title: 'Is Nawa UI free?', content: 'Yes. It is MIT licensed for personal and commercial use.', open: true },
-              { title: 'Which frameworks are supported?', content: 'React, Vue 3, Svelte 5, Astro and React Native.' },
-              { title: 'Does it support Arabic and RTL?', content: 'Yes. Layouts use logical CSS properties and mirror automatically.' },
-            ]}
-          />
-        </div>
-      </section>
-
-      <section class="doc" id="navigation" aria-labelledby="h-nav">
-        <h2 id="h-nav">Breadcrumb & Pagination</h2>
-        <div class="demo demo--stack">
-          <Breadcrumb items={[{ label: 'Home', href: '#' }, { label: 'Projects', href: '#' }, { label: 'Nawa UI' }]} />
-          <Pagination page={5} pageCount={12} href="#navigation" />
-        </div>
-      </section>
-
-      <section class="doc" id="datatable" aria-labelledby="h-table">
-        <h2 id="h-table">DataTable</h2>
-        <p class="muted">Sortable columns announce their state with <code>aria-sort</code>, loading rows use skeletons, and every table can carry a caption. The <a href="../#playground-title">live playground</a> shows client-side sorting in React.</p>
-        <div class="demo demo--stack">
-          <DataTable
-            caption="Team members"
-            rows={members}
-            sort={{ key: 'projects', direction: 'desc' }}
-            columns={[{ key: 'name', label: 'Name' }, { key: 'team', label: 'Team' }, { key: 'projects', label: 'Projects', align: 'end' }]}
-          />
-        </div>
-        <CodeTabs label="DataTable" code={snippets.datatable} />
-      </section>
-
-      <section class="doc" id="overlays" aria-labelledby="h-overlays">
-        <h2 id="h-overlays">Dialog & Drawer</h2>
-        <p class="muted">Focus moves into the panel and stays there, Escape closes, the page behind cannot scroll, and focus returns to the button that opened it.</p>
-        <div class="demo">
-          <Button data-nw-open="demo-dialog" aria-haspopup="dialog">Open dialog</Button>
-          <Button variant="secondary" data-nw-open="demo-drawer" aria-haspopup="dialog">Open drawer</Button>
-        </div>
-        <Dialog id="demo-dialog" title="Delete project?">
-          <p style="margin:0">This permanently removes “Website redesign” and its 24 files.</p>
-          <div slot="footer" style="display:flex;gap:.5rem">
-            <Button variant="ghost" data-nw-close>Cancel</Button>
-            <Button variant="danger" data-nw-close>Delete</Button>
-          </div>
-        </Dialog>
-        <Drawer id="demo-drawer" title="Filters">
-          <div style="display:grid;gap:1rem">
-            <Select label="Team" options={[{ label: 'All teams', value: '' }, { label: 'Design', value: 'd' }]} />
-            <Checkbox label="Only active members" checked />
-            <Button data-nw-close>Apply</Button>
-          </div>
-        </Drawer>
-        <CodeTabs label="Dialog" code={snippets.dialog} />
-      </section>
-
-      <section class="doc" id="toast" aria-labelledby="h-toast">
-        <h2 id="h-toast">Toast</h2>
-        <p class="muted">Toasts live in a polite live region. Auto-dismiss pauses while hovered or focused, so nobody loses a message.</p>
-        <div class="demo">
-          <Button data-demo-toast="success">Success toast</Button>
-          <Button variant="secondary" data-demo-toast="info">Info toast</Button>
-          <Button variant="danger" data-demo-toast="danger">Error toast</Button>
-        </div>
-        <CodeTabs label="Toast" code={snippets.toast} />
-      </section>
-
-      <section class="doc" id="tooltip" aria-labelledby="h-tooltip">
-        <h2 id="h-tooltip">Tooltip</h2>
-        <p class="muted">Shows on hover and keyboard focus, describes its trigger, and Escape hides it.</p>
-        <div class="demo">
-          <Tooltip text="Copy link to clipboard"><Button variant="secondary">Copy link</Button></Tooltip>
-          <Tooltip text="Opens in a new tab" placement="bottom"><Button variant="ghost">Docs</Button></Tooltip>
-        </div>
-        <Divider />
-        <h3 style="margin-top:1.5rem">Theming in code</h3>
-        <CodeTabs label="Theme" code={snippets.theme} />
-      </section>
-    </div>
+  <div class="category-grid">
+    {
+      categories.map((c) => (
+        <section class="category-card" aria-labelledby={`cat-${c.slug}`}>
+          <h2 id={`cat-${c.slug}`}>
+            <a href={`${base}/components/${c.slug}/`}>
+              <span aria-hidden="true">{c.icon}</span> {c.h1}
+            </a>
+          </h2>
+          <p class="muted">{c.entries.length} components</p>
+          <ul class="category-card__list">
+            {c.entries.map((e) => (
+              <li>
+                <a href={`${base}/components/${c.slug}/#${e.id}`}>{e.name}</a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))
+    }
   </div>
-</Base>
 
-<script>
-  const messages = {
-    success: { title: 'Saved', message: 'Your changes are live.' },
-    info: { title: 'Heads up', message: 'A new version is available.' },
-    danger: { title: 'Upload failed', message: 'The file is larger than 10 MB.' },
-  } as const;
-  document.addEventListener('click', (event) => {
-    const button = (event.target as HTMLElement).closest<HTMLElement>('[data-demo-toast]');
-    if (!button) return;
-    const variant = button.dataset.demoToast as keyof typeof messages;
-    const toast = (window as unknown as { nawaToast: (o: { title: string; message: string; variant: string }) => void }).nawaToast;
-    toast({ ...messages[variant], variant });
-  });
-</script>
+  <section class="doc" aria-labelledby="h-theming">
+    <h2 id="h-theming">Theming in code</h2>
+    <p class="muted">Every component reads the same design tokens. Switch mode, accent and shape at runtime or scope a theme to one section.</p>
+    <CodeTabs label="Theme" code={snippets.theme!} />
+  </section>
+</DocsLayout>

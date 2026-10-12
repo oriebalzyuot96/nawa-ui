@@ -134,21 +134,35 @@ export interface SwitchProps {
   disabled?: boolean;
   /** Accessible name. */
   label: string;
+  /** Show the label next to the switch (otherwise it is only the accessible name). */
+  showLabel?: boolean;
   id?: string;
 }
 
-export function Switch({ checked, onChange, disabled, label, id }: SwitchProps) {
-  return (
+export function Switch({ checked, onChange, disabled, label, showLabel = false, id }: SwitchProps) {
+  const autoId = useId();
+  const switchId = id ?? autoId;
+  const button = (
     <button
-      id={id}
+      id={switchId}
       type="button"
       role="switch"
       aria-checked={checked}
-      aria-label={label}
+      aria-label={showLabel ? undefined : label}
+      aria-labelledby={showLabel ? `${switchId}-label` : undefined}
       disabled={disabled}
       className="nw-switch"
       onClick={() => onChange(!checked)}
     />
+  );
+  if (!showLabel) return button;
+  return (
+    <span className={cx('nw-check', disabled && 'nw-check--disabled')}>
+      {button}
+      <span id={`${switchId}-label`} onClick={() => !disabled && onChange(!checked)}>
+        {label}
+      </span>
+    </span>
   );
 }
 

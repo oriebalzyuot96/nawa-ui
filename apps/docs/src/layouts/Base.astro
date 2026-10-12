@@ -4,6 +4,7 @@ import '../styles/site.css';
 import ThemeScript from '@nawa-ui/astro/components/ThemeScript';
 import Toaster from '@nawa-ui/astro/components/Toaster';
 import Logo from '../components/Logo.astro';
+import { categories } from '../data/catalog';
 
 interface Props {
   title: string;
@@ -46,7 +47,7 @@ const jsonLd = [
     name: 'Nawa UI',
     alternateName: ['nawa-ui', 'نواة UI'],
     description:
-      'Accessible, themeable UI component library for React, Vue, Svelte, Astro and React Native. WCAG 2.2 AA, 18 themes, dark mode, high contrast, skeleton loaders, RTL.',
+      'Accessible, themeable UI component library for React, Vue, Svelte, Astro and React Native. WCAG 2.2 AA, 21 themes, dark mode, high contrast, skeleton loaders, RTL.',
     url: new URL(`${base}/`, site).href,
     codeRepository: repo,
     programmingLanguage: ['TypeScript', 'CSS'],
@@ -73,7 +74,7 @@ const jsonLd = [
     <meta name="description" content={description} />
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow" />
-    <meta name="theme-color" content="#0d7377" />
+    <meta name="theme-color" content="#5b34d6" />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
     {alternate?.en && <link rel="alternate" hreflang="en" href={new URL(`${base}${alternate.en}`, site).href} />}
@@ -107,7 +108,12 @@ const jsonLd = [
         </a>
         <nav class="site-nav" aria-label={isAr ? 'التنقل الرئيسي' : 'Main'}>
           {nav.map((item) => (
-            <a href={item.href} aria-current={path === item.href ? 'page' : undefined}>{item.label}</a>
+            <a
+              href={item.href}
+              aria-current={path === item.href ? 'page' : item.href.endsWith('/components/') && path.startsWith(item.href) ? 'true' : undefined}
+            >
+              {item.label}
+            </a>
           ))}
         </nav>
         <div class="header-tools">
@@ -124,7 +130,7 @@ const jsonLd = [
             <label>
               {isAr ? 'اللون' : 'Accent'}
               <select data-theme-control="accent">
-                {['teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'].map((a) => <option value={a}>{a}</option>)}
+                {['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'].map((a) => <option value={a}>{a}</option>)}
               </select>
             </label>
             <label>
@@ -146,6 +152,11 @@ const jsonLd = [
 
     <footer class="site-footer">
       <div class="container site-footer__inner">
+        <nav aria-label={isAr ? 'صفحات المكونات' : 'Component pages'} style="width:100%">
+          <ul class="footer-cats">
+            {categories.map((c) => <li><a href={`${base}/components/${c.slug}/`}>{c.h1}</a></li>)}
+          </ul>
+        </nav>
         <span>Nawa UI · MIT License · {isAr ? 'مكتبة واجهات مفتوحة المصدر' : 'Open-source UI library'}</span>
         <span>
           <a href={repo}>GitHub</a> · <a href="https://www.npmjs.com/org/nawa-ui">npm</a> · <a href={`${base}/accessibility/`}>{isAr ? 'إمكانية الوصول' : 'Accessibility'}</a>
@@ -159,7 +170,7 @@ const jsonLd = [
       import { applyTheme, loadTheme, saveTheme } from '@nawa-ui/core/theme';
       type Choice = { mode?: 'system' | 'light' | 'dark' | 'hc'; accent?: string; shape?: string };
       const saved: Choice = loadTheme() ?? {};
-      const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'teal', shape: saved.shape ?? 'default' };
+      const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'violet', shape: saved.shape ?? 'default' };
       for (const select of document.querySelectorAll<HTMLSelectElement>('[data-theme-control]')) {
         const key = select.dataset.themeControl as keyof Choice;
         select.value = String(choice[key]);

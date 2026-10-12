@@ -1,0 +1,76 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro';
+import ComponentDoc from '../../components/ComponentDoc.astro';
+import { categories } from '../../data/catalog';
+import type { CategoryDoc } from '../../data/docs/types';
+import FormsDemo from '../../demos/forms';
+import AdvancedFormsDemo from '../../demos/advanced-forms';
+import DataDemo from '../../demos/data';
+import PanelsDemo from '../../demos/panels';
+import OverlaysDemo from '../../demos/overlays';
+import MenusDemo from '../../demos/menus';
+import MediaDemo from '../../demos/media';
+import FeedbackDemo from '../../demos/feedback';
+import ChartsDemo from '../../demos/charts';
+import Effects3DDemo from '../../demos/effects3d';
+import ThreeDemo from '../../demos/three';
+
+export function getStaticPaths() {
+  return categories.map((cat, i) => ({
+    params: { category: cat.slug },
+    props: { cat, prev: categories[i - 1], next: categories[i + 1] },
+  }));
+}
+
+interface Props {
+  cat: CategoryDoc;
+  prev?: CategoryDoc;
+  next?: CategoryDoc;
+}
+
+const { cat, prev, next } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const reactOnly = cat.entries.filter((e) => Object.keys(e.code).length === 1 && e.code.react).length;
+const s = cat.slug;
+---
+
+<DocsLayout title={cat.title} description={cat.description} current={cat.slug} toc={cat.entries.map((e) => ({ id: e.id, name: e.name }))}>
+  <nav aria-label="Breadcrumb">
+    <ol class="nw-breadcrumb">
+      <li class="nw-breadcrumb__item"><a href={`${base}/`}>Home</a></li>
+      <li class="nw-breadcrumb__item"><a href={`${base}/components/`}>Components</a></li>
+      <li class="nw-breadcrumb__item"><span aria-current="page">{cat.nav}</span></li>
+    </ol>
+  </nav>
+  <h1>{cat.h1}</h1>
+  <p class="lead">{cat.intro}</p>
+  {cat.callout && <p class="callout" role="note"><span aria-hidden="true">⌨️</span> {cat.callout}</p>}
+  <p class="muted">
+    {cat.entries.length} components on this page. Every demo is live — change the theme in the header or flip a demo to right-to-left with its
+    <strong>RTL</strong> button.
+    {reactOnly > 0 && <> {reactOnly === cat.entries.length ? 'These components' : `${reactOnly} of them`} are React-only for now; Vue, Svelte and Angular versions are coming.</>}
+  </p>
+
+  {
+    cat.entries.map((entry) => (
+      <ComponentDoc entry={entry}>
+        {s === 'forms' && <FormsDemo id={entry.id} client:visible />}
+        {s === 'advanced-forms' && <AdvancedFormsDemo id={entry.id} client:visible />}
+        {s === 'data' && <DataDemo id={entry.id} client:visible />}
+        {s === 'panels' && <PanelsDemo id={entry.id} client:visible />}
+        {s === 'overlays' && <OverlaysDemo id={entry.id} client:visible />}
+        {s === 'menus' && <MenusDemo id={entry.id} client:visible />}
+        {s === 'media' && <MediaDemo id={entry.id} client:visible />}
+        {s === 'feedback' && <FeedbackDemo id={entry.id} client:visible />}
+        {s === 'charts' && <ChartsDemo id={entry.id} client:visible />}
+        {s === '3d' && entry.demo !== 'three' && <Effects3DDemo id={entry.id} client:visible />}
+        {s === '3d' && entry.demo === 'three' && <ThreeDemo id={entry.id} client:visible />}
+      </ComponentDoc>
+    ))
+  }
+
+  <nav class="pager" aria-label="Category pages">
+    {prev ? <a class="pager__prev" href={`${base}/components/${prev.slug}/`}><span class="muted">Previous</span>{prev.h1}</a> : <span />}
+    {next && <a class="pager__next" href={`${base}/components/${next.slug}/`}><span class="muted">Next</span>{next.h1}</a>}
+  </nav>
+</DocsLayout>

@@ -1,22 +1,38 @@
 ---
 import { Code } from 'astro:components';
 import Tabs from '@nawa-ui/astro/components/Tabs';
-import { frameworks, type Framework } from '../data/snippets';
+import { frameworks, type CodeSet } from '../data/snippets';
 
 interface Props {
-  code: Record<Framework, string>;
+  code: CodeSet;
   label: string;
 }
 
 const { code, label } = Astro.props;
+// Only show tabs for frameworks that actually ship this component.
+const available = frameworks.filter((f) => code[f.key]);
+const only = available.length === 1 ? available[0] : undefined;
 ---
 
-<div class="code-tabs">
-  <Tabs label={`${label} code examples`} tabs={frameworks.map((f) => ({ key: f.key, label: f.label }))}>
-    <Code slot="panel-react" code={code.react} lang="tsx" theme="github-dark" />
-    <Code slot="panel-vue" code={code.vue} lang="vue" theme="github-dark" />
-    <Code slot="panel-svelte" code={code.svelte} lang="svelte" theme="github-dark" />
-    <Code slot="panel-astro" code={code.astro} lang="astro" theme="github-dark" />
-    <Code slot="panel-rn" code={code.rn} lang="tsx" theme="github-dark" />
-  </Tabs>
-</div>
+{
+  only ? (
+    <div class="code-tabs code-tabs--single">
+      <p class="code-tabs__label">
+        <span class="nw-badge nw-badge--primary">{only.label}</span>
+        {only.key === 'react' && <span class="muted">Coming to Vue, Svelte and Angular.</span>}
+      </p>
+      <Code code={code[only.key]!} lang={only.lang as 'tsx'} theme="github-dark" />
+    </div>
+  ) : (
+    <div class="code-tabs">
+      <Tabs label={`${label} code examples`} tabs={available.map((f) => ({ key: f.key, label: f.label }))}>
+        {code.react && <Code slot="panel-react" code={code.react} lang="tsx" theme="github-dark" />}
+        {code.vue && <Code slot="panel-vue" code={code.vue} lang="vue" theme="github-dark" />}
+        {code.svelte && <Code slot="panel-svelte" code={code.svelte} lang="svelte" theme="github-dark" />}
+        {code.astro && <Code slot="panel-astro" code={code.astro} lang="astro" theme="github-dark" />}
+        {code.rn && <Code slot="panel-rn" code={code.rn} lang="tsx" theme="github-dark" />}
+        {code.angular && <Code slot="panel-angular" code={code.angular} lang="ts" theme="github-dark" />}
+      </Tabs>
+    </div>
+  )
+}
