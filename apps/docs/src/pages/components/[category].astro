@@ -62,7 +62,7 @@ const s = cat.slug;
         {s === 'menus' && <MenusDemo id={entry.id} client:visible />}
         {s === 'media' && <MediaDemo id={entry.id} client:visible />}
         {s === 'feedback' && <FeedbackDemo id={entry.id} client:visible />}
-        {s === 'charts' && <ChartsDemo id={entry.id} client:visible />}
+        {s === 'charts' && <ChartsDemo id={entry.id} client:only="react" />}
         {s === '3d' && entry.demo !== 'three' && <Effects3DDemo id={entry.id} client:visible />}
         {s === '3d' && entry.demo === 'three' && <ThreeDemo id={entry.id} client:visible />}
       </ComponentDoc>

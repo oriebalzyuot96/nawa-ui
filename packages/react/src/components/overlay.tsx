@@ -57,7 +57,7 @@ export function Dialog({ open, title, onClose, footer, size = 'md', closeOnBackd
   return createPortal(
     <div className="oc-overlay" onMouseDown={onBackdrop}>
       <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('oc-dialog', size !== 'md' && `oc-dialog--${size}`, className)}>
-        <header className="oc-dialog__header">
+        <div className="oc-dialog__header">
           <h2 id={titleId} className="oc-dialog__title">
             {title}
           </h2>
@@ -66,9 +66,9 @@ export function Dialog({ open, title, onClose, footer, size = 'md', closeOnBackd
               ×
             </button>
           )}
-        </header>
+        </div>
         <div className="oc-dialog__body">{children}</div>
-        {footer && <footer className="oc-dialog__footer">{footer}</footer>}
+        {footer && <div className="oc-dialog__footer">{footer}</div>}
       </div>
     </div>,
     document.body,
@@ -93,7 +93,7 @@ export function Drawer({ open, title, onClose, footer, side = 'right', closeOnBa
   return createPortal(
     <div className={cx('oc-overlay', 'oc-overlay--drawer', side === 'right' && 'oc-overlay--right')} onMouseDown={onBackdrop}>
       <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={cx('oc-drawer', side === 'right' && 'oc-drawer--right', className)}>
-        <header className="oc-dialog__header">
+        <div className="oc-dialog__header">
           <h2 id={titleId} className="oc-dialog__title">
             {title}
           </h2>
@@ -102,9 +102,9 @@ export function Drawer({ open, title, onClose, footer, side = 'right', closeOnBa
               ×
             </button>
           )}
-        </header>
+        </div>
         <div className="oc-dialog__body">{children}</div>
-        {footer && <footer className="oc-dialog__footer">{footer}</footer>}
+        {footer && <div className="oc-dialog__footer">{footer}</div>}
       </div>
     </div>,
     document.body,

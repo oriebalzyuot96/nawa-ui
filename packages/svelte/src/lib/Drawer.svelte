@@ -38,12 +38,12 @@
       aria-labelledby={titleId}
       tabindex="-1"
     >
-      <header class="oc-dialog__header">
+      <div class="oc-dialog__header">
         <h2 id={titleId} class="oc-dialog__title">{title}</h2>
         <button type="button" class="oc-close" aria-label="Close" onclick={onclose}>×</button>
-      </header>
+      </div>
       <div class="oc-dialog__body">{@render children?.()}</div>
-      {#if footer}<footer class="oc-dialog__footer">{@render footer()}</footer>{/if}
+      {#if footer}<div class="oc-dialog__footer">{@render footer()}</div>{/if}
     </div>
   </div>
 {/if}

@@ -83,12 +83,12 @@ export const Dialog = defineComponent({
                 class: ['oc-dialog', props.size !== 'md' && `oc-dialog--${props.size}`],
               },
               [
-                h('header', { class: 'oc-dialog__header' }, [
+                h('div', { class: 'oc-dialog__header' }, [
                   h('h2', { id: titleId, class: 'oc-dialog__title' }, props.title),
                   h('button', { type: 'button', class: 'oc-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
                 ]),
                 h('div', { class: 'oc-dialog__body' }, slots.default?.()),
-                slots.footer ? h('footer', { class: 'oc-dialog__footer' }, slots.footer()) : null,
+                slots.footer ? h('div', { class: 'oc-dialog__footer' }, slots.footer()) : null,
               ],
             ),
           ],
@@ -133,12 +133,12 @@ export const Drawer = defineComponent({
                 class: ['oc-drawer', props.side === 'right' && 'oc-drawer--right'],
               },
               [
-                h('header', { class: 'oc-dialog__header' }, [
+                h('div', { class: 'oc-dialog__header' }, [
                   h('h2', { id: titleId, class: 'oc-dialog__title' }, props.title),
                   h('button', { type: 'button', class: 'oc-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
                 ]),
                 h('div', { class: 'oc-dialog__body' }, slots.default?.()),
-                slots.footer ? h('footer', { class: 'oc-dialog__footer' }, slots.footer()) : null,
+                slots.footer ? h('div', { class: 'oc-dialog__footer' }, slots.footer()) : null,
               ],
             ),
           ],

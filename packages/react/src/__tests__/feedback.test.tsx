@@ -271,7 +271,7 @@ describe('swal', () => {
 
 /* ------------------------------------------------------------------ */
 describe('toaster', () => {
-  it('renders toasts inside a polite live region with status/alert roles', () => {
+  it('renders toasts as list items in a polite live region, with errors assertive', () => {
     render(<Toaster />);
     act(() => {
       toast('Saved draft');
@@ -280,9 +280,12 @@ describe('toaster', () => {
     const region = screen.getByRole('region', { name: 'Notifications (Alt+T)' });
     const list = region.querySelector('ol')!;
     expect(list).toHaveAttribute('aria-live', 'polite');
-    expect(within(region).getByRole('status')).toHaveTextContent('Saved draft');
-    const alert = within(region).getByRole('alert');
-    expect(alert).toHaveTextContent('Error: Upload failed');
+    const items = within(region).getAllByRole('listitem');
+    const saved = items.find((li) => li.textContent?.includes('Saved draft'))!;
+    const failed = items.find((li) => li.textContent?.includes('Upload failed'))!;
+    expect(saved).not.toHaveAttribute('aria-live');
+    expect(failed).toHaveAttribute('aria-live', 'assertive');
+    expect(failed).toHaveTextContent('Error: Upload failed');
   });
 
   it('turns a promise toast from loading into success or error', async () => {
@@ -301,7 +304,7 @@ describe('toaster', () => {
     });
     await act(async () => bad.reject('offline'));
     const err = screen.getByText('Failed: offline').closest('li')!;
-    expect(err).toHaveAttribute('role', 'alert');
+    expect(err).toHaveAttribute('aria-live', 'assertive');
   });
 
   it('dismisses and updates by id', () => {

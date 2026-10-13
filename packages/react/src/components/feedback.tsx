@@ -993,7 +993,8 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
   return (
     <li
       ref={ref}
-      role={isError ? 'alert' : 'status'}
+      // Items stay plain list items (valid ARIA); the list is a polite live region and errors interrupt.
+      aria-live={isError ? 'assertive' : undefined}
       aria-atomic="true"
       tabIndex={0}
       className={cx('oc-toaster__toast', `oc-toaster__toast--${t.type}`, t.className)}

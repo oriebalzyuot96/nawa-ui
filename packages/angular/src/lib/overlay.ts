@@ -89,15 +89,15 @@ export abstract class OcModalBase {
 }
 
 const PANEL_CONTENT = `
-  <header class="oc-dialog__header">
+  <div class="oc-dialog__header">
     <h2 class="oc-dialog__title" [id]="titleId">{{ title() }}</h2>
     @if (closable()) {
       <button type="button" class="oc-close" [attr.aria-label]="closeLabel()" (click)="close()">×</button>
     }
-  </header>
+  </div>
   <div class="oc-dialog__body"><ng-content /></div>
   @if (footer()) {
-    <footer class="oc-dialog__footer"><ng-content select="[ocDialogFooter]" /></footer>
+    <div class="oc-dialog__footer"><ng-content select="[ocDialogFooter]" /></div>
   }`;
 
 /**

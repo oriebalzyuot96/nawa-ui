@@ -1,0 +1,55 @@
+---
+import Base from '../../layouts/Base.astro';
+import SpaceApp from '../../space/Space';
+---
+
+<Base
+  title="Orca Space — drag-and-drop page builder for Orca UI"
+  description="Build pages with real Orca UI components: drag and drop, or describe what you need in English or Arabic and Orca Space assembles it. Export clean React, Vue, Angular or HTML code."
+  alternate={{ en: '/space/' }}
+>
+  <section class="space-intro">
+    <div class="space-wrap">
+      <p class="eyebrow">Orca Space · beta</p>
+      <h1>Orca Space — drag, drop or describe your page</h1>
+      <p class="lead">
+        Compose real <code>@orca-ui/react</code> components on a live canvas — in any theme, width or direction — then export React, Vue, Angular or HTML.
+        Runs entirely in your browser.
+      </p>
+    </div>
+  </section>
+  <div class="space-wrap space-app">
+    <SpaceApp client:only="react" />
+    <noscript><p>Orca Space needs JavaScript. Browse the <a href="../components/">component docs</a> instead.</p></noscript>
+  </div>
+</Base>
+
+<style>
+  .space-wrap {
+    width: min(100% - 2rem, 112rem);
+    margin-inline: auto;
+  }
+  .space-intro {
+    padding-block: clamp(1rem, 3vw, 1.75rem) 0.75rem;
+    background: radial-gradient(50rem 18rem at 85% -20%, color-mix(in srgb, var(--oc-primary) 13%, transparent), transparent 70%);
+  }
+  .space-intro h1 {
+    max-width: 48rem;
+    font-size: clamp(1.6rem, 3vw, 2.25rem);
+    margin-bottom: 0.4rem;
+  }
+  .space-intro .lead {
+    max-width: 60rem;
+    margin-block: 0;
+    font-size: 1.0625rem;
+  }
+  .space-app {
+    padding-block: 0.5rem clamp(2rem, 5vw, 3.5rem);
+    min-height: 40rem;
+  }
+  @media (max-width: 560px) {
+    .space-wrap {
+      width: min(100% - 1.25rem, 112rem);
+    }
+  }
+</style>

@@ -1993,11 +1993,11 @@ export function ConfirmDialog({
           }
         }}
       >
-        <header className="oc-dialog__header">
+        <div className="oc-dialog__header">
           <h2 id={titleId} className="oc-dialog__title">
             {header}
           </h2>
-        </header>
+        </div>
         <div className="oc-dialog__body oc-confirm__body">
           {icon && (
             <span className="oc-confirm__icon" aria-hidden="true">
@@ -2008,9 +2008,9 @@ export function ConfirmDialog({
             {message}
           </div>
         </div>
-        <footer className="oc-dialog__footer">
+        <div className="oc-dialog__footer">
           <ConfirmActions acceptLabel={acceptLabel} rejectLabel={rejectLabel} severity={severity} onAccept={onAccept} onReject={onReject} acceptRef={acceptRef} rejectRef={rejectRef} />
-        </footer>
+        </div>
       </div>
     </div>,
     document.body,

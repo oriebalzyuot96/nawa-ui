@@ -446,7 +446,7 @@ describe('Astro components', () => {
     const close = r.$('button[data-oc-close]')!;
     expect(close.getAttribute('aria-label')).toBe('Close');
     expect(close.getAttribute('type')).toBe('button');
-    expect(r.$('footer')!.textContent).toBe('Buttons');
+    expect(r.$('.oc-dialog__footer')!.textContent).toBe('Buttons');
 
     r = await render(Drawer, { id: 'filters', title: 'Filters', side: 'left' }, { default: 'x' });
     dialog = r.$('dialog')!;
