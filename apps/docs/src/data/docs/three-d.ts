@@ -53,7 +53,7 @@ export const threeD: CategoryDoc = {
     {
       id: 'cubecarousel',
       name: 'CubeCarousel',
-      description: 'Slides on the faces of a rotating cube.',
+      description: 'Slides on the faces of a rotating cube. Drag or swipe to turn it.',
       props: [
         ['label', 'string', 'Accessible name (required).'],
         ['slides', '{ title?, content }[]', 'Slides.'],
@@ -64,11 +64,37 @@ export const threeD: CategoryDoc = {
         ['Arrow Left / Arrow Right', 'Previous / next slide (mirrored in RTL)'],
         ['Home / End', 'First / last slide'],
       ],
-      a11y: 'aria-roledescription="carousel"; inactive faces are hidden from assistive tech and the new slide is announced.',
+      a11y: 'aria-roledescription="carousel"; inactive faces are hidden from assistive tech and the new slide is announced. With reduced motion (OS or data-a11y-motion="off") it is a flat slider.',
       code: {
         react: `<CubeCarousel label="Release highlights" slides={[
   { title: 'Charts', content: <p>15 accessible chart types</p> },
   { title: '3D', content: <p>WebGL with fallbacks</p> },
+]} />`,
+      },
+    },
+    {
+      id: 'carousel3d',
+      name: 'Carousel3D',
+      description: 'A perspective carousel in three modes — coverflow, ring and stack — with drag and swipe, dots and autoplay.',
+      props: [
+        ['label', 'string', 'Accessible name (required).'],
+        ['slides', '{ title?, content }[]', 'Slides.'],
+        ['mode', "'coverflow' | 'ring' | 'stack'", 'Layout in depth. Default coverflow.'],
+        ['index / onIndexChange', 'number', 'Controlled slide.'],
+        ['autoplay', 'number', 'Interval (ms, min 2000). Adds a pause button; pauses on hover and focus.'],
+        ['loop / showDots', 'boolean', 'Wrap around; slide picker dots.'],
+        ['slideWidth / height', 'string', 'Slide size (CSS lengths; use vw or rem for ring mode).'],
+      ],
+      keys: [
+        ['Arrow Left / Arrow Right', 'Previous / next slide (mirrored in RTL)'],
+        ['Home / End', 'First / last slide'],
+      ],
+      a11y: 'APG carousel: the rotation control comes first, slides are labelled groups ("2 of 5: Themes"), neighbours are visible but aria-hidden and inert, and the slide region is polite only when not rotating. Reduced motion turns it into a plain slider and never autoplays.',
+      code: {
+        react: `<Carousel3D label="Product gallery" mode="coverflow" autoplay={5000} slides={[
+  { title: 'Charts', content: <ChartsCard /> },
+  { title: 'Themes', content: <ThemesCard /> },
+  { title: 'RTL', content: <RtlCard /> },
 ]} />`,
       },
     },

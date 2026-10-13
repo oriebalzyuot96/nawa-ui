@@ -301,18 +301,58 @@ function OrgDemo() {
   );
 }
 
+const tlIcon = (d: string) => (
+  <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    <path d={d} />
+  </svg>
+);
+
 function TimelineDemo() {
-  const [items, setItems] = useState<TimelineItem[]>([
-    { title: 'Project created', time: 'Mon 09:12', description: 'Lina set up the workspace.' },
-    { title: 'Design approved', time: 'Tue 14:30', variant: 'success' },
-    { title: 'Review requested', time: 'Wed 10:05', variant: 'warning', description: 'Waiting on 2 reviewers.' },
+  const [layout, setLayout] = useState<'vertical' | 'alternate' | 'horizontal'>('vertical');
+  const [loading, setLoading] = useState(false);
+  const now = new Date();
+  const ago = (h: number) => new Date(now.getTime() - h * 3600_000);
+  const [items, setItems] = useState<TimelineItem[]>(() => [
+    { id: 'placed', title: 'Order placed', date: ago(27), status: 'complete', icon: tlIcon('M3 4h10l-1 6H4zM6 13h.01M11 13h.01'), description: '3 items · $128.00' },
+    { id: 'paid', title: 'Payment confirmed', date: ago(26), status: 'complete', variant: 'success', icon: tlIcon('M3.5 8.5l3 3 6-7') },
+    {
+      id: 'shipped',
+      title: 'Shipped from Amman',
+      date: ago(3),
+      status: 'current',
+      avatar: { name: 'Lina Haddad' },
+      description: 'Packed by Lina',
+      details: <p style={{ margin: 0 }}>Carrier: Aramex · Tracking 1Z 999 AA1 0123 4567</p>,
+    },
+    { id: 'delivered', title: 'Out for delivery', status: 'upcoming', icon: tlIcon('M2 5h8v6H2zM10 7h3l1.5 2v2H10M4.5 12.5h.01M12 12.5h.01') },
   ]);
   return (
     <div className="demo-col">
-      <Timeline items={items} />
+      <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        {(['vertical', 'alternate', 'horizontal'] as const).map((l) => (
+          <Button key={l} size="sm" variant={layout === l ? 'primary' : 'secondary'} aria-pressed={layout === l} onClick={() => setLayout(l)}>
+            {l[0].toUpperCase() + l.slice(1)}
+          </Button>
+        ))}
+        <Button size="sm" variant="ghost" aria-pressed={loading} onClick={() => setLoading((v) => !v)}>
+          Loading state
+        </Button>
+      </div>
+      <Timeline items={items} layout={layout} relative groupBy={layout === 'vertical' ? 'day' : undefined} loading={loading} label="Order history" reveal />
       <div>
-        <Button size="sm" variant="secondary" onClick={() => setItems((list) => [...list, { title: 'Deployed to production', time: 'Thu 16:40', variant: 'success' }])} disabled={items.length > 3}>
-          Add event
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() =>
+            setItems((list) =>
+              list.map((it) =>
+                it.id === 'shipped' ? { ...it, status: 'complete' } : it.id === 'delivered' ? { ...it, status: 'complete', variant: 'success', date: new Date(), title: 'Delivered' } : it,
+              ),
+            )
+          }
+          disabled={items[3].status === 'complete'}
+        >
+          Mark delivered
         </Button>
       </div>
     </div>

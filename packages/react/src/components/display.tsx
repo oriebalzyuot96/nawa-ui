@@ -1,4 +1,5 @@
-import { cloneElement, isValidElement, useId, useState, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useEffect, useId, useRef, useState, type ReactNode, type RefObject } from 'react';
+import { inView, prefersReducedMotion } from '@orca-ui/core/motion';
 import { cx } from '../utils';
 
 export type Variant = 'info' | 'success' | 'warning' | 'danger';
@@ -176,24 +177,328 @@ export function Stepper({ steps, current, className }: { steps: StepperStep[]; c
 }
 
 export interface TimelineItem {
+  id?: string;
   title: ReactNode;
   description?: ReactNode;
+  /** Free-form time label, shown as is. */
   time?: ReactNode;
-  variant?: 'primary' | Variant;
+  /** When it happened: enables relative time, date grouping and a machine-readable <time>. */
+  date?: Date | string | number;
+  variant?: 'primary' | 'neutral' | Variant;
+  /** Progress: complete items fill the connector, current pulses, upcoming is hollow. */
+  status?: 'complete' | 'current' | 'upcoming';
+  /** Marker icon (decorative). */
+  icon?: ReactNode;
+  /** Marker avatar; the name is read before the title. */
+  avatar?: { name: string; src?: string };
+  /** Extra content behind a "Show details" toggle. */
+  details?: ReactNode;
+  /** Trailing content: badges, links, actions. */
+  meta?: ReactNode;
 }
 
-export function Timeline({ items, className }: { items: TimelineItem[]; className?: string }) {
+export interface TimelineLabels {
+  showDetails: string;
+  hideDetails: string;
+  loading: string;
+  today: string;
+  yesterday: string;
+  complete: string;
+  current: string;
+}
+
+const TIMELINE_LABELS: TimelineLabels = {
+  showDetails: 'Show details',
+  hideDetails: 'Hide details',
+  loading: 'Loading timeline…',
+  today: 'Today',
+  yesterday: 'Yesterday',
+  complete: 'completed',
+  current: 'current',
+};
+
+export interface TimelineProps {
+  items: TimelineItem[];
+  /** 'vertical' (default), 'horizontal' or 'alternate'. Horizontal and alternate become vertical in narrow containers. */
+  layout?: 'vertical' | 'horizontal' | 'alternate';
+  /** Group items under date headings ('day', 'month') or by a custom key/label. */
+  groupBy?: 'day' | 'month' | ((item: TimelineItem) => string);
+  /** Show "2h ago" style times (absolute time in the tooltip and for screen readers). Needs `date`. */
+  relative?: boolean;
+  locale?: string;
+  /** Reference time for relative labels (default: now). */
+  now?: Date;
+  /** Render a skeleton while data loads. */
+  loading?: boolean;
+  skeletonCount?: number;
+  /** Fade items in as they scroll into view (off under reduced motion). */
+  reveal?: boolean;
+  /** Accessible name of the list. */
+  label?: string;
+  /** Heading level of group headings. Default 3. */
+  headingLevel?: 2 | 3 | 4 | 5 | 6;
+  labels?: Partial<TimelineLabels>;
+  className?: string;
+}
+
+const toDate = (d: TimelineItem['date']) => {
+  if (d === undefined || d === null || d === '') return null;
+  const date = d instanceof Date ? d : new Date(d);
+  return Number.isNaN(date.getTime()) ? null : date;
+};
+
+const dayKey = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
+/** "2h ago", "in 3 days", "yesterday" … */
+export function relativeTimeLabel(date: Date, now: Date = new Date(), locale?: string): string {
+  const diff = (date.getTime() - now.getTime()) / 1000;
+  const units: Array<[Intl.RelativeTimeFormatUnit, number]> = [
+    ['year', 31536000],
+    ['month', 2592000],
+    ['week', 604800],
+    ['day', 86400],
+    ['hour', 3600],
+    ['minute', 60],
+  ];
+  for (const [unit, size] of units) {
+    if (Math.abs(diff) >= size) {
+      const style = size < 86400 ? 'narrow' : 'long';
+      return new Intl.RelativeTimeFormat(locale, { numeric: 'auto', style }).format(Math.round(diff / size), unit);
+    }
+  }
+  return new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(0, 'second');
+}
+
+function TimelineEntry({
+  item,
+  side,
+  relative,
+  locale,
+  now,
+  labels,
+  dayGrouped,
+}: {
+  item: TimelineItem;
+  side?: 'start' | 'end';
+  dayGrouped?: boolean;
+  relative: boolean;
+  locale?: string;
+  now: Date;
+  labels: TimelineLabels;
+}) {
+  const [open, setOpen] = useState(false);
+  const detailsId = useId();
+  const date = toDate(item.date);
+  const absolute = date ? new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeStyle: 'short' }).format(date) : '';
+  // Under a day heading, older items show their time of day (the heading already says which day).
+  const label = !date
+    ? ''
+    : relative && !(dayGrouped && dayKey(date) !== dayKey(now))
+      ? relativeTimeLabel(date, now, locale)
+      : relative
+        ? new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(date)
+        : null;
+  const media = item.avatar ? (
+    item.avatar.src ? <img src={item.avatar.src} alt="" /> : <span className="oc-timeline__initials">{initialsOf(item.avatar.name)}</span>
+  ) : (
+    item.icon ?? null
+  );
   return (
-    <ol className={cx('oc-timeline', className)}>
-      {items.map((item, i) => (
-        <li key={i} className="oc-timeline__item">
-          <span className={cx('oc-timeline__dot', item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`)} aria-hidden="true" />
-          {item.time && <div className="oc-timeline__time">{item.time}</div>}
-          <div className="oc-timeline__title">{item.title}</div>
-          {item.description && <div className="oc-timeline__desc">{item.description}</div>}
-        </li>
+    <li className="oc-timeline__item" data-status={item.status} data-side={side} aria-current={item.status === 'current' ? 'step' : undefined}>
+      <span
+        className={cx('oc-timeline__dot', item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`, Boolean(media) && 'oc-timeline__dot--media')}
+        aria-hidden="true"
+      >
+        {media}
+      </span>
+      <div className="oc-timeline__content">
+        {(item.time || date) && (
+          <div className="oc-timeline__time">
+            {date ? (
+              <>
+                <time dateTime={date.toISOString()} title={relative ? absolute : undefined} dir="auto" suppressHydrationWarning>
+                  {label ?? item.time ?? absolute}
+                </time>
+                {relative && <span className="oc-sr-only" suppressHydrationWarning> ({absolute})</span>}
+              </>
+            ) : (
+              item.time
+            )}
+          </div>
+        )}
+        <div className="oc-timeline__title">
+          {item.avatar && <span className="oc-sr-only">{item.avatar.name}: </span>}
+          {item.title}
+          {item.status === 'complete' && <span className="oc-sr-only"> ({labels.complete})</span>}
+          {item.status === 'current' && <span className="oc-sr-only"> ({labels.current})</span>}
+        </div>
+        {item.description && <div className="oc-timeline__desc">{item.description}</div>}
+        {item.meta && <div className="oc-timeline__meta">{item.meta}</div>}
+        {item.details && (
+          <>
+            <button type="button" className="oc-timeline__toggle" aria-expanded={open} aria-controls={detailsId} onClick={() => setOpen((o) => !o)}>
+              {open ? labels.hideDetails : labels.showDetails}
+              <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+                <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            <div id={detailsId} className="oc-timeline__details" hidden={!open}>
+              {item.details}
+            </div>
+          </>
+        )}
+      </div>
+    </li>
+  );
+}
+
+/**
+ * Event timeline: vertical, horizontal or alternating, with markers (status, icon, avatar),
+ * relative timestamps, date groups, expandable details, a progress connector, a loading skeleton
+ * and optional scroll reveal. Renders semantic ordered lists.
+ */
+export function Timeline({
+  items,
+  layout = 'vertical',
+  groupBy,
+  relative = false,
+  locale,
+  now,
+  loading = false,
+  skeletonCount = 3,
+  reveal = false,
+  label,
+  headingLevel = 3,
+  labels: labelOverrides,
+  className,
+}: TimelineProps) {
+  const labels = { ...TIMELINE_LABELS, ...labelOverrides };
+  const rootRef = useRef<HTMLElement>(null);
+  const baseId = useId();
+  const reference = now ?? new Date();
+  const media = items.some((it) => it.icon || it.avatar);
+  const listClass = cx('oc-timeline', layout !== 'vertical' && `oc-timeline--${layout}`, media && 'oc-timeline--media');
+
+  useEffect(() => {
+    const root = rootRef.current;
+    if (!reveal || !root || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return;
+    const lis = Array.from(root.querySelectorAll<HTMLElement>('.oc-timeline__item'));
+    lis.forEach((li) => li.setAttribute('data-reveal', 'armed'));
+    const stop = inView(lis, (entry) => {
+      (entry.target as HTMLElement).setAttribute('data-reveal', 'in');
+    }, { once: true, amount: 0.2 });
+    return () => {
+      stop();
+      lis.forEach((li) => li.removeAttribute('data-reveal'));
+    };
+  }, [reveal, items]);
+
+  if (loading) {
+    return (
+      <div role="status" aria-busy="true" className={cx('oc-timeline-wrap', className)}>
+        <span className="oc-sr-only">{labels.loading}</span>
+        <ol className="oc-timeline oc-timeline--loading" aria-hidden="true">
+          {Array.from({ length: skeletonCount }, (_, i) => (
+            <li key={i} className="oc-timeline__item">
+              <span className="oc-timeline__dot" />
+              <div className="oc-timeline__content">
+                <Skeleton height={10} width="5rem" />
+                <Skeleton height={14} width={`${60 - (i % 3) * 12}%`} />
+                <Skeleton height={10} width="85%" />
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    );
+  }
+
+  const renderList = (list: TimelineItem[], props: { 'aria-label'?: string; 'aria-labelledby'?: string; className?: string }, offset = 0) => (
+    <ol className={cx(listClass, props.className)} aria-label={props['aria-label']} aria-labelledby={props['aria-labelledby']}>
+      {list.map((item, i) => (
+        <TimelineEntry
+          key={item.id ?? i}
+          item={item}
+          side={layout === 'alternate' ? ((offset + i) % 2 === 0 ? 'end' : 'start') : undefined}
+          relative={relative}
+          locale={locale}
+          now={reference}
+          labels={labels}
+          dayGrouped={groupBy === 'day'}
+        />
       ))}
     </ol>
+  );
+
+  if (!groupBy && layout === 'vertical') {
+    return (
+      <ol ref={rootRef as RefObject<HTMLOListElement>} className={cx(listClass, className)} aria-label={label}>
+        {items.map((item, i) => (
+          <TimelineEntry key={item.id ?? i} item={item} relative={relative} locale={locale} now={reference} labels={labels} />
+        ))}
+      </ol>
+    );
+  }
+
+  if (!groupBy) {
+    return (
+      <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('oc-timeline-wrap', className)}>
+        {renderList(items, { 'aria-label': label })}
+      </div>
+    );
+  }
+
+  const groups: Array<{ key: string; label: string; items: TimelineItem[] }> = [];
+  const todayKey = dayKey(reference);
+  const yesterday = new Date(reference);
+  yesterday.setDate(yesterday.getDate() - 1);
+  for (const item of items) {
+    const d = toDate(item.date);
+    let key: string;
+    let name: string;
+    if (typeof groupBy === 'function') {
+      key = name = groupBy(item);
+    } else if (!d) {
+      // Undated items (e.g. upcoming steps) stay with the group before them.
+      const prev = groups[groups.length - 1];
+      key = prev?.key ?? '';
+      name = prev?.label ?? '';
+    } else if (groupBy === 'month') {
+      key = `${d.getFullYear()}-${d.getMonth()}`;
+      name = new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(d);
+    } else {
+      key = dayKey(d);
+      name =
+        key === todayKey
+          ? labels.today
+          : key === dayKey(yesterday)
+            ? labels.yesterday
+            : new Intl.DateTimeFormat(locale, { weekday: 'long', month: 'long', day: 'numeric', ...(d.getFullYear() !== reference.getFullYear() ? { year: 'numeric' } : {}) }).format(d);
+    }
+    const last = groups[groups.length - 1];
+    if (last && last.key === key) last.items.push(item);
+    else groups.push({ key, label: name, items: [item] });
+  }
+  const H = `h${headingLevel}` as 'h3';
+  let offset = 0;
+  return (
+    <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('oc-timeline-wrap oc-timeline-groups', className)} role={label ? 'group' : undefined} aria-label={label}>
+      {groups.map((g, gi) => {
+        const headingId = `${baseId}-g${gi}`;
+        const list = renderList(g.items, { 'aria-labelledby': g.label ? headingId : undefined }, offset);
+        offset += g.items.length;
+        return (
+          <section key={g.key || '_'} className="oc-timeline__group" aria-labelledby={g.label ? headingId : undefined}>
+            {g.label && (
+              <H id={headingId} className="oc-timeline__group-title" suppressHydrationWarning>
+                {g.label}
+              </H>
+            )}
+            {list}
+          </section>
+        );
+      })}
+    </div>
   );
 }
 

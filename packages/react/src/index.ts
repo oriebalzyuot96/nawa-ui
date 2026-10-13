@@ -16,3 +16,7 @@ export * from './components/data-panels-media';
 export * from './components/charts';
 export * from './components/effects-3d';
 export * from './components/feedback';
+export * from './components/accessibility';
+export * from './components/motion';
+export * from './components/wizard';
+export * from './components/sound';

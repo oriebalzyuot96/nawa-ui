@@ -1,0 +1,77 @@
+---
+// Accessibility settings drawer: color schemes, color-vision filters, text size and spacing, reading aids,
+// motion and interaction aids. Server-rendered markup; src/client/a11y-panel.ts makes it interactive,
+// restores saved preferences and keeps them in localStorage.
+// Listen for changes with: el.addEventListener('oc-change', (e) => e.detail.prefs)
+import { renderA11yPanelHTML, type A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
+
+interface Props {
+  /** 'en' (default) or 'ar'. */
+  locale?: string;
+  /** Override any label (deep merge over the locale defaults). */
+  labels?: A11yPanelLabelOverrides;
+  /** 'floating' (default): fixed round button. 'inline': a button rendered in place. 'none': open it from script. */
+  trigger?: 'floating' | 'inline' | 'none';
+  /** Text of the inline trigger. Default: the panel title. */
+  triggerLabel?: string;
+  /** Show the live preview card. Default true. */
+  preview?: boolean;
+  /** Limit and order the groups. */
+  groups?: Array<'color' | 'text' | 'reading' | 'motion' | 'interaction'>;
+  /** localStorage key, or false to not persist. */
+  persist?: string | false;
+  /** CSS selector of the element that receives the data-a11y-* attributes. Default <html>. */
+  target?: string;
+  id?: string;
+  class?: string;
+}
+
+const { locale, labels, trigger = 'floating', triggerLabel, preview = true, groups, persist, target, id, class: className } = Astro.props;
+// Only a page-level panel that persists restores early; scoped or unsaved panels apply after load.
+const restore = persist !== false && !target;
+const storageKey = typeof persist === 'string' ? persist : 'orca-ui-a11y';
+const html = renderA11yPanelHTML({
+  id: id ?? `oc-a11y-${Math.random().toString(36).slice(2, 8)}`,
+  locale,
+  labels,
+  trigger,
+  triggerLabel,
+  preview,
+  groups,
+  className,
+});
+---
+
+<div class="oc-a11y-host" data-oc-a11y-host data-persist={persist === false ? 'false' : persist} data-target={target} style="display: contents">
+  <Fragment set:html={html} />
+</div>
+
+{/* Restore saved attributes on <html> before first paint (no flash of the default colors). */}
+{restore && (
+<script is:inline define:vars={{ storageKey }}>
+  (function () {
+    try {
+      var p = JSON.parse(localStorage.getItem(storageKey) || 'null');
+      if (!p) return;
+      var r = document.documentElement;
+      var map = {
+        contrast: ['data-a11y-contrast', 'default'], colorFilter: ['data-a11y-color-filter', 'none'], saturation: ['data-a11y-saturation', 'normal'],
+        lineHeight: ['data-a11y-line-height', 'normal'], letterSpacing: ['data-a11y-letter-spacing', 'normal'], wordSpacing: ['data-a11y-word-spacing', 'normal'],
+        paragraphSpacing: ['data-a11y-paragraph-spacing', 'normal'], links: ['data-a11y-links', 'default'], focus: ['data-a11y-focus', 'default'],
+        cursor: ['data-a11y-cursor', 'default'], motion: ['data-a11y-motion', 'system']
+      };
+      for (var k in map) if (typeof p[k] === 'string' && p[k] !== map[k][1]) r.setAttribute(map[k][0], p[k]);
+      var flags = { patterns: ['data-a11y-patterns', ''], readableFont: ['data-a11y-font', 'readable'], alignStart: ['data-a11y-text-align', 'start'], hideImages: ['data-a11y-images', 'hide'], largeTargets: ['data-a11y-targets', 'large'] };
+      for (var f in flags) if (p[f] === true) r.setAttribute(flags[f][0], flags[f][1]);
+      if (typeof p.fontScale === 'number' && p.fontScale !== 1) {
+        r.setAttribute('data-a11y-font-scale', String(p.fontScale));
+        r.style.setProperty('--oc-user-font-scale', String(p.fontScale));
+      }
+    } catch (e) {}
+  })();
+</script>
+)}
+
+<script>
+  import '../client/a11y-panel';
+</script>

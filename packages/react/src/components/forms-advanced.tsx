@@ -1810,18 +1810,51 @@ export interface InputOtpProps {
   integerOnly?: boolean;
   /** Hide characters like a password. */
   mask?: boolean;
+  /** With `mask`: show a button that reveals the code. */
+  revealable?: boolean;
   /** Group label. */
   label?: string;
   hint?: string;
   error?: string;
+  /** Success state; a string is also shown (and announced) as a message. */
+  success?: boolean | string;
+  /** Group sizes, e.g. [3, 3] renders 123 – 456. Ignored unless they add up to `length`. */
+  groups?: number[];
+  /** Decorative separator between groups. Default an en dash. */
+  separator?: ReactNode;
+  /** Seconds before the resend button unlocks (shows a countdown). */
+  resendAfter?: number;
+  onResend?: () => void;
+  /** Replaces the built-in resend countdown/button. */
+  resendSlot?: ReactNode;
   /** Accessible name per cell. */
   cellLabel?: (index: number, length: number) => string;
+  labels?: Partial<InputOtpLabels>;
   disabled?: boolean;
   autoFocus?: boolean;
   id?: string;
   className?: string;
 }
 
+export interface InputOtpLabels {
+  show: string;
+  hide: string;
+  resend: string;
+  resendIn: (seconds: number) => string;
+}
+
+const DEFAULT_OTP_LABELS: InputOtpLabels = {
+  show: 'Show code',
+  hide: 'Hide code',
+  resend: 'Resend code',
+  resendIn: (s) => `Resend code in ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`,
+};
+
+/**
+ * One-time-code input: one cell per character with an animated caret, paste and SMS autofill
+ * (autocomplete="one-time-code"), numeric keypad on mobile, groups, masking with reveal, a resend
+ * countdown, an error shake (static under reduced motion) and a success state. Digits stay LTR in RTL.
+ */
 export function InputOtp({
   length = 4,
   value,
@@ -1830,21 +1863,34 @@ export function InputOtp({
   onComplete,
   integerOnly = false,
   mask = false,
+  revealable = false,
   label,
   hint,
   error,
+  success,
+  groups,
+  separator = '–',
+  resendAfter,
+  onResend,
+  resendSlot,
   cellLabel = (i, n) => `Digit ${i} of ${n}`,
+  labels: labelOverrides,
   disabled,
   autoFocus,
   id,
   className,
 }: InputOtpProps) {
+  const L = { ...DEFAULT_OTP_LABELS, ...labelOverrides };
   const autoId = useId();
   const baseId = id ?? autoId;
   const labelId = `${baseId}-label`;
-  const msg = fieldMessage(baseId, hint, error);
+  const msgId = `${baseId}-msg`;
   const [code, setCode] = useControllable(value, defaultValue, onChange);
   const refs = useRef<Array<HTMLInputElement | null>>([]);
+  const groupRef = useRef<HTMLDivElement>(null);
+  const [focused, setFocused] = useState(-1);
+  const [revealed, setRevealed] = useState(false);
+  const [remaining, setRemaining] = useState(resendAfter ?? 0);
 
   const valid = (c: string) => (integerOnly ? /^[0-9]$/.test(c) : /^[\p{L}\p{N}]$/u.test(c));
   const focusCell = (i: number) => {
@@ -1863,6 +1909,34 @@ export function InputOtp({
     emit(code.slice(0, pos) + chars + code.slice(pos + chars.length));
     focusCell(pos + chars.length);
   };
+  const fill = (i: number, text: string) => {
+    const chars = [...text].filter(valid).join('');
+    if (!chars) return;
+    if (chars.length >= length) {
+      emit(chars.slice(0, length));
+      focusCell(length - 1);
+    } else {
+      write(i, chars);
+    }
+  };
+
+  // Error shake: restart the animation each time a (new) error appears.
+  useEffect(() => {
+    const el = groupRef.current;
+    if (!el || !error) return;
+    el.removeAttribute('data-shake');
+    void el.offsetWidth;
+    el.setAttribute('data-shake', '');
+    const t = window.setTimeout(() => el.removeAttribute('data-shake'), 600);
+    return () => window.clearTimeout(t);
+  }, [error]);
+
+  // Resend countdown.
+  useEffect(() => {
+    if (!resendAfter || remaining <= 0) return;
+    const t = window.setTimeout(() => setRemaining((s) => s - 1), 1000);
+    return () => window.clearTimeout(t);
+  }, [remaining, resendAfter]);
 
   const onKeyDown = (e: KeyboardEvent<HTMLInputElement>, i: number) => {
     switch (e.key) {
@@ -1900,51 +1974,132 @@ export function InputOtp({
 
   const onPaste = (e: ClipboardEvent<HTMLInputElement>, i: number) => {
     e.preventDefault();
-    const chars = [...e.clipboardData.getData('text')].filter(valid).join('');
-    if (!chars) return;
-    if (chars.length >= length) {
-      emit(chars.slice(0, length));
-      focusCell(length - 1);
-    } else {
-      write(i, chars);
-    }
+    fill(i, e.clipboardData.getData('text'));
   };
 
+  const groupSizes = groups && groups.reduce((a, b) => a + b, 0) === length && groups.every((g) => g > 0) ? groups : [length];
+  const groupEnds = new Set(groupSizes.slice(0, -1).reduce<number[]>((acc, g) => [...acc, (acc[acc.length - 1] ?? 0) + g], []));
+  const state = error ? 'error' : success ? 'success' : undefined;
+  const hidden = mask && !revealed;
+  const message = error ? (
+    <span id={msgId} className="oc-error-text" role="alert">
+      {error}
+    </span>
+  ) : typeof success === 'string' ? (
+    <span id={msgId} className="oc-otp__success" role="status">
+      {success}
+    </span>
+  ) : hint ? (
+    <span id={msgId} className="oc-hint">
+      {hint}
+    </span>
+  ) : null;
+
+  const cells: ReactNode[] = [];
+  for (let i = 0; i < length; i++) {
+    const ch = code[i] ?? '';
+    const active = focused === i;
+    cells.push(
+      <span key={`c${i}`} className="oc-otp__slot" data-active={active ? '' : undefined} data-filled={ch ? '' : undefined}>
+        <input
+          ref={(el) => {
+            refs.current[i] = el;
+          }}
+          type={hidden ? 'password' : 'text'}
+          inputMode={integerOnly ? 'numeric' : 'text'}
+          pattern={integerOnly ? '[0-9]*' : undefined}
+          autoComplete={i === 0 ? 'one-time-code' : 'off'}
+          autoCapitalize="off"
+          autoCorrect="off"
+          spellCheck={false}
+          autoFocus={autoFocus && i === 0}
+          aria-label={cellLabel(i + 1, length)}
+          aria-invalid={error ? true : undefined}
+          className="oc-input oc-otp__cell"
+          disabled={disabled}
+          value={ch}
+          onFocus={(e) => {
+            setFocused(i);
+            e.target.select();
+          }}
+          onBlur={() => setFocused((f) => (f === i ? -1 : f))}
+          onChange={(e) => {
+            const typed = [...e.target.value].filter(valid);
+            if (typed.length > 1 && !e.target.value.includes(ch || '\u0000')) {
+              // SMS autofill / IME delivered several characters at once.
+              fill(i, typed.join(''));
+              return;
+            }
+            const c = typed[typed.length - 1];
+            if (c) write(i, c);
+          }}
+          onKeyDown={(e) => onKeyDown(e, i)}
+          onPaste={(e) => onPaste(e, i)}
+        />
+        <span className="oc-otp__caret" aria-hidden="true" />
+      </span>,
+    );
+    if (groupEnds.has(i + 1)) {
+      cells.push(
+        <span key={`s${i}`} className="oc-otp__sep" aria-hidden="true">
+          {separator}
+        </span>,
+      );
+    }
+  }
+
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('oc-field oc-otp-field', error && 'oc-field--error', className)}>
       {label && (
         <span id={labelId} className="oc-label">
           {label}
         </span>
       )}
-      <div role="group" dir="ltr" aria-labelledby={label ? labelId : undefined} aria-describedby={msg.describedBy} className="oc-otp">
-        {Array.from({ length }, (_, i) => (
-          <input
-            key={i}
-            ref={(el) => {
-              refs.current[i] = el;
-            }}
-            type={mask ? 'password' : 'text'}
-            inputMode={integerOnly ? 'numeric' : 'text'}
-            autoComplete={i === 0 ? 'one-time-code' : 'off'}
-            autoFocus={autoFocus && i === 0}
-            aria-label={cellLabel(i + 1, length)}
-            aria-invalid={error ? true : undefined}
-            className="oc-input oc-otp__cell"
-            disabled={disabled}
-            value={code[i] ?? ''}
-            onFocus={(e) => e.target.select()}
-            onChange={(e) => {
-              const typed = [...e.target.value].filter(valid);
-              const c = typed[typed.length - 1];
-              if (c) write(i, c);
-            }}
-            onKeyDown={(e) => onKeyDown(e, i)}
-            onPaste={(e) => onPaste(e, i)}
-          />
-        ))}
+      <div className="oc-otp__row">
+        <div
+          ref={groupRef}
+          role="group"
+          dir="ltr"
+          aria-labelledby={label ? labelId : undefined}
+          aria-describedby={message ? msgId : undefined}
+          className="oc-otp"
+          data-state={state}
+        >
+          {cells}
+          {success && !error && (
+            <span className="oc-otp__check" aria-hidden="true">
+              <CheckIcon />
+            </span>
+          )}
+        </div>
+        {mask && revealable && (
+          <button type="button" className="oc-btn oc-btn--ghost oc-btn--sm oc-otp__reveal" aria-pressed={revealed} disabled={disabled} onClick={() => setRevealed((r) => !r)}>
+            <EyeIcon off={revealed} />
+            {revealed ? L.hide : L.show}
+          </button>
+        )}
       </div>
-      {msg.node}
+      {message}
+      {resendSlot ??
+        (resendAfter !== undefined && (
+          <div className="oc-otp__resend">
+            {remaining > 0 ? (
+              <span className="oc-otp__countdown">{L.resendIn(remaining)}</span>
+            ) : (
+              <button
+                type="button"
+                className="oc-btn oc-btn--ghost oc-btn--sm"
+                disabled={disabled}
+                onClick={() => {
+                  onResend?.();
+                  setRemaining(resendAfter);
+                }}
+              >
+                {L.resend}
+              </button>
+            )}
+          </div>
+        ))}
     </div>
   );
 }
@@ -2383,21 +2538,319 @@ export function normalizeHex(input: string): string | null {
   return `#${h.toLowerCase()}`;
 }
 
+/** sRGB channels 0–255 and alpha 0–1. */
+export interface RgbaColor {
+  r: number;
+  g: number;
+  b: number;
+  a: number;
+}
+
+export type ColorFormat = 'hex' | 'rgb' | 'hsl' | 'oklch';
+
+const clampN = (n: number, min: number, max: number) => Math.min(max, Math.max(min, n));
+const round = (n: number, d = 0) => {
+  const f = 10 ** d;
+  return Math.round(n * f) / f;
+};
+const pctOr = (s: string, scale: number) => (s.endsWith('%') ? (parseFloat(s) / 100) * scale : parseFloat(s));
+
+function hslToRgb(h: number, s: number, l: number) {
+  const k = (n: number) => (n + h / 30) % 12;
+  const a = s * Math.min(l, 1 - l);
+  const f = (n: number) => l - a * Math.max(-1, Math.min(k(n) - 3, Math.min(9 - k(n), 1)));
+  return { r: f(0) * 255, g: f(8) * 255, b: f(4) * 255 };
+}
+
+function rgbToHsl({ r, g, b }: { r: number; g: number; b: number }) {
+  const R = r / 255;
+  const G = g / 255;
+  const B = b / 255;
+  const max = Math.max(R, G, B);
+  const min = Math.min(R, G, B);
+  const l = (max + min) / 2;
+  const d = max - min;
+  let h = 0;
+  const s = d === 0 ? 0 : d / (1 - Math.abs(2 * l - 1));
+  if (d) {
+    if (max === R) h = ((G - B) / d) % 6;
+    else if (max === G) h = (B - R) / d + 2;
+    else h = (R - G) / d + 4;
+    h *= 60;
+    if (h < 0) h += 360;
+  }
+  return { h, s, l };
+}
+
+function hsvToRgb(h: number, s: number, v: number) {
+  const f = (n: number) => {
+    const k = (n + h / 60) % 6;
+    return v - v * s * Math.max(0, Math.min(k, 4 - k, 1));
+  };
+  return { r: f(5) * 255, g: f(3) * 255, b: f(1) * 255 };
+}
+
+function rgbToHsv({ r, g, b }: { r: number; g: number; b: number }) {
+  const R = r / 255;
+  const G = g / 255;
+  const B = b / 255;
+  const max = Math.max(R, G, B);
+  const d = max - Math.min(R, G, B);
+  return { h: rgbToHsl({ r, g, b }).h, s: max === 0 ? 0 : d / max, v: max };
+}
+
+const toLinear = (c: number) => {
+  const x = c / 255;
+  return x <= 0.04045 ? x / 12.92 : ((x + 0.055) / 1.055) ** 2.4;
+};
+const fromLinear = (c: number) => 255 * (c <= 0.0031308 ? 12.92 * c : 1.055 * Math.max(0, c) ** (1 / 2.4) - 0.055);
+
+function rgbToOklch({ r, g, b }: { r: number; g: number; b: number }) {
+  const R = toLinear(r);
+  const G = toLinear(g);
+  const B = toLinear(b);
+  const l = Math.cbrt(0.4122214708 * R + 0.5363325363 * G + 0.0514459929 * B);
+  const m = Math.cbrt(0.2119034982 * R + 0.6806995451 * G + 0.1073969566 * B);
+  const s = Math.cbrt(0.0883024619 * R + 0.2817188376 * G + 0.6299787005 * B);
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const Bb = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  const C = Math.sqrt(A * A + Bb * Bb);
+  let H = (Math.atan2(Bb, A) * 180) / Math.PI;
+  if (H < 0) H += 360;
+  return { l: L, c: C, h: C < 0.0002 ? 0 : H };
+}
+
+function oklchToRgb(L: number, C: number, H: number) {
+  const hr = (H * Math.PI) / 180;
+  const A = C * Math.cos(hr);
+  const B = C * Math.sin(hr);
+  const l = (L + 0.3963377774 * A + 0.2158037573 * B) ** 3;
+  const m = (L - 0.1055613458 * A - 0.0638541728 * B) ** 3;
+  const s = (L - 0.0894841775 * A - 1.291485548 * B) ** 3;
+  return {
+    r: clampN(fromLinear(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s), 0, 255),
+    g: clampN(fromLinear(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s), 0, 255),
+    b: clampN(fromLinear(-0.0041960863 * l - 0.7034186147 * m + 1.707614701 * s), 0, 255),
+  };
+}
+
+/** Parse #rgb[a] / #rrggbb[aa], rgb()/rgba(), hsl()/hsla() and oklch() (modern or comma syntax). */
+export function parseColor(input: string): RgbaColor | null {
+  const s = input.trim().toLowerCase();
+  let m = /^#?([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/.exec(s);
+  if (m) {
+    let h = m[1];
+    if (h.length <= 4) h = [...h].map((c) => c + c).join('');
+    const n = (i: number) => parseInt(h.slice(i, i + 2), 16);
+    return { r: n(0), g: n(2), b: n(4), a: h.length === 8 ? round(n(6) / 255, 3) : 1 };
+  }
+  const alphaOf = (v?: string) => (v === undefined ? 1 : clampN(pctOr(v, 1), 0, 1));
+  m = /^rgba?\(\s*([\d.]+%?)[\s,]+([\d.]+%?)[\s,]+([\d.]+%?)(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/.exec(s);
+  if (m) return { r: clampN(pctOr(m[1], 255), 0, 255), g: clampN(pctOr(m[2], 255), 0, 255), b: clampN(pctOr(m[3], 255), 0, 255), a: alphaOf(m[4]) };
+  m = /^hsla?\(\s*([\d.]+)(?:deg)?[\s,]+([\d.]+)%[\s,]+([\d.]+)%(?:\s*[,/]\s*([\d.]+%?))?\s*\)$/.exec(s);
+  if (m) return { ...hslToRgb(parseFloat(m[1]) % 360, clampN(parseFloat(m[2]) / 100, 0, 1), clampN(parseFloat(m[3]) / 100, 0, 1)), a: alphaOf(m[4]) };
+  m = /^oklch\(\s*([\d.]+%?)\s+([\d.]+)\s+([\d.]+)(?:deg)?(?:\s*\/\s*([\d.]+%?))?\s*\)$/.exec(s);
+  if (m) return { ...oklchToRgb(clampN(pctOr(m[1], 1), 0, 1), parseFloat(m[2]), parseFloat(m[3])), a: alphaOf(m[4]) };
+  return null;
+}
+
+const hex2 = (n: number) => Math.round(clampN(n, 0, 255)).toString(16).padStart(2, '0');
+
+/** Format a colour as hex (#rrggbb, or #rrggbbaa with alpha), rgb(), hsl() or oklch() in modern syntax. */
+export function formatColor(c: RgbaColor, format: ColorFormat = 'hex'): string {
+  const a = c.a < 1 ? ` / ${round(c.a, 2)}` : '';
+  switch (format) {
+    case 'rgb':
+      return `rgb(${Math.round(c.r)} ${Math.round(c.g)} ${Math.round(c.b)}${a})`;
+    case 'hsl': {
+      const { h, s, l } = rgbToHsl(c);
+      return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(l * 100)}%${a})`;
+    }
+    case 'oklch': {
+      const { l, c: ch, h } = rgbToOklch(c);
+      return `oklch(${round(l * 100, 1)}% ${round(ch, 3)} ${round(h, 1)}${a})`;
+    }
+    default:
+      return `#${hex2(c.r)}${hex2(c.g)}${hex2(c.b)}${c.a < 1 ? hex2(c.a * 255) : ''}`;
+  }
+}
+
+function luminance({ r, g, b }: { r: number; g: number; b: number }) {
+  return 0.2126 * toLinear(r) + 0.7152 * toLinear(g) + 0.0722 * toLinear(b);
+}
+
+/** WCAG 2 contrast ratio of `fg` (composited over `bg` when translucent) against `bg`. */
+export function contrastRatio(fg: string | RgbaColor, bg: string | RgbaColor): number {
+  const f = typeof fg === 'string' ? parseColor(fg) : fg;
+  const b = typeof bg === 'string' ? parseColor(bg) : bg;
+  if (!f || !b) return 1;
+  const mix = (x: number, y: number) => x * f.a + y * (1 - f.a);
+  const L1 = luminance({ r: mix(f.r, b.r), g: mix(f.g, b.g), b: mix(f.b, b.b) });
+  const L2 = luminance(b);
+  return (Math.max(L1, L2) + 0.05) / (Math.min(L1, L2) + 0.05);
+}
+
+const HUE_NAMES: Array<[number, string]> = [
+  [12, 'red'],
+  [38, 'orange'],
+  [62, 'yellow'],
+  [85, 'lime'],
+  [150, 'green'],
+  [175, 'teal'],
+  [200, 'cyan'],
+  [245, 'blue'],
+  [270, 'indigo'],
+  [295, 'violet'],
+  [330, 'magenta'],
+  [348, 'pink'],
+  [361, 'red'],
+];
+const hueName = (h: number) => HUE_NAMES.find(([max]) => h < max)?.[1] ?? 'red';
+
+export interface ColorPickerLabels {
+  area: string;
+  areaValue: (saturation: number, brightness: number) => string;
+  hue: string;
+  hueValue: (hue: number, name: string) => string;
+  alpha: string;
+  format: string;
+  value: (format: ColorFormat) => string;
+  eyeDropper: string;
+  recent: string;
+  contrast: (ratio: string, background: string) => string;
+  pass: string;
+  fail: string;
+}
+
+const DEFAULT_COLOR_LABELS: ColorPickerLabels = {
+  area: 'Saturation and brightness',
+  areaValue: (s, v) => `Saturation ${s}%, Brightness ${v}%`,
+  hue: 'Hue',
+  hueValue: (h, n) => `${h} degrees, ${n}`,
+  alpha: 'Opacity',
+  format: 'Color format',
+  value: (f) => `${f.toUpperCase()} value`,
+  eyeDropper: 'Pick a color from the screen',
+  recent: 'Recent colors',
+  contrast: (r, bg) => `Contrast ${r}:1 on ${bg}`,
+  pass: 'pass',
+  fail: 'fail',
+};
+
+export interface ColorChange {
+  hex: string;
+  rgba: RgbaColor;
+  /** The value in the currently selected text format. */
+  css: string;
+}
+
 export interface ColorPickerProps extends FieldMetaProps {
   value?: string;
   defaultValue?: string;
+  /** Emits '#rrggbb' (or '#rrggbbaa' when `alpha` is on and opacity < 100%). */
   onChange?: (hex: string) => void;
+  /** Rich change event with RGBA and the formatted string. */
+  onColorChange?: (color: ColorChange) => void;
   presets?: Array<string | ColorPreset>;
-  /** Show the hex text input. */
+  /** Show the text input. */
   showInput?: boolean;
+  /** 'popover' (default): a swatch button opens the picker. 'inline': the picker is always shown. */
+  mode?: 'popover' | 'inline';
+  /** Show an opacity slider. Default false. */
+  alpha?: boolean;
+  /** Text formats offered by the format switch. Default all four. */
+  formats?: ColorFormat[];
+  format?: ColorFormat;
+  defaultFormat?: ColorFormat;
+  onFormatChange?: (format: ColorFormat) => void;
+  /** How many recently used colours to remember (0 hides the row). Default 6. */
+  recent?: number;
+  /** Background colour for the WCAG contrast readout (e.g. '#ffffff'). */
+  contrastWith?: string;
+  /** Offer the EyeDropper API when the browser supports it. Default true. */
+  eyeDropper?: boolean;
   pickerLabel?: string;
   hexLabel?: string;
   presetsLabel?: string;
+  labels?: Partial<ColorPickerLabels>;
   disabled?: boolean;
   id?: string;
   className?: string;
 }
 
+type Hsva = { h: number; s: number; v: number; a: number };
+
+const hsvaFrom = (c: RgbaColor): Hsva => ({ ...rgbToHsv(c), a: c.a });
+const rgbaFrom = (c: Hsva): RgbaColor => ({ ...hsvToRgb(c.h, c.s, c.v), a: c.a });
+
+/** Pointer-drag helper for 1D/2D tracks: reports the pointer position as fractions of the track. */
+function useTrackDrag(onMove: (x: number, y: number) => void, onEnd: () => void, disabled?: boolean) {
+  const move = useRef(onMove);
+  move.current = onMove;
+  const end = useRef(onEnd);
+  end.current = onEnd;
+  const report = (el: HTMLElement, e: { clientX: number; clientY: number }) => {
+    const r = el.getBoundingClientRect();
+    move.current(r.width ? clampN((e.clientX - r.left) / r.width, 0, 1) : 0, r.height ? clampN((e.clientY - r.top) / r.height, 0, 1) : 0);
+  };
+  return {
+    onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+      if (disabled || e.button !== 0) return;
+      const el = e.currentTarget;
+      try {
+        el.setPointerCapture(e.pointerId);
+      } catch {
+        /* ignore */
+      }
+      report(el, e);
+      (el.querySelector('[role="slider"]') as HTMLElement | null)?.focus({ preventScroll: true });
+      e.preventDefault();
+    },
+    onPointerMove: (e: ReactPointerEvent<HTMLElement>) => {
+      if (!e.currentTarget.hasPointerCapture?.(e.pointerId)) return;
+      report(e.currentTarget, e);
+    },
+    onPointerUp: (e: ReactPointerEvent<HTMLElement>) => {
+      if (e.currentTarget.hasPointerCapture?.(e.pointerId)) end.current();
+    },
+  };
+}
+
+/** Arrow / Page / Home / End handling for colour sliders. Returns the new value or null. */
+function sliderKey(e: KeyboardEvent<HTMLElement>, value: number, min: number, max: number, small: number, big: number): number | null {
+  const step = e.shiftKey ? big : small;
+  switch (e.key) {
+    case 'ArrowRight':
+    case 'ArrowUp':
+      return clampN(value + step, min, max);
+    case 'ArrowLeft':
+    case 'ArrowDown':
+      return clampN(value - step, min, max);
+    case 'PageUp':
+      return clampN(value + big, min, max);
+    case 'PageDown':
+      return clampN(value - big, min, max);
+    case 'Home':
+      return min;
+    case 'End':
+      return max;
+    default:
+      return null;
+  }
+}
+
+const EyeDropperIcon = () => (
+  <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+    <path d="M10.5 2.5l3 3-1.6 1.6-.9-.9-5.6 5.6-2.1.5.5-2.1 5.6-5.6-.9-.9z" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+  </svg>
+);
+
+/**
+ * Colour picker with a 2D saturation/brightness area, hue and opacity sliders (all keyboard
+ * operable with descriptive aria-valuetext), HEX/RGB/HSL/OKLCH text entry, the EyeDropper API,
+ * presets, recent colours and a WCAG contrast readout. Popover or inline.
+ */
 export function ColorPicker({
   label,
   hint,
@@ -2405,88 +2858,358 @@ export function ColorPicker({
   value,
   defaultValue = '#000000',
   onChange,
+  onColorChange,
   presets,
   showInput = true,
+  mode = 'popover',
+  alpha = false,
+  formats = ['hex', 'rgb', 'hsl', 'oklch'],
+  format: formatProp,
+  defaultFormat,
+  onFormatChange,
+  recent: recentMax = 6,
+  contrastWith,
+  eyeDropper = true,
   pickerLabel = 'Pick a color',
   hexLabel = 'Hex value',
   presetsLabel = 'Preset colors',
+  labels: labelOverrides,
   disabled,
   id,
   className,
 }: ColorPickerProps) {
+  const L = { ...DEFAULT_COLOR_LABELS, ...labelOverrides };
   const autoId = useId();
   const baseId = id ?? autoId;
   const labelId = `${baseId}-label`;
+  const panelId = `${baseId}-panel`;
   const msg = fieldMessage(baseId, hint, error);
   const [raw, setRaw] = useControllable(value, defaultValue, onChange);
-  const current = normalizeHex(raw) ?? '#000000';
+  const [fmt, setFmt] = useControllable<ColorFormat>(formatProp, defaultFormat ?? formats[0] ?? 'hex', onFormatChange);
+  const parsed = parseColor(raw) ?? { r: 0, g: 0, b: 0, a: 1 };
+  const [hsva, setHsva] = useState<Hsva>(() => hsvaFrom(parsed));
   const [draft, setDraft] = useState<string | null>(null);
-  const draftInvalid = draft !== null && draft !== '' && !normalizeHex(draft);
+  const [open, setOpen] = useState(mode === 'inline');
+  const [recentList, setRecentList] = useState<string[]>([]);
+  const [canDrop, setCanDrop] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const areaThumbRef = useRef<HTMLDivElement>(null);
+  const onColorChangeRef = useRef(onColorChange);
+  onColorChangeRef.current = onColorChange;
+
+  const toOutput = (c: RgbaColor) => formatColor({ ...c, a: alpha ? c.a : 1 }, 'hex');
+  const rgba = rgbaFrom(hsva);
+  const currentHex = toOutput(rgba);
+  const opaqueHex = formatColor({ ...rgba, a: 1 }, 'hex');
+
+  // Follow external value changes (keeps the hue when the colour is grey).
+  const rawHex = toOutput(parsed);
+  useEffect(() => {
+    if (rawHex !== currentHex) setHsva((prev) => {
+      const next = hsvaFrom(parseColor(raw) ?? parsed);
+      return next.s === 0 || next.v === 0 ? { ...next, h: prev.h } : next;
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rawHex]);
+
+  useEffect(() => {
+    setCanDrop(eyeDropper && typeof window !== 'undefined' && 'EyeDropper' in window);
+  }, [eyeDropper]);
+
+  const emit = (next: Hsva) => {
+    setHsva(next);
+    const c = rgbaFrom(next);
+    const hex = toOutput(c);
+    if (hex !== toOutput(parseColor(raw) ?? parsed)) setRaw(hex);
+    onColorChangeRef.current?.({ hex, rgba: c, css: formatColor({ ...c, a: alpha ? c.a : 1 }, fmt) });
+  };
+
+  const remember = (hex = currentHex) => {
+    if (!recentMax) return;
+    setRecentList((list) => [hex, ...list.filter((h) => h !== hex)].slice(0, recentMax));
+  };
+
+  const setFromString = (text: string, commit = true) => {
+    const c = parseColor(text);
+    if (!c) return false;
+    const next = hsvaFrom({ ...c, a: alpha ? c.a : 1 });
+    emit(next.s === 0 || next.v === 0 ? { ...next, h: hsva.h } : next);
+    if (commit) remember(toOutput(c));
+    return true;
+  };
+
+  // Popover: close on outside press, Escape and focus leaving.
+  useDismiss(open && mode === 'popover', rootRef, () => setOpen(false));
+  useEffect(() => {
+    if (open && mode === 'popover') areaThumbRef.current?.focus();
+  }, [open, mode]);
+
+  const area = useTrackDrag((x, y) => emit({ ...hsva, s: x, v: 1 - y }), () => remember(), disabled);
+  const hue = useTrackDrag((x) => emit({ ...hsva, h: x * 360 }), () => remember(), disabled);
+  const alphaTrack = useTrackDrag((x) => emit({ ...hsva, a: round(x, 2) }), () => remember(), disabled);
+
+  const sPct = Math.round(hsva.s * 100);
+  const vPct = Math.round(hsva.v * 100);
+  const hDeg = Math.round(hsva.h);
+  const aPct = Math.round(hsva.a * 100);
+  const textValue = formatColor({ ...rgba, a: alpha ? rgba.a : 1 }, fmt);
+  const draftInvalid = draft !== null && draft !== '' && !parseColor(draft);
+  const ratio = contrastWith ? contrastRatio({ ...rgba, a: alpha ? rgba.a : 1 }, contrastWith) : 0;
+  const checker = { '--oc-cp-color': formatColor({ ...rgba, a: alpha ? rgba.a : 1 }, 'rgb') } as CSSProperties;
+
+  const swatch = (hex: string, name: string, key: string) => {
+    const normalized = toOutput(parseColor(hex) ?? parsed);
+    return (
+      <button
+        key={key}
+        type="button"
+        className="oc-colorpicker__swatch"
+        style={{ '--oc-cp-color': hex } as CSSProperties}
+        aria-label={name}
+        aria-pressed={normalized === currentHex}
+        disabled={disabled}
+        onClick={() => setFromString(hex)}
+      />
+    );
+  };
+
+  const presetRow = presets && presets.length > 0 && (
+    <div role="group" aria-label={presetsLabel} className="oc-colorpicker__presets">
+      {presets.map((p) => {
+        const preset = typeof p === 'string' ? { value: p, label: p } : p;
+        return swatch(normalizeHex(preset.value) ?? preset.value, preset.label, preset.value);
+      })}
+    </div>
+  );
+
+  const panel = (
+    <div
+      id={panelId}
+      role={mode === 'popover' ? 'dialog' : 'group'}
+      aria-label={pickerLabel}
+      className={cx('oc-colorpicker__panel', mode === 'popover' && 'oc-colorpicker__panel--popover')}
+      hidden={!open}
+      dir="ltr"
+      onKeyDown={(e) => {
+        if (e.key === 'Escape' && mode === 'popover') {
+          e.stopPropagation();
+          setOpen(false);
+          triggerRef.current?.focus();
+        }
+      }}
+    >
+      <div className="oc-colorpicker__area" style={{ '--oc-cp-hue': `hsl(${hDeg} 100% 50%)` } as CSSProperties} {...area}>
+        <div
+          ref={areaThumbRef}
+          role="slider"
+          tabIndex={disabled ? -1 : 0}
+          aria-label={L.area}
+          aria-valuemin={0}
+          aria-valuemax={100}
+          aria-valuenow={sPct}
+          aria-valuetext={L.areaValue(sPct, vPct)}
+          aria-disabled={disabled || undefined}
+          className="oc-colorpicker__thumb"
+          style={{ left: `${hsva.s * 100}%`, top: `${(1 - hsva.v) * 100}%`, '--oc-cp-color': opaqueHex } as CSSProperties}
+          onKeyDown={(e) => {
+            if (disabled) return;
+            const big = 10;
+            let { s, v } = { s: sPct, v: vPct };
+            if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') s = clampN(s + (e.key === 'ArrowRight' ? 1 : -1) * (e.shiftKey ? big : 1), 0, 100);
+            else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') v = clampN(v + (e.key === 'ArrowUp' ? 1 : -1) * (e.shiftKey ? big : 1), 0, 100);
+            else if (e.key === 'PageUp' || e.key === 'PageDown') v = clampN(v + (e.key === 'PageUp' ? big : -big), 0, 100);
+            else if (e.key === 'Home') s = 0;
+            else if (e.key === 'End') s = 100;
+            else return;
+            e.preventDefault();
+            emit({ ...hsva, s: s / 100, v: v / 100 });
+          }}
+          onBlur={() => remember()}
+        />
+      </div>
+      <div className="oc-colorpicker__sliders">
+        <div className="oc-colorpicker__track oc-colorpicker__track--hue" {...hue}>
+          <div
+            role="slider"
+            tabIndex={disabled ? -1 : 0}
+            aria-label={L.hue}
+            aria-orientation="horizontal"
+            aria-valuemin={0}
+            aria-valuemax={360}
+            aria-valuenow={hDeg}
+            aria-valuetext={L.hueValue(hDeg, hueName(hsva.h))}
+            aria-disabled={disabled || undefined}
+            className="oc-colorpicker__knob"
+            style={{ left: `${(hsva.h / 360) * 100}%`, '--oc-cp-color': `hsl(${hDeg} 100% 50%)` } as CSSProperties}
+            onKeyDown={(e) => {
+              if (disabled) return;
+              const n = sliderKey(e, hDeg, 0, 360, 1, 15);
+              if (n === null) return;
+              e.preventDefault();
+              emit({ ...hsva, h: n });
+            }}
+            onBlur={() => remember()}
+          />
+        </div>
+        {alpha && (
+          <div className="oc-colorpicker__track oc-colorpicker__track--alpha" style={{ '--oc-cp-opaque': opaqueHex } as CSSProperties} {...alphaTrack}>
+            <div
+              role="slider"
+              tabIndex={disabled ? -1 : 0}
+              aria-label={L.alpha}
+              aria-orientation="horizontal"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={aPct}
+              aria-valuetext={`${aPct}%`}
+              aria-disabled={disabled || undefined}
+              className="oc-colorpicker__knob"
+              style={{ left: `${hsva.a * 100}%`, '--oc-cp-color': formatColor(rgba, 'rgb') } as CSSProperties}
+              onKeyDown={(e) => {
+                if (disabled) return;
+                const n = sliderKey(e, aPct, 0, 100, 1, 10);
+                if (n === null) return;
+                e.preventDefault();
+                emit({ ...hsva, a: n / 100 });
+              }}
+              onBlur={() => remember()}
+            />
+          </div>
+        )}
+      </div>
+      {mode === 'inline' && presetRow}
+      {recentMax > 0 && recentList.length > 0 && (
+        <div role="group" aria-label={L.recent} className="oc-colorpicker__presets oc-colorpicker__recent">
+          <span className="oc-colorpicker__caption" aria-hidden="true">
+            {L.recent}
+          </span>
+          {recentList.map((h) => swatch(h, h, `recent-${h}`))}
+        </div>
+      )}
+      {contrastWith && (
+        <div className="oc-colorpicker__contrast">
+          <span className="oc-colorpicker__sample" style={{ background: contrastWith, color: formatColor(rgba, 'rgb') }} aria-hidden="true">
+            Aa
+          </span>
+          <span className="oc-colorpicker__ratio">{L.contrast(ratio.toFixed(2), contrastWith)}</span>
+          {[
+            ['AA', 4.5],
+            ['AA Large', 3],
+            ['AAA', 7],
+          ].map(([name, min]) => {
+            const ok = ratio >= (min as number);
+            return (
+              <span key={name} className="oc-colorpicker__grade" data-pass={ok ? '' : undefined}>
+                <span aria-hidden="true">{ok ? '✓' : '✕'}</span> {name} <span className="oc-sr-only">{ok ? L.pass : L.fail}</span>
+              </span>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
 
   return (
-    <div role="group" aria-labelledby={label ? labelId : undefined} aria-label={label ? undefined : pickerLabel} className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div
+      ref={rootRef}
+      role="group"
+      aria-labelledby={label ? labelId : undefined}
+      aria-label={label ? undefined : pickerLabel}
+      className={cx('oc-field oc-colorpicker-field', error && 'oc-field--error', className)}
+      onBlur={(e) => {
+        if (mode === 'popover' && open && !rootRef.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
+      }}
+    >
       {label && (
         <span id={labelId} className="oc-label">
           {label}
         </span>
       )}
       <div className="oc-colorpicker">
-        <input
-          id={baseId}
-          type="color"
-          className="oc-colorpicker__native"
-          aria-label={pickerLabel}
-          aria-describedby={msg.describedBy}
-          value={current}
-          disabled={disabled}
-          onChange={(e) => setRaw(e.target.value.toLowerCase())}
-        />
+        {mode === 'popover' && (
+          <button
+            ref={triggerRef}
+            id={baseId}
+            type="button"
+            className="oc-colorpicker__trigger"
+            aria-label={pickerLabel}
+            aria-haspopup="dialog"
+            aria-expanded={open}
+            aria-controls={panelId}
+            aria-describedby={msg.describedBy}
+            disabled={disabled}
+            style={checker}
+            onClick={() => setOpen((o) => !o)}
+          >
+            <span className="oc-colorpicker__chip" />
+          </button>
+        )}
+        {mode === 'inline' && <span className="oc-colorpicker__preview" style={checker} aria-hidden="true" />}
+        {showInput && formats.length > 1 && (
+          <select className="oc-select oc-colorpicker__format" aria-label={L.format} value={fmt} disabled={disabled} onChange={(e) => setFmt(e.target.value as ColorFormat)}>
+            {formats.map((f) => (
+              <option key={f} value={f}>
+                {f.toUpperCase()}
+              </option>
+            ))}
+          </select>
+        )}
         {showInput && (
           <input
+            id={mode === 'inline' ? baseId : undefined}
             type="text"
             className="oc-input oc-colorpicker__hex"
-            aria-label={hexLabel}
+            data-format={fmt}
+            aria-label={fmt === 'hex' ? hexLabel : L.value(fmt)}
             aria-invalid={error || draftInvalid ? true : undefined}
             aria-describedby={msg.describedBy}
             spellCheck={false}
             autoComplete="off"
-            maxLength={7}
             disabled={disabled}
-            value={draft ?? current}
-            onFocus={() => setDraft(current)}
+            value={draft ?? textValue}
+            onFocus={() => setDraft(textValue)}
             onChange={(e) => {
               setDraft(e.target.value);
-              // Commit full 6-digit values while typing; short forms on blur.
-              if (/^#?[0-9a-f]{6}$/i.test(e.target.value.trim())) setRaw(normalizeHex(e.target.value)!);
+              // Commit complete hex values while typing; everything else on blur / Enter.
+              if (/^#?([0-9a-f]{6}|[0-9a-f]{8})$/i.test(e.target.value.trim())) setFromString(e.target.value, false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && draft !== null) {
+                e.preventDefault();
+                if (setFromString(draft)) setDraft(null);
+              }
             }}
             onBlur={() => {
-              const hex = draft !== null ? normalizeHex(draft) : null;
-              if (hex && hex !== current) setRaw(hex);
+              if (draft !== null && parseColor(draft) && formatColor(parseColor(draft)!, fmt) !== textValue) setFromString(draft);
+              else if (draft !== null && parseColor(draft)) remember();
               setDraft(null);
             }}
           />
         )}
+        {canDrop && (
+          <button
+            type="button"
+            className="oc-btn oc-btn--secondary oc-btn--icon oc-colorpicker__dropper"
+            aria-label={L.eyeDropper}
+            disabled={disabled}
+            onClick={async () => {
+              try {
+                const Ctor = (window as unknown as { EyeDropper: new () => { open: () => Promise<{ sRGBHex: string }> } }).EyeDropper;
+                const result = await new Ctor().open();
+                setFromString(result.sRGBHex);
+              } catch {
+                /* cancelled */
+              }
+            }}
+          >
+            <EyeDropperIcon />
+          </button>
+        )}
+        {mode === 'popover' && panel}
       </div>
-      {presets && presets.length > 0 && (
-        <div role="group" aria-label={presetsLabel} className="oc-colorpicker__presets">
-          {presets.map((p) => {
-            const preset = typeof p === 'string' ? { value: p, label: p } : p;
-            const hex = normalizeHex(preset.value) ?? preset.value;
-            return (
-              <button
-                key={preset.value}
-                type="button"
-                className="oc-colorpicker__swatch"
-                style={{ background: hex }}
-                aria-label={preset.label}
-                aria-pressed={hex === current}
-                disabled={disabled}
-                onClick={() => setRaw(hex)}
-              />
-            );
-          })}
-        </div>
-      )}
+      {mode === 'inline' && panel}
+      {mode === 'popover' && presetRow}
       {msg.node}
     </div>
   );

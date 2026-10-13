@@ -14,6 +14,7 @@ import FeedbackDemo from '../../demos/feedback';
 import ChartsDemo from '../../demos/charts';
 import Effects3DDemo from '../../demos/effects3d';
 import ThreeDemo from '../../demos/three';
+import MotionDemo from '../../demos/motion';
 
 export function getStaticPaths() {
   return categories.map((cat, i) => ({
@@ -65,6 +66,7 @@ const s = cat.slug;
         {s === 'charts' && <ChartsDemo id={entry.id} client:only="react" />}
         {s === '3d' && entry.demo !== 'three' && <Effects3DDemo id={entry.id} client:visible />}
         {s === '3d' && entry.demo === 'three' && <ThreeDemo id={entry.id} client:visible />}
+        {s === 'motion' && <MotionDemo id={entry.id} client:visible />}
       </ComponentDoc>
     ))
   }

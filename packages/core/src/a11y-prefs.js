@@ -1,0 +1,931 @@
+// Accessibility display preferences: contrast schemes, color-vision filters, text spacing, reading aids,
+// motion and interaction aids. Everything is a data-a11y-* attribute on <html> (or any container), styled
+// by src/parts/a11y-modes.css, so it works the same for React, Vue, Svelte, Angular, Astro or plain HTML.
+// The JS here adds what CSS alone cannot: the SVG color-vision filters, the reading guide / mask that
+// follow the pointer and focus, pausing autoplaying media, persistence and OS preference watching.
+
+export const A11Y_STORAGE_KEY = 'orca-ui-a11y';
+
+/** Every preference with its default value. */
+export const defaultA11yPrefs = Object.freeze({
+  /** 'default' | 'hc' | 'yellow-black' | 'black-yellow' | 'white-black' | 'black-white' | 'gray' | 'invert' */
+  contrast: 'default',
+  /** 'none' | 'protanopia' | 'deuteranopia' | 'tritanopia' | 'achromatopsia' */
+  colorFilter: 'none',
+  /** Patterns, dashes and markers in charts in addition to color. */
+  patterns: false,
+  /** 'low' | 'normal' | 'high' */
+  saturation: 'normal',
+  /** Text scale, 0.9 – 2 (90 % – 200 %). */
+  fontScale: 1,
+  /** 'normal' | 'wide' (1.75) | 'wider' (2) */
+  lineHeight: 'normal',
+  /** 'normal' | 'wide' (0.06em) | 'wider' (0.12em) */
+  letterSpacing: 'normal',
+  /** 'normal' | 'wide' (0.16em) | 'wider' (0.32em) */
+  wordSpacing: 'normal',
+  /** 'normal' | 'wide' (1.5em after paragraphs) | 'wider' (2em) */
+  paragraphSpacing: 'normal',
+  /** Atkinson Hyperlegible, a typeface designed for low-vision readers. */
+  readableFont: false,
+  /** Align text to the start edge (left in LTR, right in RTL); no justified text. */
+  alignStart: false,
+  /** 'default' | 'underline' | 'highlight' */
+  links: 'default',
+  /** 'default' | 'large' */
+  focus: 'default',
+  /** 'default' | 'large' */
+  cursor: 'default',
+  readingGuide: false,
+  readingMask: false,
+  /** 'system' (follow the OS) | 'reduce' | 'off' (no animation, no autoplay) */
+  motion: 'system',
+  hideImages: false,
+  /** Every control at least 44 × 44 px. */
+  largeTargets: false,
+});
+
+export const a11yOptions = Object.freeze({
+  contrast: ['default', 'hc', 'yellow-black', 'black-yellow', 'white-black', 'black-white', 'gray', 'invert'],
+  colorFilter: ['none', 'protanopia', 'deuteranopia', 'tritanopia', 'achromatopsia'],
+  saturation: ['low', 'normal', 'high'],
+  lineHeight: ['normal', 'wide', 'wider'],
+  letterSpacing: ['normal', 'wide', 'wider'],
+  wordSpacing: ['normal', 'wide', 'wider'],
+  paragraphSpacing: ['normal', 'wide', 'wider'],
+  links: ['default', 'underline', 'highlight'],
+  focus: ['default', 'large'],
+  cursor: ['default', 'large'],
+  motion: ['system', 'reduce', 'off'],
+});
+
+export const FONT_SCALE_MIN = 0.9;
+export const FONT_SCALE_MAX = 2;
+
+const BOOLEAN_KEYS = ['patterns', 'readableFont', 'alignStart', 'readingGuide', 'readingMask', 'hideImages', 'largeTargets'];
+
+/** Fill in defaults and drop invalid values (safe for data read from storage or a URL). */
+export function normalizeA11yPrefs(prefs = {}) {
+  const out = { ...defaultA11yPrefs };
+  if (!prefs || typeof prefs !== 'object') return out;
+  for (const [key, values] of Object.entries(a11yOptions)) if (values.includes(prefs[key])) out[key] = prefs[key];
+  for (const key of BOOLEAN_KEYS) if (typeof prefs[key] === 'boolean') out[key] = prefs[key];
+  const scale = Number(prefs.fontScale);
+  if (Number.isFinite(scale)) out.fontScale = Math.round(Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, scale)) * 100) / 100;
+  return out;
+}
+
+/** True when nothing differs from the defaults. */
+export function isDefaultA11yPrefs(prefs) {
+  const p = normalizeA11yPrefs(prefs);
+  return Object.keys(defaultA11yPrefs).every((k) => p[k] === defaultA11yPrefs[k]);
+}
+
+/** Number of preferences that differ from the defaults (for a badge on the trigger button). */
+export function countActiveA11yPrefs(prefs) {
+  const p = normalizeA11yPrefs(prefs);
+  return Object.keys(defaultA11yPrefs).filter((k) => p[k] !== defaultA11yPrefs[k]).length;
+}
+
+/**
+ * The data-a11y-* attributes for a set of preferences (null = attribute absent). Use it to render the
+ * attributes on the server (SSR, Astro) so the first paint already matches the user's choice.
+ */
+export function a11yPrefsToAttributes(prefs) {
+  const p = normalizeA11yPrefs(prefs);
+  const pick = (value, off) => (value === off ? null : String(value));
+  return {
+    'data-a11y-contrast': pick(p.contrast, 'default'),
+    'data-a11y-color-filter': pick(p.colorFilter, 'none'),
+    'data-a11y-patterns': p.patterns ? '' : null,
+    'data-a11y-saturation': pick(p.saturation, 'normal'),
+    'data-a11y-font-scale': p.fontScale === 1 ? null : String(p.fontScale),
+    'data-a11y-line-height': pick(p.lineHeight, 'normal'),
+    'data-a11y-letter-spacing': pick(p.letterSpacing, 'normal'),
+    'data-a11y-word-spacing': pick(p.wordSpacing, 'normal'),
+    'data-a11y-paragraph-spacing': pick(p.paragraphSpacing, 'normal'),
+    'data-a11y-font': p.readableFont ? 'readable' : null,
+    'data-a11y-text-align': p.alignStart ? 'start' : null,
+    'data-a11y-links': pick(p.links, 'default'),
+    'data-a11y-focus': pick(p.focus, 'default'),
+    'data-a11y-cursor': pick(p.cursor, 'default'),
+    'data-a11y-reading-guide': p.readingGuide ? '' : null,
+    'data-a11y-reading-mask': p.readingMask ? '' : null,
+    'data-a11y-motion': pick(p.motion, 'system'),
+    'data-a11y-images': p.hideImages ? 'hide' : null,
+    'data-a11y-targets': p.largeTargets ? 'large' : null,
+  };
+}
+
+/* ---------- Color-vision filters (inline SVG feColorMatrix) ----------
+ * Daltonization: the color information a viewer with the deficiency cannot see (original minus the
+ * Machado et al. 2009 simulation) is shifted into channels they can see. Correction = I + Shift·(I − Sim). */
+const SIM = {
+  protanopia: [[0.152286, 1.052583, -0.204868], [0.114503, 0.786281, 0.099216], [-0.003882, -0.048116, 1.051998]],
+  deuteranopia: [[0.367322, 0.860646, -0.227968], [0.280085, 0.672501, 0.047413], [-0.01182, 0.04294, 0.968881]],
+  tritanopia: [[1.255528, -0.076749, -0.178779], [-0.078411, 0.930809, 0.147602], [0.004733, 0.691367, 0.3039]],
+};
+const SHIFT_RG = [[0, 0, 0], [0.7, 1, 0], [0.7, 0, 1]];
+const SHIFT_B = [[1, 0, 0.7], [0, 1, 0.7], [0, 0, 0]];
+
+function correctionMatrix(sim, shift) {
+  const I = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
+  const err = I.map((row, i) => row.map((v, j) => v - sim[i][j]));
+  return I.map((row, i) => row.map((v, j) => v + shift[i].reduce((acc, s, k) => acc + s * err[k][j], 0)));
+}
+const fmt = (m) => m.map((row) => `${row.map((v) => +v.toFixed(4)).join(' ')} 0 0`).join(' ') + ' 0 0 0 1 0';
+
+/** feColorMatrix values per filter (exported for tests and for apps that ship their own SVG). */
+export const colorFilterMatrices = Object.freeze({
+  protanopia: fmt(correctionMatrix(SIM.protanopia, SHIFT_RG)),
+  deuteranopia: fmt(correctionMatrix(SIM.deuteranopia, SHIFT_RG)),
+  tritanopia: fmt(correctionMatrix(SIM.tritanopia, SHIFT_B)),
+  // No hue is reliable: luminance only, with a little extra contrast (see the CSS for the contrast step).
+  achromatopsia: fmt([[0.2126, 0.7152, 0.0722], [0.2126, 0.7152, 0.0722], [0.2126, 0.7152, 0.0722]]),
+});
+
+export const COLOR_FILTERS_ID = 'oc-a11y-filters';
+
+/** Insert the SVG with the color-vision filters once per document (referenced as url(#oc-a11y-<name>)). */
+export function ensureColorFilters(doc = document) {
+  if (doc.getElementById(COLOR_FILTERS_ID)) return;
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = doc.createElementNS(ns, 'svg');
+  svg.setAttribute('id', COLOR_FILTERS_ID);
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+  svg.setAttribute('width', '0');
+  svg.setAttribute('height', '0');
+  svg.setAttribute('style', 'position:absolute;width:0;height:0;overflow:hidden;pointer-events:none');
+  const defs = doc.createElementNS(ns, 'defs');
+  for (const [name, values] of Object.entries(colorFilterMatrices)) {
+    const filter = doc.createElementNS(ns, 'filter');
+    filter.setAttribute('id', `oc-a11y-${name}`);
+    filter.setAttribute('color-interpolation-filters', 'linearRGB');
+    const m = doc.createElementNS(ns, 'feColorMatrix');
+    m.setAttribute('type', 'matrix');
+    m.setAttribute('values', values);
+    filter.appendChild(m);
+    defs.appendChild(filter);
+  }
+  svg.appendChild(defs);
+  (doc.body ?? doc.documentElement).appendChild(svg);
+}
+
+/* ---------- Reading guide and reading mask ---------- */
+const aids = new WeakMap();
+
+function readingAids(target, guide, mask) {
+  const doc = target.ownerDocument ?? document;
+  const win = doc.defaultView;
+  let state = aids.get(target);
+  if (!guide && !mask) {
+    if (state) {
+      state.cleanup();
+      aids.delete(target);
+    }
+    return;
+  }
+  if (!state) {
+    const els = {};
+    let y = (win?.innerHeight ?? 600) / 2;
+    let frame = 0;
+    const paint = () => {
+      frame = 0;
+      for (const el of Object.values(els)) el?.style.setProperty('--oc-a11y-guide-y', `${Math.round(y)}px`);
+    };
+    const move = (next) => {
+      y = next;
+      if (!frame) frame = win?.requestAnimationFrame ? win.requestAnimationFrame(paint) : (paint(), 0);
+    };
+    const onPointer = (e) => move(e.clientY);
+    const onFocus = (e) => {
+      const r = e.target?.getBoundingClientRect?.();
+      if (r && (r.width || r.height)) move(r.top + r.height / 2);
+    };
+    doc.addEventListener('pointermove', onPointer, { passive: true });
+    doc.addEventListener('focusin', onFocus);
+    state = {
+      els,
+      sync: paint,
+      cleanup() {
+        doc.removeEventListener('pointermove', onPointer);
+        doc.removeEventListener('focusin', onFocus);
+        if (frame && win?.cancelAnimationFrame) win.cancelAnimationFrame(frame);
+        for (const el of Object.values(els)) el?.remove();
+      },
+    };
+    aids.set(target, state);
+  }
+  for (const [name, on] of [['guide', guide], ['mask', mask]]) {
+    if (on && !state.els[name]) {
+      const el = doc.createElement('div');
+      el.className = `oc-a11y-reading-${name}`;
+      el.setAttribute('aria-hidden', 'true');
+      el.setAttribute('data-oc-a11y-aid', name);
+      (doc.body ?? doc.documentElement).appendChild(el);
+      state.els[name] = el;
+    } else if (!on && state.els[name]) {
+      state.els[name].remove();
+      delete state.els[name];
+    }
+  }
+  state.sync();
+}
+
+/* ---------- Motion: pause autoplaying media ---------- */
+const mediaObservers = new WeakMap();
+
+function pauseMedia(root) {
+  for (const media of root.querySelectorAll?.('video[autoplay], audio[autoplay], video[data-autoplay]') ?? []) {
+    try {
+      media.pause();
+      media.removeAttribute('autoplay');
+      media.setAttribute('data-oc-a11y-paused', '');
+    } catch {
+      /* jsdom or a detached element */
+    }
+  }
+}
+
+function motionOff(target, off) {
+  const existing = mediaObservers.get(target);
+  if (!off) {
+    existing?.disconnect();
+    mediaObservers.delete(target);
+    return;
+  }
+  pauseMedia(target);
+  const MO = (target.ownerDocument?.defaultView ?? globalThis).MutationObserver;
+  if (!existing && MO) {
+    const mo = new MO((records) => {
+      for (const r of records) for (const n of r.addedNodes) if (n.nodeType === 1) pauseMedia(n.parentNode ?? n);
+    });
+    mo.observe(target, { childList: true, subtree: true });
+    mediaObservers.set(target, mo);
+  }
+}
+
+/**
+ * Apply preferences to `target` (default <html>): sets the data-a11y-* attributes and
+ * --oc-user-font-scale, injects the color-vision SVG filters when needed, starts or stops the reading
+ * guide / mask, pauses autoplaying media when motion is off, and dispatches a bubbling
+ * `oc-a11y-change` event with the normalized preferences. Returns the normalized preferences.
+ */
+export function applyA11yPrefs(prefs, target = document.documentElement) {
+  const p = normalizeA11yPrefs(prefs);
+  for (const [name, value] of Object.entries(a11yPrefsToAttributes(p))) {
+    if (value === null) target.removeAttribute(name);
+    else target.setAttribute(name, value);
+  }
+  if (p.fontScale === 1) target.style.removeProperty('--oc-user-font-scale');
+  else target.style.setProperty('--oc-user-font-scale', String(p.fontScale));
+  const doc = target.ownerDocument ?? document;
+  if (p.colorFilter !== 'none') ensureColorFilters(doc);
+  readingAids(target, p.readingGuide, p.readingMask);
+  motionOff(target, p.motion === 'off');
+  const Ev = doc.defaultView?.CustomEvent ?? globalThis.CustomEvent;
+  if (Ev) target.dispatchEvent(new Ev('oc-a11y-change', { detail: p, bubbles: true }));
+  return p;
+}
+
+/** Save preferences. Storage can be unavailable (private mode); failures are ignored. */
+export function saveA11yPrefs(prefs, key = A11Y_STORAGE_KEY) {
+  try {
+    const p = normalizeA11yPrefs(prefs);
+    if (isDefaultA11yPrefs(p)) localStorage.removeItem(key);
+    else localStorage.setItem(key, JSON.stringify(p));
+  } catch {
+    /* storage unavailable */
+  }
+}
+
+/** Read saved preferences (normalized), or the defaults. */
+export function loadA11yPrefs(key = A11Y_STORAGE_KEY) {
+  try {
+    const raw = localStorage.getItem(key);
+    return normalizeA11yPrefs(raw ? JSON.parse(raw) : {});
+  } catch {
+    return normalizeA11yPrefs({});
+  }
+}
+
+/** Remove every preference from `target` and from storage. Returns the defaults. */
+export function resetA11yPrefs(target = document.documentElement, key = A11Y_STORAGE_KEY) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    /* storage unavailable */
+  }
+  return applyA11yPrefs(defaultA11yPrefs, target);
+}
+
+/** Current OS accessibility settings. */
+export function getSystemPrefs(win = typeof window === 'undefined' ? undefined : window) {
+  const q = (query) => !!win?.matchMedia?.(query).matches;
+  return {
+    reducedMotion: q('(prefers-reduced-motion: reduce)'),
+    contrast: q('(prefers-contrast: more)') ? 'more' : q('(prefers-contrast: less)') ? 'less' : q('(prefers-contrast: custom)') ? 'custom' : 'no-preference',
+    colorScheme: q('(prefers-color-scheme: dark)') ? 'dark' : 'light',
+    forcedColors: q('(forced-colors: active)'),
+    reducedTransparency: q('(prefers-reduced-transparency: reduce)'),
+  };
+}
+
+/**
+ * Call `callback(getSystemPrefs())` now and whenever the OS reduced-motion, contrast, color-scheme,
+ * forced-colors or reduced-transparency setting changes. Returns an unsubscribe function.
+ */
+export function watchSystemPrefs(callback, win = typeof window === 'undefined' ? undefined : window) {
+  if (!win?.matchMedia) {
+    callback(getSystemPrefs(win));
+    return () => {};
+  }
+  const queries = [
+    '(prefers-reduced-motion: reduce)',
+    '(prefers-contrast: more)',
+    '(prefers-contrast: less)',
+    '(prefers-color-scheme: dark)',
+    '(forced-colors: active)',
+    '(prefers-reduced-transparency: reduce)',
+  ].map((q) => win.matchMedia(q));
+  const notify = () => callback(getSystemPrefs(win));
+  for (const mql of queries) {
+    if (mql.addEventListener) mql.addEventListener('change', notify);
+    else mql.addListener?.(notify);
+  }
+  notify();
+  return () => {
+    for (const mql of queries) {
+      if (mql.removeEventListener) mql.removeEventListener('change', notify);
+      else mql.removeListener?.(notify);
+    }
+  };
+}
+
+/* ==========================================================================
+ * Panel model shared by the React, Vue, Svelte, Angular and Astro AccessibilityPanel
+ * ======================================================================== */
+
+/** Groups and controls of the AccessibilityPanel, in display order. */
+export const a11yPanelSchema = Object.freeze([
+  {
+    id: 'color',
+    controls: [
+      { key: 'contrast', type: 'tiles' },
+      { key: 'colorFilter', type: 'select' },
+      { key: 'saturation', type: 'segmented' },
+      { key: 'patterns', type: 'switch' },
+    ],
+  },
+  {
+    id: 'text',
+    controls: [
+      { key: 'fontScale', type: 'scale' },
+      { key: 'lineHeight', type: 'segmented' },
+      { key: 'letterSpacing', type: 'segmented' },
+      { key: 'wordSpacing', type: 'segmented' },
+      { key: 'paragraphSpacing', type: 'segmented' },
+      { key: 'readableFont', type: 'switch' },
+      { key: 'alignStart', type: 'switch' },
+    ],
+  },
+  {
+    id: 'reading',
+    controls: [
+      { key: 'links', type: 'segmented' },
+      { key: 'readingGuide', type: 'switch' },
+      { key: 'readingMask', type: 'switch' },
+    ],
+  },
+  {
+    id: 'motion',
+    controls: [
+      { key: 'motion', type: 'segmented' },
+      { key: 'hideImages', type: 'switch' },
+    ],
+  },
+  {
+    id: 'interaction',
+    controls: [
+      { key: 'focus', type: 'switch', on: 'large', off: 'default' },
+      { key: 'cursor', type: 'switch', on: 'large', off: 'default' },
+      { key: 'largeTargets', type: 'switch' },
+    ],
+  },
+]);
+
+/** Background / foreground of the contrast tiles (null = the current theme). */
+export const contrastSwatches = Object.freeze({
+  default: null,
+  hc: ['#ffffff', '#000000'],
+  'yellow-black': ['#000000', '#ffff00'],
+  'black-yellow': ['#ffff00', '#000000'],
+  'white-black': ['#000000', '#ffffff'],
+  'black-white': ['#ffffff', '#000000'],
+  gray: ['#e6e6e6', '#1a1a1a'],
+  invert: ['#1d1d2b', '#f4f4f8'],
+});
+
+/** English and Arabic labels of the panel. Pass `labels` to a panel to override any of them. */
+export const a11yPanelLabels = Object.freeze({
+  en: {
+    title: 'Accessibility',
+    subtitle: 'Adjust colors, text and motion. Saved on this device.',
+    trigger: 'Accessibility settings',
+    close: 'Close accessibility settings',
+    reset: 'Reset all',
+    resetDone: 'All accessibility settings were reset.',
+    preview: 'Preview',
+    previewTitle: 'The quick brown fox',
+    previewBody: 'Readable text, clear links and calm motion make a page usable for everyone.',
+    previewLink: 'A sample link',
+    previewButton: 'Button',
+    previewStatus: 'Saved',
+    on: 'on',
+    off: 'off',
+    active: '{n} active',
+    changed: '{label}: {value}',
+    groups: {
+      color: 'Contrast & color',
+      text: 'Text',
+      reading: 'Reading aids',
+      motion: 'Motion & media',
+      interaction: 'Interaction',
+    },
+    controls: {
+      contrast: { label: 'Color scheme', hint: 'Exact token palettes; every pair meets WCAG AA or better.' },
+      colorFilter: { label: 'Color vision', hint: 'Shifts colors you cannot tell apart into ones you can.' },
+      saturation: { label: 'Saturation' },
+      patterns: { label: 'Patterns in charts', hint: 'Adds hatching, dashes and markers next to color.' },
+      fontScale: { label: 'Text size', decrease: 'Smaller text', increase: 'Larger text' },
+      lineHeight: { label: 'Line height' },
+      letterSpacing: { label: 'Letter spacing' },
+      wordSpacing: { label: 'Word spacing' },
+      paragraphSpacing: { label: 'Paragraph spacing' },
+      readableFont: { label: 'Readable font', hint: 'Atkinson Hyperlegible, designed for low-vision readers.' },
+      alignStart: { label: 'Align text to start', hint: 'No justified or centered paragraphs.' },
+      links: { label: 'Links' },
+      readingGuide: { label: 'Reading guide', hint: 'A bar that follows the pointer and keyboard focus.' },
+      readingMask: { label: 'Reading mask', hint: 'Dims everything except a band around the pointer.' },
+      motion: { label: 'Animation' },
+      hideImages: { label: 'Hide decorative images' },
+      focus: { label: 'Bigger focus indicator' },
+      cursor: { label: 'Big cursor' },
+      largeTargets: { label: 'Larger click targets', hint: 'Every control at least 44 × 44 px.' },
+    },
+    options: {
+      contrast: {
+        default: 'Theme',
+        hc: 'High contrast',
+        'yellow-black': 'Yellow on black',
+        'black-yellow': 'Black on yellow',
+        'white-black': 'White on black',
+        'black-white': 'Black on white',
+        gray: 'Grayscale',
+        invert: 'Inverted',
+      },
+      colorFilter: { none: 'No filter', protanopia: 'Protanopia (red)', deuteranopia: 'Deuteranopia (green)', tritanopia: 'Tritanopia (blue)', achromatopsia: 'Achromatopsia (no color)' },
+      saturation: { low: 'Low', normal: 'Normal', high: 'High' },
+      lineHeight: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
+      letterSpacing: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
+      wordSpacing: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
+      paragraphSpacing: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
+      links: { default: 'As designed', underline: 'Underline', highlight: 'Highlight' },
+      motion: { system: 'System', reduce: 'Reduce', off: 'Off' },
+    },
+  },
+  ar: {
+    title: 'إمكانية الوصول',
+    subtitle: 'اضبط الألوان والنص والحركة. تُحفظ على هذا الجهاز.',
+    trigger: 'إعدادات إمكانية الوصول',
+    close: 'إغلاق إعدادات إمكانية الوصول',
+    reset: 'إعادة الضبط',
+    resetDone: 'أُعيد ضبط جميع إعدادات إمكانية الوصول.',
+    preview: 'معاينة',
+    previewTitle: 'نصّ تجريبي للمعاينة',
+    previewBody: 'النص المقروء والروابط الواضحة والحركة الهادئة تجعل الصفحة صالحة للجميع.',
+    previewLink: 'رابط تجريبي',
+    previewButton: 'زر',
+    previewStatus: 'تم الحفظ',
+    on: 'مفعّل',
+    off: 'متوقف',
+    active: '{n} مفعّلة',
+    changed: '{label}: {value}',
+    groups: {
+      color: 'التباين والألوان',
+      text: 'النص',
+      reading: 'مساعدات القراءة',
+      motion: 'الحركة والوسائط',
+      interaction: 'التفاعل',
+    },
+    controls: {
+      contrast: { label: 'نظام الألوان', hint: 'لوحات ألوان دقيقة؛ كل زوج يحقق مستوى WCAG AA أو أعلى.' },
+      colorFilter: { label: 'رؤية الألوان', hint: 'ينقل الألوان التي يصعب تمييزها إلى ألوان يمكن تمييزها.' },
+      saturation: { label: 'التشبع' },
+      patterns: { label: 'أنماط في الرسوم البيانية', hint: 'يضيف تظليلًا وخطوطًا متقطعة وعلامات بجانب اللون.' },
+      fontScale: { label: 'حجم النص', decrease: 'تصغير النص', increase: 'تكبير النص' },
+      lineHeight: { label: 'ارتفاع السطر' },
+      letterSpacing: { label: 'تباعد الأحرف' },
+      wordSpacing: { label: 'تباعد الكلمات' },
+      paragraphSpacing: { label: 'تباعد الفقرات' },
+      readableFont: { label: 'خط سهل القراءة', hint: 'خط Atkinson Hyperlegible المصمم لضعاف البصر.' },
+      alignStart: { label: 'محاذاة النص إلى البداية', hint: 'بلا فقرات مضبوطة أو في الوسط.' },
+      links: { label: 'الروابط' },
+      readingGuide: { label: 'دليل القراءة', hint: 'شريط يتبع المؤشر وتركيز لوحة المفاتيح.' },
+      readingMask: { label: 'قناع القراءة', hint: 'يعتّم كل شيء عدا شريطًا حول المؤشر.' },
+      motion: { label: 'الحركة' },
+      hideImages: { label: 'إخفاء الصور الزخرفية' },
+      focus: { label: 'مؤشر تركيز أكبر' },
+      cursor: { label: 'مؤشر فأرة كبير' },
+      largeTargets: { label: 'أهداف نقر أكبر', hint: 'كل عنصر تحكم بحجم 44 × 44 بكسل على الأقل.' },
+    },
+    options: {
+      contrast: {
+        default: 'الثيم',
+        hc: 'تباين عالٍ',
+        'yellow-black': 'أصفر على أسود',
+        'black-yellow': 'أسود على أصفر',
+        'white-black': 'أبيض على أسود',
+        'black-white': 'أسود على أبيض',
+        gray: 'تدرّج رمادي',
+        invert: 'معكوس',
+      },
+      colorFilter: { none: 'بلا مرشح', protanopia: 'عمى الأحمر', deuteranopia: 'عمى الأخضر', tritanopia: 'عمى الأزرق', achromatopsia: 'عمى الألوان الكلي' },
+      saturation: { low: 'منخفض', normal: 'عادي', high: 'مرتفع' },
+      lineHeight: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
+      letterSpacing: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
+      wordSpacing: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
+      paragraphSpacing: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
+      links: { default: 'كما صُممت', underline: 'تسطير', highlight: 'إبراز' },
+      motion: { system: 'النظام', reduce: 'تقليل', off: 'إيقاف' },
+    },
+  },
+});
+
+/** Merge label overrides (deeply) over the English or Arabic defaults. */
+export function getA11yLabels(locale = 'en', overrides) {
+  const base = a11yPanelLabels[String(locale).toLowerCase().startsWith('ar') ? 'ar' : 'en'];
+  if (!overrides) return base;
+  const merge = (a, b) => {
+    const out = { ...a };
+    for (const [k, v] of Object.entries(b ?? {})) out[k] = v && typeof v === 'object' && !Array.isArray(v) ? merge(a?.[k] ?? {}, v) : v;
+    return out;
+  };
+  return merge(base, overrides);
+}
+
+/** Human-readable value of one preference ("Yellow on black", "125%", "on"). */
+export function describeA11yValue(labels, key, value) {
+  if (key === 'fontScale') return `${Math.round(Number(value) * 100)}%`;
+  if (typeof value === 'boolean') return value ? labels.on : labels.off;
+  const ctl = a11yPanelSchema.flatMap((g) => g.controls).find((c) => c.key === key);
+  if (ctl?.type === 'switch' && ctl.on) return value === ctl.on ? labels.on : labels.off;
+  return labels.options?.[key]?.[value] ?? String(value);
+}
+
+/** The polite announcement for a change ("Color scheme: Yellow on black"). */
+export function announceA11yChange(labels, key, value) {
+  return labels.changed.replace('{label}', labels.controls[key]?.label ?? key).replace('{value}', describeA11yValue(labels, key, value));
+}
+
+/* ==========================================================================
+ * Framework-free AccessibilityPanel: an HTML renderer (SSR, Astro, Angular, Vue, Svelte or plain pages)
+ * and a DOM controller. The React package renders the same markup natively.
+ * ======================================================================== */
+
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+const ICON = (inner) =>
+  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${inner}</svg>`;
+
+/** Inner markup of the panel's icons (24 × 24, stroke currentColor). */
+export const a11yIcons = Object.freeze({
+  accessibility: '<circle cx="12" cy="4.25" r="1.75" fill="currentColor" stroke="none"/><path d="M4.5 8.25c2.4.8 4.9 1.2 7.5 1.2s5.1-.4 7.5-1.2"/><path d="M12 9.5v4.25m0 0-2.75 6.75M12 13.75l2.75 6.75"/>',
+  color: '<circle cx="12" cy="12" r="8.25"/><path d="M12 3.75v16.5a8.25 8.25 0 0 0 0-16.5z" fill="currentColor" stroke="none"/>',
+  text: '<path d="M4 18 8.5 6h1L14 18M5.6 14h6.8M15.5 11.5c.6-.9 1.6-1.4 2.7-1.4 1.6 0 2.8 1 2.8 2.7V18m0-3.4c-.7-.5-1.6-.7-2.6-.7-1.7 0-2.9.9-2.9 2.1s1 2.1 2.4 2.1c1.4 0 2.6-.8 3.1-1.9"/>',
+  reading: '<path d="M3 5.5c3-.9 6-.6 9 1.2 3-1.8 6-2.1 9-1.2v13c-3-.9-6-.6-9 1.2-3-1.8-6-2.1-9-1.2z"/><path d="M12 6.7v13"/>',
+  motion: '<circle cx="12" cy="12" r="8.25"/><path d="M10 9v6M14 9v6"/>',
+  interaction: '<path d="M6 3.5v13.2l3.4-3.2 2.4 5.6 2.5-1.1-2.4-5.5H16.5z"/>',
+  check: '<path d="m5 12.5 4.5 4.5L19 7.5" stroke-width="3.2"/>',
+});
+
+let panelSeq = 0;
+
+/**
+ * HTML of an AccessibilityPanel (trigger, live region, backdrop and dialog), ready for mountA11yPanel().
+ * Options: id, locale ('en' | 'ar'), labels (overrides), trigger ('floating' | 'inline' | 'none'),
+ * triggerLabel, preview (default true), groups (ids), prefs (initial state for server rendering), className.
+ */
+export function renderA11yPanelHTML(options = {}) {
+  const { locale, labels: overrides, trigger = 'floating', triggerLabel, preview = true, groups, className } = options;
+  panelSeq += 1;
+  const id = options.id ?? `oc-a11y-panel-${panelSeq}`;
+  const L = getA11yLabels(locale ?? 'en', overrides);
+  const p = normalizeA11yPrefs(options.prefs);
+  const isAr = !!locale && String(locale).toLowerCase().startsWith('ar');
+  const active = countActiveA11yPrefs(p);
+  const activeText = L.active.replace('{n}', String(active));
+  const shown = groups ? groups.map((g) => a11yPanelSchema.find((s) => s.id === g)).filter(Boolean) : a11yPanelSchema;
+
+  const control = ({ key, type, on, off }) => {
+    const t = L.controls[key];
+    const labelId = `${id}-${key}-label`;
+    const hintId = t.hint ? `${id}-${key}-hint` : '';
+    const hint = t.hint ? `<p id="${hintId}" class="oc-a11y-control__hint">${esc(t.hint)}</p>` : '';
+    const describedby = hintId ? ` aria-describedby="${hintId}"` : '';
+    const value = p[key];
+    if (type === 'switch') {
+      const checked = on ? value === on : value === true;
+      const values = on ? ` data-on="${on}" data-off="${off}"` : '';
+      return `<div class="oc-a11y-control oc-a11y-control--switch"><div class="oc-a11y-control__text"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span>${hint}</div><button type="button" role="switch" class="oc-switch" aria-checked="${checked}" aria-labelledby="${labelId}"${describedby} data-a11y-key="${key}"${values}></button></div>`;
+    }
+    if (type === 'select') {
+      const opts = a11yOptions[key].map((o) => `<option value="${o}"${o === value ? ' selected' : ''}>${esc(L.options[key]?.[o] ?? o)}</option>`).join('');
+      return `<div class="oc-a11y-control"><label for="${id}-${key}" id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</label><select id="${id}-${key}" class="oc-select"${describedby} data-a11y-key="${key}">${opts}</select>${hint}</div>`;
+    }
+    if (type === 'scale') {
+      const pct = `${Math.round(p.fontScale * 100)}%`;
+      const dis = (cond) => (cond ? ' disabled' : '');
+      return `<div class="oc-a11y-control"><label for="${id}-${key}" id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</label><div class="oc-a11y-scale"><button type="button" class="oc-a11y-scale__btn oc-a11y-scale__btn--sm" aria-label="${esc(t.decrease)}" data-a11y-step="-0.1"${dis(p.fontScale <= FONT_SCALE_MIN)}>A</button><input id="${id}-${key}" type="range" class="oc-slider" min="${FONT_SCALE_MIN}" max="${FONT_SCALE_MAX}" step="0.05" value="${p.fontScale}" aria-valuetext="${pct}" data-a11y-key="${key}"><button type="button" class="oc-a11y-scale__btn oc-a11y-scale__btn--lg" aria-label="${esc(t.increase)}" data-a11y-step="0.1"${dis(p.fontScale >= FONT_SCALE_MAX)}>A</button><output for="${id}-${key}" class="oc-a11y-scale__value" aria-hidden="true" data-a11y-output>${pct}</output></div></div>`;
+    }
+    const radios = a11yOptions[key]
+      .map((o) => {
+        const checked = value === o;
+        const attrs = `type="button" role="radio" aria-checked="${checked}" tabindex="${checked ? 0 : -1}" data-value="${o}"`;
+        const text = esc(L.options[key]?.[o] ?? o);
+        if (type === 'tiles') {
+          const sw = contrastSwatches[o];
+          const style = sw ? ` style="--oc-swatch-bg: ${sw[0]}; --oc-swatch-fg: ${sw[1]};"` : '';
+          return `<button ${attrs} class="oc-a11y-tile"><span class="oc-a11y-tile__swatch" data-swatch="${o}" aria-hidden="true"${style}><span>Aa</span></span><span>${text}</span><span class="oc-a11y-tile__check" aria-hidden="true">${ICON(a11yIcons.check)}</span></button>`;
+        }
+        return `<button ${attrs} class="oc-segmented__item">${text}</button>`;
+      })
+      .join('');
+    if (type === 'tiles') {
+      return `<div class="oc-a11y-control"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span>${hint}<div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="oc-a11y-tiles" data-a11y-key="${key}" data-columns="4">${radios}</div></div>`;
+    }
+    return `<div class="oc-a11y-control"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span><div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="oc-segmented" data-a11y-key="${key}">${radios}</div>${hint}</div>`;
+  };
+
+  const previewHtml = preview
+    ? `<div class="oc-a11y-preview" aria-hidden="true"><p class="oc-a11y-preview__label">${esc(L.preview)}</p><p class="oc-a11y-preview__title">${esc(L.previewTitle)}</p><p class="oc-a11y-preview__body">${esc(L.previewBody)}</p><div class="oc-a11y-preview__row"><span class="oc-a11y-preview__link">${esc(L.previewLink)}</span><span class="oc-btn oc-btn--primary oc-btn--sm">${esc(L.previewButton)}</span><span class="oc-badge oc-badge--success">${esc(L.previewStatus)}</span></div></div>`
+    : '';
+  const groupsHtml = shown
+    .map((g) => `<section class="oc-a11y-group" aria-labelledby="${id}-${g.id}"><h3 id="${id}-${g.id}" class="oc-a11y-group__title">${ICON(a11yIcons[g.id])}${esc(L.groups[g.id])}</h3>${g.controls.map(control).join('')}</section>`)
+    .join('');
+  const lang = locale ? ` lang="${isAr ? 'ar' : 'en'}" dir="${isAr ? 'rtl' : 'ltr'}"` : '';
+  const badge = `<span class="oc-a11y-trigger__badge" aria-hidden="true" data-a11y-badge${active ? '' : ' hidden'}>${active}</span>`;
+  let triggerHtml = '';
+  if (trigger === 'inline') {
+    triggerHtml = `<button type="button" class="oc-a11y-trigger oc-a11y-trigger--inline" aria-haspopup="dialog" aria-expanded="false" data-a11y-open>${ICON(a11yIcons.accessibility)}<span>${esc(triggerLabel ?? L.title)}</span><span class="oc-sr-only" data-a11y-active-sr>${active ? ` (${esc(activeText)})` : ''}</span>${badge}</button>`;
+  } else if (trigger !== 'none') {
+    triggerHtml = `<button type="button" class="oc-a11y-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(active ? `${L.trigger} (${activeText})` : L.trigger)}" data-a11y-open>${ICON(a11yIcons.accessibility)}${badge}</button>`;
+  }
+  const header = `<div class="oc-a11y-panel__header"><span class="oc-a11y-panel__icon" aria-hidden="true">${ICON(a11yIcons.accessibility)}</span><div class="oc-a11y-panel__heading"><h2 id="${id}-title" class="oc-a11y-panel__title">${esc(L.title)}</h2><p class="oc-a11y-panel__subtitle">${esc(L.subtitle)}</p></div><button type="button" class="oc-close" aria-label="${esc(L.close)}" data-a11y-close>×</button></div>`;
+  const footer = `<div class="oc-a11y-panel__footer"><span class="oc-a11y-panel__count" data-a11y-count>${esc(activeText)}</span><button type="button" class="oc-btn oc-btn--secondary oc-btn--sm" data-a11y-reset${active ? '' : ' disabled'}>${esc(L.reset)}</button></div>`;
+  const panelClass = `oc-a11y-panel${className ? ` ${esc(className)}` : ''}`;
+  return `<div class="oc-a11y-root" data-oc-a11y-panel="${id}" data-labels="${esc(JSON.stringify(L))}">${triggerHtml}<div role="status" aria-live="polite" class="oc-sr-only" data-a11y-status></div><div class="oc-a11y-backdrop" hidden data-a11y-backdrop></div><div id="${id}" class="${panelClass}" data-labelledby="${id}-title" tabindex="-1" hidden${lang}>${header}<div class="oc-a11y-panel__body">${previewHtml}${groupsHtml}</div>${footer}</div></div>`;
+}
+
+const FOCUSABLE_IN_PANEL = 'button:not(:disabled):not([tabindex="-1"]), select:not(:disabled), input:not(:disabled), [tabindex="0"]';
+
+/**
+ * Wire up AccessibilityPanel markup from renderA11yPanelHTML() (or identical template markup).
+ * Options: target (element or () => element, default <html>), persist (true | storage key | false),
+ * value (initial prefs; saved ones win while persist is on), onChange(prefs, change), onOpenChange(open),
+ * portal (move the dialog to <body>; default true, because fixed panels must escape filtered or
+ * backdrop-filtered ancestors such as sticky headers).
+ * Returns { open, close, toggle, isOpen, get, set(key, value), setAll(prefs), reset, destroy }.
+ */
+export function mountA11yPanel(root, options = {}) {
+  const doc = root.ownerDocument ?? document;
+  const win = doc.defaultView ?? globalThis;
+  const { persist = true, onChange, onOpenChange, portal = true } = options;
+  const storageKey = persist === false ? null : typeof persist === 'string' ? persist : A11Y_STORAGE_KEY;
+  const target = () => (typeof options.target === 'function' ? options.target() : options.target) ?? doc.documentElement;
+  const panel = root.querySelector('.oc-a11y-panel');
+  const backdrop = root.querySelector('[data-a11y-backdrop]');
+  const trigger = root.querySelector('[data-a11y-open]');
+  const status = root.querySelector('[data-a11y-status]');
+  let labels = null;
+  try {
+    labels = JSON.parse(root.getAttribute('data-labels') || 'null');
+  } catch {
+    labels = null;
+  }
+  labels = labels ?? getA11yLabels('en');
+  if (portal) {
+    doc.body.appendChild(backdrop);
+    doc.body.appendChild(panel);
+  }
+  const saved = storageKey ? Object.fromEntries(Object.entries(loadA11yPrefs(storageKey)).filter(([k, v]) => v !== defaultA11yPrefs[k])) : {};
+  let prefs = normalizeA11yPrefs({ ...(options.value ?? {}), ...saved });
+  let openState = false;
+  let previous = null;
+  let unlockScroll = null;
+
+  const render = () => {
+    for (const el of panel.querySelectorAll('[data-a11y-key]')) {
+      const key = el.getAttribute('data-a11y-key');
+      const value = prefs[key];
+      if (el.getAttribute('role') === 'radiogroup') {
+        for (const r of el.querySelectorAll('[role="radio"]')) {
+          const on = r.getAttribute('data-value') === String(value);
+          r.setAttribute('aria-checked', String(on));
+          r.tabIndex = on ? 0 : -1;
+        }
+      } else if (el.getAttribute('role') === 'switch') {
+        const onValue = el.getAttribute('data-on');
+        el.setAttribute('aria-checked', String(onValue ? value === onValue : value === true));
+      } else if (el.tagName === 'SELECT') {
+        el.value = String(value);
+      } else if (el.type === 'range') {
+        el.value = String(value);
+        el.setAttribute('aria-valuetext', `${Math.round(value * 100)}%`);
+      }
+    }
+    const out = panel.querySelector('[data-a11y-output]');
+    if (out) out.textContent = `${Math.round(prefs.fontScale * 100)}%`;
+    for (const b of panel.querySelectorAll('[data-a11y-step]')) {
+      b.disabled = Number(b.getAttribute('data-a11y-step')) < 0 ? prefs.fontScale <= FONT_SCALE_MIN : prefs.fontScale >= FONT_SCALE_MAX;
+    }
+    const n = countActiveA11yPrefs(prefs);
+    const activeText = labels.active.replace('{n}', String(n));
+    const count = panel.querySelector('[data-a11y-count]');
+    if (count) count.textContent = activeText;
+    const reset = panel.querySelector('[data-a11y-reset]');
+    if (reset) reset.disabled = n === 0;
+    const badge = root.querySelector('[data-a11y-badge]');
+    if (badge) {
+      badge.textContent = String(n);
+      badge.hidden = n === 0;
+    }
+    const sr = root.querySelector('[data-a11y-active-sr]');
+    if (sr) sr.textContent = n ? ` (${activeText})` : '';
+    if (trigger && !trigger.classList.contains('oc-a11y-trigger--inline')) trigger.setAttribute('aria-label', n ? `${labels.trigger} (${activeText})` : labels.trigger);
+  };
+
+  const commit = (next, change) => {
+    prefs = normalizeA11yPrefs(next);
+    applyA11yPrefs(prefs, target());
+    if (storageKey) saveA11yPrefs(prefs, storageKey);
+    render();
+    onChange?.(prefs, change);
+    root.dispatchEvent(new win.CustomEvent('oc-change', { bubbles: true, detail: { prefs, change } }));
+  };
+  const announce = (text) => {
+    if (!status) return;
+    status.textContent = text;
+  };
+  const set = (key, value) => {
+    commit({ ...prefs, [key]: value }, { key, value });
+    announce(announceA11yChange(labels, key, prefs[key]));
+  };
+  const reset = () => {
+    commit({ ...defaultA11yPrefs }, { key: 'reset', value: null });
+    announce(labels.resetDone);
+  };
+
+  const focusables = () => [...panel.querySelectorAll(FOCUSABLE_IN_PANEL)];
+  const close = () => {
+    if (!openState) return;
+    openState = false;
+    unlockScroll?.();
+    unlockScroll = null;
+    backdrop.hidden = true;
+    panel.hidden = true;
+    // A closed panel is not a dialog: no hidden role="dialog" lingers in the page for assistive tech or tests.
+    for (const a of ['role', 'aria-modal', 'aria-labelledby']) panel.removeAttribute(a);
+    trigger?.setAttribute('aria-expanded', 'false');
+    trigger?.removeAttribute('aria-controls');
+    (trigger ?? previous)?.focus?.();
+    onOpenChange?.(false);
+  };
+  const open = () => {
+    if (openState) return;
+    openState = true;
+    previous = doc.activeElement;
+    // Modal like Dialog and Drawer: the page behind does not scroll while the panel is open.
+    const body = doc.body;
+    const before = body.style.overflow;
+    body.style.overflow = 'hidden';
+    unlockScroll = () => (body.style.overflow = before);
+    panel.setAttribute('role', 'dialog');
+    panel.setAttribute('aria-modal', 'true');
+    panel.setAttribute('aria-labelledby', panel.getAttribute('data-labelledby'));
+    backdrop.hidden = false;
+    panel.hidden = false;
+    trigger?.setAttribute('aria-expanded', 'true');
+    trigger?.setAttribute('aria-controls', panel.id);
+    panel.focus();
+    onOpenChange?.(true);
+  };
+  const onDocKey = (e) => {
+    if (!openState) return;
+    if (e.key === 'Escape') {
+      e.stopPropagation();
+      close();
+      return;
+    }
+    if (e.key !== 'Tab') return;
+    const items = focusables();
+    if (!items.length) return;
+    const first = items[0];
+    const last = items[items.length - 1];
+    const active = doc.activeElement;
+    if (!panel.contains(active) || active === panel) {
+      e.preventDefault();
+      (e.shiftKey ? last : first).focus();
+    } else if (e.shiftKey && active === first) {
+      e.preventDefault();
+      last.focus();
+    } else if (!e.shiftKey && active === last) {
+      e.preventDefault();
+      first.focus();
+    }
+  };
+  const onClick = (e) => {
+    const el = e.target.closest?.('button');
+    if (!el || !panel.contains(el) || el.disabled) return;
+    if (el.hasAttribute('data-a11y-close')) close();
+    else if (el.hasAttribute('data-a11y-reset')) reset();
+    else if (el.hasAttribute('data-a11y-step')) {
+      const v = prefs.fontScale + Number(el.getAttribute('data-a11y-step'));
+      set('fontScale', Math.round(Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, v)) * 100) / 100);
+    } else if (el.getAttribute('role') === 'switch') {
+      const key = el.getAttribute('data-a11y-key');
+      const onValue = el.getAttribute('data-on');
+      set(key, onValue ? (prefs[key] === onValue ? el.getAttribute('data-off') : onValue) : !prefs[key]);
+    } else if (el.getAttribute('role') === 'radio') {
+      set(el.closest('[data-a11y-key]').getAttribute('data-a11y-key'), el.getAttribute('data-value'));
+    }
+  };
+  const onChangeEvent = (e) => {
+    const key = e.target.getAttribute?.('data-a11y-key');
+    if (key && e.target.tagName === 'SELECT') set(key, e.target.value);
+  };
+  const onRange = (e) => {
+    const key = e.target.getAttribute?.('data-a11y-key');
+    if (key && e.target.type === 'range') set(key, Number(e.target.value));
+  };
+  const onKeyDown = (e) => {
+    const radio = e.target.closest?.('[role="radio"]');
+    if (!radio) return;
+    const group = radio.closest('[role="radiogroup"]');
+    const radios = [...group.querySelectorAll('[role="radio"]')];
+    const cols = Number(group.getAttribute('data-columns')) || radios.length;
+    const rtl = win.getComputedStyle?.(group).direction === 'rtl';
+    const vertical = cols < radios.length ? cols : 1;
+    const moves = { ArrowRight: rtl ? -1 : 1, ArrowLeft: rtl ? 1 : -1, ArrowDown: vertical, ArrowUp: -vertical };
+    const i = radios.indexOf(radio);
+    let next;
+    if (e.key in moves) next = (i + moves[e.key] + radios.length) % radios.length;
+    else if (e.key === 'Home') next = 0;
+    else if (e.key === 'End') next = radios.length - 1;
+    else return;
+    e.preventDefault();
+    set(group.getAttribute('data-a11y-key'), radios[next].getAttribute('data-value'));
+    radios[next].focus();
+  };
+  const toggle = () => (openState ? close() : open());
+
+  panel.addEventListener('click', onClick);
+  panel.addEventListener('change', onChangeEvent);
+  panel.addEventListener('input', onRange);
+  panel.addEventListener('keydown', onKeyDown);
+  backdrop.addEventListener('mousedown', close);
+  trigger?.addEventListener('click', toggle);
+  doc.addEventListener('keydown', onDocKey, true);
+
+  applyA11yPrefs(prefs, target());
+  render();
+
+  return {
+    open,
+    close,
+    toggle,
+    isOpen: () => openState,
+    get: () => prefs,
+    set,
+    setAll(next) {
+      prefs = normalizeA11yPrefs(next);
+      applyA11yPrefs(prefs, target());
+      render();
+    },
+    reset,
+    destroy() {
+      close();
+      panel.removeEventListener('click', onClick);
+      panel.removeEventListener('change', onChangeEvent);
+      panel.removeEventListener('input', onRange);
+      panel.removeEventListener('keydown', onKeyDown);
+      backdrop.removeEventListener('mousedown', close);
+      trigger?.removeEventListener('click', toggle);
+      doc.removeEventListener('keydown', onDocKey, true);
+      if (portal) {
+        root.appendChild(backdrop);
+        root.appendChild(panel);
+      }
+    },
+  };
+}

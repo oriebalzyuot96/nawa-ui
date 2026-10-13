@@ -31,6 +31,90 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
     </div>
   </section>
 
+  <section class="section section--alt" aria-labelledby="custom-brand">
+    <div class="container">
+      <p class="eyebrow">Custom brand colors</p>
+      <h2 id="custom-brand">Your color, every mode, still accessible</h2>
+      <p class="lead">
+        Pass any color to <code>createTheme()</code>. Orca keeps its hue and tunes lightness and chroma in OKLCH until every text,
+        control and focus pair passes WCAG 2.2 AA in light, dark and high contrast. Try a color that is hard to use, like a bright yellow.
+      </p>
+
+      <div class="brand-lab" data-brand-lab>
+        <div class="brand-lab__controls">
+          <div class="oc-field">
+            <label class="oc-label" for="brand-color">Brand color</label>
+            <div class="brand-lab__pick">
+              <input id="brand-color-swatch" type="color" value="#ff6a00" aria-label="Pick a brand color" data-brand-swatch />
+              <input id="brand-color" class="oc-input" value="#ff6a00" spellcheck="false" autocomplete="off" aria-describedby="brand-color-hint brand-color-error" data-brand-input />
+            </div>
+            <p id="brand-color-hint" class="oc-hint">Hex, rgb(), hsl(), oklch() or a color name.</p>
+            <p id="brand-color-error" class="oc-error-text" hidden data-brand-error>That is not a color Orca can read.</p>
+          </div>
+          <div class="oc-field">
+            <label class="oc-label" for="brand-neutral">Tint the neutrals (optional)</label>
+            <div class="brand-lab__pick">
+              <input id="brand-neutral" class="oc-input" placeholder="e.g. #334155" spellcheck="false" autocomplete="off" data-brand-neutral />
+            </div>
+          </div>
+          <div class="brand-lab__presets" role="group" aria-label="Example brand colors">
+            {['#ff6a00', '#ffd400', '#e11d48', '#0ea5e9', '#16a34a', '#7c3aed', '#111827'].map((c) => (
+              <button type="button" class="brand-lab__preset" data-brand-preset={c} style={`--preset: ${c}`}>
+                <span class="oc-sr-only">Use {c}</span>
+              </button>
+            ))}
+          </div>
+          <dl class="brand-lab__report" data-brand-report>
+            <div><dt>Light primary</dt><dd data-brand-out="light">#c55000</dd></div>
+            <div><dt>Dark primary</dt><dd data-brand-out="dark">#ff6a00</dd></div>
+            <div><dt>High contrast</dt><dd data-brand-out="hc">#963b00</dd></div>
+            <div><dt>WCAG pairs</dt><dd data-brand-out="pairs">All pass</dd></div>
+          </dl>
+          <div class="brand-lab__actions">
+            <button type="button" class="oc-btn oc-btn--primary oc-btn--sm" data-brand-copy="css">Copy CSS</button>
+            <button type="button" class="oc-btn oc-btn--secondary oc-btn--sm" data-brand-copy="code">Copy createTheme call</button>
+          </div>
+          <p class="oc-sr-only" role="status" aria-live="polite" data-brand-status></p>
+        </div>
+
+        <div class="brand-lab__previews">
+          {modes.map((mode) => (
+            <div class="theme-card brand-lab__card" data-theme={mode.key} data-brand-preview>
+              <div class="theme-card__title">
+                <span>{mode.label}</span>
+                <Badge variant="primary">brand</Badge>
+              </div>
+              <p class="brand-lab__text">
+                Body text with an <a href="#custom-brand">accent link</a> and a <span class="brand-lab__muted">muted note</span>.
+              </p>
+              <div class="theme-card__row">
+                <Button size="sm">Primary</Button>
+                <Button size="sm" variant="outline">Outline</Button>
+                <Button size="sm" variant="ghost">Ghost</Button>
+              </div>
+              <div class="theme-card__row">
+                <Badge variant="success">Success</Badge>
+                <Badge variant="warning">Warning</Badge>
+                <Badge variant="danger">Danger</Badge>
+              </div>
+              <ProgressBar value={64} label={`Brand theme ${mode.label} progress example`} />
+              <Checkbox label="Remember me" checked />
+            </div>
+          ))}
+        </div>
+      </div>
+      <details class="brand-lab__css">
+        <summary>Generated CSS</summary>
+        <pre><code data-brand-css></code></pre>
+      </details>
+      <p class="muted">
+        Bake a brand into the build instead (CSS plus React Native and Flutter tokens):
+        <code>node packages/core/scripts/build.mjs --brand "#ff6a00" --brand-name acme</code>, or an <code>orca.config.json</code> with
+        <code>{'{ "brands": [{ "name": "acme", "primary": "#ff6a00", "default": true }] }'}</code>.
+      </p>
+    </div>
+  </section>
+
   {modes.map((mode) => (
     <section class="section section--alt" aria-labelledby={`mode-${mode.key}`}>
       <div class="container">
@@ -78,3 +162,91 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
     </div>
   </section>
 </Base>
+
+<script>
+  import { applyCustomTheme, createTheme, themeToCode, type CustomTheme } from '@orca-ui/core/theme';
+
+  const lab = document.querySelector<HTMLElement>('[data-brand-lab]');
+  if (lab) {
+    const input = lab.querySelector<HTMLInputElement>('[data-brand-input]')!;
+    const swatch = lab.querySelector<HTMLInputElement>('[data-brand-swatch]')!;
+    const neutral = lab.querySelector<HTMLInputElement>('[data-brand-neutral]')!;
+    const error = lab.querySelector<HTMLElement>('[data-brand-error]')!;
+    const status = lab.querySelector<HTMLElement>('[data-brand-status]')!;
+    const cssOut = document.querySelector<HTMLElement>('[data-brand-css]')!;
+    const previews = [...lab.querySelectorAll<HTMLElement>('[data-brand-preview]')];
+    let theme: CustomTheme | null = null;
+
+    const update = () => {
+      try {
+        theme = createTheme({ primary: input.value.trim(), neutral: neutral.value.trim() || undefined, name: 'docs-brand' });
+      } catch {
+        error.hidden = false;
+        input.setAttribute('aria-invalid', 'true');
+        return;
+      }
+      error.hidden = true;
+      input.removeAttribute('aria-invalid');
+      // One <style data-theme-custom> for all three cards; each card keeps its own data-theme.
+      for (const card of previews) applyCustomTheme(theme, card);
+      const fails = Object.values(theme.failures).flat().length;
+      for (const mode of ['light', 'dark', 'hc'] as const) lab.querySelector(`[data-brand-out="${mode}"]`)!.textContent = theme.palette[mode].primary;
+      lab.querySelector('[data-brand-out="pairs"]')!.textContent = fails ? `${fails} below AA` : 'All pass (AA)';
+      cssOut.textContent = theme.css;
+      if (/^#[0-9a-f]{6}$/i.test(input.value.trim())) swatch.value = input.value.trim();
+    };
+    input.addEventListener('input', update);
+    neutral.addEventListener('input', update);
+    swatch.addEventListener('input', () => {
+      input.value = swatch.value;
+      update();
+    });
+    for (const b of lab.querySelectorAll<HTMLButtonElement>('[data-brand-preset]')) {
+      b.addEventListener('click', () => {
+        input.value = b.dataset.brandPreset!;
+        update();
+      });
+    }
+    for (const b of lab.querySelectorAll<HTMLButtonElement>('[data-brand-copy]')) {
+      b.addEventListener('click', async () => {
+        if (!theme) return;
+        const text = b.dataset.brandCopy === 'css' ? theme.css : themeToCode(theme);
+        try {
+          await navigator.clipboard.writeText(text);
+          status.textContent = b.dataset.brandCopy === 'css' ? 'CSS copied to the clipboard.' : 'createTheme call copied to the clipboard.';
+        } catch {
+          status.textContent = 'Copy is not available here. Select the text in "Generated CSS" instead.';
+        }
+      });
+    }
+    update();
+  }
+</script>
+
+<style>
+  .brand-lab { display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 1.5rem; margin-block: 1.5rem 1rem; align-items: start; }
+  .brand-lab__controls { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--oc-border-subtle); border-radius: var(--oc-radius-lg); background: var(--oc-surface); box-shadow: var(--oc-elev-1); }
+  .brand-lab__pick { display: flex; gap: 0.5rem; align-items: center; }
+  .brand-lab__pick .oc-input { flex: 1; min-width: 0; font-family: var(--oc-font-mono); }
+  .brand-lab__pick input[type='color'] { flex: none; width: 2.75rem; height: 2.5rem; padding: 0.125rem; border: 1px solid var(--oc-control-border); border-radius: var(--oc-radius); background: var(--oc-surface); cursor: pointer; }
+  .brand-lab__pick input[type='color']:focus-visible { outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+  .brand-lab__presets { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .brand-lab__preset { width: 2rem; height: 2rem; padding: 0; border: 2px solid var(--oc-surface); border-radius: 999px; background: var(--preset); box-shadow: 0 0 0 1px var(--oc-control-border); cursor: pointer; }
+  .brand-lab__preset:focus-visible { outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+  .brand-lab__report { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; margin: 0; }
+  .brand-lab__report div { display: grid; gap: 0.125rem; }
+  .brand-lab__report dt { color: var(--oc-text-muted); font-size: var(--oc-text-xs); }
+  .brand-lab__report dd { margin: 0; font-family: var(--oc-font-mono); font-size: var(--oc-text-sm); font-weight: 600; }
+  .brand-lab__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .brand-lab__previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); gap: 1rem; }
+  .brand-lab__text { margin: 0; font-size: var(--oc-text-md); line-height: var(--oc-leading); }
+  .brand-lab__text a { color: var(--oc-primary-ink); }
+  .brand-lab__muted { color: var(--oc-text-muted); }
+  .brand-lab [hidden] { display: none; }
+  .brand-lab__css { margin-block: 0.5rem 1rem; }
+  .brand-lab__css summary { cursor: pointer; font-weight: 600; }
+  .brand-lab__css pre { max-height: 18rem; overflow: auto; padding: 1rem; border-radius: var(--oc-radius); background: #0d1117; color: #e6edf3; font-size: 0.8125rem; }
+  @media (max-width: 52rem) {
+    .brand-lab { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

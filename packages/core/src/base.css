@@ -9,14 +9,26 @@
   --oc-font: 'IBM Plex Sans', 'IBM Plex Sans Arabic', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Cairo', sans-serif;
   --oc-font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace;
 
-  --oc-text-2xs: 0.6875rem; /* 11 */
-  --oc-text-xs: 0.75rem; /* 12 */
-  --oc-text-sm: 0.8125rem; /* 13 */
-  --oc-text-md: 0.875rem; /* 14 — control & body text in components */
-  --oc-text-lg: 1rem; /* 16 */
-  --oc-text-xl: 1.125rem; /* 18 — panel / dialog titles */
-  --oc-text-2xl: clamp(1.25rem, 1.1rem + 0.55vw, 1.5rem);
-  --oc-text-3xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
+  /* Readable font for data-a11y-font="readable" (Atkinson Hyperlegible, self-hosted in fonts/, SIL OFL). */
+  --oc-font-readable: 'Atkinson Hyperlegible', 'IBM Plex Sans Arabic', Verdana, Tahoma, 'Segoe UI', system-ui, sans-serif;
+}
+
+/* Type scale. --oc-user-font-scale (0.9–2, set by applyA11yPrefs or by hand) multiplies every step, on
+ * the root and on any container that carries its own scale, so text can grow to 200% without page zoom
+ * (WCAG 1.4.4). */
+:root,
+[data-a11y-font-scale] {
+  --oc-text-2xs: calc(0.6875rem * var(--oc-user-font-scale, 1)); /* 11 */
+  --oc-text-xs: calc(0.75rem * var(--oc-user-font-scale, 1)); /* 12 */
+  --oc-text-sm: calc(0.8125rem * var(--oc-user-font-scale, 1)); /* 13 */
+  --oc-text-md: calc(0.875rem * var(--oc-user-font-scale, 1)); /* 14 — control & body text in components */
+  --oc-text-lg: calc(1rem * var(--oc-user-font-scale, 1)); /* 16 */
+  --oc-text-xl: calc(1.125rem * var(--oc-user-font-scale, 1)); /* 18 — panel / dialog titles */
+  --oc-text-2xl: calc(clamp(1.25rem, 1.1rem + 0.55vw, 1.5rem) * var(--oc-user-font-scale, 1));
+  --oc-text-3xl: calc(clamp(1.5rem, 1.2rem + 1.2vw, 2rem) * var(--oc-user-font-scale, 1));
+}
+
+:root {
 
   --oc-leading-none: 1;
   --oc-leading-tight: 1.25;
@@ -171,9 +183,16 @@
   border: 0;
 }
 
-/* "Skip to content" link: hidden until focused. */
+/* "Skip to content" link: hidden until focused.
+ * It must appear on the very first frame of focus. The reduced-motion block below gives every oc-
+ * element `transition-duration: 0.01ms`, which (with the default `transition-property: all`) turned the
+ * top: -100px → 1rem jump into a transition; a transition only advances when the page renders frames,
+ * so in a background or throttled tab (headless browsers, a just-opened window) the link stayed at
+ * -100px after Tab. The link therefore opts out of transitions and animations entirely. */
 .oc-skip-link {
   position: absolute;
+  transition: none !important;
+  animation: none !important;
   inset-inline-start: 1rem;
   top: -100px;
   z-index: var(--oc-z-tooltip);
@@ -187,7 +206,8 @@
   font-weight: var(--oc-weight-semibold);
   text-decoration: none;
 }
-.oc-skip-link:focus { top: 1rem; outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+.oc-skip-link:focus,
+.oc-skip-link:focus-visible { top: 1rem; outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
 
 /* Tabular figures helper. */
 .oc-tabular { font-variant-numeric: tabular-nums; }
@@ -221,6 +241,8 @@
   .oc-spinner { animation: oc-spin 1.6s linear infinite !important; }
   .oc-skeleton { animation: none !important; background: var(--oc-surface-muted); }
   .oc-progress--indeterminate .oc-progress__bar { animation: none !important; width: 100% !important; opacity: 0.5; }
+  /* Must come after the catch-all above (same specificity): the skip link never transitions. */
+  .oc-skip-link { transition: none !important; }
 }
 
 /* ---------- Windows High Contrast / forced colors ---------- */

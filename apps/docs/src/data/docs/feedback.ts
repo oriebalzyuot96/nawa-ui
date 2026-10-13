@@ -8,7 +8,7 @@ export const feedback: CategoryDoc = {
   title: 'Feedback components — alerts, toasts, swal dialogs, loaders, skeletons, progress',
   h1: 'Feedback: alerts, toasts & loaders',
   description:
-    'Accessible feedback components with live demos: Alert, Message, SweetAlert-style swal dialogs, Toaster and toast(), Toast, 15 Loader types, LoaderOverlay, PageLoader, TopProgressBar, Skeleton, Spinner and ProgressBar.',
+    'Accessible feedback components with live demos: Alert, Message, SweetAlert-style swal dialogs with illustrations and presets, optional UI sounds, Toaster and toast(), Toast, 15 Loader types, LoaderOverlay, PageLoader, TopProgressBar, Skeleton, Spinner and ProgressBar.',
   intro:
     'Tell people what happened and what is happening. Messages use polite live regions (errors use assertive ones), loaders announce their label once, and every animation respects prefers-reduced-motion.',
   entries: [
@@ -52,7 +52,8 @@ export const feedback: CategoryDoc = {
       props: [
         ['<SwalHost />', 'component', 'Render once near the app root.'],
         ['swal.fire(options)', 'Promise<SwalResult>', '{ isConfirmed, isDenied, isDismissed, value, dismiss }.'],
-        ['swal.success / error / warning / info / question', '(title, text?, options?)', 'Shortcuts.'],
+        ['swal.success / error / warning / info / question', '(title, text?, options?)', 'Shortcuts (pass { illustration: true } for a scene).'],
+        ['illustration / layout / locale', '…', 'See “Illustrated swal & presets” below.'],
         ['icon / title / text / html', '…', 'Content.'],
         ['showCancelButton / showDenyButton', 'boolean', 'Extra buttons.'],
         ['input / inputValidator / preConfirm', '…', 'Prompts with validation and async confirm.'],
@@ -77,6 +78,71 @@ const { value: email } = await swal.fire({
   title: 'Your email', input: 'email', inputLabel: 'Email address',
   inputValidator: (v) => (!v ? 'Email is required' : undefined),
 });`,
+      },
+    },
+    {
+      id: 'swal-illustrated',
+      name: 'Illustrated swal & presets',
+      description:
+        'Dialogs with themeable scenes from @orca-ui/illustrations: an illustration layout with a status badge, a full-bleed hero band, tone-tinted backdrops, and ready presets with English and Arabic copy.',
+      props: [
+        ['illustration', "IllustrationName | ReactElement | true", 'A scene name (e.g. "offline"), any node, or true to pick one from the icon type.'],
+        ['layout', "'icon' | 'illustration' | 'hero'", 'Icon = animated glyph; illustration = scene + status badge; hero = large scene on a tinted band.'],
+        ['locale / labels', "'en' | 'ar' / Partial<SwalLabels>", 'Built-in copy language (sets lang and dir) and per-string overrides.'],
+        ['confirmButtonVariant', "'primary' | 'danger'", 'Danger for destructive confirms.'],
+        ['sheet', 'boolean', 'Bottom sheet under 640px (default true).'],
+        ['sound', 'UiSoundName | false', 'Sound requested on open (needs SoundProvider); false keeps the dialog silent.'],
+        ['swal.confirmDelete(item?, options?)', 'Promise<SwalResult>', 'Cancel focused; isConfirmed = delete.'],
+        ['swal.unsavedChanges(options?)', 'Promise<SwalResult>', 'isConfirmed = save, isDenied = discard, dismissed = stay.'],
+        ['swal.sessionExpired / offline / permissionDenied / serverError', '(options?) => Promise<SwalResult>', 'Hero presets with consistent copy.'],
+        ['swal.configure(defaults)', 'void', "App-wide defaults, e.g. { locale: 'ar', illustration: true }."],
+      ],
+      a11y:
+        'Roles, focus trap, Escape and focus return are unchanged. Scenes are decorative (aria-hidden): the title and text carry the meaning, and the status keeps a visible badge plus a screen-reader prefix. The entrance animation is removed under prefers-reduced-motion; forced colors get plain outlines.',
+      code: {
+        react: `<SwalHost />
+
+await swal.success('All done!', 'Your project is live.', { illustration: true });
+await swal.fire({ icon: 'info', title: 'Welcome', illustration: 'welcome', layout: 'hero' });
+
+const r = await swal.confirmDelete('Q3 report.pdf');
+if (r.isConfirmed) remove();
+
+const choice = await swal.unsavedChanges({ locale: 'ar' });
+if (choice.isConfirmed) save(); else if (choice.isDenied) discard();
+
+swal.configure({ locale: 'ar', illustration: true }); // app-wide defaults`,
+      },
+    },
+    {
+      id: 'sound',
+      name: 'Sound (SoundProvider, useSound)',
+      description:
+        'Optional UI sounds synthesized with the Web Audio API — no audio files. Off by default, never before a user gesture, silent in hidden tabs, with four themes, master volume and a reduced mode. Swal, toasts and loaders request sounds through emitUiSound.',
+      props: [
+        ['<SoundProvider>', 'enabled theme volume allowed reduced', 'enabled/theme/volume are defaults for users without a saved choice; allowed=false silences the whole app.'],
+        ['useSound()', 'UseSound', '{ enabled, theme, volume, reduced, unlocked, supported, play, setEnabled, toggle, setTheme, setVolume, setReduced }. User changes persist to localStorage ("oc-sound").'],
+        ['UiSoundName', '18 sounds', 'click · toggle-on · toggle-off · select · success · error · warning · info · notification · delete · send · pop · swipe · open · close · drag-start · drop · typing.'],
+        ['themes', "'soft' | 'crisp' | 'playful' | 'minimal'", 'Timbre presets.'],
+        ['emitUiSound(name)', '@orca-ui/core/sound', 'Request a sound from any code without depending on the engine.'],
+        ['createSoundEngine(options)', '@orca-ui/core/sound', 'Framework-agnostic engine (play, setEnabled, setVolume, setTheme, isEnabled, subscribe, destroy).'],
+        ['<html data-sound="off | reduced">', 'attribute', 'Page-level mute or reduced mode (e.g. from an accessibility panel).'],
+      ],
+      a11y:
+        'Sound is never the only signal: every component keeps its visual state and live-region announcement. Users can turn sound off, lower it, or keep only status sounds; the choice is remembered.',
+      code: {
+        react: `<SoundProvider theme="soft">
+  <App />
+</SoundProvider>
+
+function SoundToggle() {
+  const sound = useSound();
+  return <Switch label="UI sounds" checked={sound.enabled} onChange={sound.setEnabled} />;
+}
+
+// Anywhere, framework-agnostic:
+import { emitUiSound } from '@orca-ui/core/sound';
+emitUiSound('send');`,
       },
     },
     {

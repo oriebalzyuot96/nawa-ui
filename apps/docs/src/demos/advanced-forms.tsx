@@ -165,11 +165,31 @@ function InputMaskDemo() {
 }
 
 function InputOtpDemo() {
-  const [status, setStatus] = useState('Waiting for code');
+  const [code, setCode] = useState('');
+  const [result, setResult] = useState<'idle' | 'ok' | 'bad'>('idle');
   return (
     <div className="demo-col">
-      <InputOtp label="Verification code" hint="Try 123456" length={6} integerOnly onComplete={(c) => setStatus(c === '123456' ? 'Verified ✓' : 'Wrong code, try 123456')} onChange={() => setStatus('Typing…')} />
-      <Output label="Status">{status}</Output>
+      <InputOtp
+        label="Verification code"
+        hint="We sent a 6-digit code to •••• 4821. Try 123456."
+        length={6}
+        groups={[3, 3]}
+        integerOnly
+        value={code}
+        onChange={(c) => {
+          setCode(c);
+          setResult('idle');
+        }}
+        onComplete={(c) => setResult(c === '123456' ? 'ok' : 'bad')}
+        error={result === 'bad' ? 'That code did not match. Check the SMS and try again.' : undefined}
+        success={result === 'ok' ? 'Verified — you are signed in.' : undefined}
+        resendAfter={30}
+        onResend={() => {
+          setCode('');
+          setResult('idle');
+        }}
+      />
+      <InputOtp label="Card PIN" length={4} integerOnly mask revealable defaultValue="27" />
     </div>
   );
 }
@@ -207,24 +227,22 @@ function KnobDemo() {
 
 function ColorDemo() {
   const [color, setColor] = useState('#5b34d6');
+  const presets = [
+    { value: '#5b34d6', label: 'Violet' },
+    { value: '#0f766e', label: 'Teal' },
+    { value: '#be123c', label: 'Rose' },
+    { value: '#b45309', label: 'Amber' },
+    { value: '#047857', label: 'Emerald' },
+    { value: '#334155', label: 'Slate' },
+  ];
   return (
-    <>
-      <ColorPicker
-        label="Brand colour"
-        value={color}
-        onChange={setColor}
-        showInput
-        presets={[
-          { value: '#5b34d6', label: 'Violet' },
-          { value: '#0f766e', label: 'Teal' },
-          { value: '#be123c', label: 'Rose' },
-          { value: '#b45309', label: 'Amber' },
-          { value: '#047857', label: 'Emerald' },
-          { value: '#334155', label: 'Slate' },
-        ]}
-      />
-      <span aria-hidden="true" style={{ width: '3rem', height: '3rem', borderRadius: '50%', background: color, border: '2px solid var(--oc-border)' }} />
-    </>
+    <div className="demo-col">
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-start' }}>
+        <ColorPicker label="Brand colour (popover)" value={color} onChange={setColor} alpha contrastWith="#ffffff" presets={presets} />
+        <ColorPicker label="Text colour (inline)" mode="inline" defaultValue="#1d4ed8" defaultFormat="oklch" contrastWith="#ffffff" presets={presets.slice(0, 4)} />
+      </div>
+      <Output label="Value">{color}</Output>
+    </div>
   );
 }
 
@@ -378,5 +396,5 @@ export default createDemoIsland(
     iconfield: IconFieldDemo,
     keyfilter: KeyFilterDemo,
   },
-  ['autocomplete', 'multiselect', 'listbox', 'cascadeselect', 'treeselect', 'inputotp', 'datepicker', 'selectbutton', 'inputgroup'],
+  ['autocomplete', 'multiselect', 'listbox', 'cascadeselect', 'treeselect', 'inputotp', 'colorpicker', 'datepicker', 'selectbutton', 'inputgroup'],
 );

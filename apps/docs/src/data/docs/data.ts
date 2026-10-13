@@ -220,21 +220,29 @@ export const data: CategoryDoc = {
     {
       id: 'timeline',
       name: 'Timeline',
-      description: 'A vertical list of events with time, description and status colour.',
+      description: 'Events in vertical, horizontal or alternating layouts, with status markers, icons or avatars, relative times, date groups, expandable details and a progress connector.',
       props: [
-        ['items', 'TimelineItem[]', '{ title, time?, description?, variant? }.'],
+        ['items', 'TimelineItem[]', '{ title, description?, time?, date?, status?, variant?, icon?, avatar?, details?, meta? }.'],
+        ['layout', "'vertical' | 'horizontal' | 'alternate'", 'Horizontal and alternate fall back to vertical in narrow containers.'],
+        ['relative / locale / now', 'boolean / string / Date', '"2h ago" labels with the full date in the tooltip.'],
+        ['groupBy', "'day' | 'month' | (item) => string", 'Date headings (Today, Yesterday…).'],
+        ['loading', 'boolean', 'Skeleton while data loads.'],
+        ['reveal', 'boolean', 'Fade items in on scroll (off with reduced motion).'],
       ],
-      a11y: 'An ordered list, so the number of events and their order are announced.',
+      keys: [['Enter / Space', 'Show or hide the details of an item (on its toggle)']],
+      a11y: 'Ordered lists (one per date group, labelled by its heading). Status is also spoken ("completed", aria-current for the current step); relative times include the absolute date for screen readers; markers are decorative.',
       code: {
-        react: `<Timeline items={[
-  { title: 'Project created', time: 'Mon 09:12' },
-  { title: 'Design approved', time: 'Tue 14:30', variant: 'success' },
+        react: `<Timeline relative groupBy="day" items={[
+  { title: 'Order placed', date: placedAt, status: 'complete', icon: <CartIcon /> },
+  { title: 'Shipped', date: shippedAt, status: 'current', details: <Tracking id="1Z999" /> },
+  { title: 'Delivered', status: 'upcoming' },
 ]} />`,
         vue: `<Timeline :items="events" />`,
         svelte: `<Timeline items={events} />`,
         astro: `<Timeline items={events} />`,
         rn: `<Timeline items={events} />`,
       },
+      note: 'The rich options (layouts, dates, details) are React-only for now; other frameworks render the classic vertical timeline.',
     },
   ],
 };

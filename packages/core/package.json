@@ -12,6 +12,13 @@
     "src/a11y.d.ts",
     "src/theme.js",
     "src/theme.d.ts",
+    "src/motion.js",
+    "src/motion.d.ts",
+    "src/sound.js",
+    "src/sound.d.ts",
+    "src/a11y-prefs.js",
+    "src/a11y-prefs.d.ts",
+    "fonts",
     "README.md"
   ],
   "style": "orca-ui.css",
@@ -32,6 +39,20 @@
     "./theme": {
       "types": "./src/theme.d.ts",
       "default": "./src/theme.js"
+    },
+    "./a11y-prefs": {
+      "types": "./src/a11y-prefs.d.ts",
+      "default": "./src/a11y-prefs.js"
+    },
+    "./fonts/*": "./fonts/*",
+    "./fonts.css": "./fonts/atkinson-hyperlegible.css",
+    "./sound": {
+      "types": "./src/sound.d.ts",
+      "default": "./src/sound.js"
+    },
+    "./motion": {
+      "types": "./src/motion.d.ts",
+      "default": "./src/motion.js"
     }
   },
   "sideEffects": [

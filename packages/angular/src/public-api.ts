@@ -83,3 +83,5 @@ export const ORCA_UI = [
   OcDialogFooter,
   OcToaster,
 ] as const;
+export * from './lib/sound';
+export * from './lib/accessibility';

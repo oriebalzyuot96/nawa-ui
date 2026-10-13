@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   Button,
@@ -10,8 +10,11 @@ import {
   Message,
   PageLoader,
   ProgressBar,
+  Segmented,
   Select,
   SkeletonCard,
+  Slider,
+  SoundProvider,
   SkeletonText,
   Skeleton,
   Spinner,
@@ -23,13 +26,42 @@ import {
   toast,
   topProgress,
   useAsyncAction,
+  useSound,
   type LoaderType,
+  type SoundTheme,
+  type SwalLayout,
+  type SwalLocale,
+  type UiSoundName,
   type ToastItem,
   type ToasterPosition,
 } from '@orca-ui/react';
 import { createDemoIsland, Output, Row, SwitchField } from './shared';
 
 const wait = (ms: number) => new Promise<void>((r) => window.setTimeout(r, ms));
+
+/* Several demos on this page fire swal dialogs; exactly one SwalHost may render them. */
+let swalHostOwner: symbol | null = null;
+const swalHostClaims = new Set<() => void>();
+function SharedSwalHost() {
+  const [id] = useState(() => Symbol('swal-host'));
+  const [own, setOwn] = useState(false);
+  useEffect(() => {
+    const claim = () => {
+      if (!swalHostOwner) swalHostOwner = id;
+      setOwn(swalHostOwner === id);
+    };
+    claim();
+    swalHostClaims.add(claim);
+    return () => {
+      swalHostClaims.delete(claim);
+      if (swalHostOwner === id) {
+        swalHostOwner = null;
+        swalHostClaims.forEach((c) => c());
+      }
+    };
+  }, [id]);
+  return own ? <SwalHost /> : null;
+}
 
 function AlertDemo() {
   const [shown, setShown] = useState(true);
@@ -118,7 +150,7 @@ function SwalDemo() {
   };
   return (
     <>
-      <SwalHost />
+      <SharedSwalHost />
       <Button variant="danger" onClick={confirmDelete}>
         Confirm delete
       </Button>
@@ -134,6 +166,182 @@ function SwalDemo() {
       </Button>
       <Output label="Result">{result}</Output>
     </>
+  );
+}
+
+type DemoTone = 'success' | 'error' | 'warning' | 'info' | 'question';
+
+const TONE_COPY: Record<SwalLocale, Record<DemoTone, [string, string]>> = {
+  en: {
+    success: ['All done!', 'Your project was published and is live for your team.'],
+    error: ['Payment failed', 'Your card was declined. Try another card or contact your bank.'],
+    warning: ['Scheduled maintenance', 'Some features will be unavailable tonight from 01:00 to 02:00.'],
+    info: ['Welcome aboard', 'Take a quick tour to see what’s new in your workspace.'],
+    question: ['No matches yet', 'Do you want to widen your search to every project?'],
+  },
+  ar: {
+    success: ['تمّ كل شيء!', 'نُشر مشروعك وأصبح متاحًا لفريقك.'],
+    error: ['تعذّر الدفع', 'رُفضت بطاقتك. جرّب بطاقة أخرى أو تواصل مع البنك.'],
+    warning: ['صيانة مجدولة', 'بعض الميزات لن تكون متاحة الليلة من 01:00 إلى 02:00.'],
+    info: ['أهلًا بك', 'خذ جولة سريعة لتتعرّف على الجديد في مساحة عملك.'],
+    question: ['لا توجد نتائج بعد', 'هل تريد توسيع البحث ليشمل كل المشاريع؟'],
+  },
+};
+
+const TONE_BUTTONS: Array<[DemoTone, string, 'primary' | 'secondary' | 'danger']> = [
+  ['success', 'Success', 'primary'],
+  ['error', 'Error', 'danger'],
+  ['warning', 'Warning', 'secondary'],
+  ['info', 'Info', 'secondary'],
+  ['question', 'Question', 'secondary'],
+];
+
+function IllustratedSwalDemo() {
+  const [layout, setLayout] = useState<SwalLayout>('illustration');
+  const [locale, setLocale] = useState<SwalLocale>('en');
+  const [result, setResult] = useState('—');
+  const show = async (tone: DemoTone) => {
+    const [title, text] = TONE_COPY[locale][tone];
+    const r = await swal[tone](title, text, {
+      illustration: true,
+      layout,
+      locale,
+      showCancelButton: tone === 'question',
+      confirmButtonText: tone === 'question' ? (locale === 'ar' ? 'وسّع البحث' : 'Search everywhere') : undefined,
+    });
+    setResult(r.isConfirmed ? 'confirmed' : `dismissed (${r.dismiss ?? '—'})`);
+  };
+  const run = async (name: string, p: Promise<{ isConfirmed: boolean; isDenied: boolean; dismiss?: string }>) => {
+    const r = await p;
+    setResult(`${name}: ${r.isConfirmed ? 'confirmed' : r.isDenied ? 'denied' : `dismissed (${r.dismiss ?? '—'})`}`);
+  };
+  return (
+    <div className="demo-col">
+      <SharedSwalHost />
+      <Row>
+        <Segmented
+          label="Layout"
+          value={layout}
+          onChange={(v) => setLayout(v as SwalLayout)}
+          options={[
+            { label: 'Illustration', value: 'illustration' },
+            { label: 'Hero', value: 'hero' },
+            { label: 'Icon', value: 'icon' },
+          ]}
+        />
+        <Segmented
+          label="Language"
+          value={locale}
+          onChange={(v) => setLocale(v as SwalLocale)}
+          options={[
+            { label: 'English', value: 'en' },
+            { label: 'العربية', value: 'ar' },
+          ]}
+        />
+      </Row>
+      <Row>
+        {TONE_BUTTONS.map(([tone, label, variant]) => (
+          <Button key={tone} variant={variant} onClick={() => void show(tone)}>
+            {label}
+          </Button>
+        ))}
+      </Row>
+      <p className="muted" style={{ margin: 0 }}>
+        Presets
+      </p>
+      <Row>
+        <Button variant="danger" onClick={() => void run('confirmDelete', swal.confirmDelete(locale === 'ar' ? 'تقرير الربع الثالث.pdf' : 'Q3 report.pdf', { locale, layout: layout === 'icon' ? 'icon' : undefined }))}>
+          Delete file
+        </Button>
+        <Button variant="secondary" onClick={() => void run('unsavedChanges', swal.unsavedChanges({ locale }))}>
+          Unsaved changes
+        </Button>
+        <Button variant="secondary" onClick={() => void run('sessionExpired', swal.sessionExpired({ locale }))}>
+          Session expired
+        </Button>
+        <Button variant="secondary" onClick={() => void run('offline', swal.offline({ locale }))}>
+          Offline
+        </Button>
+        <Button variant="secondary" onClick={() => void run('permissionDenied', swal.permissionDenied({ locale }))}>
+          No permission
+        </Button>
+        <Button variant="secondary" onClick={() => void run('serverError', swal.serverError({ locale }))}>
+          Server error
+        </Button>
+      </Row>
+      <Output label="Result">{result}</Output>
+    </div>
+  );
+}
+
+const SOUND_LABELS: Record<UiSoundName, string> = {
+  click: 'Click',
+  'toggle-on': 'Toggle on',
+  'toggle-off': 'Toggle off',
+  select: 'Select',
+  success: 'Success',
+  error: 'Error',
+  warning: 'Warning',
+  info: 'Info',
+  notification: 'Notification',
+  delete: 'Delete',
+  send: 'Send',
+  pop: 'Pop',
+  swipe: 'Swipe',
+  open: 'Open sheet',
+  close: 'Close sheet',
+  'drag-start': 'Drag start',
+  drop: 'Drop',
+  typing: 'Typing',
+};
+
+function SoundPanel() {
+  const s = useSound();
+  const status = !s.supported ? 'Web Audio is not available in this browser' : !s.enabled ? 'Off — turn sound on to hear previews' : `On · ${s.theme} · ${Math.round(s.volume * 100)}%`;
+  return (
+    <div className="demo-col">
+      <Row>
+        <SwitchField label="UI sounds" checked={s.enabled} onChange={s.setEnabled} />
+        <SwitchField label="Reduced (status sounds only)" checked={s.reduced} onChange={s.setReduced} />
+      </Row>
+      <Row>
+        <Segmented
+          label="Sound theme"
+          value={s.theme}
+          onChange={(v) => s.setTheme(v as SoundTheme)}
+          options={s.themes.map((t) => ({ label: t[0].toUpperCase() + t.slice(1), value: t }))}
+        />
+        <div style={{ minWidth: '12rem' }}>
+          <Slider label="Volume" showValue value={Math.round(s.volume * 100)} onChange={(v) => s.setVolume(v / 100)} />
+        </div>
+      </Row>
+      <div role="group" aria-label="Preview sounds" style={{ display: 'grid', gap: '0.5rem', gridTemplateColumns: 'repeat(auto-fill, minmax(8.5rem, 1fr))' }}>
+        {s.sounds.map((name) => (
+          <Button key={name} size="sm" variant="secondary" onClick={() => s.play(name)}>
+            {SOUND_LABELS[name]}
+          </Button>
+        ))}
+      </div>
+      <Row>
+        <span className="muted">With components:</span>
+        <Button size="sm" variant="secondary" onClick={() => void swal.success('Published', 'Dialogs request a sound on open, confirm and cancel.', { illustration: true })}>
+          Open a dialog
+        </Button>
+        <Button size="sm" variant="secondary" onClick={() => void swal.confirmDelete('draft.md')}>
+          Confirm delete
+        </Button>
+      </Row>
+      <Output label="Sound">{status}</Output>
+    </div>
+  );
+}
+
+function SoundDemo() {
+  return (
+    <SoundProvider>
+      <SharedSwalHost />
+      <SoundPanel />
+    </SoundProvider>
   );
 }
 
@@ -376,6 +584,8 @@ export default createDemoIsland(
     alert: AlertDemo,
     message: MessageDemo,
     swal: SwalDemo,
+    'swal-illustrated': IllustratedSwalDemo,
+    sound: SoundDemo,
     toaster: ToasterDemo,
     toast: ToastDemo,
     loader: LoaderDemo,
@@ -388,5 +598,5 @@ export default createDemoIsland(
     progressbar: ProgressDemo,
     skeleton: SkeletonDemo,
   },
-  ['alert', 'message', 'toaster', 'loader', 'loaderoverlay', 'useasyncaction', 'progressbar', 'skeleton'],
+  ['alert', 'message', 'swal-illustrated', 'sound', 'toaster', 'loader', 'loaderoverlay', 'useasyncaction', 'progressbar', 'skeleton'],
 );

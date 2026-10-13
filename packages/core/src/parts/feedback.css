@@ -74,12 +74,18 @@
   color: var(--oc-text);
 }
 .oc-swal--modal {
+  --oc-swal-backdrop-tone: var(--oc-primary);
   background:
-    radial-gradient(60% 50% at 50% 40%, color-mix(in srgb, var(--oc-primary) 14%, transparent), transparent 70%),
+    radial-gradient(60% 50% at 50% 40%, color-mix(in srgb, var(--oc-swal-backdrop-tone) 16%, transparent), transparent 70%),
     var(--oc-overlay);
   backdrop-filter: blur(3px) saturate(1.1);
   animation: oc-fade 180ms ease-out;
 }
+/* Tone-tinted backdrop glow (the status color bleeds softly behind the card). */
+.oc-swal--modal[data-tone='success'] { --oc-swal-backdrop-tone: var(--oc-success); }
+.oc-swal--modal[data-tone='error'] { --oc-swal-backdrop-tone: var(--oc-danger); }
+.oc-swal--modal[data-tone='warning'] { --oc-swal-backdrop-tone: var(--oc-warning); }
+.oc-swal--modal[data-tone='info'] { --oc-swal-backdrop-tone: var(--oc-info); }
 .oc-swal--toast { pointer-events: none; z-index: var(--oc-z-toast); }
 .oc-swal--toast .oc-swal__popup { pointer-events: auto; }
 
@@ -174,6 +180,96 @@
   border-radius: var(--oc-radius);
   box-shadow: var(--oc-fb-hairline);
 }
+
+/* ---------- Illustrated layouts ----------
+ * The scene (from @orca-ui/illustrations) is retinted with the dialog tone through --oc-illus-*,
+ * sits in a soft tonal spotlight and carries a small status badge, so the status never depends on
+ * the picture. Decorative (aria-hidden): the title and text carry the meaning. */
+.oc-swal__art,
+.oc-swal__hero {
+  --oc-illus-accent: var(--oc-swal-tone);
+  --oc-illus-soft: color-mix(in srgb, var(--oc-swal-tone) 18%, var(--oc-surface));
+  --oc-illus-alt: color-mix(in srgb, var(--oc-swal-tone) 6%, var(--oc-surface-alt));
+  position: relative;
+  isolation: isolate;
+  flex: none;
+}
+.oc-swal__scene { width: 100%; animation: oc-fb-art-in 720ms var(--oc-fb-spring) 40ms both; }
+.oc-swal__scene > svg,
+.oc-swal__scene .oc-illus { display: block; width: 100%; max-inline-size: none; height: auto; margin-inline: auto; }
+.oc-swal__badge {
+  position: absolute;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0.45rem;
+  border-radius: 50%;
+  background: var(--oc-surface-raised);
+  color: var(--oc-swal-tone);
+  box-shadow:
+    0 0 0 4px var(--oc-surface-raised),
+    inset 0 0 0 1px color-mix(in srgb, var(--oc-swal-tone) 26%, transparent),
+    0 10px 22px -10px color-mix(in srgb, var(--oc-swal-tone) 75%, transparent);
+  animation: oc-fb-pop-in 520ms var(--oc-fb-spring) 420ms both;
+}
+.oc-swal__badge--custom { font-size: 1.15rem; }
+.oc-swal__badge .oc-glyph { width: 100%; height: 100%; }
+
+/* layout: 'illustration' — scene above the title, badge on its lower inline-end corner */
+.oc-swal__popup--illustration { width: min(100%, 27rem); padding-top: 1.5rem; gap: 0.6rem; }
+.oc-swal__art { width: min(100%, 13.5rem); margin-bottom: 1.35rem; }
+.oc-swal__art::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 4% -14% -2%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--oc-swal-tone) 16%, transparent), transparent);
+}
+.oc-swal__art .oc-swal__badge { left: 50%; bottom: -1.05rem; width: 2.5rem; height: 2.5rem; margin-left: -1.25rem; padding: 0.4rem; }
+
+/* layout: 'hero' — full-bleed tinted band, large scene, badge straddling the band edge */
+.oc-swal__popup.oc-swal__popup--hero { width: min(100%, 28rem); padding-top: 0; gap: 0.6rem; }
+.oc-swal__hero {
+  display: grid;
+  place-items: end center;
+  align-self: stretch;
+  margin: 0 -1.5rem 1.6rem;
+  padding: 1.75rem 1.5rem 0;
+  background:
+    radial-gradient(70% 90% at 50% 100%, color-mix(in srgb, var(--oc-swal-tone) 24%, transparent), transparent 72%),
+    linear-gradient(180deg, color-mix(in srgb, var(--oc-swal-tone) 5%, var(--oc-surface-raised)), color-mix(in srgb, var(--oc-swal-tone) 13%, var(--oc-surface-raised)));
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--oc-swal-tone) 22%, var(--oc-border));
+}
+/* Dotted grid that fades toward the edges. */
+.oc-swal__hero::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: radial-gradient(circle, color-mix(in srgb, var(--oc-swal-tone) 30%, transparent) 1px, transparent 1.6px) 0 0 / 16px 16px;
+  -webkit-mask-image: radial-gradient(75% 85% at 50% 55%, #000, transparent 78%);
+  mask-image: radial-gradient(75% 85% at 50% 55%, #000, transparent 78%);
+  opacity: 0.7;
+}
+/* The scene's horizon line lands on the band edge. */
+.oc-swal__hero .oc-swal__scene { position: relative; z-index: 0; width: min(100%, 14.5rem); margin-bottom: -0.85rem; }
+.oc-swal__hero .oc-swal__badge { left: 50%; bottom: -1.375rem; margin-left: -1.375rem; }
+.oc-swal__popup--hero .oc-swal__close {
+  z-index: 2;
+  background: color-mix(in srgb, var(--oc-surface-raised) 72%, transparent);
+  box-shadow: var(--oc-fb-hairline);
+}
+.oc-swal__popup--hero .oc-swal__image { margin-top: 0.25rem; }
+
+@keyframes oc-fb-art-in {
+  0% { opacity: 0; transform: translateY(12px) scale(0.92); filter: blur(4px); }
+  60% { opacity: 1; filter: blur(0); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes oc-fb-sheet-in { from { transform: translateY(100%); } to { transform: none; } }
 
 .oc-swal__form { display: flex; flex-direction: column; align-items: center; gap: 0.85rem; width: 100%; }
 .oc-swal__content { display: flex; flex-direction: column; gap: 0.35rem; width: 100%; }
@@ -288,6 +384,14 @@
     0 8px 18px -10px color-mix(in srgb, var(--oc-primary) 80%, transparent);
 }
 .oc-swal__btn--confirm:hover:not([aria-disabled='true']) { background: var(--oc-primary-hover); }
+.oc-swal__btn--confirm.oc-swal__btn--danger {
+  background: var(--oc-danger);
+  color: var(--oc-on-danger);
+  box-shadow:
+    inset 0 1px 0 color-mix(in srgb, var(--oc-on-danger) 22%, transparent),
+    0 8px 18px -10px color-mix(in srgb, var(--oc-danger) 80%, transparent);
+}
+.oc-swal__btn--confirm.oc-swal__btn--danger:hover:not([aria-disabled='true']) { background: color-mix(in srgb, var(--oc-danger) 88%, var(--oc-text)); }
 .oc-swal__btn--deny { background: var(--oc-danger); color: var(--oc-on-danger); }
 .oc-swal__btn--deny:hover:not([aria-disabled='true']) { box-shadow: 0 8px 18px -10px color-mix(in srgb, var(--oc-danger) 80%, transparent); }
 .oc-swal__btn--cancel { background: var(--oc-surface-alt); color: var(--oc-text); box-shadow: var(--oc-fb-hairline); }
@@ -885,6 +989,33 @@
   .oc-swal--modal .oc-swal__actions { flex-direction: column; }
   .oc-swal--modal .oc-swal__btn { width: 100%; }
   .oc-swal__footer { width: calc(100% + 2.25rem); margin: 0.25rem -1.125rem -1.125rem; padding-inline: 1.125rem; }
+  .oc-swal__hero { margin-inline: -1.125rem; padding-inline: 1.125rem; }
+  .oc-swal__hero .oc-swal__scene { width: min(100%, 13rem); margin-bottom: -0.75rem; }
+
+  /* Modal alerts become bottom sheets (like Dialog). Opt out with `sheet: false` (data-sheet="false"). */
+  .oc-swal--modal:not([data-sheet='false']) { place-items: end stretch; padding: 2.5rem 0 0; }
+  .oc-swal--modal:not([data-sheet='false']) .oc-swal__popup {
+    width: 100% !important;
+    max-height: calc(100dvh - 2.5rem);
+    padding-bottom: calc(1.125rem + env(safe-area-inset-bottom, 0px));
+    border-radius: var(--oc-radius-xl) var(--oc-radius-xl) 0 0;
+    animation: oc-fb-sheet-in var(--oc-dur-4, 420ms) var(--oc-ease);
+  }
+  .oc-swal--modal:not([data-sheet='false']) .oc-swal__popup:not(.oc-swal__popup--hero) { padding-top: 1.75rem; }
+  /* Drag handle (visual affordance; dismissal stays on the buttons, Escape and backdrop). */
+  .oc-swal--modal:not([data-sheet='false']) .oc-swal__popup::before {
+    content: '';
+    position: absolute;
+    z-index: 3;
+    top: 0.5rem;
+    left: 50%;
+    width: 2.25rem;
+    height: 0.25rem;
+    margin-left: -1.125rem;
+    border-radius: var(--oc-radius-pill);
+    background: var(--oc-border-strong, var(--oc-border));
+  }
+  .oc-swal--modal:not([data-sheet='false']) .oc-swal__footer { margin-bottom: calc(-1.125rem - env(safe-area-inset-bottom, 0px)); padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px)); }
 }
 
 /* ---------- Reduced motion: calm, static, still understandable ---------- */
@@ -895,6 +1026,8 @@
   .oc-swal__icon::after { animation: none !important; }
   .oc-swal__popup,
   .oc-swal__icon,
+  .oc-swal__scene,
+  .oc-swal__badge,
   .oc-toaster__toast { animation: none !important; }
   .oc-toaster__toast { transition: opacity 120ms linear !important; }
   .oc-loader .oc-loader__art,
@@ -918,6 +1051,10 @@
   .oc-toaster__toast,
   .oc-loader-overlay__scrim .oc-loader { border: 1px solid CanvasText; }
   .oc-swal__btn { border: 1px solid ButtonText; }
+  .oc-swal__hero { background: Canvas; border-bottom: 1px solid CanvasText; }
+  .oc-swal__hero::before,
+  .oc-swal__art::before { display: none; }
+  .oc-swal__badge { border: 1px solid CanvasText; background: Canvas; }
   .oc-loader__part,
   .oc-top-progress__bar,
   .oc-swal__timer-bar,

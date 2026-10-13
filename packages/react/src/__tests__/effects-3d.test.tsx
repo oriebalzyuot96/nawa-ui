@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { CubeCarousel, FlipCard, Floating3DIcon, Perspective3DStack, Text3D, TiltCard } from '../components/effects-3d';
+import { Carousel3D, CubeCarousel, FlipCard, Floating3DIcon, Perspective3DStack, Text3D, TiltCard } from '../components/effects-3d';
 
 function mockMatchMedia(reduced: boolean) {
   vi.stubGlobal(
@@ -141,5 +141,75 @@ describe('decorative and list semantics', () => {
     expect(screen.getByRole('heading', { level: 1, name: 'Deep title' })).toBeInTheDocument();
     expect(screen.getByText('★').closest('.oc-float3d')).toHaveAttribute('aria-hidden', 'true');
     expect(screen.getByRole('list', { name: 'Plans' }).querySelectorAll('li')).toHaveLength(3);
+  });
+});
+
+describe('Carousel3D', () => {
+  const slides = [
+    { title: 'Charts', content: <p>Charts slide</p> },
+    { title: 'Themes', content: <p>Themes slide</p> },
+    { title: 'RTL', content: <p>RTL slide</p> },
+    { title: '3D', content: <p>3D slide</p> },
+  ];
+
+  it('follows the APG carousel pattern in every mode', async () => {
+    for (const mode of ['coverflow', 'ring', 'stack'] as const) {
+      const { unmount, container } = render(<Carousel3D label="Highlights" mode={mode} slides={slides} />);
+      const region = screen.getByRole('region', { name: 'Highlights' });
+      expect(region).toHaveAttribute('aria-roledescription', 'carousel');
+      expect(region).toHaveAttribute('data-mode', mode);
+      expect(screen.getByRole('group', { name: '1 of 4: Charts' })).toHaveAttribute('aria-roledescription', 'slide');
+      // Neighbours are visible in 3D but hidden from AT and inert.
+      const hidden = container.querySelector('.oc-c3d__slide[data-pos="after"]')!;
+      expect(hidden).toHaveAttribute('aria-hidden', 'true');
+      expect(hidden).toHaveAttribute('inert');
+      expect(container.querySelector('.oc-c3d__stage')).toHaveAttribute('aria-live', 'polite');
+      unmount();
+    }
+  });
+
+  it('moves with buttons, dots and arrow keys (mirrored in RTL)', async () => {
+    const onIndexChange = vi.fn();
+    const { unmount } = render(<Carousel3D label="Highlights" slides={slides} onIndexChange={onIndexChange} />);
+    await userEvent.click(screen.getByRole('button', { name: 'Next slide' }));
+    expect(screen.getByRole('group', { name: '2 of 4: Themes' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '2: Themes' })).toHaveAttribute('aria-current', 'true');
+    await userEvent.click(screen.getByRole('button', { name: '4: 3D' }));
+    expect(onIndexChange).toHaveBeenLastCalledWith(3);
+    fireEvent.keyDown(screen.getByRole('region'), { key: 'ArrowRight' }); // loops
+    expect(screen.getByRole('group', { name: '1 of 4: Charts' })).toBeInTheDocument();
+    unmount();
+    render(
+      <div dir="rtl">
+        <Carousel3D label="Highlights" slides={slides} loop={false} />
+      </div>,
+    );
+    expect(screen.getByRole('button', { name: 'Previous slide' })).toBeDisabled();
+    fireEvent.keyDown(screen.getByRole('region'), { key: 'ArrowLeft' });
+    expect(screen.getByRole('group', { name: '2 of 4: Themes' })).toBeInTheDocument();
+  });
+
+  it('puts a pause control first and turns autoplay off', async () => {
+    render(<Carousel3D label="Auto" slides={slides} autoplay={4000} />);
+    const region = screen.getByRole('region', { name: 'Auto' });
+    const first = region.querySelector('button');
+    expect(first).toHaveAccessibleName('Stop automatic slide show');
+    await userEvent.click(first!);
+    expect(screen.getByRole('button', { name: 'Start automatic slide show' })).toBeInTheDocument();
+  });
+
+  it('becomes a plain slider under reduced motion (no autoplay)', () => {
+    mockMatchMedia(true);
+    render(<Carousel3D label="Calm" slides={slides} autoplay={4000} />);
+    expect(screen.getByRole('region', { name: 'Calm' })).toHaveAttribute('data-static');
+    expect(screen.queryByRole('button', { name: /automatic slide show/ })).toBeNull();
+  });
+
+  it('CubeCarousel is static under data-a11y-motion="off"', () => {
+    document.documentElement.setAttribute('data-a11y-motion', 'off');
+    render(<CubeCarousel label="Cube" slides={slides} autoplay={3000} />);
+    expect(screen.getByRole('region', { name: 'Cube' })).toHaveAttribute('data-static');
+    expect(screen.getByRole('button', { name: 'Start automatic slide show' })).toBeInTheDocument();
+    document.documentElement.removeAttribute('data-a11y-motion');
   });
 });

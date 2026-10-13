@@ -134,6 +134,155 @@
 .oc-cube__status { min-width: 6ch; text-align: center; color: var(--oc-text-muted); font-size: 0.875rem; font-variant-numeric: tabular-nums; }
 .oc-cube:focus-visible { outline: 2px solid var(--oc-focus); outline-offset: 4px; border-radius: var(--oc-radius); }
 
+.oc-cube__viewport { touch-action: pan-y; cursor: grab; }
+.oc-cube[data-dragging] .oc-cube__viewport { cursor: grabbing; }
+.oc-cube[data-dragging] .oc-cube__stage { transition: none; }
+/* Plain slider: reduced motion (OS or <html data-a11y-motion="off">). */
+.oc-cube[data-static] .oc-cube__viewport { perspective: none; cursor: auto; }
+.oc-cube[data-static] .oc-cube__stage { transform: none; transition: none; }
+.oc-cube[data-static] .oc-cube__slide { transform: none; }
+.oc-cube[data-static] .oc-cube__slide[aria-hidden='true'] { visibility: hidden; }
+[dir='rtl'] .oc-c3d__chevron { transform: scaleX(-1); }
+
+/* ---------- Carousel3D (coverflow · ring · stack) ---------- */
+.oc-c3d {
+  --oc-c3d-w: min(19rem, 70vw);
+  --oc-c3d-h: 15rem;
+  --oc-dir3d: 1;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+  min-width: 0;
+  font-family: var(--oc-font);
+  color: var(--oc-text);
+}
+[dir='rtl'] .oc-c3d { --oc-dir3d: -1; }
+.oc-c3d__viewport {
+  position: relative;
+  height: var(--oc-c3d-h);
+  overflow: hidden;
+  perspective: 1100px;
+  perspective-origin: 50% 45%;
+  touch-action: pan-y;
+  cursor: grab;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.oc-c3d[data-dragging] .oc-c3d__viewport { cursor: grabbing; }
+.oc-c3d__stage { --oc-drag: 0; position: absolute; inset: 0; transform-style: preserve-3d; }
+.oc-c3d__slide {
+  --oc-p: calc(var(--oc-off) + var(--oc-drag));
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  width: var(--oc-c3d-w);
+  height: calc(100% - 1.5rem);
+  margin-left: calc(var(--oc-c3d-w) / -2);
+  overflow: hidden;
+  border: 1px solid var(--oc-border-subtle);
+  border-radius: var(--oc-radius-lg);
+  background: var(--oc-surface);
+  box-shadow: var(--oc-elev-2);
+  -webkit-user-select: text;
+  user-select: text;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition: transform 620ms var(--oc-ease), opacity 420ms var(--oc-ease), filter 420ms var(--oc-ease), box-shadow 420ms var(--oc-ease);
+}
+.oc-c3d__slide[data-pos='current'] { box-shadow: var(--oc-elev-3); }
+.oc-c3d__slide:not([data-pos='current']) { filter: saturate(0.7) brightness(0.97); }
+.oc-c3d__slide[data-far] { opacity: 0; visibility: hidden; }
+.oc-c3d[data-dragging] .oc-c3d__slide { transition: none; }
+/* Coverflow: neighbours step aside, sink back and turn toward the centre. */
+.oc-c3d[data-mode='coverflow'] .oc-c3d__slide {
+  opacity: calc(1 - max(0, var(--oc-abs) - 1) * 0.25);
+  transform: translateX(calc(var(--oc-p) * 58% * var(--oc-dir3d))) translateZ(calc(min(var(--oc-abs), 2) * -120px))
+    rotateY(calc(var(--oc-sign) * min(var(--oc-abs), 1) * -38deg * var(--oc-dir3d)));
+}
+/* Ring: slides on a cylinder; the stage is pushed back by its radius. */
+.oc-c3d[data-mode='ring'] .oc-c3d__stage {
+  --oc-ring-step: calc(360deg / var(--oc-c3d-n));
+  --oc-ring-r: calc(var(--oc-c3d-w) / 2 / tan(calc(180deg / var(--oc-c3d-n))) + 1.25rem);
+  transform: translateZ(calc(-1 * var(--oc-ring-r)));
+}
+.oc-c3d[data-mode='ring'] .oc-c3d__slide { transform: rotateY(calc(var(--oc-p) * var(--oc-ring-step) * var(--oc-dir3d))) translateZ(var(--oc-ring-r)); }
+/* Stack: a deck; the current card can be flicked away. */
+.oc-c3d[data-mode='stack'] .oc-c3d__slide { height: calc(100% - 3rem); }
+.oc-c3d[data-mode='stack'] .oc-c3d__slide[data-pos='current'] {
+  transform: translateX(calc(var(--oc-drag) * 45% * var(--oc-dir3d))) rotate(calc(var(--oc-drag) * 5deg * var(--oc-dir3d)));
+}
+.oc-c3d[data-mode='stack'] .oc-c3d__slide[data-pos='after'] {
+  opacity: calc(1 - var(--oc-abs) * 0.25);
+  transform: translateY(calc(min(var(--oc-abs), 3) * 0.75rem)) translateZ(calc(var(--oc-abs) * -50px)) scale(calc(1 - min(var(--oc-abs), 3) * 0.045));
+}
+.oc-c3d[data-mode='stack'] .oc-c3d__slide[data-pos='before'] { opacity: 0; transform: translateX(calc(-118% * var(--oc-dir3d))) rotate(calc(-9deg * var(--oc-dir3d))); }
+.oc-c3d__play {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  z-index: 200;
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+  border: 1px solid var(--oc-border-subtle);
+  border-radius: 999px;
+  background: var(--oc-surface-raised);
+  color: var(--oc-text);
+  box-shadow: var(--oc-elev-2);
+  cursor: pointer;
+}
+.oc-c3d__controls { display: flex; align-items: center; justify-content: center; gap: 0.75rem; }
+.oc-c3d__nav {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: 1px solid var(--oc-border-subtle);
+  border-radius: 999px;
+  background: var(--oc-surface-raised);
+  color: var(--oc-text);
+  box-shadow: var(--oc-elev-1);
+  cursor: pointer;
+  transition: background-color var(--oc-dur-1), border-color var(--oc-dur-1), transform var(--oc-dur-2) var(--oc-ease);
+}
+.oc-c3d__nav:hover:not(:disabled),
+.oc-c3d__play:hover { background: var(--oc-tint-hover); border-color: var(--oc-border-strong); color: var(--oc-primary-ink); }
+.oc-c3d__nav:active:not(:disabled) { transform: scale(0.94); }
+.oc-c3d__nav:disabled { opacity: 0.45; cursor: not-allowed; }
+.oc-c3d__nav:focus-visible,
+.oc-c3d__play:focus-visible,
+.oc-c3d__dot:focus-visible { outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+.oc-c3d__dots { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.125rem; min-width: 0; }
+.oc-c3d__dot { position: relative; width: 1.5rem; height: 1.5rem; padding: 0; border: 0; border-radius: 999px; background: transparent; cursor: pointer; }
+.oc-c3d__dot::after {
+  content: '';
+  position: absolute;
+  inset: calc(50% - 0.25rem) calc(50% - 0.25rem);
+  border-radius: 999px;
+  background: var(--oc-control-border);
+  transition: inset var(--oc-dur-3) var(--oc-ease), background-color var(--oc-dur-2);
+}
+.oc-c3d__dot:hover::after { background: var(--oc-text-muted); }
+.oc-c3d__dot[aria-current='true'] { width: 2rem; }
+.oc-c3d__dot[aria-current='true']::after { inset: calc(50% - 0.25rem) 0.25rem; background: var(--oc-primary); }
+.oc-c3d__status { min-width: 6ch; color: var(--oc-text-muted); font-size: var(--oc-text-sm); font-variant-numeric: tabular-nums; text-align: center; }
+@media (pointer: coarse) {
+  .oc-c3d__nav,
+  .oc-c3d__play { width: 2.75rem; height: 2.75rem; }
+  .oc-c3d__dot { width: 1.75rem; height: 2.75rem; }
+  .oc-c3d__dot[aria-current='true'] { width: 2.5rem; }
+  .oc-c3d__dot[aria-current='true']::after { inset: calc(50% - 0.25rem) 0.375rem; }
+}
+/* Plain slider under reduced motion: one flat slide at a time, no perspective, no transitions. */
+.oc-c3d[data-static] .oc-c3d__viewport { height: auto; overflow: visible; perspective: none; cursor: auto; }
+.oc-c3d[data-static] .oc-c3d__stage { position: static; transform: none; }
+.oc-c3d[data-static] .oc-c3d__slide { position: relative; top: auto; left: auto; height: var(--oc-c3d-h); margin: 0 auto; transform: none; opacity: 1; filter: none; transition: none; }
+.oc-c3d[data-static] .oc-c3d__slide:not([data-pos='current']) { display: none; }
+
 /* ---------- ParallaxLayers ---------- */
 .oc-parallax {
   --oc-px: 0;
@@ -363,7 +512,10 @@
   .oc-tilt__inner,
   .oc-flip__face,
   .oc-cube__slide,
+  .oc-c3d__slide,
   .oc-stack3d__item { border: 1px solid CanvasText; }
+  .oc-c3d__dot[aria-current='true']::after { forced-color-adjust: none; background: Highlight; }
+  .oc-c3d__dot::after { forced-color-adjust: none; background: CanvasText; }
   .oc-text3d { text-shadow: none !important; }
   .oc-tilt__glare { display: none; }
 }

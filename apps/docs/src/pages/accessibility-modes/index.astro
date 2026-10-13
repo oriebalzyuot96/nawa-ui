@@ -1,0 +1,232 @@
+---
+import { Code } from 'astro:components';
+import Base from '../../layouts/Base.astro';
+import AccessibilityPanel from '@orca-ui/astro/components/AccessibilityPanel';
+import Badge from '@orca-ui/astro/components/Badge';
+import Button from '@orca-ui/astro/components/Button';
+import Checkbox from '@orca-ui/astro/components/Checkbox';
+import ProgressBar from '@orca-ui/astro/components/ProgressBar';
+import { a11yPanelLabels } from '@orca-ui/core/a11y-prefs';
+import { contrastPairs, contrastSchemes } from '@orca-ui/core/themes';
+import { contrastRatio, resolveTokens } from '@orca-ui/core/theme';
+
+const L = a11yPanelLabels.en;
+const schemeLabel = (s: string) => L.options.contrast?.[s] ?? s;
+const schemes = ['hc', 'yellow-black', 'black-yellow', 'white-black', 'black-white', 'gray', 'invert'] as const;
+
+// Lowest ratio of each scheme over every WCAG pair, computed from the same tokens the CSS uses.
+const results = Object.entries(contrastSchemes).map(([name, s]) => {
+  const t = resolveTokens(s.colorScheme === 'dark' ? 'dark' : 'light', s as never, s as never) as unknown as Record<string, string>;
+  let minText = Infinity;
+  let minUi = Infinity;
+  for (const [, fg, bg, min] of contrastPairs as Array<[string, string, string, number]>) {
+    const r = contrastRatio(t[fg], t[bg]);
+    if (min >= 4.5) minText = Math.min(minText, r);
+    else minUi = Math.min(minUi, r);
+  }
+  return { name, surface: s.surface, text: s.text, minText, minUi, pairs: contrastPairs.length };
+});
+
+const modes = [
+  ['Color scheme', 'data-a11y-contrast', 'hc · yellow-black · black-yellow · white-black · black-white · gray · invert', 'Complete token palettes (!important), so contrast is exact. Gray adds a grayscale filter for images; invert re-inverts photos and video.', '1.4.3, 1.4.6, 1.4.11'],
+  ['Color vision', 'data-a11y-color-filter', 'protanopia · deuteranopia · tritanopia · achromatopsia', 'Daltonization filters (inline SVG feColorMatrix) move hues you cannot tell apart into ones you can.', '1.4.1'],
+  ['Patterns', 'data-a11y-patterns', '(present)', 'Charts add hatching, dashes and markers. On automatically in gray, hc and achromatopsia.', '1.4.1'],
+  ['Saturation', 'data-a11y-saturation', 'low · high', 'Low desaturates the page; high only boosts images and charts, so text contrast never drops.', ''],
+  ['Text size', 'data-a11y-font-scale + --oc-user-font-scale', '0.9 – 2', 'Scales every type token and the page text, without zooming the layout.', '1.4.4'],
+  ['Line / letter / word / paragraph spacing', 'data-a11y-line-height · -letter-spacing · -word-spacing · -paragraph-spacing', 'wide · wider', '"wider" meets or exceeds the WCAG text-spacing values; components reflow without clipping. Arabic keeps letter-spacing at 0 so letters stay joined.', '1.4.12'],
+  ['Readable font', 'data-a11y-font', 'readable', 'Atkinson Hyperlegible (self-hosted, SIL OFL), with an Arabic fallback.', ''],
+  ['Align to start', 'data-a11y-text-align', 'start', 'No justified or centered paragraphs; start is right in RTL.', '1.4.8'],
+  ['Links', 'data-a11y-links', 'underline · highlight', 'Underline every link, or underline and highlight it.', '1.4.1'],
+  ['Focus indicator', 'data-a11y-focus', 'large', '4px outline plus a wide halo on everything focusable.', '2.4.7, 2.4.13'],
+  ['Big cursor', 'data-a11y-cursor', 'large', '48px SVG cursors (arrow, hand, text) with a light outline that reads on any background.', ''],
+  ['Reading guide / mask', 'data-a11y-reading-guide · data-a11y-reading-mask', '(present)', 'A band that follows the pointer and keyboard focus, or a mask that dims everything else.', ''],
+  ['Motion', 'data-a11y-motion', 'reduce · off', 'Reduce matches prefers-reduced-motion; off stops every animation and transition and pauses autoplaying media.', '2.2.2, 2.3.3'],
+  ['Decorative images', 'data-a11y-images', 'hide', 'Hides images with empty alt text, presentation images, illustrations and [data-decorative].', ''],
+  ['Large targets', 'data-a11y-targets', 'large', 'Every control at least 44 × 44 px with any pointer.', '2.5.5, 2.5.8'],
+];
+
+const coreCode = `import {
+  applyA11yPrefs, loadA11yPrefs, saveA11yPrefs, resetA11yPrefs, watchSystemPrefs,
+} from '@orca-ui/core/a11y-prefs';
+
+// Restore what the user chose last time, then apply it to <html> (or any container).
+const prefs = applyA11yPrefs(loadA11yPrefs());
+
+// Change one thing.
+saveA11yPrefs(applyA11yPrefs({ ...prefs, contrast: 'yellow-black', fontScale: 1.5 }));
+
+// Follow the OS: reduced motion, contrast, dark mode, forced colors.
+const stop = watchSystemPrefs((os) => console.log(os.reducedMotion, os.contrast));`;
+
+const panelCode = `// React
+import { AccessibilityPanel } from '@orca-ui/react';
+<AccessibilityPanel locale="ar" onChange={(prefs, change) => track(change)} />
+
+// Vue:     <AccessibilityPanel v-model="prefs" trigger="inline" />
+// Svelte:  <AccessibilityPanel bind:prefs bind:open />
+// Angular: <oc-accessibility-panel [(prefs)]="prefs" locale="ar" />
+// Astro:   <AccessibilityPanel trigger="inline" locale={lang} />
+// HTML:    root.innerHTML = renderA11yPanelHTML({ locale: 'en' }); mountA11yPanel(root.firstElementChild);`;
+
+const htmlCode = `<!-- No JavaScript needed for the CSS modes: set the attributes yourself (or server-side). -->
+<html data-a11y-contrast="black-yellow" data-a11y-line-height="wider" data-a11y-links="underline">
+<section data-a11y-contrast="gray">Scoped to one part of the page</section>`;
+---
+
+<Base
+  title="Accessibility display modes"
+  description="Orca UI accessibility modes: yellow-on-black and other exact contrast schemes, color-vision filters, text size and spacing, readable font, reading guide and mask, motion off, big cursor and large targets, with a ready-made AccessibilityPanel for every framework."
+>
+  <section class="section">
+    <div class="container">
+      <p class="eyebrow">Accessibility modes</p>
+      <h1>Let people see the page their way</h1>
+      <p class="lead">
+        Contrast schemes, color-vision filters, text spacing, reading aids, motion and interaction aids. Each one is a
+        <code>data-a11y-*</code> attribute on <code>&lt;html&gt;</code> or any container, works in all 21 themes and in custom brand themes,
+        mirrors in right-to-left languages, and is available as a ready-made settings panel in React, Vue, Svelte, Angular and Astro.
+      </p>
+      <div class="framework-row">
+        <button type="button" class="oc-btn oc-btn--primary" data-open-site-panel>Open the accessibility panel</button>
+        <a class="oc-btn oc-btn--secondary" href="#modes">See every mode</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="schemes">
+    <div class="container">
+      <h2 id="schemes">Color schemes</h2>
+      <p class="lead">Each card below is the same interface with one scheme applied to just that card.</p>
+      <div class="modes-grid">
+        {schemes.map((s) => (
+          <div class="theme-card modes-card" data-a11y-contrast={s}>
+            <div class="theme-card__title">
+              <span>{schemeLabel(s)}</span>
+              <Badge variant="primary">{s}</Badge>
+            </div>
+            <p class="modes-card__text">Body text, a <a href="#schemes">link</a> and a <span class="muted">muted note</span>.</p>
+            <div class="theme-card__row">
+              <Button size="sm">Primary</Button>
+              <Button size="sm" variant="outline">Outline</Button>
+            </div>
+            <div class="theme-card__row">
+              <Badge variant="success">Saved</Badge>
+              <Badge variant="danger">Failed</Badge>
+            </div>
+            <ProgressBar value={40} label={`${schemeLabel(s)} progress example`} />
+            <Checkbox label="Remember this" checked />
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="try">
+    <div class="container">
+      <h2 id="try">Try it on part of a page</h2>
+      <p class="lead">
+        This panel is scoped: it writes its attributes to the card below only and does not save anything. The panel in the site header
+        changes the whole site and remembers your choice.
+      </p>
+      <div class="modes-try">
+        <AccessibilityPanel trigger="inline" triggerLabel="Adjust this card" target="#modes-sandbox" persist={false} id="modes-demo-panel" labels={{ subtitle: 'Applies to the report card on this page only. Nothing is saved.' }} />
+        <article id="modes-sandbox" class="theme-card modes-sandbox" aria-labelledby="sandbox-title">
+          <h3 id="sandbox-title">Quarterly report</h3>
+          <p>
+            Revenue grew 12% this quarter. Read the <a href="#try">full report</a> or download the summary. Most of the growth came from
+            returning customers, who now make up more than half of all orders.
+          </p>
+          <p>Support response times fell to under two hours, and satisfaction scores reached their highest level this year.</p>
+          <div class="theme-card__row">
+            <Button size="sm">Download</Button>
+            <Button size="sm" variant="secondary">Share</Button>
+            <Badge variant="success">On track</Badge>
+            <Badge variant="warning">2 risks</Badge>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="modes">
+    <div class="container">
+      <h2 id="modes">Every mode</h2>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table of accessibility modes">
+        <table class="props-table">
+          <thead>
+            <tr><th scope="col">Mode</th><th scope="col">Attribute</th><th scope="col">Values</th><th scope="col">What it does</th><th scope="col">WCAG</th></tr>
+          </thead>
+          <tbody>
+            {modes.map(([name, attr, values, what, wcag]) => (
+              <tr><th scope="row">{name}</th><td><code class="type">{attr}</code></td><td>{values}</td><td>{what}</td><td>{wcag}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="contrast">
+    <div class="container">
+      <h2 id="contrast">Verified contrast</h2>
+      <p class="lead">
+        <code>scripts/check-contrast.mjs</code> checks all {contrastPairs.length} text, control and focus pairs for every scheme, the inverted and
+        low-saturation renderings of all 21 themes, and a sample of custom brand themes, on every build. Lowest ratio per scheme:
+      </p>
+      <div class="table-scroll" tabindex="0" role="region" aria-label="Table of contrast results">
+        <table class="props-table">
+          <thead>
+            <tr><th scope="col">Scheme</th><th scope="col">Colors</th><th scope="col">Lowest text pair (needs 4.5)</th><th scope="col">Lowest UI pair (needs 3)</th></tr>
+          </thead>
+          <tbody>
+            {results.map((r) => (
+              <tr>
+                <th scope="row">{r.name}</th>
+                <td><span class="modes-swatch" style={`background:${r.surface};color:${r.text}`} aria-hidden="true">Aa</span> <code>{r.text} on {r.surface}</code></td>
+                <td>{r.minText.toFixed(2)}:1</td>
+                <td>{r.minUi.toFixed(2)}:1</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="api">
+    <div class="container">
+      <h2 id="api">Use it</h2>
+      <div class="grid grid--2 modes-code">
+        <div><h3>JavaScript</h3><Code code={coreCode} lang="ts" theme="github-dark-high-contrast" /></div>
+        <div><h3>The panel</h3><Code code={panelCode} lang="tsx" theme="github-dark-high-contrast" /></div>
+      </div>
+      <h3>Without JavaScript</h3>
+      <Code code={htmlCode} lang="html" theme="github-dark-high-contrast" />
+    </div>
+  </section>
+</Base>
+
+<script>
+  document.querySelector('[data-open-site-panel]')?.addEventListener('click', () => {
+    document.querySelector<HTMLButtonElement>('.site-header [data-a11y-open]')?.click();
+  });
+</script>
+
+<style>
+  .modes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: 1rem; }
+  .modes-card .theme-card__title { text-transform: none; }
+  .modes-card__text { margin: 0; font-size: var(--oc-text-md); }
+  .modes-card__text a { color: var(--oc-primary-ink); }
+  .modes-try { display: grid; gap: 1rem; justify-items: start; margin-top: 1rem; }
+  .modes-sandbox { width: 100%; max-width: 46rem; }
+  .modes-sandbox h3 { margin: 0; font-size: var(--oc-text-xl); }
+  .modes-sandbox p { margin: 0; font-size: var(--oc-text-md); line-height: var(--oc-leading); }
+  .modes-sandbox a { color: var(--oc-primary-ink); }
+  .modes-swatch { display: inline-grid; place-items: center; width: 2rem; height: 1.5rem; border: 1px solid var(--oc-border); border-radius: 4px; font-weight: 700; font-size: 0.75rem; vertical-align: middle; forced-color-adjust: none; }
+  .modes-code h3 { margin-block: 0 0.5rem; }
+  .modes-code :global(pre) { margin: 0; overflow-x: auto; padding: 1rem; border-radius: var(--oc-radius); font-size: 0.8125rem; }
+  section :global(pre) { overflow-x: auto; padding: 1rem; border-radius: var(--oc-radius); font-size: 0.8125rem; }
+  @media (max-width: 52rem) {
+    .modes-code { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>

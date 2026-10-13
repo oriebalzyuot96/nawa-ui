@@ -2,10 +2,18 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { accents, defaultAccent, defaultShape, modes, shapes, softMix, tint } from '../src/themes.mjs';
-import { accentNames, modeNames, resolveTheme } from './resolve.mjs';
+// Brand accents: --brand "#ff6a00" [--brand-name acme] [--neutral …] [--secondary …] [--brand-default],
+// or --config orca.config.json (see scripts/brand.mjs).
+import { accents, contrastSchemes, defaultAccent as coreDefaultAccent, defaultShape, modes, shapes, softMix, tint } from '../src/themes.mjs';
+import { mixHex } from '../src/theme.js';
+import { buildBrands, readBrandConfig } from './brand.mjs';
+import { accentNames as coreAccentNames, modeNames, resolveTheme } from './resolve.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
+const brands = buildBrands(readBrandConfig());
+const accentNames = [...coreAccentNames, ...brands.map((b) => b.theme.name).filter((n) => !coreAccentNames.includes(n))];
+const defaultBrand = brands.find((b) => b.isDefault)?.theme;
+const defaultAccent = defaultBrand?.name ?? coreDefaultAccent;
 const kebab = (s) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 const block = (selector, vars) =>
   `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --oc-${kebab(k)}: ${v};`).join('\n')}\n}\n`;
@@ -17,6 +25,86 @@ function accentVars(accent) {
     for (const [key, value] of Object.entries(accents[accent][mode])) vars[`a-${mode}-${kebab(key)}`] = value;
   }
   return vars;
+}
+
+/**
+ * Accessibility color schemes (data-a11y-contrast). Every token is !important so the user's choice wins
+ * over any theme, accent or custom theme, on the element and on nested [data-theme] / [data-accent] scopes.
+ */
+function schemeVars(s) {
+  return {
+    surface: s.surface,
+    surfaceAlt: s.surfaceAlt,
+    surfaceMuted: s.surfaceMuted,
+    text: s.text,
+    textMuted: s.textMuted,
+    border: s.border,
+    controlBorder: s.controlBorder,
+    success: s.success,
+    warning: s.warning,
+    danger: s.danger,
+    info: s.info,
+    onDanger: s.onDanger,
+    overlay: s.overlay,
+    primary: s.primary,
+    primaryHover: s.primaryHover,
+    primaryInk: s.primaryInk,
+    onPrimary: s.onPrimary,
+    secondary: s.primary,
+    secondaryHover: s.primaryHover,
+    secondaryInk: s.primaryInk,
+    onSecondary: s.onPrimary,
+    focus: s.primary,
+    primarySoft: mixHex(s.primary, s.surface, softMix.primary),
+    successSoft: mixHex(s.success, s.surface, softMix.status),
+    warningSoft: mixHex(s.warning, s.surface, softMix.status),
+    dangerSoft: mixHex(s.danger, s.surface, softMix.status),
+    infoSoft: mixHex(s.info, s.surface, softMix.status),
+    tintHover: mixHex(s.primary, s.surface, tint.hover),
+    tintPress: mixHex(s.primary, s.surface, tint.press),
+    canvas: mixHex(s.primary, s.surfaceAlt, tint.canvas),
+    borderSubtle: mixHex(s.primary, s.border, tint.border),
+    borderStrong: mixHex(s.controlBorder, s.border, 0.55),
+    ring: `color-mix(in srgb, ${s.primary} 30%, transparent)`,
+    surfaceRaised: s.colorScheme === 'dark' ? s.surfaceAlt : s.surface,
+    highlight: 'transparent',
+  };
+}
+const importantBlock = (selectors, vars, colorScheme) =>
+  `${selectors.join(',\n')} {\n  color-scheme: ${colorScheme} !important;\n${Object.entries(vars)
+    .map(([k, v]) => `  --oc-${kebab(k)}: ${v} !important;`)
+    .join('\n')}\n}\n`;
+const NESTED = ':is([data-theme], [data-accent])';
+function schemeCss() {
+  let out = '/* ---------- Accessibility color schemes (data-a11y-contrast), verified by check-contrast ---------- */\n';
+  for (const [name, s] of Object.entries(contrastSchemes)) {
+    if (name === 'gray-dark') continue;
+    const sel = `[data-a11y-contrast="${name}"]`;
+    out += importantBlock([sel, `${sel} ${NESTED}`], schemeVars(s), s.colorScheme);
+  }
+  // Grayscale follows the page mode: dark greys under data-theme="dark" or the OS dark setting.
+  const gd = contrastSchemes['gray-dark'];
+  const g = '[data-a11y-contrast="gray"]';
+  out += importantBlock(
+    [`${g}[data-theme="dark"]`, `${g}[data-theme="dark"] ${NESTED}`, `[data-theme="dark"] ${g}`, `[data-theme="dark"] ${g} ${NESTED}`, `${g} [data-theme="dark"]`],
+    schemeVars(gd),
+    'dark',
+  );
+  out += `@media (prefers-color-scheme: dark) {\n${importantBlock(
+    [`:root:not([data-theme])${g}`, `:root:not([data-theme])${g} [data-accent]:not([data-theme])`, `:root:not([data-theme]) ${g}:not([data-theme])`],
+    schemeVars(gd),
+    'dark',
+  )}}\n`;
+  // Invert (filter in a11y-modes.css) always inverts the light tokens, or the hc tokens under data-theme="hc":
+  // an inverted dark theme would be a washed-out light page. check-contrast verifies the inverted colors.
+  const inv = '[data-a11y-contrast="invert"]';
+  const pinned = (mode) => ({ ...modeVars(mode), ...bindingVars(mode) });
+  // data-a11y-contrast="hc": the built-in high-contrast tokens for the current accent, whatever data-theme says.
+  const hc = '[data-a11y-contrast="hc"]';
+  out += importantBlock([hc, `${hc} ${NESTED}`], pinned('hc'), 'light');
+  out += importantBlock([inv, `${inv} ${NESTED}`], pinned('light'), 'light');
+  out += importantBlock([`${inv}[data-theme="hc"]`, `${inv}[data-theme="hc"] ${NESTED}`, `[data-theme="hc"] ${inv}`, `[data-theme="hc"] ${inv} ${NESTED}`], pinned('hc'), 'light');
+  return out;
 }
 
 // Binding: pick the accent values for the current mode.
@@ -90,6 +178,15 @@ const shapeVars = (name) => {
   };
 };
 
+/** Custom brand accents baked in with --brand / orca.config.json (same CSS as createTheme()). */
+function brandCss() {
+  if (!brands.length) return '';
+  const parts = brands.map(({ theme, isDefault }) =>
+    isDefault ? theme.css.replace(`[data-accent="${theme.name}"] {`, `:root, [data-accent="${theme.name}"] {`) : theme.css,
+  );
+  return `/* ---------- Brand accents ---------- */\n${parts.join('')}\n`;
+}
+
 let css = `/* Orca UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
  * Theme with attributes on <html> (or any container):
  *   data-theme="light | dark | hc"   (default: follows prefers-color-scheme / prefers-contrast)
@@ -103,11 +200,11 @@ ${block(`:root, [data-shape="${defaultShape}"]`, shapeVars(defaultShape))}${Obje
   .map((s) => block(`[data-shape="${s}"]`, shapeVars(s)))
   .join('')}
 /* ---------- Accent palettes ---------- */
-${block(`:root, [data-accent="${defaultAccent}"]`, accentVars(defaultAccent))}${accentNames
-  .filter((a) => a !== defaultAccent)
+${block(`:root, [data-accent="${coreDefaultAccent}"]`, accentVars(coreDefaultAccent))}${coreAccentNames
+  .filter((a) => a !== coreDefaultAccent)
   .map((a) => block(`[data-accent="${a}"]`, accentVars(a)))
   .join('')}
-/* ---------- Modes ---------- */
+${brandCss()}/* ---------- Modes ---------- */
 ${block(':root, [data-theme="light"]', { ...modeVars('light') }).replace('{\n', '{\n  color-scheme: light;\n')}${block('[data-theme="dark"]', modeVars('dark')).replace('{\n', '{\n  color-scheme: dark;\n')}${block('[data-theme="hc"]', modeVars('hc')).replace('{\n', '{\n  color-scheme: light;\n')}@media (prefers-color-scheme: dark) {
 ${block(':root:not([data-theme])', modeVars('dark')).replace('{\n', '{\n  color-scheme: dark;\n')}}
 @media (prefers-contrast: more) {
@@ -126,6 +223,7 @@ ${block(':where(:root:not([data-theme])) [data-accent]', bindingVars('dark'))}}
 ${block(':where(:root:not([data-theme])) [data-accent]', bindingVars('hc'))}}
 ${block('[data-theme="light"]', bindingVars('light'))}${block('[data-theme="dark"]', bindingVars('dark'))}${block('[data-theme="hc"]', bindingVars('hc'))}`;
 
+css += '\n' + schemeCss();
 css += '\n' + readFileSync(join(root, 'src/base.css'), 'utf8');
 css += '\n' + readFileSync(join(root, 'src/components.css'), 'utf8');
 // Additional component groups live in src/parts/*.css (one file per area), concatenated in name order.
@@ -141,12 +239,16 @@ writeFileSync(join(root, 'orca-ui.css'), css);
 const themes = {};
 for (const mode of modeNames) {
   themes[mode] = {};
-  for (const accent of accentNames) {
+  for (const accent of coreAccentNames) {
     const { mode: _m, accent: _a, ...colors } = resolveTheme(mode, accent);
     themes[mode][accent] = colors;
   }
+  for (const { theme } of brands) {
+    const tokenKeys = Object.keys(themes[mode][coreDefaultAccent]);
+    themes[mode][theme.name] = Object.fromEntries(tokenKeys.map((k) => [k, theme.tokens[mode][k]]));
+  }
 }
-const keys = Object.keys(themes.light[defaultAccent]);
+const keys = Object.keys(themes.light[coreDefaultAccent]);
 
 const header = '/* Orca UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
 

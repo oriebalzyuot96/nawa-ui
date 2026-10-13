@@ -9,3 +9,5 @@ export { getPageItems, nextId } from './utils';
 export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@orca-ui/core/theme';
 export type { ThemeChoice } from '@orca-ui/core/theme';
 export type { ThemeMode, ThemeAccent, ThemeShape } from '@orca-ui/core/tokens';
+export * from './sound';
+export * from './components/accessibility';

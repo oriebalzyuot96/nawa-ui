@@ -17,6 +17,8 @@ import {
 } from 'react';
 import { createPortal } from 'react-dom';
 import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { emitUiSound, type UiSoundName } from '@orca-ui/core/sound';
+import { Illustration, isIllustrationName, type IllustrationName } from '@orca-ui/illustrations/react';
 import { cx } from '../utils';
 
 /* ==========================================================================
@@ -130,9 +132,139 @@ export type SwalDismissReason = 'cancel' | 'backdrop' | 'esc' | 'close' | 'timer
 export type SwalInputValue = string | boolean;
 export type SwalInputOptions = Record<string, ReactNode> | Array<{ value: string; label: ReactNode; disabled?: boolean }>;
 
+export type SwalLayout = 'icon' | 'illustration' | 'hero';
+export type SwalLocale = 'en' | 'ar';
+
+/** Every piece of built-in copy (buttons, status prefixes, presets). Override any of it with `labels`. */
+export interface SwalLabels {
+  confirm: string;
+  deny: string;
+  cancel: string;
+  close: string;
+  pauseTimer: string;
+  status: Record<StatusTone, string>;
+  deleteTitle: (item?: string) => string;
+  deleteText: string;
+  deleteConfirm: string;
+  unsavedTitle: string;
+  unsavedText: string;
+  unsavedSave: string;
+  unsavedDiscard: string;
+  sessionTitle: string;
+  sessionText: string;
+  sessionConfirm: string;
+  offlineTitle: string;
+  offlineText: string;
+  offlineRetry: string;
+  permissionTitle: string;
+  permissionText: string;
+  permissionConfirm: string;
+  serverErrorTitle: string;
+  serverErrorText: string;
+  serverErrorRetry: string;
+}
+
+export type SwalLabelsInput = Partial<Omit<SwalLabels, 'status'>> & { status?: Partial<Record<StatusTone, string>> };
+
+/** Wrap user content (file names…) in Unicode first-strong isolates so mixed-direction text stays intact. */
+const isolate = (text: string) => `\u2068${text}\u2069`;
+
+export const SWAL_LABELS: Record<SwalLocale, SwalLabels> = {
+  en: {
+    confirm: 'OK',
+    deny: 'No',
+    cancel: 'Cancel',
+    close: 'Close',
+    pauseTimer: 'Pause auto-close',
+    status: DEFAULT_STATUS_LABEL,
+    deleteTitle: (item) => (item ? `Delete “${isolate(item)}”?` : 'Delete this item?'),
+    deleteText: 'This can’t be undone.',
+    deleteConfirm: 'Delete',
+    unsavedTitle: 'You have unsaved changes',
+    unsavedText: 'Save them before you leave, or discard them.',
+    unsavedSave: 'Save changes',
+    unsavedDiscard: 'Discard',
+    sessionTitle: 'Your session has expired',
+    sessionText: 'For your security you were signed out after a period of inactivity. Sign in again to pick up where you left off.',
+    sessionConfirm: 'Sign in again',
+    offlineTitle: 'You’re offline',
+    offlineText: 'Check your internet connection, then try again. Nothing you saved is lost.',
+    offlineRetry: 'Try again',
+    permissionTitle: 'You don’t have access',
+    permissionText: 'Ask a workspace admin to give you permission, then try again.',
+    permissionConfirm: 'Got it',
+    serverErrorTitle: 'Something went wrong on our end',
+    serverErrorText: 'We’re already on it. Please try again in a moment.',
+    serverErrorRetry: 'Try again',
+  },
+  ar: {
+    confirm: 'حسنًا',
+    deny: 'لا',
+    cancel: 'إلغاء',
+    close: 'إغلاق',
+    pauseTimer: 'إيقاف الإغلاق التلقائي مؤقتًا',
+    status: { success: 'نجاح', error: 'خطأ', warning: 'تحذير', info: 'معلومة', question: 'سؤال' },
+    deleteTitle: (item) => (item ? `حذف «${isolate(item)}»؟` : 'حذف هذا العنصر؟'),
+    deleteText: 'لا يمكن التراجع عن هذا الإجراء.',
+    deleteConfirm: 'حذف',
+    unsavedTitle: 'لديك تغييرات غير محفوظة',
+    unsavedText: 'احفظها قبل المغادرة أو تجاهلها.',
+    unsavedSave: 'حفظ التغييرات',
+    unsavedDiscard: 'تجاهل',
+    sessionTitle: 'انتهت جلستك',
+    sessionText: 'حفاظًا على أمانك سُجّل خروجك بعد فترة من عدم النشاط. سجّل الدخول مجددًا لتكمل من حيث توقفت.',
+    sessionConfirm: 'تسجيل الدخول مجددًا',
+    offlineTitle: 'أنت غير متصل بالإنترنت',
+    offlineText: 'تحقق من اتصالك ثم حاول مرة أخرى. لم يضِع شيء مما حفظته.',
+    offlineRetry: 'إعادة المحاولة',
+    permissionTitle: 'لا تملك صلاحية الوصول',
+    permissionText: 'اطلب الصلاحية من مسؤول مساحة العمل ثم حاول مرة أخرى.',
+    permissionConfirm: 'حسنًا',
+    serverErrorTitle: 'حدث خطأ من جهتنا',
+    serverErrorText: 'نعمل على إصلاحه الآن. حاول مرة أخرى بعد قليل.',
+    serverErrorRetry: 'إعادة المحاولة',
+  },
+};
+
+function resolveLabels(locale: SwalLocale | undefined, labels: SwalLabelsInput | undefined): SwalLabels {
+  const base = SWAL_LABELS[locale ?? 'en'] ?? SWAL_LABELS.en;
+  if (!labels) return base;
+  return { ...base, ...labels, status: { ...base.status, ...labels.status } } as SwalLabels;
+}
+
+/** Scene picked by `illustration: true` for each icon type. */
+export const SWAL_ILLUSTRATIONS: Record<StatusTone | 'none', IllustrationName> = {
+  success: 'all-done',
+  error: 'error',
+  warning: 'maintenance',
+  info: 'welcome',
+  question: 'no-results',
+  none: 'welcome',
+};
+
 export interface SwalOptions {
   /** Built-in status icon, 'none', or any custom element. */
   icon?: SwalIcon | ReactElement;
+  /**
+   * Illustrated header: a scene name from `@orca-ui/illustrations`, any React node, or `true` to pick a
+   * scene from the icon type (see `SWAL_ILLUSTRATIONS`). Always decorative; the title and text carry the meaning.
+   */
+  illustration?: IllustrationName | ReactElement | boolean;
+  /**
+   * `icon` (animated status glyph), `illustration` (scene with a small status badge) or `hero`
+   * (full-bleed tinted band with a large scene). Defaults to `illustration` when `illustration` is set.
+   */
+  layout?: SwalLayout;
+  /** Built-in copy language (buttons, status prefixes, presets). Also sets `lang`/`dir` on the dialog. */
+  locale?: SwalLocale;
+  /** Override any built-in copy. */
+  labels?: SwalLabelsInput;
+  /** Style of the confirm button. Presets for destructive actions use 'danger'. */
+  confirmButtonVariant?: 'primary' | 'danger';
+  /** Sound requested when the dialog opens (needs a SoundProvider), or `false` to keep this dialog silent. */
+  sound?: UiSoundName | false;
+  /** Become a bottom sheet on small screens (modal only). Default true. */
+  sheet?: boolean;
   /** Screen-reader status prefix announced before the title (default: "Success", "Error", …). */
   iconLabel?: string;
   title?: ReactNode;
@@ -220,13 +352,17 @@ function settleSwal(id: number, result: SwalResult<unknown>) {
 
 const dismissed = (reason: SwalDismissReason): SwalResult<unknown> => ({ isConfirmed: false, isDenied: false, isDismissed: true, dismiss: reason });
 
+/** Global defaults merged under every call (set with `swal.configure`). */
+let swalDefaults: SwalOptions = {};
+
 function fire<T = unknown>(options: SwalOptions): Promise<SwalResult<T>> {
+  const merged: SwalOptions = { ...swalDefaults, ...options };
   return new Promise<SwalResult<T>>((resolve) => {
     const queue = swalStore.get();
-    if (queue.length === 0 && !options.toast && canUseDom()) {
+    if (queue.length === 0 && !merged.toast && canUseDom()) {
       swalOpener = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     }
-    swalStore.set([...queue, { id: ++swalSeq, options, resolve: resolve as (r: SwalResult<unknown>) => void }]);
+    swalStore.set([...queue, { id: ++swalSeq, options: merged, resolve: resolve as (r: SwalResult<unknown>) => void }]);
   });
 }
 
@@ -234,6 +370,100 @@ const shortcut =
   (icon: StatusTone) =>
   <T = unknown,>(title: ReactNode, text?: ReactNode, options?: SwalOptions): Promise<SwalResult<T>> =>
     fire<T>({ ...options, icon, title, text });
+
+const presetLabels = (options?: SwalOptions) => resolveLabels(options?.locale ?? swalDefaults.locale, { ...swalDefaults.labels, ...options?.labels });
+
+/** Ready-made, consistently worded dialogs. Every preset accepts the usual options to override anything. */
+const presets = {
+  /** Destructive confirmation. Cancel is focused; `isConfirmed` means "delete". */
+  confirmDelete<T = unknown>(item?: string, options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'error',
+      iconLabel: L.status.warning,
+      illustration: 'empty-folder',
+      title: L.deleteTitle(item),
+      text: L.deleteText,
+      showCancelButton: true,
+      confirmButtonText: L.deleteConfirm,
+      confirmButtonVariant: 'danger',
+      focusCancel: true,
+      sound: 'warning',
+      ...options,
+    });
+  },
+  /** Save / Discard / Cancel. `isConfirmed` = save, `isDenied` = discard, dismissed = stay. */
+  unsavedChanges<T = unknown>(options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'warning',
+      illustration: 'no-files',
+      title: L.unsavedTitle,
+      text: L.unsavedText,
+      showDenyButton: true,
+      showCancelButton: true,
+      confirmButtonText: L.unsavedSave,
+      denyButtonText: L.unsavedDiscard,
+      ...options,
+    });
+  },
+  /** Session timeout. Escape and outside clicks are disabled; confirm = sign in again. */
+  sessionExpired<T = unknown>(options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'info',
+      illustration: 'no-permission',
+      layout: 'hero',
+      title: L.sessionTitle,
+      text: L.sessionText,
+      confirmButtonText: L.sessionConfirm,
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      ...options,
+    });
+  },
+  /** Lost connection. Confirm = try again. */
+  offline<T = unknown>(options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'warning',
+      illustration: 'offline',
+      layout: 'hero',
+      title: L.offlineTitle,
+      text: L.offlineText,
+      confirmButtonText: L.offlineRetry,
+      showCancelButton: true,
+      ...options,
+    });
+  },
+  /** 403-style message. */
+  permissionDenied<T = unknown>(options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'error',
+      illustration: 'no-permission',
+      layout: 'hero',
+      title: L.permissionTitle,
+      text: L.permissionText,
+      confirmButtonText: L.permissionConfirm,
+      ...options,
+    });
+  },
+  /** 5xx-style message. Confirm = try again. */
+  serverError<T = unknown>(options?: SwalOptions): Promise<SwalResult<T>> {
+    const L = presetLabels(options);
+    return fire<T>({
+      icon: 'error',
+      illustration: 'server-error',
+      layout: 'hero',
+      title: L.serverErrorTitle,
+      text: L.serverErrorText,
+      confirmButtonText: L.serverErrorRetry,
+      showCancelButton: true,
+      ...options,
+    });
+  },
+};
 
 /**
  * Imperative alert dialogs. Render `<SwalHost />` once (e.g. in your app root).
@@ -246,6 +476,11 @@ export const swal = {
   warning: shortcut('warning'),
   info: shortcut('info'),
   question: shortcut('question'),
+  ...presets,
+  /** Set defaults for every later call, e.g. `swal.configure({ locale: 'ar', illustration: true })`. Pass `{}` to reset. */
+  configure(defaults: SwalOptions) {
+    swalDefaults = { ...defaults };
+  },
   /** Returns a `fire` bound to default options. */
   mixin(defaults: SwalOptions) {
     return { fire: <T = unknown,>(options: SwalOptions = {}) => fire<T>({ ...defaults, ...options }) };
@@ -290,12 +525,29 @@ function initialInputValue(o: SwalOptions): SwalInputValue {
   return '';
 }
 
+/** Sound requested when a dialog opens. */
+function swalOpenSound(tone: StatusTone | null, isToast: boolean): UiSoundName {
+  if (tone === 'success' || tone === 'error' || tone === 'warning' || tone === 'info') return tone;
+  return isToast ? 'notification' : 'open';
+}
+
 function SwalPopup({ entry }: { entry: SwalEntry }) {
   const o = entry.options;
   const isToast = Boolean(o.toast);
   const tone = isStatusTone(o.icon) ? o.icon : null;
   const customIcon = o.icon && typeof o.icon !== 'string' ? o.icon : null;
-  const statusLabel = tone ? o.iconLabel ?? DEFAULT_STATUS_LABEL[tone] : o.iconLabel;
+  const L = resolveLabels(o.locale, o.labels);
+  const statusLabel = tone ? o.iconLabel ?? L.status[tone] : o.iconLabel;
+  // Illustration: explicit scene / node, `true` (auto by tone), or implied by an illustrated layout.
+  const wantsArt = !isToast && o.illustration !== false && (o.illustration != null || o.layout === 'illustration' || o.layout === 'hero');
+  const layout: SwalLayout = wantsArt ? (o.layout === 'icon' ? 'icon' : o.layout ?? 'illustration') : 'icon';
+  let art: ReactNode = null;
+  if (wantsArt && layout !== 'icon') {
+    const ill = o.illustration;
+    const name = typeof ill === 'string' && isIllustrationName(ill) ? ill : ill == null || ill === true ? SWAL_ILLUSTRATIONS[tone ?? 'none'] : null;
+    art = name ? <Illustration name={name} className="oc-swal__illus" /> : typeof ill === 'object' ? ill : null;
+  }
+  const illustrated = art != null;
   const role = isToast
     ? tone === 'error' || tone === 'warning'
       ? 'alert'
@@ -330,10 +582,14 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
   const programmaticFocus = useRef(false);
   const done = useRef(false);
 
-  const setValidation = useCallback((message: string | null) => {
-    validationRef.current = message;
-    setValidationState(message);
-  }, []);
+  const setValidation = useCallback(
+    (message: string | null) => {
+      if (message && !validationRef.current && entry.options.sound !== false) emitUiSound('error');
+      validationRef.current = message;
+      setValidationState(message);
+    },
+    [entry.options.sound],
+  );
   const setBusy = (busy: boolean) => {
     loadingRef.current = busy;
     setLoading(busy);
@@ -343,9 +599,13 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
     (result: SwalResult<unknown>) => {
       if (done.current) return;
       done.current = true;
+      if (entry.options.sound !== false) {
+        if (result.isConfirmed) emitUiSound('select');
+        else if (result.dismiss !== 'timer') emitUiSound('close');
+      }
       settleSwal(entry.id, result);
     },
-    [entry.id],
+    [entry.id, entry.options.sound],
   );
   const dismiss = useCallback((reason: SwalDismissReason) => finish(dismissed(reason)), [finish]);
 
@@ -377,6 +637,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
       target.focus();
       programmaticFocus.current = false;
     }
+    if (o.sound !== false) emitUiSound(o.sound ?? swalOpenSound(tone, isToast));
     o.didOpen?.();
     return () => {
       releaseFocus();
@@ -580,26 +841,26 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
         key="confirm"
         ref={confirmRef}
         type="submit"
-        className={cx('oc-swal__btn', 'oc-swal__btn--confirm', loading && 'is-loading')}
+        className={cx('oc-swal__btn', 'oc-swal__btn--confirm', o.confirmButtonVariant === 'danger' && 'oc-swal__btn--danger', loading && 'is-loading')}
         aria-disabled={loading || undefined}
         aria-busy={loading || undefined}
       >
         {loading && <LoaderArt type="dots" className="oc-swal__btn-loader" />}
-        <span>{o.confirmButtonText ?? 'OK'}</span>
+        <span>{o.confirmButtonText ?? L.confirm}</span>
       </button>,
     );
   }
   if (o.showDenyButton) {
     buttons.push(
       <button key="deny" ref={denyRef} type="button" className="oc-swal__btn oc-swal__btn--deny" aria-disabled={loading || undefined} onClick={deny}>
-        {o.denyButtonText ?? 'No'}
+        {o.denyButtonText ?? L.deny}
       </button>,
     );
   }
   if (o.showCancelButton) {
     buttons.push(
       <button key="cancel" ref={cancelRef} type="button" className="oc-swal__btn oc-swal__btn--cancel" onClick={() => dismiss('cancel')}>
-        {o.cancelButtonText ?? 'Cancel'}
+        {o.cancelButtonText ?? L.cancel}
       </button>,
     );
   }
@@ -614,7 +875,8 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
       aria-label={o.title == null ? statusLabel ?? 'Dialog' : undefined}
       aria-describedby={hasBody ? textId : undefined}
       tabIndex={-1}
-      className={cx('oc-swal__popup', tone && `oc-swal__popup--${tone}`, o.className)}
+      className={cx('oc-swal__popup', tone && `oc-swal__popup--${tone}`, illustrated && `oc-swal__popup--${layout}`, o.className)}
+      data-layout={illustrated ? layout : undefined}
       style={o.width !== undefined ? { width: typeof o.width === 'number' ? `${o.width}px` : o.width } : undefined}
       data-paused={o.timer ? String(paused) : undefined}
       onKeyDown={onPanelKeyDown}
@@ -624,18 +886,27 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
       onBlur={onPanelBlur}
     >
       {o.showCloseButton && (
-        <button type="button" className="oc-swal__close" aria-label={o.closeButtonAriaLabel ?? 'Close'} onClick={() => dismiss('close')}>
+        <button type="button" className="oc-swal__close" aria-label={o.closeButtonAriaLabel ?? L.close} onClick={() => dismiss('close')}>
           <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
             <path d="M4 4l8 8M12 4l-8 8" />
           </svg>
         </button>
       )}
-      {tone && (
-        <div className="oc-swal__icon">
-          <StatusGlyph tone={tone} />
+      {illustrated ? (
+        <div className={layout === 'hero' ? 'oc-swal__hero' : 'oc-swal__art'} aria-hidden="true">
+          <div className="oc-swal__scene">{art}</div>
+          {(tone || customIcon) && (
+            <span className={cx('oc-swal__badge', customIcon && 'oc-swal__badge--custom')}>{tone ? <StatusGlyph tone={tone} className="oc-glyph--sm" /> : customIcon}</span>
+          )}
         </div>
+      ) : (
+        tone && (
+          <div className="oc-swal__icon">
+            <StatusGlyph tone={tone} />
+          </div>
+        )
       )}
-      {customIcon && (
+      {customIcon && !illustrated && (
         <div className="oc-swal__icon oc-swal__icon--custom" aria-hidden="true">
           {customIcon}
         </div>
@@ -691,7 +962,7 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
               <span className="oc-swal__timer-bar" style={vars({ '--oc-countdown': `${o.timer}ms`, animationPlayState: paused || loading ? 'paused' : 'running' })} />
             </div>
           )}
-          <button type="button" className="oc-swal__pause" aria-pressed={manualPause} aria-label={o.pauseTimerLabel ?? 'Pause auto-close'} onClick={() => setManualPause((p) => !p)}>
+          <button type="button" className="oc-swal__pause" aria-pressed={manualPause} aria-label={o.pauseTimerLabel ?? L.pauseTimer} onClick={() => setManualPause((p) => !p)}>
             <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
               {manualPause ? <path d="M5.5 3.5l7 4.5-7 4.5z" /> : <path d="M5.5 3.5v9M10.5 3.5v9" />}
             </svg>
@@ -702,7 +973,14 @@ function SwalPopup({ entry }: { entry: SwalEntry }) {
   );
 
   return (
-    <div className={cx('oc-swal', `oc-swal--${position}`, isToast ? 'oc-swal--toast' : 'oc-swal--modal')} onMouseDown={onBackdrop}>
+    <div
+      className={cx('oc-swal', `oc-swal--${position}`, isToast ? 'oc-swal--toast' : 'oc-swal--modal')}
+      data-tone={tone ?? undefined}
+      data-sheet={!isToast && o.sheet === false ? 'false' : undefined}
+      lang={o.locale}
+      dir={o.locale === 'ar' ? 'rtl' : undefined}
+      onMouseDown={onBackdrop}
+    >
       {panel}
     </div>
   );
@@ -745,6 +1023,8 @@ export interface ToastOptions {
   /** Show a countdown bar. */
   progress?: boolean;
   className?: string;
+  /** Sound requested when the toast appears or changes type (needs a SoundProvider); `false` keeps it silent. */
+  sound?: UiSoundName | false;
   onDismiss?: (toast: ToastRecord) => void;
   onAutoClose?: (toast: ToastRecord) => void;
 }
@@ -769,10 +1049,21 @@ let toastSeq = 0;
 /** Exit animation length before a dismissed toast leaves the DOM. */
 const TOAST_EXIT_MS = 200;
 
+function toastSound(type: ToastType): UiSoundName | null {
+  if (type === 'loading') return null;
+  return type === 'default' ? 'notification' : type;
+}
+
 function upsertToast(message: ReactNode, opts: ToastOptions = {}): ToastId {
   const list = toastStore.get();
   const id = opts.id ?? `oc-toast-${++toastSeq}`;
   const existing = list.find((t) => t.id === id);
+  const nextType = opts.type ?? existing?.type ?? 'default';
+  const silent = (opts.sound ?? existing?.sound) === false;
+  if (!silent && (!existing || existing.type !== nextType || existing.dismissed)) {
+    const s = opts.sound || toastSound(nextType);
+    if (s) emitUiSound(s);
+  }
   if (existing) {
     toastStore.set(list.map((t) => (t.id === id ? { ...t, ...opts, message, id, type: opts.type ?? t.type, version: t.version + 1, dismissed: false } : t)));
   } else {
@@ -960,6 +1251,7 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
     onSwipeChange(false);
     if (Math.abs(distance) >= TOAST_SWIPE_THRESHOLD || (Math.abs(distance) >= 32 && velocity > 0.5)) {
       setSwipeOut(distance > 0 ? 'right' : 'left');
+      if (t.sound !== false) emitUiSound('swipe');
       dismissToast(t.id);
     } else {
       setDx(0);
@@ -1327,14 +1619,26 @@ export interface LoaderOverlayProps extends Omit<LoaderProps, 'variant'> {
   blur?: boolean;
   /** Wrapper class (the overlay is positioned relative to this wrapper). */
   className?: string;
+  /** Sound requested when loading finishes (needs a SoundProvider). Default 'pop'; `false` disables. */
+  doneSound?: UiSoundName | false;
+}
+
+/** Emits `sound` when `active` turns from true to false (never on mount). */
+function useDoneSound(active: boolean, sound: UiSoundName | false) {
+  const prev = useRef(active);
+  useEffect(() => {
+    if (prev.current && !active && sound) emitUiSound(sound);
+    prev.current = active;
+  }, [active, sound]);
 }
 
 /**
  * Covers its content while `active`: the region gets aria-busy, the content becomes inert
  * (not focusable, hidden from assistive tech) and a centered Loader announces the state.
  */
-export function LoaderOverlay({ active, children, blur = true, className, type = 'orbit', label = 'Loading', ...loader }: LoaderOverlayProps) {
+export function LoaderOverlay({ active, children, blur = true, className, type = 'orbit', label = 'Loading', doneSound = 'pop', ...loader }: LoaderOverlayProps) {
   const contentRef = useRef<HTMLDivElement>(null);
+  useDoneSound(active, doneSound);
   useEffect(() => {
     const el = contentRef.current;
     if (!el) return;
@@ -1361,11 +1665,14 @@ export interface PageLoaderProps extends Omit<LoaderProps, 'variant' | 'size'> {
   brand?: ReactNode;
   /** Fade-out length in ms. Default 450. */
   exitDuration?: number;
+  /** Sound requested when loading finishes (needs a SoundProvider). Default 'pop'; `false` disables. */
+  doneSound?: UiSoundName | false;
 }
 
 /** Full-page splash. Locks scroll and marks the page busy while active, then fades out. */
-export function PageLoader({ active, brand, exitDuration = 450, type = 'orbit', label = 'Loading', showLabel = true, className, ...loader }: PageLoaderProps) {
+export function PageLoader({ active, brand, exitDuration = 450, type = 'orbit', label = 'Loading', showLabel = true, className, doneSound = 'pop', ...loader }: PageLoaderProps) {
   const [phase, setPhase] = useState<'visible' | 'leaving' | 'gone'>(active ? 'visible' : 'gone');
+  useDoneSound(active, doneSound);
 
   useEffect(() => {
     if (active) {

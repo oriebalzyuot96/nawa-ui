@@ -7,12 +7,16 @@ import {
   useId,
   useRef,
   useState,
+  useSyncExternalStore,
   type CSSProperties,
   type ElementType,
+  type FocusEvent as ReactFocusEvent,
   type KeyboardEvent as ReactKeyboardEvent,
+  type MouseEvent as ReactMouseEvent,
   type PointerEvent as ReactPointerEvent,
   type ReactNode,
 } from 'react';
+import { onReducedMotionChange, prefersReducedMotion as motionOff } from '@orca-ui/core/motion';
 import { cx } from '../utils';
 
 const REDUCED_QUERY = '(prefers-reduced-motion: reduce)';
@@ -179,7 +183,140 @@ export function FlipCard({
   );
 }
 
-/* ---------------------------------------------------------------- CubeCarousel */
+/* ---------------------------------------------------------------- CubeCarousel / Carousel3D */
+
+const subscribeMotion = (cb: () => void) => onReducedMotionChange(cb);
+/** Reduced motion from the OS or `<html data-a11y-motion="off">` (carousels become plain sliders). */
+function useMotionOff(): boolean {
+  return useSyncExternalStore(subscribeMotion, motionOff, () => false);
+}
+
+/** Horizontal swipe / mouse drag. Reports live offset (px) and fires onSwipe(+1 next | -1 previous). */
+function useSwipe({ onSwipe, onDrag, disabled }: { onSwipe: (dir: 1 | -1) => void; onDrag?: (dx: number, width: number) => void; disabled?: boolean }) {
+  const s = useRef<{ id: number; x: number; y: number; dx: number; dragging: boolean; width: number; rtl: boolean } | null>(null);
+  const suppressClick = useRef(false);
+  return {
+    onPointerDown: (e: ReactPointerEvent<HTMLElement>) => {
+      if (disabled || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      if ((e.target as HTMLElement).closest('input, textarea, select, [contenteditable="true"]')) return;
+      s.current = { id: e.pointerId, x: e.clientX, y: e.clientY, dx: 0, dragging: false, width: e.currentTarget.getBoundingClientRect().width || 1, rtl: isRtl(e.currentTarget) };
+      suppressClick.current = false;
+    },
+    onPointerMove: (e: ReactPointerEvent<HTMLElement>) => {
+      const st = s.current;
+      if (!st || st.id !== e.pointerId) return;
+      const dx = e.clientX - st.x;
+      const dy = e.clientY - st.y;
+      if (!st.dragging) {
+        if (Math.abs(dx) < 8 || Math.abs(dx) < Math.abs(dy)) return;
+        st.dragging = true;
+        try {
+          e.currentTarget.setPointerCapture(e.pointerId);
+        } catch {
+          /* ignore */
+        }
+      }
+      st.dx = dx;
+      onDrag?.(st.rtl ? -dx : dx, st.width);
+    },
+    onPointerUp: (e: ReactPointerEvent<HTMLElement>) => {
+      const st = s.current;
+      s.current = null;
+      if (!st || st.id !== e.pointerId || !st.dragging) return;
+      suppressClick.current = true;
+      onDrag?.(0, st.width);
+      const dx = st.rtl ? -st.dx : st.dx;
+      if (Math.abs(dx) > Math.min(64, st.width * 0.15)) onSwipe(dx < 0 ? 1 : -1);
+    },
+    onPointerCancel: () => {
+      if (s.current) onDrag?.(0, s.current.width);
+      s.current = null;
+    },
+    onClickCapture: (e: ReactMouseEvent<HTMLElement>) => {
+      if (suppressClick.current) {
+        suppressClick.current = false;
+        e.preventDefault();
+        e.stopPropagation();
+      }
+    },
+  };
+}
+
+const PlayPauseIcon = ({ playing }: { playing: boolean }) =>
+  playing ? (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+      <rect x="4" y="3.5" width="2.75" height="9" rx="0.75" fill="currentColor" />
+      <rect x="9.25" y="3.5" width="2.75" height="9" rx="0.75" fill="currentColor" />
+    </svg>
+  ) : (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
+      <path d="M5 3.5v9l7-4.5z" fill="currentColor" />
+    </svg>
+  );
+
+const ChevronIcon = ({ dir }: { dir: 'prev' | 'next' }) => (
+  <svg className="oc-c3d__chevron" data-dir={dir} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+    <path d={dir === 'prev' ? 'M10 3.5L5.5 8l4.5 4.5' : 'M6 3.5L10.5 8 6 12.5'} fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+  </svg>
+);
+
+/** Shared carousel state: index, autoplay with hover/focus hold, keyboard and RTL. */
+function useCarousel({ count, index, defaultIndex, onIndexChange, autoplay, loop = true }: { count: number; index?: number; defaultIndex: number; onIndexChange?: (i: number) => void; autoplay?: number; loop?: boolean }) {
+  const [inner, setInner] = useState(defaultIndex);
+  const current = clamp(index ?? inner, 0, Math.max(0, count - 1));
+  const reduced = useMotionOff();
+  // Starts as the server rendered it; the effect below stops it under reduced motion (no hydration mismatch).
+  const [playing, setPlaying] = useState(Boolean(autoplay));
+  const [hold, setHold] = useState(false);
+  const [rtl, setRtl] = useState(false);
+  const rootRef = useRef<HTMLElement>(null);
+
+  useEffect(() => setRtl(isRtl(rootRef.current)), []);
+  useEffect(() => {
+    if (reduced) setPlaying(false);
+  }, [reduced]);
+
+  const go = useCallback(
+    (to: number) => {
+      if (!count) return;
+      const next = loop ? ((to % count) + count) % count : clamp(to, 0, count - 1);
+      if (index === undefined) setInner(next);
+      onIndexChange?.(next);
+    },
+    [count, index, onIndexChange, loop],
+  );
+
+  const rotating = Boolean(autoplay) && playing && !hold;
+  useEffect(() => {
+    if (!rotating || !autoplay) return;
+    const t = window.setInterval(() => go(current + 1 >= count && !loop ? 0 : current + 1), Math.max(2000, autoplay));
+    return () => window.clearInterval(t);
+  }, [rotating, autoplay, current, go, count, loop]);
+
+  const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
+    if ((event.target as HTMLElement).closest('input, textarea, select, [contenteditable="true"]')) return;
+    const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
+    const back = rtl ? 'ArrowRight' : 'ArrowLeft';
+    let handled = true;
+    if (event.key === forward) go(current + 1);
+    else if (event.key === back) go(current - 1);
+    else if (event.key === 'Home') go(0);
+    else if (event.key === 'End') go(count - 1);
+    else handled = false;
+    if (handled) event.preventDefault();
+  };
+
+  const holdHandlers = {
+    onPointerEnter: () => setHold(true),
+    onPointerLeave: () => setHold(false),
+    onFocus: () => setHold(true),
+    onBlur: (e: ReactFocusEvent<HTMLElement>) => {
+      if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHold(false);
+    },
+  };
+
+  return { current, go, playing, setPlaying, rotating, rtl, rootRef, onKeyDown, holdHandlers, reduced };
+}
 
 export interface CubeSlide {
   /** Optional slide title, appended to the "Slide n of m" label. */
@@ -204,7 +341,7 @@ export interface CubeCarouselProps {
   className?: string;
 }
 
-/** 3D ring (a cube for 4 slides) carousel following the APG carousel pattern. */
+/** 3D ring (a cube for 4 slides) carousel following the APG carousel pattern. Swipe or drag to turn; flat under reduced motion. */
 export function CubeCarousel({
   label,
   slides,
@@ -219,96 +356,55 @@ export function CubeCarousel({
   className,
 }: CubeCarouselProps) {
   const count = slides.length;
-  const [inner, setInner] = useState(defaultIndex);
-  const current = clamp(index ?? inner, 0, Math.max(0, count - 1));
-  const reduced = useReducedMotion();
-  const [playing, setPlaying] = useState(Boolean(autoplay) && !prefersReducedMotion());
-  const [hold, setHold] = useState(false); // hover or focus inside
-  const [rtl, setRtl] = useState(false);
-  const rootRef = useRef<HTMLElement>(null);
+  const c = useCarousel({ count, index, defaultIndex, onIndexChange, autoplay });
   const id = useId();
-
-  useEffect(() => setRtl(isRtl(rootRef.current)), []);
-  useEffect(() => {
-    if (reduced) setPlaying(false);
-  }, [reduced]);
-
-  const go = useCallback(
-    (to: number) => {
-      if (!count) return;
-      const next = ((to % count) + count) % count;
-      if (index === undefined) setInner(next);
-      onIndexChange?.(next);
-    },
-    [count, index, onIndexChange],
-  );
-
-  const rotating = Boolean(autoplay) && playing && !hold;
-  useEffect(() => {
-    if (!rotating || !autoplay) return;
-    const t = window.setInterval(() => go(current + 1), autoplay);
-    return () => window.clearInterval(t);
-  }, [rotating, autoplay, current, go]);
-
-  const onKeyDown = (event: ReactKeyboardEvent<HTMLElement>) => {
-    const forward = rtl ? 'ArrowLeft' : 'ArrowRight';
-    const back = rtl ? 'ArrowRight' : 'ArrowLeft';
-    let handled = true;
-    if (event.key === forward) go(current + 1);
-    else if (event.key === back) go(current - 1);
-    else if (event.key === 'Home') go(0);
-    else if (event.key === 'End') go(count - 1);
-    else handled = false;
-    if (handled) event.preventDefault();
-  };
+  const [drag, setDrag] = useState(0);
+  const swipe = useSwipe({ onSwipe: (d) => c.go(c.current + d), onDrag: (dx, w) => setDrag(dx / w), disabled: count < 2 });
 
   const style = {
     '--oc-cube-n': Math.max(count, 3),
-    '--oc-cube-index': current,
+    '--oc-cube-index': c.current - drag,
     ...(width ? { '--oc-cube-size': width } : {}),
     ...(height ? { '--oc-cube-h': height } : {}),
   } as CSSProperties;
 
   return (
     <section
-      ref={rootRef}
+      ref={c.rootRef}
       className={cx('oc-cube', className)}
       aria-roledescription="carousel"
       aria-label={label}
       style={style}
-      onKeyDown={onKeyDown}
-      onPointerEnter={() => setHold(true)}
-      onPointerLeave={() => setHold(false)}
-      onFocus={() => setHold(true)}
-      onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHold(false);
-      }}
+      data-static={c.reduced ? '' : undefined}
+      data-dragging={drag ? '' : undefined}
+      onKeyDown={c.onKeyDown}
+      {...c.holdHandlers}
     >
       <div className="oc-cube__controls">
         {autoplay ? (
           <button
             type="button"
-            className="oc-btn oc-btn--ghost oc-btn--sm"
-            onClick={() => setPlaying((p) => !p)}
-            aria-label={playing ? 'Stop automatic slide show' : 'Start automatic slide show'}
+            className="oc-btn oc-btn--ghost oc-btn--sm oc-btn--icon"
+            onClick={() => c.setPlaying((p) => !p)}
+            aria-label={c.playing ? 'Stop automatic slide show' : 'Start automatic slide show'}
           >
-            {playing ? '❚❚' : '▶'}
+            <PlayPauseIcon playing={c.playing} />
           </button>
         ) : null}
-        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={prevLabel} onClick={() => go(current - 1)}>
-          <span aria-hidden="true">{rtl ? '›' : '‹'}</span>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={prevLabel} onClick={() => c.go(c.current - 1)}>
+          <ChevronIcon dir="prev" />
         </button>
         <span className="oc-cube__status" aria-hidden="true">
-          {count ? current + 1 : 0} / {count}
+          {count ? c.current + 1 : 0} / {count}
         </span>
-        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={nextLabel} onClick={() => go(current + 1)}>
-          <span aria-hidden="true">{rtl ? '‹' : '›'}</span>
+        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm oc-btn--icon" aria-controls={`${id}-slides`} aria-label={nextLabel} onClick={() => c.go(c.current + 1)}>
+          <ChevronIcon dir="next" />
         </button>
       </div>
-      <div className="oc-cube__viewport" id={`${id}-slides`} aria-live={rotating ? 'off' : 'polite'}>
+      <div className="oc-cube__viewport" id={`${id}-slides`} aria-live={c.rotating ? 'off' : 'polite'} {...swipe}>
         <div className="oc-cube__stage">
           {slides.map((slide, i) => (
-            <CubeSlidePanel key={i} i={i} count={count} active={i === current} title={slide.title}>
+            <CubeSlidePanel key={i} i={i} count={count} active={i === c.current} title={slide.title}>
               {slide.content}
             </CubeSlidePanel>
           ))}
@@ -329,6 +425,182 @@ function CubeSlidePanel({ i, count, active, title, children }: { i: number; coun
       aria-label={`Slide ${i + 1} of ${count}${title ? `: ${title}` : ''}`}
       aria-hidden={!active || undefined}
       style={{ '--oc-cube-i': i } as CSSProperties}
+    >
+      {children}
+    </div>
+  );
+}
+
+export interface Carousel3DProps {
+  /** Accessible name of the carousel. */
+  label: string;
+  slides: CubeSlide[];
+  /** 'coverflow' (default): tilted neighbours; 'ring': slides on a rotating cylinder; 'stack': a deck of cards. */
+  mode?: 'coverflow' | 'ring' | 'stack';
+  index?: number;
+  defaultIndex?: number;
+  onIndexChange?: (index: number) => void;
+  /** Autoplay interval in ms (min 2000). Shows a pause button; pauses on hover and focus; never under reduced motion. */
+  autoplay?: number;
+  /** Wrap around at the ends. Default true. */
+  loop?: boolean;
+  /** Slide width / stage height (CSS lengths). */
+  slideWidth?: string;
+  height?: string;
+  /** Slide picker dots. Default true. */
+  showDots?: boolean;
+  prevLabel?: string;
+  nextLabel?: string;
+  playLabel?: string;
+  pauseLabel?: string;
+  /** Accessible name of each slide. */
+  slideLabel?: (index: number, count: number, title?: string) => string;
+  className?: string;
+}
+
+/**
+ * Perspective carousel with coverflow, ring and stack modes. APG carousel semantics: labelled
+ * region, slide groups, rotation control first, live region when not rotating. Drag/swipe,
+ * arrow keys (mirrored in RTL), Home/End and dots. Reduced motion turns it into a plain slider.
+ */
+export function Carousel3D({
+  label,
+  slides,
+  mode = 'coverflow',
+  index,
+  defaultIndex = 0,
+  onIndexChange,
+  autoplay,
+  loop = true,
+  slideWidth,
+  height,
+  showDots = true,
+  prevLabel = 'Previous slide',
+  nextLabel = 'Next slide',
+  playLabel = 'Start automatic slide show',
+  pauseLabel = 'Stop automatic slide show',
+  slideLabel = (i, n, t) => `${i} of ${n}${t ? `: ${t}` : ''}`,
+  className,
+}: Carousel3DProps) {
+  const count = slides.length;
+  const c = useCarousel({ count, index, defaultIndex, onIndexChange, autoplay, loop });
+  const id = useId();
+  const stageRef = useRef<HTMLDivElement>(null);
+  const [dragging, setDragging] = useState(false);
+  const swipe = useSwipe({
+    onSwipe: (d) => c.go(c.current + d),
+    onDrag: (dx, w) => {
+      stageRef.current?.style.setProperty('--oc-drag', (dx / Math.max(1, w * 0.5)).toFixed(3));
+      setDragging(dx !== 0);
+    },
+    disabled: count < 2,
+  });
+
+  const offsetOf = (i: number) => {
+    let off = i - c.current;
+    if (loop && count > 2) {
+      if (off > count / 2) off -= count;
+      if (off < -count / 2) off += count;
+    }
+    return off;
+  };
+
+  const atStart = !loop && c.current === 0;
+  const atEnd = !loop && c.current === count - 1;
+
+  return (
+    <section
+      ref={c.rootRef}
+      className={cx('oc-c3d', className)}
+      data-mode={mode}
+      data-static={c.reduced ? '' : undefined}
+      data-dragging={dragging ? '' : undefined}
+      aria-roledescription="carousel"
+      aria-label={label}
+      style={{ ...(slideWidth ? { '--oc-c3d-w': slideWidth } : {}), ...(height ? { '--oc-c3d-h': height } : {}), '--oc-c3d-n': Math.max(count, 3) } as CSSProperties}
+      onKeyDown={c.onKeyDown}
+      {...c.holdHandlers}
+    >
+      {autoplay && !c.reduced ? (
+        <button type="button" className="oc-c3d__play" aria-label={c.playing ? pauseLabel : playLabel} onClick={() => c.setPlaying((p) => !p)}>
+          <PlayPauseIcon playing={c.playing} />
+        </button>
+      ) : null}
+      <div
+        className="oc-c3d__viewport"
+        {...swipe}
+        onClick={(e) => {
+          if (c.reduced) return;
+          // Pointer users can click a neighbour (neighbours are inert, so the click lands here).
+          if ((e.target as HTMLElement).closest('.oc-c3d__slide[data-pos="current"]')) return;
+          const r = e.currentTarget.getBoundingClientRect();
+          const x = (e.clientX - r.left) / (r.width || 1) - 0.5;
+          if (Math.abs(x) < 0.18) return;
+          const forward = c.rtl ? x < 0 : x > 0;
+          if (forward ? !atEnd : !atStart) c.go(c.current + (forward ? 1 : -1));
+        }}
+      >
+        <div ref={stageRef} className="oc-c3d__stage" id={`${id}-slides`} aria-live={c.rotating ? 'off' : 'polite'}>
+          {slides.map((slide, i) => {
+            const off = offsetOf(i);
+            return (
+              <Carousel3DSlide
+                key={i}
+                active={off === 0}
+                off={off}
+                label={slideLabel(i + 1, count, slide.title)}
+              >
+                {slide.content}
+              </Carousel3DSlide>
+            );
+          })}
+        </div>
+      </div>
+      <div className="oc-c3d__controls">
+        <button type="button" className="oc-c3d__nav" aria-controls={`${id}-slides`} aria-label={prevLabel} disabled={atStart} onClick={() => c.go(c.current - 1)}>
+          <ChevronIcon dir="prev" />
+        </button>
+        {showDots && count > 1 ? (
+          <div className="oc-c3d__dots" role="group" aria-label="Choose slide">
+            {slides.map((slide, i) => (
+              <button
+                key={i}
+                type="button"
+                className="oc-c3d__dot"
+                aria-label={`${i + 1}${slide.title ? `: ${slide.title}` : ''}`}
+                aria-current={i === c.current ? 'true' : undefined}
+                aria-controls={`${id}-slides`}
+                onClick={() => c.go(i)}
+              />
+            ))}
+          </div>
+        ) : (
+          <span className="oc-c3d__status" aria-hidden="true">
+            {count ? c.current + 1 : 0} / {count}
+          </span>
+        )}
+        <button type="button" className="oc-c3d__nav" aria-controls={`${id}-slides`} aria-label={nextLabel} disabled={atEnd} onClick={() => c.go(c.current + 1)}>
+          <ChevronIcon dir="next" />
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function Carousel3DSlide({ active, off, label, children }: { active: boolean; off: number; label: string; children: ReactNode }) {
+  const ref = useInert<HTMLDivElement>(!active);
+  const abs = Math.abs(off);
+  return (
+    <div
+      ref={ref}
+      className="oc-c3d__slide"
+      role="group"
+      aria-roledescription="slide"
+      aria-label={label}
+      aria-hidden={!active || undefined}
+      data-pos={off === 0 ? 'current' : off < 0 ? 'before' : 'after'}
+      data-far={abs > 2 ? '' : undefined}
+      style={{ '--oc-off': off, '--oc-abs': abs, '--oc-sign': Math.sign(off), zIndex: 100 - abs } as CSSProperties}
     >
       {children}
     </div>

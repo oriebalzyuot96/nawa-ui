@@ -1,4 +1,4 @@
-import { act, render, screen, within } from '@testing-library/react';
+import { act, fireEvent, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -6,6 +6,9 @@ import {
   AutoComplete,
   CascadeSelect,
   ColorPicker,
+  contrastRatio,
+  formatColor,
+  parseColor,
   DatePicker,
   FloatLabel,
   InputMask,
@@ -465,7 +468,7 @@ describe('Knob', () => {
 });
 
 describe('ColorPicker', () => {
-  it('syncs presets, native input and hex text', async () => {
+  it('syncs presets and the hex text field', async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(<ColorPicker label="Brand" presets={[{ value: '#ff0000', label: 'Red' }, '#00F']} onChange={onChange} />);
@@ -481,7 +484,8 @@ describe('ColorPicker', () => {
     await user.type(hex, '#00f');
     await user.tab();
     expect(onChange).toHaveBeenLastCalledWith('#0000ff');
-    expect(screen.getByLabelText('Pick a color')).toHaveValue('#0000ff');
+    expect(hex).toHaveValue('#0000ff');
+    expect(screen.getByRole('button', { name: 'Pick a color' })).toHaveAttribute('aria-expanded', 'false');
   });
 });
 
@@ -676,5 +680,131 @@ describe('KeyFilter', () => {
     const hex = screen.getByRole('textbox', { name: 'Hex' });
     await user.type(hex, 'fgA0z9');
     expect(hex).toHaveValue('fA09');
+  });
+});
+
+describe('ColorPicker (custom picker)', () => {
+  it('converts between formats and checks contrast', () => {
+    expect(parseColor('#f00')).toEqual({ r: 255, g: 0, b: 0, a: 1 });
+    expect(parseColor('rgb(0 128 255 / 50%)')).toEqual({ r: 0, g: 128, b: 255, a: 0.5 });
+    expect(formatColor(parseColor('hsl(120, 100%, 50%)')!, 'hex')).toBe('#00ff00');
+    expect(formatColor({ r: 255, g: 0, b: 0, a: 1 }, 'hsl')).toBe('hsl(0 100% 50%)');
+    expect(formatColor({ r: 255, g: 255, b: 255, a: 1 }, 'oklch')).toBe('oklch(100% 0 0)');
+    expect(formatColor(parseColor('oklch(62.8% 0.2577 29.23)')!, 'hex')).toBe('#ff0000');
+    expect(contrastRatio('#000', '#fff')).toBeCloseTo(21, 5);
+    expect(parseColor('nope')).toBeNull();
+  });
+
+  it('opens a popover whose 2D area and hue slider work from the keyboard', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<ColorPicker label="Accent" defaultValue="#ff0000" onChange={onChange} />);
+    const trigger = screen.getByRole('button', { name: 'Pick a color' });
+    expect(trigger).toHaveAttribute('aria-haspopup', 'dialog');
+    await user.click(trigger);
+    expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    const dialog = screen.getByRole('dialog', { name: 'Pick a color' });
+    const area = within(dialog).getByRole('slider', { name: 'Saturation and brightness' });
+    expect(area).toHaveFocus();
+    expect(area).toHaveAttribute('aria-valuetext', 'Saturation 100%, Brightness 100%');
+    await user.keyboard('{Shift>}{ArrowDown}{/Shift}');
+    expect(area).toHaveAttribute('aria-valuetext', 'Saturation 100%, Brightness 90%');
+    expect(onChange).toHaveBeenLastCalledWith('#e60000');
+    await user.keyboard('{ArrowLeft}{Home}');
+    expect(area).toHaveAttribute('aria-valuetext', 'Saturation 0%, Brightness 90%');
+
+    const hue = within(dialog).getByRole('slider', { name: 'Hue' });
+    expect(hue).toHaveAttribute('aria-valuetext', '0 degrees, red');
+    await user.keyboard('{End}');
+    hue.focus();
+    await user.keyboard('{Shift>}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{ArrowRight}{/Shift}');
+    expect(hue).toHaveAttribute('aria-valuenow', '120');
+    expect(hue).toHaveAttribute('aria-valuetext', '120 degrees, green');
+
+    await user.keyboard('{Escape}');
+    expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    expect(trigger).toHaveFocus();
+  });
+
+  it('switches text formats, accepts any CSS colour and remembers recent colours', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<ColorPicker label="Accent" mode="inline" defaultValue="#ff0000" onChange={onChange} />);
+    expect(screen.getByRole('group', { name: 'Pick a color' })).toBeVisible();
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Color format' }), 'rgb');
+    const field = screen.getByRole('textbox', { name: 'RGB value' });
+    expect(field).toHaveValue('rgb(255 0 0)');
+    await user.clear(field);
+    await user.type(field, 'hsl(240 100% 50%){Enter}');
+    expect(onChange).toHaveBeenLastCalledWith('#0000ff');
+    await user.tab();
+    expect(field).toHaveValue('rgb(0 0 255)');
+    await user.selectOptions(screen.getByRole('combobox', { name: 'Color format' }), 'oklch');
+    expect(screen.getByRole('textbox', { name: 'OKLCH value' })).toHaveValue('oklch(45.2% 0.313 264.1)');
+    expect(within(screen.getByRole('group', { name: 'Recent colors' })).getByRole('button', { name: '#0000ff' })).toHaveAttribute('aria-pressed', 'true');
+  });
+
+  it('supports opacity and a WCAG contrast readout', async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<ColorPicker label="Text" mode="inline" alpha defaultValue="#ff0000" contrastWith="#ffffff" onChange={onChange} />);
+    expect(screen.getByText('Contrast 4.00:1 on #ffffff')).toBeInTheDocument();
+    const grades = document.querySelectorAll('.oc-colorpicker__grade');
+    expect(grades[0]).toHaveTextContent('AA fail');
+    expect(grades[1]).toHaveTextContent('AA Large pass');
+    const alpha = screen.getByRole('slider', { name: 'Opacity' });
+    alpha.focus();
+    await user.keyboard('{Shift>}{ArrowLeft}{/Shift}');
+    expect(alpha).toHaveAttribute('aria-valuetext', '90%');
+    expect(onChange).toHaveBeenLastCalledWith('#ff0000e6');
+  });
+});
+
+describe('InputOtp (premium)', () => {
+  it('groups cells with a decorative separator, keeps digits LTR in RTL and fills from SMS autofill', () => {
+    const onComplete = vi.fn();
+    const { container } = render(
+      <div dir="rtl">
+        <InputOtp label="Code" length={6} groups={[3, 3]} integerOnly onComplete={onComplete} />
+      </div>,
+    );
+    const group = screen.getByRole('group', { name: 'Code' });
+    expect(group).toHaveAttribute('dir', 'ltr');
+    expect(container.querySelector('.oc-otp__sep')).toHaveAttribute('aria-hidden', 'true');
+    const cells = screen.getAllByRole('textbox');
+    expect(cells).toHaveLength(6);
+    expect(cells[0]).toHaveAttribute('autocomplete', 'one-time-code');
+    expect(cells[0]).toHaveAttribute('pattern', '[0-9]*');
+    fireEvent.change(cells[0], { target: { value: '482913' } });
+    expect(onComplete).toHaveBeenCalledWith('482913');
+    expect(cells.map((c) => (c as HTMLInputElement).value).join('')).toBe('482913');
+  });
+
+  it('masks with a reveal toggle and shows error and success states', async () => {
+    const { rerender } = render(<InputOtp label="PIN" mask revealable defaultValue="12" error="Wrong code" />);
+    expect(screen.getByLabelText('Digit 1 of 4')).toHaveAttribute('type', 'password');
+    await userEvent.click(screen.getByRole('button', { name: 'Show code' }));
+    expect(screen.getByRole('button', { name: 'Hide code' })).toHaveAttribute('aria-pressed', 'true');
+    expect(screen.getByLabelText('Digit 1 of 4')).toHaveAttribute('type', 'text');
+    const group = screen.getByRole('group', { name: 'PIN' });
+    expect(group).toHaveAttribute('data-state', 'error');
+    expect(group).toHaveAttribute('data-shake');
+    expect(screen.getByRole('alert')).toHaveTextContent('Wrong code');
+    expect(group).toHaveAccessibleDescription('Wrong code');
+    rerender(<InputOtp label="PIN" mask revealable defaultValue="1234" success="Verified" />);
+    expect(group).toHaveAttribute('data-state', 'success');
+    expect(screen.getByRole('status')).toHaveTextContent('Verified');
+  });
+
+  it('counts down before allowing a resend', () => {
+    vi.useFakeTimers();
+    const onResend = vi.fn();
+    render(<InputOtp label="Code" resendAfter={3} onResend={onResend} />);
+    expect(screen.getByText('Resend code in 0:03')).toBeInTheDocument();
+    for (let i = 0; i < 3; i++) act(() => vi.advanceTimersByTime(1000));
+    act(() => screen.getByRole('button', { name: 'Resend code' }).click());
+    expect(onResend).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Resend code in 0:03')).toBeInTheDocument();
+    vi.useRealTimers();
   });
 });

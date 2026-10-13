@@ -3,6 +3,7 @@ import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { readdirSync } from 'node:fs';
 import { JSDOM } from 'jsdom';
 import { beforeAll, describe, expect, it } from 'vitest';
+import AccessibilityPanel from '../src/components/AccessibilityPanel.astro';
 import Accordion from '../src/components/Accordion.astro';
 import Alert from '../src/components/Alert.astro';
 import Avatar from '../src/components/Avatar.astro';
@@ -522,6 +523,32 @@ describe('Astro components', () => {
     const empty = r.$('td.oc-table__empty')!;
     expect(empty.textContent).toBe('Nobody');
     expect(empty.getAttribute('colspan')).toBe('2');
+  });
+
+  it('AccessibilityPanel: trigger, labelled dialog, groups, Arabic (behavior: test/a11y-panel.test.ts)', async () => {
+    mark('AccessibilityPanel');
+    let r = await render(AccessibilityPanel, { id: 'a11y', trigger: 'inline' });
+    const trigger = r.$('[data-a11y-open]')!;
+    expect(trigger.getAttribute('aria-haspopup')).toBe('dialog');
+    expect(trigger.textContent).toContain('Accessibility');
+    const dialog = r.$('.oc-a11y-panel')!;
+    // role="dialog" and aria-modal are set by the client script while open; a closed panel is not a dialog.
+    expect(dialog.hasAttribute('role')).toBe(false);
+    expect(r.$(`#${dialog.getAttribute('data-labelledby')}`)!.textContent).toBe('Accessibility');
+    expect(dialog.hasAttribute('hidden')).toBe(true);
+    expect(r.$$('.oc-a11y-group__title').map((h) => h.textContent)).toEqual(['Contrast & color', 'Text', 'Reading aids', 'Motion & media', 'Interaction']);
+    expect(r.$$('[role="radiogroup"][data-a11y-key="contrast"] [role="radio"]')).toHaveLength(8);
+    expect(r.$('[role="status"][aria-live="polite"]')).not.toBeNull();
+    expect(r.html).toContain('localStorage.getItem(storageKey)');
+    expect(r.html).toContain('orca-ui-a11y');
+
+    r = await render(AccessibilityPanel, { locale: 'ar', groups: ['text'], preview: false, persist: false });
+    expect(r.$('.oc-a11y-panel')!.getAttribute('dir')).toBe('rtl');
+    expect(r.$('[data-a11y-open]')!.getAttribute('aria-label')).toBe('إعدادات إمكانية الوصول');
+    expect(r.$$('.oc-a11y-group')).toHaveLength(1);
+    expect(r.$('.oc-a11y-preview')).toBeNull();
+    expect(r.$('[data-oc-a11y-host]')!.getAttribute('data-persist')).toBe('false');
+    expect(r.html).not.toContain('localStorage.getItem(storageKey)');
   });
 
   it('covers every component in src/components', () => {

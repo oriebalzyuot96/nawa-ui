@@ -538,3 +538,168 @@ describe('useAsyncAction', () => {
     expect(await screen.findByText('error: Error: nope')).toBeInTheDocument();
   });
 });
+
+
+/* ------------------------------------------------------------------ */
+describe('swal illustrations, layouts and presets', () => {
+  afterEach(() => swal.configure({}));
+
+  it('auto-picks a decorative scene from the icon type with `illustration: true`', () => {
+    render(<SwalHost />);
+    void open({ icon: 'success', title: 'Saved', text: 'Your changes are live.', illustration: true });
+    const dialog = screen.getByRole('dialog');
+    expect(dialog).toHaveAttribute('data-layout', 'illustration');
+    expect(dialog).toHaveAccessibleName('Success: Saved');
+    const art = dialog.querySelector('.oc-swal__art')!;
+    expect(art).toHaveAttribute('aria-hidden', 'true');
+    const svg = art.querySelector('svg[data-illustration]')!;
+    expect(svg).toHaveAttribute('data-illustration', 'all-done');
+    expect(svg).toHaveAttribute('aria-hidden', 'true');
+    // The status glyph stays as a small badge, and the big icon is not duplicated.
+    expect(art.querySelector('.oc-swal__badge .oc-glyph--success')).not.toBeNull();
+    expect(dialog.querySelector('.oc-swal__icon')).toBeNull();
+  });
+
+  it.each([
+    ['error', 'error'],
+    ['warning', 'maintenance'],
+    ['info', 'welcome'],
+    ['question', 'no-results'],
+  ] as const)('maps icon %s to the %s scene', (icon, scene) => {
+    render(<SwalHost />);
+    void open({ icon, title: 'T', illustration: true });
+    expect(document.querySelector(`.oc-swal__art svg[data-illustration="${scene}"]`)).not.toBeNull();
+  });
+
+  it('accepts a scene name, a custom node, the hero layout and `layout: "icon"`', () => {
+    render(<SwalHost />);
+    void open({ icon: 'info', title: 'Hero', illustration: 'upload', layout: 'hero' });
+    const hero = screen.getByRole('dialog');
+    expect(hero).toHaveClass('oc-swal__popup--hero');
+    expect(hero.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', 'upload');
+    act(() => swal.close());
+
+    void open({ title: 'Custom', illustration: <svg data-testid="mine" /> });
+    expect(screen.getByTestId('mine').closest('.oc-swal__art')).toHaveAttribute('aria-hidden', 'true');
+    act(() => swal.close());
+
+    void open({ icon: 'success', title: 'Classic', illustration: true, layout: 'icon' });
+    const classic = screen.getByRole('dialog');
+    expect(classic.querySelector('.oc-swal__art')).toBeNull();
+    expect(classic.querySelector('.oc-swal__icon .oc-glyph--success')).not.toBeNull();
+    act(() => swal.close());
+
+    // An illustrated layout without an explicit scene auto-picks one.
+    void open({ icon: 'error', title: 'Hero auto', layout: 'hero' });
+    expect(document.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', 'error');
+  });
+
+  it('ignores illustrations in toast mode and tints the backdrop by tone', () => {
+    render(<SwalHost />);
+    void open({ icon: 'warning', title: 'Careful', illustration: true });
+    expect(document.querySelector('.oc-swal')).toHaveAttribute('data-tone', 'warning');
+    act(() => swal.close());
+    void open({ toast: true, icon: 'success', title: 'Saved', illustration: true });
+    expect(document.querySelector('.oc-swal__art, .oc-swal__hero')).toBeNull();
+  });
+
+  it('confirmDelete: alertdialog, danger confirm, cancel focused, resolves on confirm', async () => {
+    render(
+      <>
+        <button type="button">opener</button>
+        <SwalHost />
+      </>,
+    );
+    screen.getByRole('button', { name: 'opener' }).focus();
+    let p!: Promise<SwalResult>;
+    act(() => {
+      p = swal.confirmDelete('Q3 report.pdf');
+    });
+    const dialog = screen.getByRole('alertdialog');
+    expect(dialog).toHaveAccessibleName('Warning: Delete “\u2068Q3 report.pdf\u2069”?');
+    expect(dialog).toHaveAccessibleDescription('This can’t be undone.');
+    expect(dialog).toHaveAttribute('aria-modal', 'true');
+    expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
+    const del = screen.getByRole('button', { name: 'Delete' });
+    expect(del).toHaveClass('oc-swal__btn--danger');
+    expect(dialog.querySelector('[data-illustration]')).not.toBeNull();
+    await userEvent.click(del);
+    await expect(p).resolves.toMatchObject({ isConfirmed: true });
+    expect(screen.getByRole('button', { name: 'opener' })).toHaveFocus();
+  });
+
+  it('unsavedChanges: save / discard / stay', async () => {
+    render(<SwalHost />);
+    let p!: Promise<SwalResult>;
+    act(() => {
+      p = swal.unsavedChanges();
+    });
+    expect(screen.getByRole('alertdialog')).toHaveAccessibleName('Warning: You have unsaved changes');
+    expect(screen.getByRole('button', { name: 'Save changes' })).toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: 'Discard' }));
+    await expect(p).resolves.toMatchObject({ isDenied: true });
+  });
+
+  it('sessionExpired cannot be dismissed with Escape; offline / permission / server presets render hero scenes', async () => {
+    render(<SwalHost />);
+    let p!: Promise<SwalResult>;
+    act(() => {
+      p = swal.sessionExpired();
+    });
+    expect(screen.getByRole('dialog')).toHaveClass('oc-swal__popup--hero');
+    fireEvent.keyDown(document, { key: 'Escape' });
+    expect(swal.isOpen()).toBe(true);
+    await userEvent.click(screen.getByRole('button', { name: 'Sign in again' }));
+    await expect(p).resolves.toMatchObject({ isConfirmed: true });
+
+    for (const [fn, scene, name] of [
+      [swal.offline, 'offline', 'Warning: You’re offline'],
+      [swal.permissionDenied, 'no-permission', 'Error: You don’t have access'],
+      [swal.serverError, 'server-error', 'Error: Something went wrong on our end'],
+    ] as const) {
+      act(() => {
+        void fn();
+      });
+      const d = document.querySelector('.oc-swal__popup')!;
+      expect(d).toHaveAccessibleName(name);
+      expect(d.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', scene);
+      act(() => swal.close());
+    }
+  });
+
+  it('localizes presets and built-in labels (Arabic) and sets lang/dir', () => {
+    render(<SwalHost />);
+    act(() => {
+      void swal.confirmDelete('التقرير', { locale: 'ar' });
+    });
+    const dialog = screen.getByRole('alertdialog');
+    expect(dialog).toHaveAccessibleName('تحذير: حذف «\u2068التقرير\u2069»؟');
+    expect(screen.getByRole('button', { name: 'حذف' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'إلغاء' })).toBeInTheDocument();
+    const root = document.querySelector('.oc-swal')!;
+    expect(root).toHaveAttribute('lang', 'ar');
+    expect(root).toHaveAttribute('dir', 'rtl');
+    act(() => swal.close());
+
+    swal.configure({ locale: 'ar', labels: { confirm: 'تم' } });
+    void open({ icon: 'success', title: 'تم الحفظ' });
+    expect(screen.getByRole('dialog')).toHaveAccessibleName('نجاح: تم الحفظ');
+    expect(screen.getByRole('button', { name: 'تم' })).toBeInTheDocument();
+  });
+
+  it('passes an axe audit when illustrated', async () => {
+    const { default: axe } = await import('axe-core');
+    render(<SwalHost />);
+    act(() => {
+      void swal.confirmDelete('notes.txt');
+    });
+    const results = await axe.run(document.body, { rules: { 'color-contrast': { enabled: false } }, resultTypes: ['violations'] });
+    expect(results.violations.map((v) => v.id)).toEqual([]);
+  });
+
+  it('can opt out of the mobile bottom sheet', () => {
+    render(<SwalHost />);
+    void open({ title: 'No sheet', sheet: false });
+    expect(document.querySelector('.oc-swal')).toHaveAttribute('data-sheet', 'false');
+  });
+});

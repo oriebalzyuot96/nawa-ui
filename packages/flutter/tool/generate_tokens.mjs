@@ -16,6 +16,11 @@ import {
   defaultShape,
 } from '../../core/src/themes.mjs';
 import { accentNames, modeNames, resolveTheme } from '../../core/scripts/resolve.mjs';
+// Custom brand accents, same flags as the core build: --brand '#ff6a00' --brand-name acme, or orca.config.json.
+import { buildBrands, readBrandConfig } from '../../core/scripts/brand.mjs';
+
+const brands = buildBrands(readBrandConfig());
+const dartName = (name) => name.replace(/-([a-z0-9])/g, (_, c) => c.toUpperCase());
 
 const here = dirname(fileURLToPath(import.meta.url));
 const out = join(here, '..', 'lib', 'src', 'tokens.g.dart');
@@ -81,7 +86,7 @@ function generate() {
   w(`enum OrcaMode { ${modeNames.join(', ')} }`);
   w();
   w('/// Accent palette.');
-  w(`enum OrcaAccent { ${accentNames.join(', ')} }`);
+  w(`enum OrcaAccent { ${[...accentNames, ...brands.map((b) => dartName(b.theme.name))].join(', ')} }`);
   w();
   w('/// Corner radius preset. `standard` is the web `default` shape.');
   w(`enum OrcaShape { ${Object.keys(shapes).map(shapeName).join(', ')} }`);
@@ -117,6 +122,13 @@ function generate() {
         if (!(key in t)) throw new Error(`resolveTheme(${mode}, ${accent}) is missing ${key}`);
         w(`      ${key}: ${dartColor(t[key])},`);
       }
+      w('    ),');
+    }
+    for (const { theme } of brands) {
+      const t = theme.tokens[mode];
+      w(`    OrcaAccent.${dartName(theme.name)}: OrcaColors(`);
+      w(`      brightness: Brightness.${mode === 'dark' ? 'dark' : 'light'},`);
+      for (const key of colorKeys) w(`      ${key}: ${dartColor(t[key])},`);
       w('    ),');
     }
     w('  },');

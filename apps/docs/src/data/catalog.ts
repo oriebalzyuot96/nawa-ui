@@ -10,8 +10,9 @@ import { media } from './docs/media';
 import { feedback } from './docs/feedback';
 import { charts } from './docs/charts';
 import { threeD } from './docs/three-d';
+import { motion } from './docs/motion';
 
-export const categories: CategoryDoc[] = [forms, advancedForms, data, panels, overlays, menus, media, feedback, charts, threeD];
+export const categories: CategoryDoc[] = [forms, advancedForms, data, panels, overlays, menus, media, feedback, charts, threeD, motion];
 
 export const categoryBySlug = (slug: string) => categories.find((c) => c.slug === slug);
 

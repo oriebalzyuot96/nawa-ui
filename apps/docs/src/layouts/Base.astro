@@ -3,6 +3,7 @@ import '@orca-ui/core/style.css';
 import '../styles/site.css';
 import ThemeScript from '@orca-ui/astro/components/ThemeScript';
 import Toaster from '@orca-ui/astro/components/Toaster';
+import AccessibilityPanel from '@orca-ui/astro/components/AccessibilityPanel';
 import Logo from '../components/Logo.astro';
 import { categories } from '../data/catalog';
 
@@ -142,6 +143,7 @@ const jsonLd = [
               </select>
             </label>
           </div>
+          <AccessibilityPanel trigger="inline" locale={lang} id="site-a11y" />
           <a href={isAr ? `${base}/` : `${base}/ar/`} lang={isAr ? 'en' : 'ar'} hreflang={isAr ? 'en' : 'ar'}>{isAr ? 'English' : 'العربية'}</a>
           <a href={repo} rel="noopener">GitHub</a>
         </div>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import {
   Badge,
   Button,
+  Carousel3D,
   CubeCarousel,
   FlipCard,
   Floating3DIcon,
@@ -72,9 +73,46 @@ function CubeDemo() {
   ];
   return (
     <>
-      <CubeCarousel label="Release highlights" slides={slides} index={i} onIndexChange={setI} width="18rem" height="12rem" />
+      <CubeCarousel label="Release highlights (cube)" slides={slides} index={i} onIndexChange={setI} width="18rem" height="12rem" />
       <Output label="Slide">{`${i + 1} of ${slides.length}`}</Output>
     </>
+  );
+}
+
+const C3D_SLIDES = [
+  { title: 'Charts', hue: 262, text: '15 accessible chart types, each with a data table.' },
+  { title: 'Themes', hue: 172, text: 'Light, dark and high contrast × 7 accents.' },
+  { title: 'RTL', hue: 340, text: 'Every component mirrors for Arabic.' },
+  { title: 'Motion', hue: 32, text: 'Springs and timelines that respect reduced motion.' },
+  { title: '3D', hue: 205, text: 'WebGL scenes with graceful fallbacks.' },
+];
+
+function Carousel3DDemo() {
+  const [mode, setMode] = useState<'coverflow' | 'ring' | 'stack'>('coverflow');
+  const [i, setI] = useState(0);
+  const slides = C3D_SLIDES.map((s) => ({
+    title: s.title,
+    content: (
+      <div style={{ height: '100%', display: 'grid', alignContent: 'end', gap: '0.25rem', padding: '1.25rem', background: `linear-gradient(160deg, hsl(${s.hue} 70% 62% / 0.28), transparent 65%)` }}>
+        <h3 style={{ margin: 0 }}>{s.title}</h3>
+        <p className="muted" style={{ margin: 0 }}>
+          {s.text}
+        </p>
+      </div>
+    ),
+  }));
+  return (
+    <div className="demo-col">
+      <div role="group" aria-label="Mode" style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+        {(['coverflow', 'ring', 'stack'] as const).map((m) => (
+          <Button key={m} size="sm" variant={mode === m ? 'primary' : 'secondary'} aria-pressed={mode === m} onClick={() => setMode(m)}>
+            {m[0].toUpperCase() + m.slice(1)}
+          </Button>
+        ))}
+      </div>
+      <Carousel3D label="Product gallery" mode={mode} slides={slides} index={i} onIndexChange={setI} autoplay={6000} slideWidth="min(17rem, 68vw)" height="14rem" />
+      <Output label="Slide">{`${i + 1} of ${slides.length}: ${C3D_SLIDES[i].title}`}</Output>
+    </div>
   );
 }
 
@@ -173,11 +211,12 @@ export default createDemoIsland(
     tiltcard: TiltDemo,
     flipcard: FlipDemo,
     cubecarousel: CubeDemo,
+    carousel3d: Carousel3DDemo,
     parallaxlayers: ParallaxDemo,
     text3d: Text3DDemo,
     floating3dicon: FloatDemo,
     orbitbadge: OrbitDemo,
     perspective3dstack: StackDemo,
   },
-  ['parallaxlayers', 'text3d'],
+  ['carousel3d', 'parallaxlayers', 'text3d'],
 );

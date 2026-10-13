@@ -154,21 +154,26 @@ export const advancedForms: CategoryDoc = {
     {
       id: 'inputotp',
       name: 'InputOtp',
-      description: 'One-time-code entry split into cells, with paste support and auto-advance.',
+      description: 'One-time-code entry: one cell per character with an animated caret, grouping, SMS autofill, masking with reveal, a resend countdown and error / success states.',
       props: [
-        ['length', 'number', 'Number of cells. Default 6.'],
-        ['value / onChange', 'string', 'The code.'],
-        ['onComplete', '(code) => void', 'Called when all cells are filled.'],
-        ['integerOnly / mask', 'boolean', 'Digits only / hide characters.'],
+        ['length', 'number', 'Number of cells. Default 4.'],
+        ['value / onChange / onComplete', 'string', 'The code; onComplete fires when every cell is filled.'],
+        ['integerOnly', 'boolean', 'Digits only — opens the numeric keypad on phones.'],
+        ['groups / separator', 'number[] / ReactNode', 'e.g. [3, 3] renders 123 – 456.'],
+        ['mask / revealable', 'boolean', 'Hide characters, with a Show code toggle.'],
+        ['error / success', 'string / boolean | string', 'Error shakes the cells (not with reduced motion); success turns them green.'],
+        ['resendAfter / onResend', 'number / () => void', 'Countdown in seconds before Resend unlocks.'],
       ],
       keys: [
         ['Arrow Left / Arrow Right', 'Move between cells'],
         ['Backspace', 'Clear and move back'],
         ['Home / End', 'First / last cell'],
+        ['Ctrl + V', 'Paste a whole code from any cell'],
       ],
-      a11y: 'Each cell has its own label ("Digit 2 of 6") and the group is labelled; pasting a full code fills every cell.',
+      a11y: 'Each cell has its own label ("Digit 2 of 6") inside a labelled group; autocomplete="one-time-code" lets phones fill the SMS code. Errors are announced (role="alert") and success politely. Digits stay left-to-right in Arabic pages. Separators and the caret are decorative.',
       code: {
-        react: `<InputOtp label="Verification code" length={6} integerOnly
+        react: `<InputOtp label="Verification code" length={6} groups={[3, 3]} integerOnly
+  resendAfter={30} onResend={sendAgain} error={wrong ? 'That code did not match' : undefined}
   onComplete={(code) => verify(code)} />`,
       },
     },
@@ -231,20 +236,28 @@ export const advancedForms: CategoryDoc = {
     {
       id: 'colorpicker',
       name: 'ColorPicker',
-      description: 'Pick a colour from presets, the native picker or a hex field.',
+      description: 'A full colour picker: saturation / brightness area, hue and opacity sliders, HEX · RGB · HSL · OKLCH entry, eyedropper, presets, recent colours and a WCAG contrast check.',
       props: [
-        ['value / onChange', 'string', 'Hex colour.'],
-        ['presets', 'Array<string | { value, label }>', 'Swatches. Give labels for screen readers.'],
-        ['showInput', 'boolean', 'Shows a hex text field.'],
+        ['value / onChange', 'string', 'Any CSS colour in; emits #rrggbb (or #rrggbbaa with alpha).'],
+        ['onColorChange', '({ hex, rgba, css }) => void', 'Rich change event.'],
+        ['mode', "'popover' | 'inline'", 'Swatch button with a popover (default), or always visible.'],
+        ['alpha', 'boolean', 'Opacity slider.'],
+        ['formats / format', "('hex' | 'rgb' | 'hsl' | 'oklch')[]", 'Text formats offered by the format switch.'],
+        ['presets / recent', 'Array<string | { value, label }> / number', 'Swatches and how many recent colours to keep.'],
+        ['contrastWith', 'string', 'Background to check against: shows the ratio and AA / AA Large / AAA pass or fail.'],
+        ['eyeDropper', 'boolean', 'Pick from the screen where the EyeDropper API exists.'],
       ],
       keys: [
-        ['Tab', 'Move between swatches, the native picker and the hex field'],
-        ['Space / Enter', 'Pick the focused swatch'],
+        ['Arrow Left / Arrow Right', 'Saturation (area) or value (sliders); Shift = 10 steps'],
+        ['Arrow Up / Arrow Down', 'Brightness (area) or value (sliders)'],
+        ['Page Up / Page Down', 'Large steps'],
+        ['Home / End', 'Minimum / maximum'],
+        ['Escape', 'Close the popover and return to the swatch button'],
       ],
-      a11y: 'Swatches are toggle buttons (aria-pressed) named by their label, so colours are never conveyed by colour alone.',
+      a11y: 'The area is a slider whose aria-valuetext reads "Saturation 40%, Brightness 70%"; the hue slider names the colour ("210 degrees, blue"). Swatches are toggle buttons with labels, and the contrast grades are written out, so nothing depends on seeing colour.',
       code: {
-        react: `<ColorPicker label="Brand colour" value={color} onChange={setColor} showInput
-  presets={[{ value: '#5b34d6', label: 'Violet' }, { value: '#0f766e', label: 'Teal' }]} />`,
+        react: `<ColorPicker label="Brand colour" value={color} onChange={setColor} alpha
+  contrastWith="#ffffff" presets={[{ value: '#5b34d6', label: 'Violet' }, { value: '#0f766e', label: 'Teal' }]} />`,
       },
     },
     {
