@@ -1,6 +1,8 @@
 ---
 import Base from './Base.astro';
-import { categories } from '../data/catalog';
+import Icon from '@orca-ui/icons/astro';
+import { categories, documentedCount } from '../data/catalog';
+import { categoryIcon } from '../data/site';
 
 interface Props {
   title: string;
@@ -18,17 +20,30 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 <Base title={title} description={description}>
   <div class="container doc-layout">
     <aside class="docs-sidebar">
+      <button type="button" class="sidebar-search" data-palette-open aria-haspopup="dialog">
+        <Icon name="search" size={16} />
+        <span>Find a component</span>
+        <kbd aria-hidden="true" data-kbd-mod>Ctrl K</kbd>
+      </button>
       <nav aria-label="Component categories">
-        <p class="eyebrow" id="sidebar-cats">Components</p>
+        <p class="docs-sidebar__label" id="sidebar-cats">
+          Components <span class="docs-sidebar__total">{documentedCount}</span>
+        </p>
         <ul class="docs-sidebar__cats" aria-labelledby="sidebar-cats">
           <li>
-            <a href={`${base}/components/`} aria-current={current ? undefined : 'page'}>Overview</a>
+            <a href={`${base}/components/`} aria-current={current ? undefined : 'page'}>
+              <span class="docs-sidebar__icon"><Icon name="grid" size={16} /></span>
+              Overview
+            </a>
           </li>
           {
             categories.map((c) => (
               <li>
                 <a href={`${base}/components/${c.slug}/`} aria-current={c.slug === current ? 'page' : undefined}>
-                  <span aria-hidden="true">{c.icon}</span> {c.nav}
+                  <span class="docs-sidebar__icon">
+                    <Icon name={categoryIcon[c.slug] ?? 'grid'} size={16} />
+                  </span>
+                  {c.nav}
                   <span class="docs-sidebar__count">
                     <span class="oc-sr-only">(</span>
                     {c.entries.length}

@@ -1,6 +1,6 @@
 ---
-import { Code } from 'astro:components';
-import Tabs from '@orca-ui/astro/components/Tabs';
+import CodeBlock from './CodeBlock.astro';
+import CodeTabSet from './CodeTabSet.astro';
 import { frameworks, type CodeSet } from '../data/snippets';
 
 interface Props {
@@ -21,18 +21,14 @@ const only = available.length === 1 ? available[0] : undefined;
         <span class="oc-badge oc-badge--primary">{only.label}</span>
         {only.key === 'react' && <span class="muted">Coming to Vue, Svelte and Angular.</span>}
       </p>
-      <Code code={code[only.key]!} lang={only.lang as 'tsx'} theme="github-dark-high-contrast" />
+      <CodeBlock code={code[only.key]!} lang={only.lang} file={`${label} · ${only.label}`} lang_label={only.lang.toUpperCase()} />
     </div>
   ) : (
     <div class="code-tabs">
-      <Tabs label={`${label} code examples`} tabs={available.map((f) => ({ key: f.key, label: f.label }))}>
-        {code.react && <Code slot="panel-react" code={code.react} lang="tsx" theme="github-dark-high-contrast" />}
-        {code.vue && <Code slot="panel-vue" code={code.vue} lang="vue" theme="github-dark-high-contrast" />}
-        {code.svelte && <Code slot="panel-svelte" code={code.svelte} lang="svelte" theme="github-dark-high-contrast" />}
-        {code.astro && <Code slot="panel-astro" code={code.astro} lang="astro" theme="github-dark-high-contrast" />}
-        {code.rn && <Code slot="panel-rn" code={code.rn} lang="tsx" theme="github-dark-high-contrast" />}
-        {code.angular && <Code slot="panel-angular" code={code.angular} lang="ts" theme="github-dark-high-contrast" />}
-      </Tabs>
+      <CodeTabSet
+        label={`${label} code examples`}
+        items={available.map((f) => ({ key: f.key, label: f.label, code: code[f.key]!, lang: f.lang, file: `${label} · ${f.label}`, langLabel: f.lang.toUpperCase() }))}
+      />
     </div>
   )
 }

@@ -4,3 +4,6 @@ dist/
 coverage/
 *.log
 .DS_Store
+
+# Local review artifacts (screenshots)
+.artifacts/

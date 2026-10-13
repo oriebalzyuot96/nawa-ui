@@ -1,0 +1,119 @@
+---
+// Package marks drawn for this site: a tinted tile with a simple geometric glyph per platform.
+// They are deliberately abstract (no third-party logos) and always decorative.
+import type { MarkId } from '../data/packages';
+
+interface Props {
+  id: MarkId;
+  size?: number;
+  class?: string;
+}
+
+const { id, size = 44, class: className } = Astro.props;
+const gid = `mk-${id}-${Math.random().toString(36).slice(2, 7)}`;
+
+// [from, to] tile gradient. The Orca tile follows the active accent instead.
+const tones: Record<MarkId, [string, string]> = {
+  orca: ['var(--oc-primary)', 'var(--oc-primary-hover)'],
+  react: ['#0b6e85', '#0aa2c0'],
+  vue: ['#0b6b4f', '#1aa375'],
+  angular: ['#a3133a', '#df3a5c'],
+  svelte: ['#b53c0c', '#ef6a2a'],
+  astro: ['#2a1a6e', '#7340e0'],
+  native: ['#1a49c4', '#4c86f0'],
+  flutter: ['#075b8c', '#2aa3dd'],
+  three: ['#111827', '#3b4556'],
+  icons: ['#8f1a99', '#cf45d6'],
+  illustrations: ['#9a4a07', '#e08a14'],
+  core: ['#2b3646', '#5e6b7e'],
+};
+const [from, to] = tones[id];
+---
+
+<svg class:list={['mark', className]} width={size} height={size} viewBox="0 0 40 40" aria-hidden="true" focusable="false" data-mark={id}>
+  <defs>
+    <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color={from}></stop>
+      <stop offset="1" stop-color={to}></stop>
+    </linearGradient>
+  </defs>
+  <rect class="mark__tile" width="40" height="40" rx="11" fill={`url(#${gid})`}></rect>
+  <rect class="mark__sheen" x="0.5" y="0.5" width="39" height="39" rx="10.5" fill="none" stroke="#fff" stroke-opacity="0.18"></rect>
+  <g class="mark__glyph" fill="none" stroke={id === 'orca' ? 'var(--oc-on-primary)' : '#fff'} stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    {id === 'orca' && (
+      <g transform="translate(0 0) scale(1.25)">
+        <path d="M9.5 21.5C11.2 15.4 14.6 9.6 20.6 6.8c-.9 4.6-.5 9.6 1.4 14.7z" fill="var(--oc-on-primary)" stroke="none"></path>
+        <path d="M5.5 24.2c2.1-1.6 4.2-1.6 6.3 0s4.2 1.6 6.3 0 4.2-1.6 6.3 0" stroke-width="1.8"></path>
+      </g>
+    )}
+    {id === 'react' && (
+      <>
+        <ellipse cx="20" cy="20" rx="12" ry="5" transform="rotate(45 20 20)"></ellipse>
+        <ellipse cx="20" cy="20" rx="12" ry="5" transform="rotate(-45 20 20)"></ellipse>
+        <circle cx="20" cy="20" r="2.4" fill="#fff" stroke="none"></circle>
+      </>
+    )}
+    {id === 'vue' && (
+      <>
+        <path d="M9 11.5 20 30l11-18.5"></path>
+        <path d="M15 11.5 20 20l5-8.5" stroke-opacity="0.7"></path>
+      </>
+    )}
+    {id === 'angular' && (
+      <>
+        <path d="M20 8.5 30.5 12.2 29 26.6 20 31.5 11 26.6 9.5 12.2Z"></path>
+        <path d="M15.6 25 20 14.5 24.4 25M17.2 21.4h5.6" stroke-width="2"></path>
+      </>
+    )}
+    {id === 'svelte' && (
+      <path d="M25.5 12.2c-2.6-2.4-8.4-2-9.6 1.8-1.4 4.6 9.6 4.4 8.6 9.8-.8 4.2-7.2 5.2-10.2 2" stroke-width="2.6"></path>
+    )}
+    {id === 'astro' && (
+      <>
+        <path d="M12.5 27.5 18 10.5h4l5.5 17"></path>
+        <path d="M16 27.2c1.4 2.6 6.6 2.6 8 0" stroke-opacity="0.75"></path>
+      </>
+    )}
+    {id === 'native' && (
+      <>
+        <rect x="13" y="8" width="14" height="24" rx="3.2"></rect>
+        <path d="M18 28.2h4"></path>
+        <circle cx="20" cy="18" r="3.4" stroke-opacity="0.8"></circle>
+      </>
+    )}
+    {id === 'flutter' && (
+      <>
+        <path d="M20 8.5 31.5 20 20 31.5 8.5 20Z"></path>
+        <path d="M20 14.5 25.5 20 20 25.5 14.5 20Z" fill="#fff" fill-opacity="0.85" stroke="none"></path>
+      </>
+    )}
+    {id === 'three' && (
+      <>
+        <path d="M20 8.5 30 14v12l-10 5.5L10 26V14Z"></path>
+        <path d="M10 14l10 5.5L30 14M20 19.5v12" stroke-opacity="0.75"></path>
+      </>
+    )}
+    {id === 'icons' && (
+      <>
+        <circle cx="14" cy="14" r="4"></circle>
+        <rect x="22" y="10" width="8" height="8" rx="2"></rect>
+        <path d="M14 22.5 18.5 30h-9Z"></path>
+        <path d="M26 22v8M22 26h8"></path>
+      </>
+    )}
+    {id === 'illustrations' && (
+      <>
+        <rect x="8.5" y="10" width="23" height="20" rx="3.5"></rect>
+        <path d="m10 27 7-7.5 5 5 3-3 5.5 5.5" stroke-width="2"></path>
+        <circle cx="25" cy="15.5" r="2.2" fill="#fff" stroke="none"></circle>
+      </>
+    )}
+    {id === 'core' && (
+      <>
+        <path d="M20 9.5 31 15l-11 5.5L9 15Z"></path>
+        <path d="M9 20l11 5.5L31 20" stroke-opacity="0.8"></path>
+        <path d="M9 25l11 5.5L31 25" stroke-opacity="0.6"></path>
+      </>
+    )}
+  </g>
+</svg>

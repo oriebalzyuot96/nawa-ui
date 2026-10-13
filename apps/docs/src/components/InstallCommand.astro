@@ -1,0 +1,47 @@
+---
+// Install command with a package-manager switch and a copy button.
+// Every install command on the page follows the last package manager the visitor picked
+// (remembered in localStorage by src/scripts/site.ts).
+import Icon from '@orca-ui/icons/astro';
+import type { InstallOption } from '../data/packages';
+import { t } from '../data/site';
+
+interface Props {
+  options: InstallOption[];
+  locale?: 'en' | 'ar';
+  /** Hide the package-manager switch (the command still follows the visitor's choice). */
+  compact?: boolean;
+  size?: 'md' | 'lg';
+  /** Accessible name of the command, e.g. "Install @orca-ui/react". */
+  label?: string;
+  class?: string;
+}
+
+const { options, locale = 'en', compact = false, size = 'md', label, class: className } = Astro.props;
+const L = t[locale];
+const first = options[0];
+const cmds = Object.fromEntries(options.map((o) => [o.pm, o.cmd]));
+const name = label ?? first.cmd;
+---
+
+<div class:list={['install', `install--${size}`, compact && 'install--compact', className]} data-install data-cmds={JSON.stringify(cmds)} data-pm={first.pm} dir="ltr">
+  {
+    !compact && options.length > 1 && (
+      <div class="install__pms" role="group" aria-label={L.pm}>
+        {options.map((o, i) => (
+          <button type="button" class="install__pm" data-pm-choice={o.pm} aria-pressed={i === 0 ? 'true' : 'false'}>
+            {o.pm}
+          </button>
+        ))}
+      </div>
+    )
+  }
+  <div class="install__row">
+    <span class="install__prompt" aria-hidden="true" data-install-prompt hidden={first.cmd.includes('\n')}>$</span>
+    <code class="install__cmd" data-install-cmd>{first.cmd}</code>
+    <button type="button" class="copy-btn copy-btn--icon" data-copy aria-label={`${L.copy}: ${name}`}>
+      <Icon name="copy" size={16} class="copy-btn__idle" />
+      <Icon name="check" size={16} class="copy-btn__done" />
+    </button>
+  </div>
+</div>

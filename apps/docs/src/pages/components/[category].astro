@@ -1,5 +1,6 @@
 ---
 import DocsLayout from '../../layouts/DocsLayout.astro';
+import Icon from '@orca-ui/icons/astro';
 import ComponentDoc from '../../components/ComponentDoc.astro';
 import { categories } from '../../data/catalog';
 import type { CategoryDoc } from '../../data/docs/types';
@@ -45,7 +46,7 @@ const s = cat.slug;
   </nav>
   <h1>{cat.h1}</h1>
   <p class="lead">{cat.intro}</p>
-  {cat.callout && <p class="callout" role="note"><span aria-hidden="true">⌨️</span> {cat.callout}</p>}
+  {cat.callout && <p class="callout" role="note"><Icon name="keyboard" size={18} /> <span>{cat.callout}</span></p>}
   <p class="muted">
     {cat.entries.length} components on this page. Every demo is live — change the theme in the header or flip a demo to right-to-left with its
     <strong>RTL</strong> button.

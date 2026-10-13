@@ -1,0 +1,149 @@
+---
+// The home-page studio: real Orca UI components (the Astro package) in a stage you can re-theme on
+// the spot — mode, accent and direction are scoped to the stage — plus the same card's code for every platform.
+import Icon from '@orca-ui/icons/astro';
+import Card from '@orca-ui/astro/components/Card';
+import Input from '@orca-ui/astro/components/Input';
+import Segmented from '@orca-ui/astro/components/Segmented';
+import Switch from '@orca-ui/astro/components/Switch';
+import ProgressBar from '@orca-ui/astro/components/ProgressBar';
+import Badge from '@orca-ui/astro/components/Badge';
+import Button from '@orca-ui/astro/components/Button';
+import Avatar from '@orca-ui/astro/components/Avatar';
+import CodeTabSet from './CodeTabSet.astro';
+import { showcase } from '../data/showcase';
+import { accents } from '../data/site';
+
+interface Props {
+  locale?: 'en' | 'ar';
+}
+
+const { locale = 'en' } = Astro.props;
+const ar = locale === 'ar';
+const L = ar
+  ? {
+      live: 'معاينة حية',
+      mode: 'وضع المعاينة',
+      modes: [
+        ['auto', 'تلقائي'],
+        ['light', 'فاتح'],
+        ['dark', 'داكن'],
+        ['hc', 'تباين'],
+      ],
+      accent: 'لون المعاينة',
+      dir: 'عرض المعاينة من اليسار لليمين',
+      stage: 'معاينة المكونات',
+      title: 'نشر جديد',
+      project: 'اسم المشروع',
+      env: 'البيئة',
+      envs: [
+        { label: 'تجريبية', value: 'preview' },
+        { label: 'إنتاج', value: 'prod' },
+      ],
+      notify: 'إشعار الفريق',
+      progress: 'تقدّم البناء',
+      checks: 'نجحت الفحوص',
+      regions: '12 منطقة',
+      cancel: 'إلغاء',
+      deploy: 'انشر',
+      toastTitle: 'تم النشر',
+      toastMsg: 'orca-app متاح الآن في 12 منطقة.',
+      code: 'نفس البطاقة في كل منصة',
+      by: 'بواسطة',
+    }
+  : {
+      live: 'Live preview',
+      mode: 'Preview mode',
+      modes: [
+        ['auto', 'Auto'],
+        ['light', 'Light'],
+        ['dark', 'Dark'],
+        ['hc', 'HC'],
+      ],
+      accent: 'Preview accent',
+      dir: 'Preview right-to-left',
+      stage: 'Component preview',
+      title: 'New deployment',
+      project: 'Project name',
+      env: 'Environment',
+      envs: [
+        { label: 'Preview', value: 'preview' },
+        { label: 'Production', value: 'prod' },
+      ],
+      notify: 'Notify the team',
+      progress: 'Build progress',
+      checks: 'Checks passed',
+      regions: '12 regions',
+      cancel: 'Cancel',
+      deploy: 'Deploy',
+      toastTitle: 'Deployed',
+      toastMsg: 'orca-app is live in 12 regions.',
+      code: 'The same card on every platform',
+      by: 'by',
+    };
+---
+
+<div class="studio" data-studio data-toast-title={L.toastTitle} data-toast-msg={L.toastMsg}>
+  <div class="studio__bar">
+    <span class="studio__live"><span class="pulse-dot" aria-hidden="true"></span>{L.live}</span>
+    <div class="studio__controls">
+      <div class="studio-seg" role="radiogroup" aria-label={L.mode}>
+        {L.modes.map(([value, label], i) => (
+          <label class="studio-seg__item">
+            <input type="radio" class="oc-sr-only" name={`studio-mode-${locale}`} value={value} checked={i === 0} data-studio-mode />
+            <span>{label}</span>
+          </label>
+        ))}
+      </div>
+      <div class="studio-swatches" role="radiogroup" aria-label={L.accent}>
+        {accents.map((a, i) => (
+          <label class="swatch" data-accent={a} title={a}>
+            <input type="radio" class="oc-sr-only" name={`studio-accent-${locale}`} value={a} checked={i === 0} data-studio-accent />
+            <span class="swatch__dot" aria-hidden="true"></span>
+            <span class="oc-sr-only">{a}</span>
+          </label>
+        ))}
+      </div>
+      <button type="button" class="studio__dir" aria-pressed="false" data-studio-dir>
+        <Icon name={ar ? 'text-direction-ltr' : 'text-direction-rtl'} size={16} />
+        <span class="oc-sr-only">{L.dir}</span>
+        <span aria-hidden="true">{ar ? 'LTR' : 'RTL'}</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="studio__stage" data-studio-stage role="region" aria-label={L.stage}>
+    <div class="studio__grid" aria-hidden="true"></div>
+    <div class="studio__card">
+      <Card title={L.title}>
+        <div class="studio__form">
+          <Input label={L.project} value="orca-app" autocomplete="off" />
+          <div class="studio__field">
+            <span class="oc-label" aria-hidden="true">{L.env}</span>
+            <Segmented name={`studio-env-${locale}`} label={L.env} options={L.envs} />
+          </div>
+          <Switch label={L.notify} checked />
+          <ProgressBar value={72} label={L.progress} />
+          <div class="studio__meta">
+            <Badge variant="success">{L.checks}</Badge>
+            <Badge variant="info">{L.regions}</Badge>
+            <span class="studio__avatars">
+              <Avatar name="Lina Haddad" size="sm" />
+              <Avatar name="Omar Khalil" size="sm" />
+              <Avatar name="Sara Nasser" size="sm" />
+            </span>
+          </div>
+        </div>
+        <div slot="footer" class="studio__actions">
+          <Button variant="ghost">{L.cancel}</Button>
+          <Button data-studio-deploy>{L.deploy}</Button>
+        </div>
+      </Card>
+    </div>
+  </div>
+
+  <div class="studio__code">
+    <p class="studio__code-title" id={`studio-code-${locale}`}>{L.code}</p>
+    <CodeTabSet label={L.code} items={showcase} locale={locale} />
+  </div>
+</div>

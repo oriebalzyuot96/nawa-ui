@@ -1,0 +1,54 @@
+---
+// A package as a rich card: mark, registry, what it includes, a headline number and its install command.
+import Icon from '@orca-ui/icons/astro';
+import Mark from './Mark.astro';
+import InstallCommand from './InstallCommand.astro';
+import type { PackageInfo } from '../data/packages';
+
+interface Props {
+  pkg: PackageInfo;
+  locale?: 'en' | 'ar';
+  featured?: boolean;
+  headingLevel?: 'h3' | 'h2';
+}
+
+const { pkg, locale = 'en', featured = false, headingLevel: H = 'h3' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const ar = locale === 'ar';
+const detail = `${base}${ar ? '/ar' : ''}/packages/#${pkg.id}`;
+const headingId = `pkg-card-${pkg.id}`;
+---
+
+<article class:list={['pkg-card', featured && 'pkg-card--featured']} aria-labelledby={headingId} data-spotlight>
+  <div class="pkg-card__head">
+    <Mark id={pkg.mark} size={featured ? 56 : 44} />
+    <div class="pkg-card__id">
+      <H class="pkg-card__name" id={headingId}>
+        <a href={detail} dir="ltr">{pkg.name.includes("/") ? <>{pkg.name.split("/")[0]}/<wbr />{pkg.name.split("/")[1]}</> : pkg.name}</a>
+      </H>
+      <p class="pkg-card__platform">
+        <span class="pkg-chip">{pkg.registry}</span>
+        <span>{pkg.platform[locale]}</span>
+      </p>
+    </div>
+    <p class="pkg-card__stat">
+      <strong>{pkg.stat.value}</strong>
+      <span>{pkg.stat.label[locale]}</span>
+    </p>
+  </div>
+  <p class="pkg-card__tagline">{pkg.tagline[locale]}</p>
+  {featured && <p class="pkg-card__desc">{pkg.description[locale]}</p>}
+  <ul class="pkg-card__includes">
+    {pkg.includes[locale].map((item) => (
+      <li><Icon name="check" size={16} />{item}</li>
+    ))}
+  </ul>
+  <InstallCommand options={pkg.install} locale={locale} compact label={ar ? `تثبيت ${pkg.name}` : `Install ${pkg.name}`} />
+  <div class="pkg-card__foot">
+    <a class="pkg-card__more" href={detail}>
+      {ar ? 'التفاصيل' : 'Details'}<span class="oc-sr-only"> {pkg.name}</span>
+      <Icon name="arrow-right" size={16} flipRtl />
+    </a>
+    <span class="pkg-card__size" dir="ltr">{pkg.size.packed !== '—' ? pkg.size.packed : pkg.size.unpacked}<span class="oc-sr-only">{ar ? ' الحجم' : ' size'}</span></span>
+  </div>
+</article>

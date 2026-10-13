@@ -1,0 +1,259 @@
+---
+// /packages/ and /ar/packages/: every package in detail — install, import, exports, size and links.
+import Icon from '@orca-ui/icons/astro';
+import Mark from './Mark.astro';
+import InstallCommand from './InstallCommand.astro';
+import CodeBlock from './CodeBlock.astro';
+import { packages } from '../data/packages';
+
+interface Props {
+  locale: 'en' | 'ar';
+}
+
+const { locale } = Astro.props;
+const ar = locale === 'ar';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const T = ar
+  ? {
+      eyebrow: 'الحزم',
+      h1: 'كل حزم أوركا UI',
+      lead: 'اثنتا عشرة حزمة تقرأ نفس الرموز ونفس الثيمات. ثبّت orca-ui لتحصل على كل شيء، أو اختر حزمة منصّتك فقط — مدير الحزم الذي تختاره يُحفَظ لكل أوامر التثبيت.',
+      index: 'فهرس الحزم',
+      version: 'الإصدار',
+      packed: 'حجم التنزيل',
+      unpacked: 'الحجم بعد التثبيت',
+      peers: 'الاعتماديات المطلوبة',
+      license: 'الرخصة',
+      install: 'التثبيت',
+      usage: 'الاستخدام',
+      exports: 'مسارات التصدير',
+      path: 'المسار',
+      what: 'المحتوى',
+      includes: 'يتضمن',
+      registry: (r: string) => `على ${r}`,
+      source: 'الشيفرة المصدرية',
+      docs: 'التوثيق',
+      compare: 'مقارنة سريعة',
+      compareLead: 'أي حزمة تحتاج؟ اختر حسب منصّتك.',
+      pkg: 'الحزمة',
+      platform: 'المنصّة',
+      count: 'العدد',
+      top: 'العودة إلى الفهرس',
+      sizeNote: 'الأحجام مقيسة من بناء 0.1.0 باستخدام npm pack؛ حجم Flutter هو شيفرة Dart في lib/.',
+    }
+  : {
+      eyebrow: 'Packages',
+      h1: 'Every Orca UI package',
+      lead: 'Twelve packages that read the same tokens and the same themes. Install orca-ui to get everything, or just your platform — the package manager you pick is remembered for every install command.',
+      index: 'Package index',
+      version: 'Version',
+      packed: 'Download size',
+      unpacked: 'Unpacked',
+      peers: 'Peer dependencies',
+      license: 'License',
+      install: 'Install',
+      usage: 'Usage',
+      exports: 'Export paths',
+      path: 'Path',
+      what: 'What you get',
+      includes: 'Includes',
+      registry: (r: string) => `on ${r}`,
+      source: 'Source',
+      docs: 'Docs',
+      compare: 'At a glance',
+      compareLead: 'Which package do you need? Pick by platform.',
+      pkg: 'Package',
+      platform: 'Platform',
+      count: 'Count',
+      top: 'Back to the index',
+      sizeNote: 'Sizes measured from the 0.1.0 build with npm pack; the Flutter size is the Dart source in lib/.',
+    };
+---
+
+<section class="page-hero" aria-labelledby="packages-h1">
+  <div class="page-hero__fx" aria-hidden="true"></div>
+  <div class="container">
+    <p class="eyebrow">{T.eyebrow}</p>
+    <h1 id="packages-h1">{T.h1}</h1>
+    <p class="lead">{T.lead}</p>
+    <ul class="page-hero__marks" aria-hidden="true">
+      {packages.map((p) => <li><Mark id={p.mark} size={34} /></li>)}
+    </ul>
+  </div>
+</section>
+
+<div class="container pkgs-layout">
+  <aside class="pkgs-index">
+    <nav aria-labelledby="pkgs-index-title">
+      <p class="docs-sidebar__label" id="pkgs-index-title">{T.index}</p>
+      <ul data-toc>
+        {packages.map((p) => (
+          <li>
+            <a href={`#${p.id}`}>
+              <Mark id={p.mark} size={22} />
+              <span dir="ltr">{p.name}</span>
+            </a>
+          </li>
+        ))}
+        <li>
+          <a href="#compare"><span class="pkgs-index__dot" aria-hidden="true"><Icon name="table" size={16} /></span>{T.compare}</a>
+        </li>
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="pkgs-content">
+    {
+      packages.map((p) => (
+        <section class="pkg-detail" id={p.id} aria-labelledby={`h-${p.id}`}>
+          <header class="pkg-detail__head">
+            <Mark id={p.mark} size={60} />
+            <div class="pkg-detail__id">
+              <h2 id={`h-${p.id}`} dir="ltr">{p.name}</h2>
+              <p class="pkg-detail__sub">
+                <span class="pkg-chip">{p.registry}</span>
+                <span>{p.platform[locale]}</span>
+                <span aria-hidden="true">·</span>
+                <span>{p.tagline[locale]}</span>
+              </p>
+            </div>
+            <p class="pkg-card__stat pkg-detail__stat">
+              <strong>{p.stat.value}</strong>
+              <span>{p.stat.label[locale]}</span>
+            </p>
+          </header>
+
+          <p class="pkg-detail__desc">{p.description[locale]}</p>
+
+          <dl class="pkg-facts">
+            <div>
+              <dt>{T.version}</dt>
+              <dd dir="ltr">0.1.0</dd>
+            </div>
+            <div>
+              <dt>{T.packed}</dt>
+              <dd dir="ltr">{p.size.packed}</dd>
+            </div>
+            <div>
+              <dt>{T.unpacked}</dt>
+              <dd dir="ltr">{p.size.unpacked}</dd>
+            </div>
+            <div>
+              <dt>{T.license}</dt>
+              <dd dir="ltr">MIT</dd>
+            </div>
+            <div class="pkg-facts__wide">
+              <dt>{T.peers}</dt>
+              <dd dir="ltr">{p.peers.join(' · ')}</dd>
+            </div>
+          </dl>
+
+          <div class="pkg-detail__grid">
+            <div class="pkg-detail__main">
+              <h3>{T.install}</h3>
+              <InstallCommand options={p.install} locale={locale} label={ar ? `تثبيت ${p.name}` : `Install ${p.name}`} />
+              <h3>{T.usage}</h3>
+              <CodeBlock code={p.usage.code} lang={p.usage.lang} file={p.usage.file} locale={locale} />
+            </div>
+            <div class="pkg-detail__side">
+              <h3>{T.includes}</h3>
+              <ul class="pkg-card__includes">
+                {p.includes[locale].map((x) => (
+                  <li>
+                    <Icon name="check" size={16} />
+                    {x}
+                  </li>
+                ))}
+              </ul>
+              <ul class="pkg-links">
+                <li>
+                  <a href={p.registryUrl} rel="noopener">
+                    <Icon name="package" size={17} />
+                    {p.registry} <span class="oc-sr-only">{T.registry(p.name)}</span>
+                    <Icon name="external-link" size={13} flipRtl />
+                  </a>
+                </li>
+                <li>
+                  <a href={p.sourceUrl} rel="noopener">
+                    <Icon name="code" size={17} />
+                    {T.source} <span class="oc-sr-only">{p.name}</span>
+                    <Icon name="external-link" size={13} flipRtl />
+                  </a>
+                </li>
+                {p.docs && (
+                  <li>
+                    <a href={`${base}${p.docs}`}>
+                      <Icon name="book" size={17} />
+                      {T.docs} <span class="oc-sr-only">{p.name}</span>
+                    </a>
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          <h3>{T.exports}</h3>
+          <div class="table-scroll" role="region" aria-label={`${p.name} ${T.exports}`} tabindex="0">
+            <table class="props-table exports-table">
+              <thead>
+                <tr>
+                  <th scope="col">{T.path}</th>
+                  <th scope="col">{T.what}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {p.exports.map((e) => (
+                  <tr>
+                    <th scope="row" dir="ltr">
+                      <code>{e.path}</code>
+                    </th>
+                    <td>{e.text[locale]}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ))
+    }
+
+    <section class="pkg-detail" id="compare" aria-labelledby="h-compare">
+      <h2 id="h-compare">{T.compare}</h2>
+      <p class="muted">{T.compareLead}</p>
+      <div class="table-scroll" role="region" aria-label={ar ? 'جدول المقارنة' : 'Comparison table'} tabindex="0">
+        <table class="props-table compare-table">
+          <thead>
+            <tr>
+              <th scope="col">{T.pkg}</th>
+              <th scope="col">{T.platform}</th>
+              <th scope="col">{T.count}</th>
+              <th scope="col">{T.packed}</th>
+              <th scope="col">{T.install}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {packages.map((p) => (
+              <tr>
+                <th scope="row">
+                  <a href={`#${p.id}`} class="compare-table__pkg">
+                    <Mark id={p.mark} size={22} />
+                    <span dir="ltr">{p.name}</span>
+                  </a>
+                </th>
+                <td>{p.platform[locale]}</td>
+                <td>
+                  <span dir="ltr">{p.stat.value}</span> {p.stat.label[locale]}
+                </td>
+                <td dir="ltr">{p.size.packed}</td>
+                <td dir="ltr">
+                  <code>{p.install[0].cmd}</code>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="muted pkg-note">{T.sizeNote}</p>
+    </section>
+  </div>
+</div>

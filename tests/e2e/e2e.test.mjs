@@ -29,6 +29,8 @@ const BASE = (process.env.E2E_URL ?? `http://127.0.0.1:${PORT}/orca-ui/`).replac
 const MODES = ['light', 'dark', 'hc'];
 const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'];
 const VIEWPORT = { width: 1280, height: 900 };
+// Pages that must be in the sitemap (and so in every check below), whatever else it lists.
+const REQUIRED_PAGES = ['', 'ar/', 'packages/', 'ar/packages/', 'components/', 'themes/', 'accessibility-modes/', 'space/'];
 
 let server;
 let browser;
@@ -151,6 +153,10 @@ before(async () => {
   });
   pages = await discoverPages();
   assert.ok(pages.length > 5, `expected the sitemap to list the docs pages, got ${pages.length}`);
+  for (const p of REQUIRED_PAGES) {
+    const url = new URL(p, BASE).href;
+    assert.ok(pages.includes(url), `the sitemap is missing ${url}`);
+  }
 });
 
 after(async () => {
@@ -242,7 +248,8 @@ describe('keyboard smoke', () => {
   it('a dialog on /components/ traps focus, closes with Escape and restores focus', async () => {
     const url = new URL('components/overlays/', BASE).href;
     const { page } = await open(url, { mode: 'light' });
-    const opener = await page.waitForSelector('button[aria-haspopup="dialog"]');
+    // Scope to the page content: the site header also has dialog triggers (search, accessibility panel).
+    const opener = await page.waitForSelector('.docs-content button[aria-haspopup="dialog"]');
     await opener.evaluate((el) => el.scrollIntoView({ block: 'center' }));
     // The demo is a client:visible island: retry until it has hydrated and the click opens the dialog.
     let dialog = null;
@@ -275,6 +282,29 @@ describe('keyboard smoke', () => {
     await page.waitForFunction(() => !document.querySelector('[role="dialog"][aria-modal="true"]'), { timeout: 3000 });
     const restored = await opener.evaluate((el) => document.activeElement === el);
     assert.ok(restored, 'focus did not return to the opener');
+    await page.close();
+  });
+
+  it('the command palette opens with Ctrl+K, finds a component and restores focus on Escape', async () => {
+    const { page } = await open(new URL('packages/', BASE).href, { mode: 'light' });
+    await page.waitForFunction(() => document.documentElement.classList.contains('js'));
+    const trigger = await page.$('.search-trigger');
+    await trigger.focus();
+    await page.keyboard.down('Control');
+    await page.keyboard.press('k');
+    await page.keyboard.up('Control');
+    await page.waitForSelector('dialog.palette[open]', { timeout: 3000 });
+    assert.ok(await page.evaluate(() => document.activeElement?.matches('[role="combobox"]')), 'focus is not in the search box');
+    await page.keyboard.type('datatable');
+    await page.waitForSelector('#palette-list [role="option"]', { timeout: 5000 });
+    const first = await page.$eval('#palette-list [role="option"][aria-selected="true"]', (el) => el.textContent);
+    assert.match(first, /DataTable/i);
+    const active = await page.$eval('[role="combobox"]', (el) => el.getAttribute('aria-activedescendant'));
+    assert.ok(active && (await page.$('#' + active)), 'aria-activedescendant does not point at an option');
+    await page.screenshot({ path: join(artifacts, 'keyboard--palette.png') });
+    await page.keyboard.press('Escape');
+    await page.waitForFunction(() => !document.querySelector('dialog.palette[open]'), { timeout: 3000 });
+    assert.ok(await page.evaluate(() => document.activeElement?.classList.contains('search-trigger')), 'focus did not return to the search button');
     await page.close();
   });
 });

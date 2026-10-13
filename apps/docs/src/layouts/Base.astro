@@ -1,11 +1,16 @@
 ---
 import '@orca-ui/core/style.css';
+import '@orca-ui/icons/css';
 import '../styles/site.css';
+import '../styles/chrome.css';
+import '../styles/home.css';
+import '../styles/packages.css';
 import ThemeScript from '@orca-ui/astro/components/ThemeScript';
 import Toaster from '@orca-ui/astro/components/Toaster';
-import AccessibilityPanel from '@orca-ui/astro/components/AccessibilityPanel';
-import Logo from '../components/Logo.astro';
-import { categories } from '../data/catalog';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import CommandPalette from '../components/CommandPalette.astro';
+import { repo, t } from '../data/site';
 
 interface Props {
   title: string;
@@ -13,35 +18,19 @@ interface Props {
   lang?: 'en' | 'ar';
   /** Path of the equivalent page in the other language, for hreflang. */
   alternate?: { en?: string; ar?: string };
+  /** Extra JSON-LD objects for this page. */
+  structuredData?: Record<string, unknown>[];
 }
 
-const { title, description, lang = 'en', alternate } = Astro.props;
+const { title, description, lang = 'en', alternate, structuredData = [] } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(`${base}/og.png`, site).href;
-const repo = 'https://github.com/oriebalzyuot96/orca-ui';
 const fullTitle = title.includes('Orca UI') ? title : `${title} — Orca UI`;
-const path = Astro.url.pathname;
 const isAr = lang === 'ar';
-
-const nav = isAr
-  ? [
-      { href: `${base}/ar/`, label: 'الرئيسية' },
-      { href: `${base}/components/`, label: 'المكونات' },
-      { href: `${base}/themes/`, label: 'الثيمات' },
-      { href: `${base}/accessibility/`, label: 'إمكانية الوصول' },
-      { href: `${base}/space/`, label: 'المساحة' },
-      { href: `${base}/getting-started/`, label: 'ابدأ' },
-    ]
-  : [
-      { href: `${base}/`, label: 'Home' },
-      { href: `${base}/components/`, label: 'Components' },
-      { href: `${base}/themes/`, label: 'Themes' },
-      { href: `${base}/accessibility/`, label: 'Accessibility' },
-      { href: `${base}/space/`, label: 'Space' },
-      { href: `${base}/getting-started/`, label: 'Get started' },
-    ];
+// Where the language switch goes: the translated page when there is one, otherwise the other home page.
+const otherLangPath = (isAr ? alternate?.en : alternate?.ar) ?? (isAr ? '/' : '/ar/');
 
 const jsonLd = [
   {
@@ -50,13 +39,14 @@ const jsonLd = [
     name: 'Orca UI',
     alternateName: ['orca-ui', 'أوركا UI'],
     description:
-      'Accessible, themeable UI component library for React, Vue, Svelte, Astro and React Native. WCAG 2.2 AA, 21 themes, dark mode, high contrast, skeleton loaders, RTL.',
+      'Accessible, themeable UI component library for React, Vue, Angular, Svelte, Astro, React Native and Flutter. WCAG 2.2 AA, 21 themes, custom brand colors, dark mode, high contrast, accessibility modes, charts, 3D, RTL.',
     url: new URL(`${base}/`, site).href,
     codeRepository: repo,
-    programmingLanguage: ['TypeScript', 'CSS'],
-    runtimePlatform: ['React', 'Vue', 'Svelte', 'Astro', 'React Native'],
+    programmingLanguage: ['TypeScript', 'CSS', 'Dart'],
+    runtimePlatform: ['React', 'Vue', 'Angular', 'Svelte', 'Astro', 'React Native', 'Flutter'],
     license: 'https://opensource.org/licenses/MIT',
-    keywords: 'ui library, component library, design system, react, vue, svelte, astro, react native, accessibility, wcag, themes, dark mode, skeleton, rtl, arabic',
+    keywords:
+      'ui library, component library, design system, react, vue, angular, svelte, astro, react native, flutter, accessibility, wcag, themes, dark mode, skeleton, rtl, arabic',
   },
   {
     '@context': 'https://schema.org',
@@ -65,6 +55,7 @@ const jsonLd = [
     url: new URL(`${base}/`, site).href,
     inLanguage: ['en', 'ar'],
   },
+  ...structuredData,
 ];
 ---
 
@@ -78,6 +69,7 @@ const jsonLd = [
     <link rel="canonical" href={canonical} />
     <meta name="robots" content="index, follow" />
     <meta name="theme-color" content="#5b34d6" />
+    <meta name="color-scheme" content="light dark" />
     <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
     <link rel="sitemap" href={`${base}/sitemap-index.xml`} />
     {alternate?.en && <link rel="alternate" hreflang="en" href={new URL(`${base}${alternate.en}`, site).href} />}
@@ -100,90 +92,29 @@ const jsonLd = [
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
     <ThemeScript />
+    {/* The site's own animation pause, restored before first paint. */}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+      try {
+        if (localStorage.getItem('orca-docs-motion') === 'paused') document.documentElement.setAttribute('data-site-motion', 'paused');
+      } catch (e) {}
+    </script>
   </head>
   <body>
-    <a class="oc-skip-link" href="#main">{isAr ? 'تخطَّ إلى المحتوى' : 'Skip to content'}</a>
-    <header class="site-header">
-      <div class="container site-header__inner">
-        <a class="brand" href={isAr ? `${base}/ar/` : `${base}/`}>
-          <Logo />
-          <span>Orca UI</span>
-        </a>
-        <nav class="site-nav" aria-label={isAr ? 'التنقل الرئيسي' : 'Main'}>
-          {nav.map((item) => (
-            <a
-              href={item.href}
-              aria-current={path === item.href ? 'page' : item.href.endsWith('/components/') && path.startsWith(item.href) ? 'true' : undefined}
-            >
-              {item.label}
-            </a>
-          ))}
-        </nav>
-        <div class="header-tools">
-          <div class="theme-picker" role="group" aria-label={isAr ? 'المظهر' : 'Theme'}>
-            <label>
-              {isAr ? 'الوضع' : 'Mode'}
-              <select data-theme-control="mode">
-                <option value="system">{isAr ? 'النظام' : 'System'}</option>
-                <option value="light">{isAr ? 'فاتح' : 'Light'}</option>
-                <option value="dark">{isAr ? 'داكن' : 'Dark'}</option>
-                <option value="hc">{isAr ? 'تباين عالٍ' : 'High contrast'}</option>
-              </select>
-            </label>
-            <label>
-              {isAr ? 'اللون' : 'Accent'}
-              <select data-theme-control="accent">
-                {['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'].map((a) => <option value={a}>{a}</option>)}
-              </select>
-            </label>
-            <label>
-              {isAr ? 'الشكل' : 'Shape'}
-              <select data-theme-control="shape">
-                {['default', 'sharp', 'round'].map((s) => <option value={s}>{s}</option>)}
-              </select>
-            </label>
-          </div>
-          <AccessibilityPanel trigger="inline" locale={lang} id="site-a11y" />
-          <a href={isAr ? `${base}/` : `${base}/ar/`} lang={isAr ? 'en' : 'ar'} hreflang={isAr ? 'en' : 'ar'}>{isAr ? 'English' : 'العربية'}</a>
-          <a href={repo} rel="noopener">GitHub</a>
-        </div>
-      </div>
-    </header>
+    <a class="oc-skip-link" href="#main">{t[lang].skip}</a>
+    <SiteHeader lang={lang} otherLangPath={otherLangPath} />
 
     <main id="main" tabindex="-1">
       <slot />
     </main>
 
-    <footer class="site-footer">
-      <div class="container site-footer__inner">
-        <nav aria-label={isAr ? 'صفحات المكونات' : 'Component pages'} style="width:100%">
-          <ul class="footer-cats">
-            {categories.map((c) => <li><a href={`${base}/components/${c.slug}/`}>{c.h1}</a></li>)}
-          </ul>
-        </nav>
-        <span>Orca UI · MIT License · {isAr ? 'مكتبة واجهات مفتوحة المصدر' : 'Open-source UI library'}</span>
-        <span>
-          <a href={repo}>GitHub</a> · <a href="https://www.npmjs.com/org/orca-ui">npm</a> · <a href={`${base}/accessibility/`}>{isAr ? 'إمكانية الوصول' : 'Accessibility'}</a>
-        </span>
-      </div>
-    </footer>
-
+    <SiteFooter lang={lang} otherLangPath={otherLangPath} />
+    <CommandPalette lang={lang} />
     <Toaster />
+    <p class="oc-sr-only" role="status" aria-live="polite" data-site-live></p>
 
     <script>
-      import { applyTheme, loadTheme, saveTheme } from '@orca-ui/core/theme';
-      type Choice = { mode?: 'system' | 'light' | 'dark' | 'hc'; accent?: string; shape?: string };
-      const saved: Choice = loadTheme() ?? {};
-      const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'violet', shape: saved.shape ?? 'default' };
-      for (const select of document.querySelectorAll<HTMLSelectElement>('[data-theme-control]')) {
-        const key = select.dataset.themeControl as keyof Choice;
-        select.value = String(choice[key]);
-        select.addEventListener('change', () => {
-          (choice as Record<string, string>)[key] = select.value;
-          applyTheme(choice as Parameters<typeof applyTheme>[0]);
-          saveTheme(choice as Parameters<typeof saveTheme>[0]);
-        });
-      }
+      import '../scripts/site.ts';
     </script>
   </body>
 </html>

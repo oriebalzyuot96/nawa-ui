@@ -1,0 +1,85 @@
+---
+// ⌘K / Ctrl K command palette: a modal <dialog> with an ARIA combobox over pages, packages,
+// categories and every documented component. The index is fetched on first open (search-index.json).
+import Icon from '@orca-ui/icons/astro';
+
+interface Props {
+  lang: 'en' | 'ar';
+}
+
+const { lang } = Astro.props;
+const ar = lang === 'ar';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const L = ar
+  ? {
+      title: 'ابحث في أوركا UI',
+      placeholder: 'ابحث عن مكوّن أو حزمة أو صفحة…',
+      results: 'النتائج',
+      groups: { page: 'الصفحات', package: 'الحزم', category: 'الفئات', component: 'المكونات' },
+      empty: 'لا نتائج. جرّب كلمة أخرى.',
+      count: '{n} نتيجة',
+      nav: 'للتنقل',
+      open: 'للفتح',
+      close: 'للإغلاق',
+      closeBtn: 'إغلاق البحث',
+      loading: 'جارٍ التحميل…',
+    }
+  : {
+      title: 'Search Orca UI',
+      placeholder: 'Search components, packages, pages…',
+      results: 'Results',
+      groups: { page: 'Pages', package: 'Packages', category: 'Categories', component: 'Components' },
+      empty: 'No results. Try another word.',
+      count: '{n} results',
+      nav: 'to navigate',
+      open: 'to open',
+      close: 'to close',
+      closeBtn: 'Close search',
+      loading: 'Loading…',
+    };
+---
+
+<dialog
+  class="palette"
+  aria-labelledby="palette-title"
+  data-palette
+  data-index={`${base}/search-index.json`}
+  data-lang={lang}
+  data-labels={JSON.stringify({ groups: L.groups, empty: L.empty, count: L.count, loading: L.loading })}
+>
+  <div class="palette__box">
+    <h2 class="oc-sr-only" id="palette-title">{L.title}</h2>
+    <div class="palette__head">
+      <Icon name="search" size={20} />
+      <input
+        class="palette__input"
+        type="text"
+        role="combobox"
+        aria-label={L.title}
+        aria-expanded="true"
+        aria-controls="palette-list"
+        aria-autocomplete="list"
+        autocomplete="off"
+        spellcheck="false"
+        placeholder={L.placeholder}
+        data-palette-input
+      />
+      <button type="button" class="palette__close" data-palette-close>
+        <span aria-hidden="true">Esc</span>
+        <span class="oc-sr-only">{L.closeBtn}</span>
+      </button>
+    </div>
+    <div class="palette__list" id="palette-list" role="listbox" aria-label={L.results} data-palette-list></div>
+    <p class="palette__empty" hidden data-palette-empty>{L.empty}</p>
+    <div class="palette__foot" aria-hidden="true">
+      <span><kbd>↑</kbd><kbd>↓</kbd> {L.nav}</span>
+      <span><kbd>↵</kbd> {L.open}</span>
+      <span><kbd>Esc</kbd> {L.close}</span>
+    </div>
+    <p class="oc-sr-only" role="status" aria-live="polite" data-palette-status></p>
+  </div>
+  <template data-kind="page"><Icon name="file-text" size={18} /></template>
+  <template data-kind="package"><Icon name="package" size={18} /></template>
+  <template data-kind="category"><Icon name="grid" size={18} /></template>
+  <template data-kind="component"><Icon name="code-block" size={18} /></template>
+</dialog>

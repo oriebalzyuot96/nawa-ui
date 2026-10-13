@@ -1,0 +1,408 @@
+---
+// The home page, shared by / and /ar/. Copy lives in the dictionary below; layout and components are identical.
+import Icon from '@orca-ui/icons/astro';
+import Button from '@orca-ui/astro/components/Button';
+import Badge from '@orca-ui/astro/components/Badge';
+import Switch from '@orca-ui/astro/components/Switch';
+import Playground from './Playground';
+import HeroShowcase from './HeroShowcase.astro';
+import InstallCommand from './InstallCommand.astro';
+import PackageCard from './PackageCard.astro';
+import Mark from './Mark.astro';
+import * as OrcaReact from '@orca-ui/react';
+import { categories, documentedCount } from '../data/catalog';
+import { packageById, packages } from '../data/packages';
+import { categoryIcon } from '../data/site';
+import type { IconName } from '@orca-ui/icons';
+
+interface Props {
+  locale: 'en' | 'ar';
+}
+
+const { locale } = Astro.props;
+const ar = locale === 'ar';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const pk = ar ? `${base}/ar/packages/` : `${base}/packages/`;
+// Real count of exported React components (PascalCase functions and forwardRef objects) in @orca-ui/react.
+const componentCount = Object.entries(OrcaReact).filter(
+  ([name, value]) => /^[A-Z][a-z]/.test(name) && (typeof value === 'function' || (typeof value === 'object' && value !== null && '$$typeof' in value)),
+).length;
+const umbrella = packageById('orca-ui')!;
+const rest = packages.filter((p) => p.id !== 'orca-ui');
+const platforms = ['react', 'vue', 'angular', 'svelte', 'astro', 'react-native', 'flutter'].map((id) => packageById(id)!);
+const platformName: Record<string, string> = {
+  react: 'React',
+  vue: 'Vue',
+  angular: 'Angular',
+  svelte: 'Svelte',
+  astro: 'Astro',
+  'react-native': 'React Native',
+  flutter: 'Flutter',
+};
+
+const T = ar
+  ? {
+      announce: 'أوركا سبيس — صِف صفحتك وسنبنيها',
+      brand: 'أوركا UI',
+      h1a: 'مكتبة واجهات سهلة الوصول',
+      h1b: 'لكل إطار عمل',
+      lead: 'نظام تصميم واحد يُشحن كحزم أصلية لـ React وVue وAngular وSvelte وAstro وReact Native وFlutter. نفس الأسماء، نفس الخصائص، نفس المظهر — وإمكانية الوصول مُختبرة في كل بناء.',
+      start: 'ابدأ الآن',
+      browse: 'تصفّح الحزم',
+      trust: ['WCAG 2.2 AA', '5,540 فحص تباين', '21 ثيماً', 'مرخّصة MIT'],
+      pause: 'إيقاف الحركة',
+      play: 'تشغيل الحركة',
+      platformsTitle: 'حزم أصلية لـ',
+      pkEyebrow: 'الحزم',
+      pkTitle: 'حزمة واحدة — أو اختر ما تحتاجه فقط',
+      pkLead: 'كل منصّة لها حزمة مستقلة، وكلها تقرأ نفس الرموز. ثبّت orca-ui لتحصل على كل شيء، أو اختر حزمة إطارك فقط.',
+      pkAll: 'قارن كل الحزم',
+      numbers: [
+        [String(componentCount), 'مكوّناً في React'],
+        ['7', 'منصّات بتصميم واحد'],
+        ['21', 'ثيماً + لون علامتك'],
+        ['5,540', 'فحص تباين آلي'],
+        ['239', 'أيقونة أصلية'],
+        ['24', 'رسماً توضيحياً'],
+      ],
+      numbersTitle: 'أوركا UI بالأرقام',
+      whyEyebrow: 'لماذا أوركا',
+      whyTitle: 'افتراضات بمستوى كبار المطوّرين، بلا إعداد',
+      themesT: 'ثيمات بسمة واحدة',
+      themesP: 'فاتح وداكن وتباين عالٍ × سبعة ألوان × ثلاثة أشكال. غيّر الثيم بسمة HTML أو حدّده لجزء من الصفحة.',
+      a11yT: 'أوضاع عرض لإمكانية الوصول',
+      a11yP: 'تباين، فلاتر عمى الألوان، حجم النص والتباعد، دليل القراءة، إيقاف الحركة، وأهداف أكبر — بسمات data-a11y-*.',
+      a11yModes: ['أصفر على أسود', 'تدرّج رمادي', 'خط مقروء', 'دليل القراءة', 'أهداف 44px', 'بلا حركة'],
+      brandT: 'لون علامتك، متاح دائماً',
+      brandP: 'createTheme() تحافظ على درجة لونك وتضبط الإضاءة حتى ينجح كل زوج ألوان في WCAG AA.',
+      chartsT: 'رسوم بيانية سهلة الوصول',
+      chartsP: '13 نوعاً بلا اعتماديات، يمكن التنقل فيها بلوحة المفاتيح، مع جدول بيانات بديل.',
+      motionT: 'حركة وصوت باحترام',
+      motionP: 'محرّك نوابض وخطوط زمنية، و18 صوتاً للواجهة. يتوقف كل شيء مع تقليل الحركة.',
+      rtlT: 'العربية و RTL أولاً',
+      rtlP: 'خصائص CSS منطقية في كل مكان، فتنعكس الواجهة كاملة بسمة dir واحدة.',
+      iconsT: '239 أيقونة و24 رسماً',
+      iconsP: 'أيقونات ثنائية اللون ورسوم للحالات الفارغة تتلوّن مع الثيم.',
+      spaceT: 'أوركا سبيس',
+      spaceP: 'اسحب وأفلت، أو صِف الصفحة بالعربية أو الإنجليزية، ثم صدّر React أو Vue أو Angular أو HTML.',
+      spaceCta: 'افتح أوركا سبيس',
+      learn: 'اعرف المزيد',
+      sample: { title: 'طلب جديد', body: 'تمت الموافقة على طلبك', ok: 'تأكيد' },
+      playEyebrow: 'معاينة حية',
+      playTitle: 'تطبيق حقيقي مبني بأوركا UI',
+      playLead: 'ابحث، صفِّ، رتّب، أضف عضواً، وشغّل هياكل التحميل. كل ما يلي هو @orca-ui/react ويتبع الثيم.',
+      catEyebrow: 'المكونات',
+      catTitle: `${documentedCount} مكوّناً موثّقاً في ${categories.length} فئة`,
+      catLead: 'كل فئة لها عروض حية وجداول خصائص ودعم لوحة المفاتيح وشيفرة جاهزة للنسخ.',
+      catAll: 'كل المكونات',
+      ctaTitle: 'اشحن واجهات سهلة الوصول على كل منصّة',
+      ctaLead: 'مجانية ومفتوحة المصدر برخصة MIT.',
+      componentsWord: 'مكوّناً',
+    }
+  : {
+      announce: 'Orca Space — describe a page and watch it build',
+      brand: 'Orca UI',
+      h1a: 'The accessible component library',
+      h1b: 'for every framework',
+      lead: 'One design system shipped as native packages for React, Vue, Angular, Svelte, Astro, React Native and Flutter. Same names, same props, same look — and accessibility tested on every build.',
+      start: 'Get started',
+      browse: 'Browse packages',
+      trust: ['WCAG 2.2 AA', '5,540 contrast checks', '21 themes', 'MIT licensed'],
+      pause: 'Pause animation',
+      play: 'Play animation',
+      platformsTitle: 'Native packages for',
+      pkEyebrow: 'Packages',
+      pkTitle: 'One install — or only what you need',
+      pkLead: 'Every platform has its own package and they all read the same tokens. Install orca-ui to get everything, or just your framework.',
+      pkAll: 'Compare every package',
+      numbers: [
+        [String(componentCount), 'React components'],
+        ['7', 'platforms, one design'],
+        ['21', 'themes + your brand'],
+        ['5,540', 'automated contrast checks'],
+        ['239', 'original icons'],
+        ['24', 'illustrations'],
+      ],
+      numbersTitle: 'Orca UI in numbers',
+      whyEyebrow: 'Why Orca',
+      whyTitle: 'Senior-grade defaults, zero setup',
+      themesT: 'Themes are one attribute',
+      themesP: 'Light, dark and high contrast × seven accents × three shapes. Switch with an HTML attribute or scope a theme to any section.',
+      a11yT: 'Accessibility display modes',
+      a11yP: 'Contrast schemes, color-vision filters, text size and spacing, reading guide, motion off and large targets — as data-a11y-* attributes.',
+      a11yModes: ['Yellow on black', 'Grayscale', 'Readable font', 'Reading guide', '44px targets', 'Motion off'],
+      brandT: 'Your brand color, still accessible',
+      brandP: 'createTheme() keeps your hue and tunes lightness until every pair passes WCAG AA in every mode.',
+      chartsT: 'Charts people can use',
+      chartsP: '13 dependency-free types, keyboard navigable, announced, with a data-table fallback.',
+      motionT: 'Motion and sound, politely',
+      motionP: 'A spring and timeline engine plus 18 UI sounds. Everything stops for reduced motion.',
+      rtlT: 'RTL and Arabic first',
+      rtlP: 'Logical CSS everywhere, so a whole interface mirrors with one dir attribute.',
+      iconsT: '239 icons, 24 illustrations',
+      iconsP: 'Duotone icons and empty-state scenes that recolor with the theme.',
+      spaceT: 'Orca Space',
+      spaceP: 'Drag and drop, or describe a page in English or Arabic — then export React, Vue, Angular or HTML.',
+      spaceCta: 'Open Orca Space',
+      learn: 'Learn more',
+      sample: { title: 'طلب جديد', body: 'تمت الموافقة على طلبك', ok: 'تأكيد' },
+      playEyebrow: 'Live preview',
+      playTitle: 'A real app built with Orca UI',
+      playLead: 'Search, filter, sort, paginate, add a member, toggle loading skeletons. Everything below is @orca-ui/react and follows the theme.',
+      catEyebrow: 'Components',
+      catTitle: `${documentedCount} documented components in ${categories.length} categories`,
+      catLead: 'Every category page has live demos, props, keyboard support and copy-ready code.',
+      catAll: 'See all components',
+      ctaTitle: 'Ship accessible UI on every platform',
+      ctaLead: 'Free and open source under the MIT license.',
+      componentsWord: 'components',
+    };
+
+const showcaseIcons: IconName[] = ['search', 'bell', 'calendar', 'chart-line', 'shield-check', 'rocket', 'palette', 'globe', 'heart', 'users', 'sparkles', 'cloud'];
+const bars = [38, 62, 48, 80, 56, 92, 70];
+// A seamless wave: 8 half-periods of 360 units across 2880, so sliding it by half its width loops cleanly.
+const wave = (y: number, a: number) => {
+  let d = `M0 ${y}c120 ${-a} 240 ${-a} 360 0`;
+  for (let i = 1; i < 8; i += 1) d += `s240 ${i % 2 ? a : -a} 360 0`;
+  return `${d}V220H0z`;
+};
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero__fx" aria-hidden="true">
+    <div class="hero__glow"></div>
+    <div class="hero__mesh"></div>
+    <svg class="hero__waves" viewBox="0 0 2880 220" preserveAspectRatio="none">
+      <path class="wave wave--1" d={wave(118, 36)}></path>
+      <path class="wave wave--2" d={wave(150, 26)}></path>
+      <path class="wave wave--3" d={wave(182, 16)}></path>
+    </svg>
+  </div>
+  <div class="container hero__grid">
+    <div class="hero__copy">
+      <a class="announce" href={`${base}/space/`}>
+        <span class="announce__tag">{ar ? 'جديد' : 'New'}</span>
+        <span>{T.announce}</span>
+        <Icon name="arrow-right" size={15} flipRtl />
+      </a>
+      <h1 id="hero-title" class="hero__title">
+        <span class="hero__brand">{T.brand}</span>
+        <span class="hero__line">{T.h1a}</span>
+        <span class="hero__line hero__line--accent">{T.h1b}</span>
+      </h1>
+      <p class="hero__lead">{T.lead}</p>
+      <div class="hero__actions">
+        <a class="oc-btn oc-btn--primary oc-btn--lg" href={`${base}/getting-started/`}>
+          {T.start}<Icon name="arrow-right" size={18} flipRtl />
+        </a>
+        <a class="oc-btn oc-btn--secondary oc-btn--lg" href={pk}><Icon name="package" size={18} />{T.browse}</a>
+      </div>
+      <InstallCommand options={umbrella.install} locale={locale} size="lg" label={ar ? 'تثبيت orca-ui' : 'Install orca-ui'} />
+      <ul class="hero__trust">
+        {T.trust.map((x) => (
+          <li><Icon name="check-circle" size={16} />{x}</li>
+        ))}
+      </ul>
+    </div>
+    <div class="hero__stage">
+      <HeroShowcase locale={locale} />
+    </div>
+  </div>
+  <div class="container hero__foot">
+    <button type="button" class="motion-btn" aria-pressed="false" data-motion-button data-pause={T.pause} data-play={T.play}>
+      <Icon name="pause" size={14} class="motion-btn__pause" />
+      <Icon name="play" size={14} class="motion-btn__play" />
+      <span data-motion-label>{T.pause}</span>
+    </button>
+  </div>
+</section>
+
+<section class="platforms" aria-labelledby="platforms-title">
+  <div class="container platforms__inner">
+    <h2 class="platforms__title" id="platforms-title">{T.platformsTitle}</h2>
+    <ul class="platforms__list">
+      {platforms.map((p) => (
+        <li>
+          <a href={`${pk}#${p.id}`} class="platform">
+            <Mark id={p.mark} size={36} />
+            <span>{platformName[p.id]}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="packages" aria-labelledby="packages-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">{T.pkEyebrow}</p>
+      <h2 id="packages-title">{T.pkTitle}</h2>
+      <p class="lead">{T.pkLead}</p>
+    </div>
+    <div class="pkg-grid">
+      <PackageCard pkg={umbrella} locale={locale} featured />
+      {rest.map((p) => <PackageCard pkg={p} locale={locale} />)}
+    </div>
+    <p class="section-cta">
+      <a class="oc-btn oc-btn--secondary" href={pk}>{T.pkAll}<Icon name="arrow-right" size={16} flipRtl /></a>
+    </p>
+  </div>
+</section>
+
+<section class="numbers" aria-labelledby="numbers-title">
+  <div class="container">
+    <h2 id="numbers-title" class="oc-sr-only">{T.numbersTitle}</h2>
+    <dl class="numbers__grid">
+      {T.numbers.map(([n, label]) => (
+        <div class="numbers__item" data-reveal>
+          <dt>{label}</dt>
+          <dd dir="ltr">{n}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="why-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">{T.whyEyebrow}</p>
+      <h2 id="why-title">{T.whyTitle}</h2>
+    </div>
+    <div class="bento">
+      <article class="bento__card bento__card--themes" data-reveal data-spotlight>
+        <div class="bento__text">
+          <h3><Icon name="palette" size={20} variant="duotone" />{T.themesT}</h3>
+          <p>{T.themesP}</p>
+          <a class="bento__link" href={`${base}/themes/`}>{T.learn}<span class="oc-sr-only">: {T.themesT}</span><Icon name="arrow-right" size={15} flipRtl /></a>
+        </div>
+        <div class="theme-trio">
+          {[
+            ['light', 'violet', 'default'],
+            ['dark', 'teal', 'round'],
+            ['hc', 'amber', 'sharp'],
+          ].map(([mode, accent, shape]) => (
+            <div class="theme-trio__item" data-theme={mode} data-accent={accent} data-shape={shape}>
+              <span class="theme-trio__name" dir="ltr">{mode === 'hc' ? 'high contrast' : mode} · {accent}</span>
+              <Button size="sm">{ar ? 'حفظ' : 'Save'}</Button>
+              <Badge variant="primary">{shape}</Badge>
+              <Switch label={ar ? `تفعيل ${mode}` : `Enable ${mode}`} showLabel={false} checked />
+            </div>
+          ))}
+        </div>
+      </article>
+
+      <article class="bento__card bento__card--a11y" data-reveal data-spotlight>
+        <h3><Icon name="accessibility" size={20} variant="duotone" />{T.a11yT}</h3>
+        <p>{T.a11yP}</p>
+        <ul class="chip-cloud">
+          {T.a11yModes.map((m) => <li>{m}</li>)}
+        </ul>
+        <a class="bento__link" href={`${base}/accessibility-modes/`}>{T.learn}<span class="oc-sr-only">: {T.a11yT}</span><Icon name="arrow-right" size={15} flipRtl /></a>
+      </article>
+
+      <article class="bento__card bento__card--brand" data-reveal data-spotlight>
+        <h3><Icon name="magic-wand" size={20} variant="duotone" />{T.brandT}</h3>
+        <p>{T.brandP}</p>
+        <code class="bento__code" dir="ltr">createTheme(&#123; primary: '#ff6a00' &#125;)</code>
+        <div class="brand-dots" aria-hidden="true">
+          {['#ff6a00', '#0ea5e9', '#e11d48', '#16a34a', '#facc15'].map((c) => <span style={`--c:${c}`}></span>)}
+        </div>
+      </article>
+
+      <article class="bento__card bento__card--charts" data-reveal data-spotlight>
+        <h3><Icon name="chart-bar" size={20} variant="duotone" />{T.chartsT}</h3>
+        <p>{T.chartsP}</p>
+        <svg class="mini-chart" viewBox="0 0 220 96" aria-hidden="true" preserveAspectRatio="none">
+          {bars.map((h, i) => <rect x={i * 31 + 4} y={96 - h} width="22" height={h} rx="5" style={`--i:${i}`}></rect>)}
+          <path d="M15 70 46 44 77 56 108 22 139 40 170 10 201 28" fill="none"></path>
+        </svg>
+        <a class="bento__link" href={`${base}/components/charts/`}>{T.learn}<span class="oc-sr-only">: {T.chartsT}</span><Icon name="arrow-right" size={15} flipRtl /></a>
+      </article>
+
+      <article class="bento__card bento__card--motion" data-reveal data-spotlight>
+        <h3><Icon name="sparkles" size={20} variant="duotone" />{T.motionT}</h3>
+        <p>{T.motionP}</p>
+        <div class="eq" aria-hidden="true">
+          {Array.from({ length: 14 }, (_, i) => <span style={`--i:${i}`}></span>)}
+        </div>
+        <a class="bento__link" href={`${base}/components/motion/`}>{T.learn}<span class="oc-sr-only">: {T.motionT}</span><Icon name="arrow-right" size={15} flipRtl /></a>
+      </article>
+
+      <article class="bento__card bento__card--rtl" data-reveal data-spotlight>
+        <h3><Icon name="language" size={20} variant="duotone" />{T.rtlT}</h3>
+        <p>{T.rtlP}</p>
+        <div class="rtl-sample oc-card" dir="rtl" lang="ar">
+          <strong>{T.sample.title}</strong>
+          <span>{T.sample.body}</span>
+          <span class="rtl-sample__row"><Badge variant="success">✓</Badge><Button size="sm">{T.sample.ok}</Button></span>
+        </div>
+      </article>
+
+      <article class="bento__card bento__card--icons" data-reveal data-spotlight>
+        <h3><Icon name="grid" size={20} variant="duotone" />{T.iconsT}</h3>
+        <p>{T.iconsP}</p>
+        <div class="icon-wall" aria-hidden="true">
+          {showcaseIcons.map((n, i) => <span><Icon name={n} size={22} variant={i % 3 === 0 ? 'duotone' : 'outline'} /></span>)}
+        </div>
+        <a class="bento__link" href={`${pk}#icons`}>{T.learn}<span class="oc-sr-only">: {T.iconsT}</span><Icon name="arrow-right" size={15} flipRtl /></a>
+      </article>
+
+      <article class="bento__card bento__card--space" data-reveal data-spotlight>
+        <h3><Icon name="rocket" size={20} variant="duotone" />{T.spaceT}</h3>
+        <p>{T.spaceP}</p>
+        <a class="oc-btn oc-btn--primary" href={`${base}/space/`}>{T.spaceCta}<Icon name="arrow-right" size={16} flipRtl /></a>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt" aria-labelledby="playground-title">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow">{T.playEyebrow}</p>
+      <h2 id="playground-title">{T.playTitle}</h2>
+      <p class="lead">{T.playLead}</p>
+    </div>
+    <div class="playground-frame">
+      <Playground client:visible />
+    </div>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="inside-title">
+  <div class="container">
+    <div class="section-head" data-reveal>
+      <p class="eyebrow">{T.catEyebrow}</p>
+      <h2 id="inside-title">{T.catTitle}</h2>
+      <p class="lead">{T.catLead}</p>
+    </div>
+    <div class="inside-grid">
+      {categories.map((c) => (
+        <a class="inside-card" href={`${base}/components/${c.slug}/`} data-spotlight>
+          <span class="inside-card__icon"><Icon name={categoryIcon[c.slug] ?? 'grid'} size={22} variant="duotone" /></span>
+          <strong>{c.h1}</strong>
+          <span class="inside-card__count">{c.entries.length} {T.componentsWord}</span>
+          <span class="inside-card__list" dir="ltr">{c.entries.slice(0, 4).map((e) => e.name).join(' · ')}</span>
+        </a>
+      ))}
+    </div>
+    <p class="section-cta">
+      <a class="oc-btn oc-btn--secondary" href={`${base}/components/`}>{T.catAll}<Icon name="arrow-right" size={16} flipRtl /></a>
+    </p>
+  </div>
+</section>
+
+<section class="cta-band" aria-labelledby="cta-title">
+  <div class="container cta-band__inner" data-reveal>
+    <div>
+      <h2 id="cta-title">{T.ctaTitle}</h2>
+      <p>{T.ctaLead}</p>
+    </div>
+    <div class="cta-band__actions">
+      <InstallCommand options={umbrella.install} locale={locale} compact label={ar ? 'تثبيت orca-ui' : 'Install orca-ui'} />
+      <a class="oc-btn oc-btn--primary oc-btn--lg" href={`${base}/getting-started/`}>{T.start}<Icon name="arrow-right" size={18} flipRtl /></a>
+    </div>
+  </div>
+</section>

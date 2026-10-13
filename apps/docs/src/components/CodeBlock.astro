@@ -1,0 +1,37 @@
+---
+// A framed, highlighted code block with a file label and a copy button.
+// The copy button reads the rendered <pre>, so the code is never duplicated in the page.
+import { Code } from 'astro:components';
+import Icon from '@orca-ui/icons/astro';
+
+interface Props {
+  code: string;
+  lang: string;
+  /** File name or caption shown in the bar. */
+  file?: string;
+  lang_label?: string;
+  locale?: 'en' | 'ar';
+  class?: string;
+}
+
+const { code, lang, file, lang_label, locale = 'en', class: className } = Astro.props;
+const label = lang_label ?? lang.toUpperCase();
+const copy = locale === 'ar' ? 'نسخ' : 'Copy';
+const copyName = locale === 'ar' ? `نسخ الشيفرة${file ? ` ${file}` : ''}` : `Copy ${file ?? 'code'}`;
+---
+
+<figure class:list={['cb', className]} dir="ltr" data-code-block>
+  <figcaption class="cb__bar">
+    <span class="cb__file">
+      <Icon name="file-code" size={15} />
+      <span>{file ?? label}</span>
+    </span>
+    {file && <span class="cb__lang" aria-hidden="true">{label}</span>}
+    <button type="button" class="copy-btn" data-copy aria-label={copyName}>
+      <Icon name="copy" size={15} class="copy-btn__idle" />
+      <Icon name="check" size={15} class="copy-btn__done" />
+      <span class="copy-btn__text" data-copy-text>{copy}</span>
+    </button>
+  </figcaption>
+  <Code code={code} lang={lang as 'tsx'} theme="github-dark-high-contrast" />
+</figure>

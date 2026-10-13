@@ -3,6 +3,8 @@ import DocsLayout from '../../layouts/DocsLayout.astro';
 import CodeTabs from '../../components/CodeTabs.astro';
 import { snippets } from '../../data/snippets';
 import { categories, documentedCount } from '../../data/catalog';
+import { categoryIcon } from '../../data/site';
+import Icon from '@orca-ui/icons/astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -23,7 +25,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         <section class="category-card" aria-labelledby={`cat-${c.slug}`}>
           <h2 id={`cat-${c.slug}`}>
             <a href={`${base}/components/${c.slug}/`}>
-              <span aria-hidden="true">{c.icon}</span> {c.h1}
+              <span class="category-card__icon"><Icon name={categoryIcon[c.slug] ?? 'grid'} size={20} variant="duotone" /></span> {c.h1}
             </a>
           </h2>
           <p class="muted">{c.entries.length} components</p>
