@@ -20,7 +20,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build tokens and CSS
-        run: npm run build -w @orca-ui/core
+        run: npm run build -w @orca-ui/core && npm run build -w @orca-ui/illustrations && npm run build -w @orca-ui/icons
       - name: Core (tokens, a11y helpers, theme, build output, WCAG contrast)
         run: |
           npm run test:contrast -w @orca-ui/core
@@ -67,6 +67,8 @@ jobs:
       - name: Build core, React, Three and the docs
         run: |
           npm run build -w @orca-ui/core
+          npm run build -w @orca-ui/illustrations
+          npm run build -w @orca-ui/icons
           npm run build -w @orca-ui/react
           npm run build -w @orca-ui/three
           npm run build -w @orca-ui/docs
