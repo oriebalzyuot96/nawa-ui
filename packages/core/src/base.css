@@ -186,7 +186,6 @@
   font-size: var(--oc-text-md);
   font-weight: var(--oc-weight-semibold);
   text-decoration: none;
-  transition: top var(--oc-dur-2) var(--oc-ease);
 }
 .oc-skip-link:focus { top: 1rem; outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
 
