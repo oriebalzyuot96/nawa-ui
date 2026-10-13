@@ -302,7 +302,8 @@ export async function build() {
   write('svelte/index.js', BANNER + `export { default as Icon } from './Icon.svelte';\nexport { icons, iconNames, iconToSvg } from '../icons.js';\n`);
   write('svelte/index.d.ts', BANNER + runtime('svelte.d.ts'));
   write('astro/Icon.astro', runtime('Icon.astro'));
-  write('astro/index.d.ts', BANNER + `export { default as Icon } from './Icon.astro';\n`);
+  // The "./astro" export resolves to Icon.astro itself, so its types must expose a default export too.
+  write('astro/index.d.ts', BANNER + `export { default, default as Icon } from './Icon.astro';\n`);
   write('angular/index.js', BANNER + runtime('angular.js'));
   write('angular/index.d.ts', BANNER + runtime('angular.d.ts'));
   removeStale();
