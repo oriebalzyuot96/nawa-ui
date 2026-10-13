@@ -1,4 +1,4 @@
-// Angular standalone <oc-icon> component, shipped in Angular's partial-compilation
+// Angular standalone <pl-icon> component, shipped in Angular's partial-compilation
 // format (the same format ng-packagr emits), so the Angular CLI linker compiles it
 // ahead-of-time in the consuming app. Rendering uses Renderer2 (SSR-safe, no innerHTML).
 import * as i0 from '@angular/core';
@@ -7,7 +7,7 @@ import { iconTree, nextId } from '../core.js';
 
 const truthy = (v) => v === true || v === '' || v === 'true';
 
-export class OcIconComponent {
+export class PlIconComponent {
   constructor(el, renderer) {
     this.el = el;
     this.renderer = renderer;
@@ -57,21 +57,21 @@ export class OcIconComponent {
   }
 }
 
-OcIconComponent.ɵfac = i0.ɵɵngDeclareFactory({
+PlIconComponent.ɵfac = i0.ɵɵngDeclareFactory({
   minVersion: '12.0.0',
   version: '17.3.0',
   ngImport: i0,
-  type: OcIconComponent,
+  type: PlIconComponent,
   deps: [{ token: i0.ElementRef }, { token: i0.Renderer2 }],
   target: i0.ɵɵFactoryTarget.Component,
 });
 
-OcIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({
+PlIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({
   minVersion: '14.0.0',
   version: '17.3.0',
-  type: OcIconComponent,
+  type: PlIconComponent,
   isStandalone: true,
-  selector: 'oc-icon',
+  selector: 'pl-icon',
   inputs: {
     name: 'name',
     variant: 'variant',
@@ -88,11 +88,11 @@ OcIconComponent.ɵcmp = i0.ɵɵngDeclareComponent({
   styles: [
     ':host{display:inline-flex;vertical-align:-.125em;line-height:0;flex-shrink:0}' +
       ':host svg{display:block;overflow:visible}' +
-      '.oc-icon__duo{fill:var(--oc-icon-duotone,currentColor);fill-opacity:var(--oc-icon-duotone-opacity,.22)}' +
-      ':host-context([dir=rtl]) .oc-icon--flip-rtl{transform:scaleX(-1)}' +
-      '.oc-icon--spin{animation:oc-icon-spin .9s linear infinite;transform-origin:50% 50%}' +
-      '@keyframes oc-icon-spin{to{transform:rotate(360deg)}}' +
-      '@media (prefers-reduced-motion:reduce){.oc-icon--spin{animation-duration:2.4s}}',
+      '.pl-icon__duo{fill:var(--pl-icon-duotone,currentColor);fill-opacity:var(--pl-icon-duotone-opacity,.22)}' +
+      ':host-context([dir=rtl]) .pl-icon--flip-rtl{transform:scaleX(-1)}' +
+      '.pl-icon--spin{animation:pl-icon-spin .9s linear infinite;transform-origin:50% 50%}' +
+      '@keyframes pl-icon-spin{to{transform:rotate(360deg)}}' +
+      '@media (prefers-reduced-motion:reduce){.pl-icon--spin{animation-duration:2.4s}}',
   ],
   changeDetection: i0.ChangeDetectionStrategy.OnPush,
 });

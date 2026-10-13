@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ActivityIndicator, Animated, Image, Pressable, StyleSheet, Text, View, type DimensionValue } from 'react-native';
-import { fontSize, radius, space, useOrcaTheme, useReducedMotion } from '../theme';
+import { fontSize, radius, space, usePelagicTheme, useReducedMotion } from '../theme';
 import { initialsOf } from '../utils';
 
 export type Variant = 'info' | 'success' | 'warning' | 'danger';
 
-function variantColors(t: ReturnType<typeof useOrcaTheme>, variant: Variant | 'primary' | 'neutral') {
+function variantColors(t: ReturnType<typeof usePelagicTheme>, variant: Variant | 'primary' | 'neutral') {
   switch (variant) {
     case 'success':
       return { fg: t.success, bg: t.successSoft };
@@ -23,7 +23,7 @@ function variantColors(t: ReturnType<typeof useOrcaTheme>, variant: Variant | 'p
 }
 
 export function Badge({ children, variant = 'neutral' }: { children: ReactNode; variant?: 'neutral' | 'primary' | Variant }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const c = variantColors(t, variant);
   return (
     <View style={[styles.badge, { backgroundColor: c.bg }]}>
@@ -33,7 +33,7 @@ export function Badge({ children, variant = 'neutral' }: { children: ReactNode; 
 }
 
 export function Tag({ children, removable = false, onRemove }: { children: ReactNode; removable?: boolean; onRemove?: () => void }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View style={[styles.tag, { borderColor: t.border, backgroundColor: t.surfaceAlt }]}>
       <Text style={{ color: t.text, fontSize: fontSize.sm }}>{children}</Text>
@@ -47,7 +47,7 @@ export function Tag({ children, removable = false, onRemove }: { children: React
 }
 
 export function Avatar({ src, name, size = 'md' }: { src?: string; name: string; size?: 'sm' | 'md' | 'lg' }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const dim = size === 'sm' ? 32 : size === 'lg' ? 56 : 40;
   return (
     <View
@@ -66,7 +66,7 @@ export function Avatar({ src, name, size = 'md' }: { src?: string; name: string;
 }
 
 export function Card({ title, footer, children }: { title?: ReactNode; footer?: ReactNode; children?: ReactNode }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View style={[styles.card, { backgroundColor: t.surface, borderColor: t.border }]}>
       {title ? <View style={[styles.cardHeader, { borderBottomColor: t.border }]}><Text style={{ color: t.text, fontWeight: '700', fontSize: fontSize.md }}>{title}</Text></View> : null}
@@ -77,12 +77,12 @@ export function Card({ title, footer, children }: { title?: ReactNode; footer?: 
 }
 
 export function Spinner({ size = 'md', color }: { size?: 'sm' | 'md' | 'lg'; color?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return <ActivityIndicator size={size === 'lg' ? 'large' : 'small'} color={color ?? t.primary} accessibilityLabel="Loading" />;
 }
 
 export function Skeleton({ width = '100%', height = 14, circle = false }: { width?: DimensionValue; height?: number; circle?: boolean }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const reduceMotion = useReducedMotion();
   const opacity = useRef(new Animated.Value(0.7)).current;
   useEffect(() => {
@@ -124,7 +124,7 @@ export function SkeletonText({ lines = 3, label = 'Loading' }: { lines?: number;
 
 /** Card placeholder: avatar, title lines and a body paragraph. */
 export function SkeletonCard({ lines = 3, label = 'Loading' }: { lines?: number; label?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View
       accessible
@@ -150,7 +150,7 @@ export function SkeletonCard({ lines = 3, label = 'Loading' }: { lines?: number;
 }
 
 export function ProgressBar({ value, label = 'Progress' }: { value?: number; label?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const indeterminate = value === undefined;
   const pct = indeterminate ? 40 : Math.min(100, Math.max(0, value));
   return (
@@ -167,7 +167,7 @@ export function ProgressBar({ value, label = 'Progress' }: { value?: number; lab
 }
 
 export function Stepper({ steps, current }: { steps: { label: string; description?: string }[]; current: number }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View style={styles.stepper} accessible accessibilityRole="progressbar" accessibilityLabel={`Step ${current + 1} of ${steps.length}`}>
       {steps.map((s, i) => {
@@ -193,7 +193,7 @@ export interface TimelineItem {
 }
 
 export function Timeline({ items }: { items: TimelineItem[] }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View>
       {items.map((item, i) => {
@@ -212,7 +212,7 @@ export function Timeline({ items }: { items: TimelineItem[] }) {
 }
 
 export function Alert({ variant = 'info', title, children, onClose }: { variant?: Variant; title?: ReactNode; children?: ReactNode; onClose?: () => void }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const c = variantColors(t, variant);
   return (
     <View accessibilityRole="alert" style={[styles.alert, { backgroundColor: c.bg, borderColor: c.fg }]}>
@@ -236,8 +236,8 @@ export interface EmptyStateProps {
   title: string;
   description?: string;
   /**
-   * Decorative scene, e.g. `<NoResultsIllustration theme={useOrcaTheme()} />` from
-   * `@orca-ui/illustrations/native` (needs react-native-svg). Hidden from screen readers. `false` hides it.
+   * Decorative scene, e.g. `<NoResultsIllustration theme={usePelagicTheme()} />` from
+   * `@pelagic-ui/illustrations/native` (needs react-native-svg). Hidden from screen readers. `false` hides it.
    */
   illustration?: ReactNode | false;
   /** Legacy decorative icon. */
@@ -274,7 +274,7 @@ export function EmptyState({
   headingLevel = 3,
   testID,
 }: EmptyStateProps) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const [wide, setWide] = useState(false);
   const row = layout === 'split' && wide;
   const start = align === 'start' || row;
@@ -322,7 +322,7 @@ export function EmptyState({
 }
 
 export function Divider() {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return <View style={{ height: StyleSheet.hairlineWidth, backgroundColor: t.border, alignSelf: 'stretch' }} />;
 }
 

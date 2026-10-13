@@ -34,15 +34,15 @@ import {
   Wizard,
   wizardField,
   type WizardStep,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Output } from './shared';
 
 const card: CSSProperties = {
   padding: '1rem',
-  border: '1px solid var(--oc-border-subtle)',
-  borderRadius: 'var(--oc-radius-lg)',
-  background: 'var(--oc-surface)',
-  boxShadow: 'var(--oc-elev-1)',
+  border: '1px solid var(--pl-border-subtle)',
+  borderRadius: 'var(--pl-radius-lg)',
+  background: 'var(--pl-surface)',
+  boxShadow: 'var(--pl-elev-1)',
 };
 
 /* ------------------------------------------------------------ engine */
@@ -74,17 +74,17 @@ function EngineDemo() {
             <span
               key={i}
               className="engine-bar"
-              style={{ width: '0.875rem', height: `${h}%`, borderRadius: '0.375rem', background: 'linear-gradient(var(--oc-primary), color-mix(in srgb, var(--oc-primary) 45%, var(--oc-info)))', transformOrigin: 'bottom' }}
+              style={{ width: '0.875rem', height: `${h}%`, borderRadius: '0.375rem', background: 'linear-gradient(var(--pl-primary), color-mix(in srgb, var(--pl-primary) 45%, var(--pl-info)))', transformOrigin: 'bottom' }}
             />
           ))}
         </div>
         <svg ref={checkRef} viewBox="0 0 64 64" width="72" height="72" aria-hidden="true">
-          <path d="M32 4a28 28 0 1 1 0 56a28 28 0 1 1 0-56" fill="none" stroke="var(--oc-success)" strokeWidth="4" strokeLinecap="round" />
-          <path d="M20 33l8 8 16-17" fill="none" stroke="var(--oc-success)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M32 4a28 28 0 1 1 0 56a28 28 0 1 1 0-56" fill="none" stroke="var(--pl-success)" strokeWidth="4" strokeLinecap="round" />
+          <path d="M20 33l8 8 16-17" fill="none" stroke="var(--pl-success)" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
         <div style={{ display: 'grid', gap: '0.5rem' }}>
           <Button onClick={play}>Play timeline</Button>
-          <span className="muted" style={{ fontSize: 'var(--oc-text-xs)' }}>
+          <span className="muted" style={{ fontSize: 'var(--pl-text-xs)' }}>
             spring(260, 18) settles in {s.duration} ms
           </span>
         </div>
@@ -118,12 +118,12 @@ function MotionDemo() {
             </Button>
           ))}
         </div>
-        <div style={{ position: 'relative', height: '3.5rem', borderRadius: 'var(--oc-radius)', background: 'var(--oc-canvas)', overflow: 'hidden' }}>
+        <div style={{ position: 'relative', height: '3.5rem', borderRadius: 'var(--pl-radius)', background: 'var(--pl-canvas)', overflow: 'hidden' }}>
           <Motion
             aria-hidden="true"
             animate={{ insetInlineStart: `calc(${x} * (100% - 3rem) / 2)`, rotate: x * 90 }}
             transition={{ spring: { stiffness: 220, damping: 16 } }}
-            style={{ position: 'absolute', top: '0.25rem', width: '3rem', height: '3rem', borderRadius: '0.875rem', background: 'var(--oc-primary)', boxShadow: 'var(--oc-shadow-md)' }}
+            style={{ position: 'absolute', top: '0.25rem', width: '3rem', height: '3rem', borderRadius: '0.875rem', background: 'var(--pl-primary)', boxShadow: 'var(--pl-shadow-md)' }}
           />
         </div>
       </div>
@@ -202,12 +202,12 @@ function RevealDemo() {
   return (
     <div className="demo-col">
       <div key={run} style={{ display: 'grid', gap: '1rem' }}>
-        <TextReveal as="h3" text="Motion that respects people, in every language." style={{ margin: 0, fontSize: 'var(--oc-text-2xl)' }} />
+        <TextReveal as="h3" text="Motion that respects people, in every language." style={{ margin: 0, fontSize: 'var(--pl-text-2xl)' }} />
         <Stagger as="ul" each={90} effect="fade-up" style={{ listStyle: 'none', margin: 0, padding: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(9rem, 1fr))', gap: '0.75rem' }}>
           {['Accessible', 'Themeable', 'Bilingual', 'Fast'].map((w) => (
             <li key={w} style={card}>
               <strong>{w}</strong>
-              <p className="muted" style={{ margin: '0.25rem 0 0', fontSize: 'var(--oc-text-sm)' }}>
+              <p className="muted" style={{ margin: '0.25rem 0 0', fontSize: 'var(--pl-text-sm)' }}>
                 Revealed with a stagger.
               </p>
             </li>
@@ -267,7 +267,7 @@ const LOGOS = ['Nawa Bank', 'Petra Air', 'Wadi Labs', 'Sahra Health', 'Qamar Stu
 function MarqueeDemo() {
   return (
     <div className="demo-col">
-      <Marquee label="Teams using Orca" speed={45}>
+      <Marquee label="Teams using Pelagic" speed={45}>
         {LOGOS.map((l) => (
           <span key={l} style={{ ...card, padding: '0.625rem 1rem', whiteSpace: 'nowrap', fontWeight: 600 }}>
             {l}
@@ -291,10 +291,10 @@ function TickerDemo() {
   const [n, setN] = useState(12840);
   const stat = (label: string, node: ReactNode) => (
     <div style={{ ...card, minWidth: '9rem' }}>
-      <div className="muted" style={{ fontSize: 'var(--oc-text-xs)', fontWeight: 600 }}>
+      <div className="muted" style={{ fontSize: 'var(--pl-text-xs)', fontWeight: 600 }}>
         {label}
       </div>
-      <div style={{ fontSize: 'var(--oc-text-2xl)', fontWeight: 700 }}>{node}</div>
+      <div style={{ fontSize: 'var(--pl-text-2xl)', fontWeight: 700 }}>{node}</div>
     </div>
   );
   return (
@@ -319,13 +319,13 @@ function TickerDemo() {
 function TypingDemo() {
   return (
     <div className="demo-col">
-      <p style={{ margin: 0, fontSize: 'var(--oc-text-xl)', fontWeight: 600 }}>
+      <p style={{ margin: 0, fontSize: 'var(--pl-text-xl)', fontWeight: 600 }}>
         Build <TypingText words={['dashboards', 'checkout flows', 'design systems']} loop />
       </p>
-      <p style={{ margin: 0, fontSize: 'var(--oc-text-xl)', fontWeight: 600 }}>
-        Orca is <MorphingText texts={['accessible', 'themeable', 'bilingual', 'fast']} />
+      <p style={{ margin: 0, fontSize: 'var(--pl-text-xl)', fontWeight: 600 }}>
+        Pelagic is <MorphingText texts={['accessible', 'themeable', 'bilingual', 'fast']} />
       </p>
-      <p dir="rtl" lang="ar" style={{ margin: 0, fontSize: 'var(--oc-text-lg)' }}>
+      <p dir="rtl" lang="ar" style={{ margin: 0, fontSize: 'var(--pl-text-lg)' }}>
         <TypingText text="واجهات سهلة الوصول للجميع" />
       </p>
     </div>
@@ -357,7 +357,7 @@ function SpotlightDemo() {
       <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
         <ShimmerButton>Get started</ShimmerButton>
         <ShimmerButton variant="secondary">Book a demo</ShimmerButton>
-        <span style={{ position: 'relative', padding: '0.5rem 0.875rem', borderRadius: '999px', border: '1px solid var(--oc-border-subtle)', fontSize: 'var(--oc-text-sm)' }}>
+        <span style={{ position: 'relative', padding: '0.5rem 0.875rem', borderRadius: '999px', border: '1px solid var(--pl-border-subtle)', fontSize: 'var(--pl-text-sm)' }}>
           <BorderBeam duration={5} size={90} />
           v1.0 is out
         </span>
@@ -372,11 +372,11 @@ function BackgroundsDemo() {
   const tile: CSSProperties = { position: 'relative', overflow: 'hidden', minHeight: '9rem', display: 'grid', placeItems: 'center', ...card, padding: 0 };
   return (
     <div className="demo-col">
-      <AuroraBackground intensity={0.8} style={{ padding: '2.5rem 1.5rem', border: '1px solid var(--oc-border-subtle)' }}>
+      <AuroraBackground intensity={0.8} style={{ padding: '2.5rem 1.5rem', border: '1px solid var(--pl-border-subtle)' }}>
         <DotPattern size={22} />
         <div style={{ position: 'relative', textAlign: 'center' }}>
           <p className="eyebrow">Hero</p>
-          <h3 style={{ margin: 0, fontSize: 'var(--oc-text-2xl)' }}>Ship accessible UI</h3>
+          <h3 style={{ margin: 0, fontSize: 'var(--pl-text-2xl)' }}>Ship accessible UI</h3>
         </div>
       </AuroraBackground>
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(10rem, 1fr))', gap: '0.75rem' }}>
@@ -426,7 +426,7 @@ function ListDemo() {
         renderItem={(i) => (
           <div style={{ ...card, display: 'flex', justifyContent: 'space-between', gap: '0.75rem', padding: '0.75rem 1rem' }}>
             <span>{i.text}</span>
-            <span className="muted" style={{ fontSize: 'var(--oc-text-xs)' }}>
+            <span className="muted" style={{ fontSize: 'var(--pl-text-xs)' }}>
               {i.at}
             </span>
           </div>
@@ -454,16 +454,16 @@ function ScrollDemo() {
       </div>
       <Parallax
         speed={0.4}
-        style={{ border: '1px solid var(--oc-border-subtle)' }}
+        style={{ border: '1px solid var(--pl-border-subtle)' }}
         background={
-          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--oc-primary) 40%, transparent), transparent 60%), radial-gradient(circle at 75% 70%, color-mix(in srgb, var(--oc-info) 35%, transparent), transparent 55%), var(--oc-canvas)' }}>
+          <div style={{ position: 'absolute', inset: 0, background: 'radial-gradient(circle at 30% 30%, color-mix(in srgb, var(--pl-primary) 40%, transparent), transparent 60%), radial-gradient(circle at 75% 70%, color-mix(in srgb, var(--pl-info) 35%, transparent), transparent 55%), var(--pl-canvas)' }}>
             <GridPattern size={28} fade="none" />
           </div>
         }
       >
         <div style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
           <p className="eyebrow">Parallax</p>
-          <h3 style={{ margin: 0, fontSize: 'var(--oc-text-2xl)' }}>The background drifts as you scroll the page</h3>
+          <h3 style={{ margin: 0, fontSize: 'var(--pl-text-2xl)' }}>The background drifts as you scroll the page</h3>
         </div>
       </Parallax>
     </div>
@@ -483,7 +483,7 @@ function WizardDemo() {
       description: 'Email and name',
       content: (ctx) => (
         <>
-          <Input label="Email" type="email" autoComplete="email" hint="Try “taken@orca.dev” to see an async error" {...wizardField(ctx, 'email')} />
+          <Input label="Email" type="email" autoComplete="email" hint="Try “taken@pelagic.dev” to see an async error" {...wizardField(ctx, 'email')} />
           <Input label="Full name" autoComplete="name" {...wizardField(ctx, 'name')} />
         </>
       ),
@@ -491,7 +491,7 @@ function WizardDemo() {
         const errors: Record<string, string> = {};
         if (!data.email || !/^\S+@\S+\.\S+$/.test(data.email)) errors.email = 'Enter an email address like name@example.com';
         if (!data.name?.trim()) errors.name = 'Enter your full name';
-        if (!errors.email && data.email === 'taken@orca.dev') {
+        if (!errors.email && data.email === 'taken@pelagic.dev') {
           await new Promise((r) => setTimeout(r, 600));
           errors.email = 'That email already has an account';
         }
@@ -513,16 +513,16 @@ function WizardDemo() {
       description: 'Pick a plan',
       content: (ctx) => (
         <fieldset style={{ border: 0, padding: 0, margin: 0, display: 'grid', gap: '0.5rem' }}>
-          <legend className="oc-label" style={{ marginBottom: '0.5rem' }}>
+          <legend className="pl-label" style={{ marginBottom: '0.5rem' }}>
             Plan
           </legend>
           {['Starter', 'Pro', 'Enterprise'].map((p) => (
-            <label key={p} className="oc-check">
+            <label key={p} className="pl-check">
               <input type="radio" name="plan" id={p === 'Starter' ? 'plan' : undefined} checked={ctx.data.plan === p} onChange={() => ctx.setData({ plan: p })} />
               {p}
             </label>
           ))}
-          {ctx.errors.plan && <span className="oc-error-text">{ctx.errors.plan}</span>}
+          {ctx.errors.plan && <span className="pl-error-text">{ctx.errors.plan}</span>}
         </fieldset>
       ),
       validate: ({ data }) => (data.plan ? undefined : { plan: 'Choose a plan' }),
@@ -546,7 +546,7 @@ function WizardDemo() {
   }
   return (
     <div className="demo-col">
-      <Wizard<Signup> label="Create your workspace" steps={steps} persist="orca-docs-wizard" saveDraft onComplete={(d) => setDone(d)} />
+      <Wizard<Signup> label="Create your workspace" steps={steps} persist="pelagic-docs-wizard" saveDraft onComplete={(d) => setDone(d)} />
     </div>
   );
 }

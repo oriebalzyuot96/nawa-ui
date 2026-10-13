@@ -1,7 +1,7 @@
 <script lang="ts">
   // Accessibility settings drawer: color schemes, color-vision filters, text size and spacing, reading
-  // aids, motion and interaction aids. Markup and behavior are shared with every Orca package
-  // (@orca-ui/core/a11y-prefs); this component adds Svelte props, bindings and callbacks.
+  // aids, motion and interaction aids. Markup and behavior are shared with every Pelagic package
+  // (@pelagic-ui/core/a11y-prefs); this component adds Svelte props, bindings and callbacks.
   //
   //   <AccessibilityPanel bind:prefs bind:open locale="ar" trigger="inline" onchange={(prefs, change) => …} />
   import { onDestroy, untrack } from 'svelte';
@@ -13,7 +13,7 @@
     type A11yPanelController,
     type A11yPanelLabelOverrides,
     type A11yPrefs,
-  } from '@orca-ui/core/a11y-prefs';
+  } from '@pelagic-ui/core/a11y-prefs';
 
   type GroupId = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
 
@@ -28,7 +28,7 @@
     groups,
     persist = true,
     target,
-    id = `oc-a11y-${Math.random().toString(36).slice(2, 8)}`,
+    id = `pl-a11y-${Math.random().toString(36).slice(2, 8)}`,
     onchange,
   }: {
     /** The preferences (bindable). The panel keeps its own state when omitted. */
@@ -91,4 +91,4 @@
   });
 </script>
 
-<div bind:this={host} class="oc-a11y-host" style="display: contents"></div>
+<div bind:this={host} class="pl-a11y-host" style="display: contents"></div>

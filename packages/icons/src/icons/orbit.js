@@ -1,7 +1,7 @@
 /** @type {import('../types').IconSource} */
 export default {
   name: 'orbit',
-  category: 'orca',
+  category: 'pelagic',
   tags: ['planet', 'space', 'satellite'],
   outline: [
     '<circle cx="12" cy="12" r="4.5"/>',

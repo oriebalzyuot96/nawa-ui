@@ -17,14 +17,14 @@ interface Props {
 }
 
 const { tabs, value = tabs[0]?.key, label } = Astro.props;
-const baseId = `oc-tabs-${Math.random().toString(36).slice(2, 8)}`;
+const baseId = `pl-tabs-${Math.random().toString(36).slice(2, 8)}`;
 const panels = await Promise.all(
   tabs.map(async (t) => ({ key: t.key, html: Astro.slots.has(`panel-${t.key}`) ? await Astro.slots.render(`panel-${t.key}`) : '' })),
 );
 ---
 
-<div class="oc-tabs" data-oc-tabs>
-  <div role="tablist" class="oc-tabs__list" aria-label={label}>
+<div class="pl-tabs" data-pl-tabs>
+  <div role="tablist" class="pl-tabs__list" aria-label={label}>
     {tabs.map((t) => (
       <button
         type="button"
@@ -34,7 +34,7 @@ const panels = await Promise.all(
         aria-selected={t.key === value ? 'true' : 'false'}
         tabindex={t.key === value ? 0 : -1}
         disabled={t.disabled}
-        class="oc-tabs__tab"
+        class="pl-tabs__tab"
       >
         {t.label}
       </button>
@@ -45,7 +45,7 @@ const panels = await Promise.all(
       role="tabpanel"
       id={`${baseId}-panel-${p.key}`}
       aria-labelledby={`${baseId}-tab-${p.key}`}
-      class="oc-tabs__panel"
+      class="pl-tabs__panel"
       hidden={p.key !== value}
       tabindex="0"
       set:html={p.html}

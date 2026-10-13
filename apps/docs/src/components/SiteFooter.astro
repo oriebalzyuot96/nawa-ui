@@ -1,5 +1,5 @@
 ---
-import Icon from '@orca-ui/icons/astro';
+import Icon from '@pelagic-ui/icons/astro';
 import Logo from './Logo.astro';
 import InstallCommand from './InstallCommand.astro';
 import { categories } from '../data/catalog';
@@ -15,7 +15,7 @@ const { lang, otherLangPath } = Astro.props;
 const ar = lang === 'ar';
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const pk = ar ? `${base}/ar/packages/` : `${base}/packages/`;
-const umbrella = packageById('orca-ui')!;
+const umbrella = packageById('pelagic')!;
 
 const columns = [
   {
@@ -25,7 +25,7 @@ const columns = [
       { href: `${base}/components/`, label: ar ? 'المكونات' : 'Components' },
       { href: pk, label: ar ? 'الحزم' : 'Packages' },
       { href: `${base}/themes/`, label: ar ? 'الثيمات' : 'Themes' },
-      { href: `${base}/space/`, label: ar ? 'أوركا سبيس' : 'Orca Space' },
+      { href: `${base}/space/`, label: ar ? 'بيلاجيك سبيس' : 'Pelagic Space' },
       { href: `${base}/getting-started/`, label: ar ? 'ابدأ' : 'Get started' },
     ],
   },
@@ -48,8 +48,8 @@ const columns = [
     title: ar ? 'الموارد' : 'Resources',
     links: [
       { href: repo, label: 'GitHub', external: true },
-      { href: 'https://www.npmjs.com/package/orca-ui', label: 'npm', external: true },
-      { href: 'https://pub.dev/packages/orca_ui', label: 'pub.dev', external: true },
+      { href: 'https://www.npmjs.com/package/pelagic', label: 'npm', external: true },
+      { href: 'https://pub.dev/packages/pelagic_ui', label: 'pub.dev', external: true },
       { href: `${base}/llms.txt`, label: 'llms.txt' },
       { href: `${base}/sitemap-index.xml`, label: ar ? 'خريطة الموقع' : 'Sitemap' },
     ],
@@ -63,7 +63,7 @@ const columns = [
       <div class="site-footer__brand">
         <a class="brand" href={ar ? `${base}/ar/` : `${base}/`}>
           <Logo size={34} />
-          <span class="brand__name">Orca UI</span>
+          <span class="brand__name">Pelagic UI</span>
         </a>
         <p class="site-footer__pitch">
           {
@@ -72,7 +72,7 @@ const columns = [
               : 'One design system for seven platforms. Accessible by default, fully themeable, open source.'
           }
         </p>
-        <InstallCommand options={umbrella.install} locale={lang} compact label={ar ? 'تثبيت orca-ui' : 'Install orca-ui'} />
+        <InstallCommand options={umbrella.install} locale={lang} compact label={ar ? 'تثبيت pelagic' : 'Install pelagic'} />
       </div>
       <div class="site-footer__cols">
         {columns.map((col, i) => (
@@ -104,7 +104,7 @@ const columns = [
     </nav>
 
     <div class="site-footer__bottom">
-      <span>© {new Date().getFullYear()} Orca UI · {ar ? 'رخصة MIT' : 'MIT License'}</span>
+      <span>© {new Date().getFullYear()} Pelagic UI · {ar ? 'رخصة MIT' : 'MIT License'}</span>
       <span class="site-footer__badges">
         <span class="pill"><Icon name="shield-check" size={14} />WCAG 2.2 AA</span>
         <span class="pill"><Icon name="language" size={14} />{ar ? 'يدعم RTL' : 'RTL ready'}</span>

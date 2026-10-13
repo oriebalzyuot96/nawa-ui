@@ -1,7 +1,7 @@
 /** @type {import('../types').IconSource} */
 export default {
   name: 'rocket',
-  category: 'orca',
+  category: 'pelagic',
   tags: ['launch', 'startup', 'fast'],
   outline: [
     '<path d="M12 3c2.9 2 4.5 5.3 4.5 9v3.5h-9V12c0-3.7 1.6-7 4.5-9z"/>',

@@ -1,6 +1,6 @@
 <script lang="ts">
   import AccessibilityPanel from '../../src/lib/AccessibilityPanel.svelte';
-  import type { A11yPrefs } from '@orca-ui/core/a11y-prefs';
+  import type { A11yPrefs } from '@pelagic-ui/core/a11y-prefs';
   let { initial = {} }: { initial?: Partial<A11yPrefs> } = $props();
   let prefs = $state<Partial<A11yPrefs>>(initial);
   let open = $state(false);

@@ -1,4 +1,4 @@
-// Orca UI sound — a tiny, framework-agnostic UI sound engine on the Web Audio API.
+// Pelagic UI sound — a tiny, framework-agnostic UI sound engine on the Web Audio API.
 //
 // Every sound is synthesized (oscillators + filtered noise); no audio files are loaded.
 // Rules the engine enforces:
@@ -37,10 +37,10 @@ export const UI_SOUNDS = Object.freeze([
 export const SOUND_THEMES = Object.freeze(['soft', 'crisp', 'playful', 'minimal']);
 
 /** Window event used by `emitUiSound`. */
-export const UI_SOUND_EVENT = 'oc:ui-sound';
+export const UI_SOUND_EVENT = 'pl:ui-sound';
 
 /** localStorage key holding the user's sound preferences. */
-export const SOUND_STORAGE_KEY = 'oc-sound';
+export const SOUND_STORAGE_KEY = 'pl-sound';
 
 /** Sounds kept in reduced mode: they confirm an outcome rather than decorate an interaction. */
 const ESSENTIAL = new Set(['success', 'error', 'warning', 'info', 'notification']);

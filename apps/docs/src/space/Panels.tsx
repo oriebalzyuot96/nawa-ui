@@ -1,6 +1,6 @@
 /** Palette (add components), Layers (outline tree) and Inspector (props + arrange). */
 import { useId, useMemo, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Button, Input, Select, Switch, Textarea } from '@orca-ui/react';
+import { Button, Input, Select, Switch, Textarea } from '@pelagic-ui/react';
 import { GROUPS, NODE_TYPES, REGISTRY, nodeLabel, type FieldDef } from './registry';
 import { PALETTE_BLOCKS, type BlockDef } from './blocks';
 import { Icon } from './icons';
@@ -50,7 +50,7 @@ export function Palette({
       <p className="sp-help" id={`${idBase}-help`}>
         Drag onto the canvas, or press <kbd>Enter</kbd> to add after the selection.
       </p>
-      <p className="oc-sr-only" role="status">
+      <p className="pl-sr-only" role="status">
         {q ? `${items.length} components match` : ''}
       </p>
       {GROUPS.map((g) => {
@@ -231,7 +231,7 @@ export function Inspector({
         />
         <div className="sp-tip">
           <strong>Tip</strong>
-          <p>Select a component on the canvas or in Layers to edit its properties. Everything here is a real Orca UI component.</p>
+          <p>Select a component on the canvas or in Layers to edit its properties. Everything here is a real Pelagic UI component.</p>
         </div>
       </div>
     );

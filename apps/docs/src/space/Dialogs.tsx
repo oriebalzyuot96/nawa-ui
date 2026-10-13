@@ -1,16 +1,16 @@
 /** Modal dialogs: code export, starter templates and keyboard shortcuts. */
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { Alert, Button, Tabs } from '@orca-ui/react';
+import { Alert, Button, Tabs } from '@pelagic-ui/react';
 import { notify } from './notify';
-import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
 import { exportCode, TARGETS, type Target } from './exporters';
 import { TEMPLATES, type Template } from './templates';
 import { Icon } from './icons';
 import type { SpaceDoc } from './types';
 
 /**
- * Modal built on Orca's dialog classes and focus helpers. (Same behavior as the library Dialog: Escape closes,
+ * Modal built on Pelagic's dialog classes and focus helpers. (Same behavior as the library Dialog: Escape closes,
  * focus is trapped and restored, the page does not scroll.) Its title bar is a plain div so the portal
  * does not add a second banner landmark to the page.
  */
@@ -39,17 +39,17 @@ function Dialog({ open, title, onClose, size = 'md', className, children }: { op
   }, [open]);
   if (!open) return null;
   return createPortal(
-    <div className="oc-overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
-      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={`oc-dialog${size === 'lg' ? ' oc-dialog--lg' : ''} ${className ?? ''}`}>
-        <div className="oc-dialog__header">
-          <h2 id={titleId} className="oc-dialog__title">
+    <div className="pl-overlay" onMouseDown={(e) => e.target === e.currentTarget && onClose()}>
+      <div ref={panelRef} role="dialog" aria-modal="true" aria-labelledby={titleId} tabIndex={-1} className={`pl-dialog${size === 'lg' ? ' pl-dialog--lg' : ''} ${className ?? ''}`}>
+        <div className="pl-dialog__header">
+          <h2 id={titleId} className="pl-dialog__title">
             {title}
           </h2>
-          <button type="button" className="oc-close" aria-label="Close" onClick={onClose}>
+          <button type="button" className="pl-close" aria-label="Close" onClick={onClose}>
             ×
           </button>
         </div>
-        <div className="oc-dialog__body">{children}</div>
+        <div className="pl-dialog__body">{children}</div>
       </div>
     </div>,
     document.body,
@@ -134,7 +134,7 @@ export function ExportDialog({ open, doc, onClose }: { open: boolean; doc: Space
   return (
     <Dialog open={open} onClose={onClose} title="Export code" size="lg" className="sp-dialog sp-dialog--code">
       <p className="sp-help">
-        Clean, dependency-light code for the page you composed. Install with <code>npm i @orca-ui/core</code> plus your framework package.
+        Clean, dependency-light code for the page you composed. Install with <code>npm i @pelagic-ui/core</code> plus your framework package.
       </p>
       {open && (
         <Tabs
@@ -198,8 +198,8 @@ export function ShortcutsDialog({ open, onClose }: { open: boolean; onClose: () 
   return (
     <Dialog open={open} onClose={onClose} title="Keyboard shortcuts" size="md" className="sp-dialog">
       <p className="sp-help">Every drag and drop action has a keyboard or button alternative.</p>
-      <table className="oc-table sp-keys">
-        <caption className="oc-sr-only">Keyboard shortcuts</caption>
+      <table className="pl-table sp-keys">
+        <caption className="pl-sr-only">Keyboard shortcuts</caption>
         <thead>
           <tr>
             <th scope="col">Keys</th>

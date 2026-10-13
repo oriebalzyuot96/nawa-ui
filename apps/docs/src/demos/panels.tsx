@@ -14,7 +14,7 @@ import {
   Stepper,
   Tabs,
   Toolbar,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Output, Row } from './shared';
 
 function CardDemo() {
@@ -43,7 +43,7 @@ function AccordionDemo() {
     <Accordion
       defaultOpen={['free']}
       items={[
-        { key: 'free', title: 'Is Orca UI free?', content: 'Yes. It is MIT licensed for personal and commercial use.' },
+        { key: 'free', title: 'Is Pelagic UI free?', content: 'Yes. It is MIT licensed for personal and commercial use.' },
         { key: 'fw', title: 'Which frameworks are supported?', content: 'React, Vue 3, Svelte 5, Astro, React Native and Angular (in progress).' },
         { key: 'rtl', title: 'Does it support Arabic and RTL?', content: 'Yes. Layouts use logical CSS properties and mirror automatically — try the RTL button above.' },
       ]}
@@ -110,7 +110,7 @@ function ScrollPanelDemo() {
       <ScrollPanel label="Terms of service" height={180}>
         {Array.from({ length: 8 }, (_, i) => (
           <p key={i} style={{ marginTop: 0 }}>
-            <strong>{i + 1}. Section {i + 1}.</strong> You may use Orca UI in personal and commercial projects. Attribution is appreciated but not
+            <strong>{i + 1}. Section {i + 1}.</strong> You may use Pelagic UI in personal and commercial projects. Attribution is appreciated but not
             required. The software is provided “as is”, without warranty of any kind.
           </p>
         ))}

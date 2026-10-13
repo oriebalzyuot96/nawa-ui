@@ -85,7 +85,7 @@ describe('every scene', () => {
         for (const attr of ['fill', 'stroke']) {
           const v = node.getAttribute(attr);
           if (v == null || v === 'none') continue;
-          assert.match(v, /^var\(--oc-illus-[a-z]+, /, `${name} ${attr}="${v}"`);
+          assert.match(v, /^var\(--pl-illus-[a-z]+, /, `${name} ${attr}="${v}"`);
           assert.ok(!/#[0-9a-f]{3,8}\b|rgb|hsl/i.test(stripVars(v)), `${name}: literal color outside var(): ${v}`);
         }
         for (const attr of ['style', 'color', 'stop-color']) assert.equal(node.getAttribute(attr), null, `${name}: ${attr}`);
@@ -98,7 +98,7 @@ describe('every scene', () => {
   it('the backdrop and the nucleus motif recur in every scene', () => {
     for (const name of ILLUSTRATION_NAMES) {
       const el = parseSvg(illustrationToSvg(name));
-      assert.ok(el.querySelectorAll('.oc-illus__bg').length >= 2, `${name}: backdrop discs`);
+      assert.ok(el.querySelectorAll('.pl-illus__bg').length >= 2, `${name}: backdrop discs`);
       assert.ok(el.querySelector('ellipse[stroke-dasharray]'), `${name}: dotted orbit`);
     }
   });
@@ -116,15 +116,15 @@ describe('options and accessibility', () => {
   it('compact drops detail layers and adds the compact class', () => {
     const full = parseSvg(illustrationToSvg('all-done'));
     const compact = parseSvg(illustrationToSvg('all-done', { compact: true }));
-    assert.ok(compact.classList.contains('oc-illus--compact'));
+    assert.ok(compact.classList.contains('pl-illus--compact'));
     assert.ok(compact.querySelectorAll('*').length < full.querySelectorAll('*').length);
     assert.equal(compact.querySelector('ellipse[stroke-dasharray]'), null);
   });
 
   it('motion is opt-out and always disabled under prefers-reduced-motion', () => {
-    assert.ok(illustrationToSvg('no-data').includes('oc-illus__float'));
-    assert.ok(!illustrationToSvg('no-data', { animated: false }).includes('class="oc-illus__float'));
-    assert.match(lib.ILLUSTRATION_CSS, /prefers-reduced-motion:reduce\)\{\.oc-illus__float\{animation:none\}/);
+    assert.ok(illustrationToSvg('no-data').includes('pl-illus__float'));
+    assert.ok(!illustrationToSvg('no-data', { animated: false }).includes('class="pl-illus__float'));
+    assert.match(lib.ILLUSTRATION_CSS, /prefers-reduced-motion:reduce\)\{\.pl-illus__float\{animation:none\}/);
   });
 
   it('forced-colors rules map fills to Canvas and strokes to CanvasText', () => {
@@ -141,7 +141,7 @@ describe('options and accessibility', () => {
     assert.equal(illustrationTree('offline', { styles: false }).children[0].tag !== 'style', true);
   });
 
-  it('resolvePalette maps Orca theme tokens for React Native', async () => {
+  it('resolvePalette maps Pelagic theme tokens for React Native', async () => {
     const { getTheme } = await import(pathToFileURL(join(root, '../core/tokens.js')).href);
     const dark = getTheme('dark', 'teal');
     const p = resolvePalette(dark);
@@ -165,7 +165,7 @@ describe('framework entry points', () => {
     const html = renderToStaticMarkup(createElement(r.NoResultsIllustration, { compact: true, style: { maxWidth: 80 } }));
     const el = parseSvg(html);
     assert.equal(el.getAttribute('aria-hidden'), 'true');
-    assert.ok(el.classList.contains('oc-illus--compact'));
+    assert.ok(el.classList.contains('pl-illus--compact'));
     assert.match(el.getAttribute('style'), /max-width:80px/);
     assert.ok(el.querySelector('[stroke-width]'), 'kebab-case SVG attributes survive');
     const labelled = parseSvg(renderToStaticMarkup(createElement(r.Illustration, { name: 'offline', label: 'Offline' })));
@@ -195,14 +195,14 @@ describe('framework entry points', () => {
     Object.assign(globalThis, { HTMLElement: window.HTMLElement, customElements: window.customElements, document: window.document });
     try {
       const mod = await import(dist('element.js') + '?jsdom');
-      const el = window.document.createElement('oc-illustration');
+      const el = window.document.createElement('pl-illustration');
       el.setAttribute('name', 'not-found');
       window.document.body.append(el);
       assert.equal(el.querySelector('svg').getAttribute('aria-hidden'), 'true');
       el.setAttribute('label', 'Page not found');
       el.setAttribute('compact', '');
       assert.equal(el.querySelector('svg').getAttribute('role'), 'img');
-      assert.ok(el.querySelector('svg').classList.contains('oc-illus--compact'));
+      assert.ok(el.querySelector('svg').classList.contains('pl-illus--compact'));
       el.setAttribute('name', 'bogus');
       assert.equal(el.innerHTML, '');
       assert.equal(typeof mod.defineIllustrationElement, 'function');
@@ -249,6 +249,6 @@ describe('framework entry points', () => {
     const { code } = await babel.transformAsync(source, { filename: join(root, 'dist/angular.js'), plugins: [plugin], compact: false });
     assert.ok(!code.includes('ɵɵngDeclareDirective'), 'declaration was linked');
     assert.match(code, /ɵɵdefineDirective/);
-    assert.match(code, /ocIllustration/);
+    assert.match(code, /plIllustration/);
   });
 });

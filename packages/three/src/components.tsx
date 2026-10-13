@@ -55,14 +55,14 @@ function CanvasHost({ hostRef, status, height, className, style, label, describe
     : { role: 'img', 'aria-label': label, 'aria-describedby': describedBy, 'aria-roledescription': interactive ? 'interactive 3D view' : undefined };
   return (
     <div
-      className={cx('oc-three', interactive && status === 'ready' && 'oc-three--interactive', className)}
-      style={{ ...(height ? ({ '--oc-three-h': height } as CSSProperties) : null), ...style }}
+      className={cx('pl-three', interactive && status === 'ready' && 'pl-three--interactive', className)}
+      style={{ ...(height ? ({ '--pl-three-h': height } as CSSProperties) : null), ...style }}
       data-status={status}
       hidden={hideOnFallback && status === 'fallback' ? true : undefined}
       {...a11y}
     >
-      <div ref={hostRef} className="oc-three__canvas" tabIndex={interactive && status === 'ready' && !decorative ? 0 : undefined} />
-      {status === 'fallback' && <div className="oc-three__fallback">{fallback}</div>}
+      <div ref={hostRef} className="pl-three__canvas" tabIndex={interactive && status === 'ready' && !decorative ? 0 : undefined} />
+      {status === 'fallback' && <div className="pl-three__fallback">{fallback}</div>}
       {children}
     </div>
   );
@@ -113,7 +113,7 @@ export function Scene3D({ setup, label, description, decorative, interactive, an
       fallback={fallback ?? (decorative ? null : <span>{label}</span>)}
     >
       {hasDesc && (
-        <span id={descId} className="oc-sr-only">
+        <span id={descId} className="pl-sr-only">
           {description} {interactive && status === 'ready' ? KEY_HELP : ''}
         </span>
       )}
@@ -238,7 +238,7 @@ export function Globe3D({
   });
   const name = markers.length ? `${label}, ${markers.length} location${markers.length === 1 ? '' : 's'} marked` : label;
   return (
-    <figure className={cx('oc-globe3d', className)}>
+    <figure className={cx('pl-globe3d', className)}>
       <CanvasHost
         hostRef={hostRef}
         status={status}
@@ -249,7 +249,7 @@ export function Globe3D({
         fallback={<span>{name}</span>}
       />
       {markers.length > 0 && (
-        <figcaption className={showList ? 'oc-globe3d__caption' : 'oc-sr-only'}>
+        <figcaption className={showList ? 'pl-globe3d__caption' : 'pl-sr-only'}>
           <span id={listId}>{listLabel}</span>
           <ul aria-labelledby={listId}>
             {markers.map((m, i) => (
@@ -308,7 +308,7 @@ export function ParticlesField({ count = 600, speed = 1, background = true, heig
     };
   };
   const { status } = useThreeScene(hostRef, { setup, camera: { position: [0, 0, 6] }, deps: [count, speed] });
-  return <CanvasHost hostRef={hostRef} status={status} height={height} decorative className={cx(background && 'oc-three--bg', className)} fallback={null} />;
+  return <CanvasHost hostRef={hostRef} status={status} height={height} decorative className={cx(background && 'pl-three--bg', className)} fallback={null} />;
 }
 
 /* ================================================================== FloatingShapes */
@@ -367,7 +367,7 @@ export function FloatingShapes({ count = 5, background = true, height, className
     };
   };
   const { status } = useThreeScene(hostRef, { setup, camera: { position: [0, 0, 6] }, deps: [count] });
-  return <CanvasHost hostRef={hostRef} status={status} height={height} decorative className={cx(background && 'oc-three--bg', className)} fallback={null} />;
+  return <CanvasHost hostRef={hostRef} status={status} height={height} decorative className={cx(background && 'pl-three--bg', className)} fallback={null} />;
 }
 
 /* ================================================================== ModelViewer */
@@ -481,21 +481,21 @@ export function ModelViewer({
       hostRef={hostRef}
       status={status}
       height={height}
-      className={cx('oc-model-viewer', className)}
+      className={cx('pl-model-viewer', className)}
       label={alt}
       interactive={interactive}
       describedBy={interactive && status === 'ready' ? descId : undefined}
       fallback={fallback ?? <span>{alt}</span>}
     >
       {interactive && status === 'ready' && (
-        <span id={descId} className="oc-sr-only">
+        <span id={descId} className="pl-sr-only">
           {KEY_HELP}
         </span>
       )}
       {status === 'ready' && loadState === 'loading' && (
-        <div className="oc-three__status">
+        <div className="pl-three__status">
           <div
-            className="oc-three__progress"
+            className="pl-three__progress"
             role="progressbar"
             aria-label={loadingLabel}
             aria-valuemin={0}
@@ -507,7 +507,7 @@ export function ModelViewer({
         </div>
       )}
       {loadState === 'error' && (
-        <div className="oc-three__status oc-three__status--error" role="alert">
+        <div className="pl-three__status pl-three__status--error" role="alert">
           {errorText}
         </div>
       )}
@@ -588,8 +588,8 @@ export function Chart3D({
   });
   const fallback = status === 'fallback';
   return (
-    <figure className={cx('oc-chart3d', className)}>
-      <figcaption id={captionId} className="oc-chart3d__title">
+    <figure className={cx('pl-chart3d', className)}>
+      <figcaption id={captionId} className="pl-chart3d__title">
         {title}
       </figcaption>
       <CanvasHost
@@ -601,13 +601,13 @@ export function Chart3D({
         fallback={null}
         hideOnFallback
       />
-      <div className={showTable || fallback ? 'oc-table-wrap' : 'oc-sr-only'}>
-        <table className="oc-table">
-          <caption className="oc-sr-only">{title}</caption>
+      <div className={showTable || fallback ? 'pl-table-wrap' : 'pl-sr-only'}>
+        <table className="pl-table">
+          <caption className="pl-sr-only">{title}</caption>
           <thead>
             <tr>
               <th scope="col">{categoryLabel}</th>
-              <th scope="col" className="oc-table__align-end">
+              <th scope="col" className="pl-table__align-end">
                 {valueLabel}
               </th>
             </tr>
@@ -616,7 +616,7 @@ export function Chart3D({
             {data.map((d, i) => (
               <tr key={i}>
                 <th scope="row">{d.label}</th>
-                <td className="oc-table__align-end">{format(d.value)}</td>
+                <td className="pl-table__align-end">{format(d.value)}</td>
               </tr>
             ))}
           </tbody>

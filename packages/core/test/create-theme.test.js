@@ -115,7 +115,7 @@ describe('createTheme', () => {
     expect(plain.tokens.dark.surface).toBe(modes.dark.surface);
     const tinted = createTheme({ primary: '#7c3aed', neutral: '#0ea5e9' });
     expect(tinted.tokens.light.surface).not.toBe(modes.light.surface);
-    expect(tinted.css).toContain('--oc-surface:');
+    expect(tinted.css).toContain('--pl-surface:');
   });
 
   it('emits CSS scoped to the theme name for light, dark, hc and the OS preferences', () => {
@@ -124,14 +124,14 @@ describe('createTheme', () => {
     const { css } = theme;
     expect(css).toContain('[data-accent="acme-corp"] {');
     for (const mode of MODES) {
-      expect(css).toContain(`--oc-a-${mode}-primary: ${theme.palette[mode].primary};`);
+      expect(css).toContain(`--pl-a-${mode}-primary: ${theme.palette[mode].primary};`);
       expect(css).toContain(`[data-accent="acme-corp"][data-theme="${mode}"]`);
     }
     expect(css).toMatch(/@media \(prefers-color-scheme: dark\) \{\s*:root\[data-accent="acme-corp"\]:not\(\[data-theme\]\)/);
     expect(css).toMatch(/@media \(prefers-contrast: more\)/);
-    expect(css).toContain('--oc-secondary: var(--oc-a-light-secondary);');
-    expect(css).toContain('--oc-radius: 6px;');
-    expect(css).toContain('--oc-font: Inter, sans-serif;');
+    expect(css).toContain('--pl-secondary: var(--pl-a-light-secondary);');
+    expect(css).toContain('--pl-radius: 6px;');
+    expect(css).toContain('--pl-font: Inter, sans-serif;');
     const open = (css.match(/\{/g) ?? []).length;
     expect((css.match(/\}/g) ?? []).length).toBe(open);
   });

@@ -10,9 +10,9 @@ export const motion: CategoryDoc = {
   title: 'Motion — accessible animation primitives, animated components and Wizard',
   h1: 'Motion & flows',
   description:
-    'Dependency-free motion for Orca UI: springs, timelines, staggers, FLIP layout, scroll progress, Presence enter/exit, Reorder, Marquee, NumberTicker, TextReveal, SpotlightCard, AnimatedTabs and a multi-step Wizard.',
+    'Dependency-free motion for Pelagic UI: springs, timelines, staggers, FLIP layout, scroll progress, Presence enter/exit, Reorder, Marquee, NumberTicker, TextReveal, SpotlightCard, AnimatedTabs and a multi-step Wizard.',
   intro:
-    'A small animation engine (@orca-ui/core/motion) and React components built on it. Motion is always optional: with reduced motion everything snaps to its end state, decorative layers are hidden from assistive tech, anything that keeps moving has a pause button, and nothing flashes.',
+    'A small animation engine (@pelagic-ui/core/motion) and React components built on it. Motion is always optional: with reduced motion everything snaps to its end state, decorative layers are hidden from assistive tech, anything that keeps moving has a pause button, and nothing flashes.',
   callout: 'Try the RTL switch on each demo, and set your OS to reduce motion: every demo still works, without the movement.',
   entries: [
     {
@@ -30,7 +30,7 @@ export const motion: CategoryDoc = {
       ],
       a11y: `Global reduced-motion switch: ${reducedNote} Promises still resolve, so code that awaits an animation keeps working.`,
       code: {
-        react: `import { animate, timeline, stagger, drawPath } from '@orca-ui/react'; // or '@orca-ui/core/motion'
+        react: `import { animate, timeline, stagger, drawPath } from '@pelagic-ui/react'; // or '@pelagic-ui/core/motion'
 
 timeline()
   .add('.card', { opacity: [0, 1], y: [24, 0] }, { spring: { stiffness: 260, damping: 22 }, stagger: stagger(60) })

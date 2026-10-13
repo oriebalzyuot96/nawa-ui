@@ -13,12 +13,12 @@
     children,
   }: { text: string; placement?: 'top' | 'bottom'; children: Snippet<[{ 'aria-describedby': string }]> } = $props();
 
-  const id = nextId('oc-tip');
+  const id = nextId('pl-tip');
   let dismissed = $state(false);
 </script>
 
 <span
-  class={['oc-tooltip', placement === 'bottom' && 'oc-tooltip--bottom']}
+  class={['pl-tooltip', placement === 'bottom' && 'pl-tooltip--bottom']}
   data-dismissed={dismissed ? '' : undefined}
   role="presentation"
   onkeydown={(e) => {
@@ -28,5 +28,5 @@
   onfocusout={() => (dismissed = false)}
 >
   {@render children({ 'aria-describedby': id })}
-  <span role="tooltip" {id} class="oc-tooltip__bubble">{text}</span>
+  <span role="tooltip" {id} class="pl-tooltip__bubble">{text}</span>
 </span>

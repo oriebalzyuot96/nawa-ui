@@ -4,7 +4,7 @@
 // The JS here adds what CSS alone cannot: the SVG color-vision filters, the reading guide / mask that
 // follow the pointer and focus, pausing autoplaying media, persistence and OS preference watching.
 
-export const A11Y_STORAGE_KEY = 'orca-ui-a11y';
+export const A11Y_STORAGE_KEY = 'pelagic-ui-a11y';
 
 /** Every preference with its default value. */
 export const defaultA11yPrefs = Object.freeze({
@@ -144,9 +144,9 @@ export const colorFilterMatrices = Object.freeze({
   achromatopsia: fmt([[0.2126, 0.7152, 0.0722], [0.2126, 0.7152, 0.0722], [0.2126, 0.7152, 0.0722]]),
 });
 
-export const COLOR_FILTERS_ID = 'oc-a11y-filters';
+export const COLOR_FILTERS_ID = 'pl-a11y-filters';
 
-/** Insert the SVG with the color-vision filters once per document (referenced as url(#oc-a11y-<name>)). */
+/** Insert the SVG with the color-vision filters once per document (referenced as url(#pl-a11y-<name>)). */
 export function ensureColorFilters(doc = document) {
   if (doc.getElementById(COLOR_FILTERS_ID)) return;
   const ns = 'http://www.w3.org/2000/svg';
@@ -160,7 +160,7 @@ export function ensureColorFilters(doc = document) {
   const defs = doc.createElementNS(ns, 'defs');
   for (const [name, values] of Object.entries(colorFilterMatrices)) {
     const filter = doc.createElementNS(ns, 'filter');
-    filter.setAttribute('id', `oc-a11y-${name}`);
+    filter.setAttribute('id', `pl-a11y-${name}`);
     filter.setAttribute('color-interpolation-filters', 'linearRGB');
     const m = doc.createElementNS(ns, 'feColorMatrix');
     m.setAttribute('type', 'matrix');
@@ -192,7 +192,7 @@ function readingAids(target, guide, mask) {
     let frame = 0;
     const paint = () => {
       frame = 0;
-      for (const el of Object.values(els)) el?.style.setProperty('--oc-a11y-guide-y', `${Math.round(y)}px`);
+      for (const el of Object.values(els)) el?.style.setProperty('--pl-a11y-guide-y', `${Math.round(y)}px`);
     };
     const move = (next) => {
       y = next;
@@ -220,9 +220,9 @@ function readingAids(target, guide, mask) {
   for (const [name, on] of [['guide', guide], ['mask', mask]]) {
     if (on && !state.els[name]) {
       const el = doc.createElement('div');
-      el.className = `oc-a11y-reading-${name}`;
+      el.className = `pl-a11y-reading-${name}`;
       el.setAttribute('aria-hidden', 'true');
-      el.setAttribute('data-oc-a11y-aid', name);
+      el.setAttribute('data-pl-a11y-aid', name);
       (doc.body ?? doc.documentElement).appendChild(el);
       state.els[name] = el;
     } else if (!on && state.els[name]) {
@@ -241,7 +241,7 @@ function pauseMedia(root) {
     try {
       media.pause();
       media.removeAttribute('autoplay');
-      media.setAttribute('data-oc-a11y-paused', '');
+      media.setAttribute('data-pl-a11y-paused', '');
     } catch {
       /* jsdom or a detached element */
     }
@@ -268,9 +268,9 @@ function motionOff(target, off) {
 
 /**
  * Apply preferences to `target` (default <html>): sets the data-a11y-* attributes and
- * --oc-user-font-scale, injects the color-vision SVG filters when needed, starts or stops the reading
+ * --pl-user-font-scale, injects the color-vision SVG filters when needed, starts or stops the reading
  * guide / mask, pauses autoplaying media when motion is off, and dispatches a bubbling
- * `oc-a11y-change` event with the normalized preferences. Returns the normalized preferences.
+ * `pl-a11y-change` event with the normalized preferences. Returns the normalized preferences.
  */
 export function applyA11yPrefs(prefs, target = document.documentElement) {
   const p = normalizeA11yPrefs(prefs);
@@ -278,14 +278,14 @@ export function applyA11yPrefs(prefs, target = document.documentElement) {
     if (value === null) target.removeAttribute(name);
     else target.setAttribute(name, value);
   }
-  if (p.fontScale === 1) target.style.removeProperty('--oc-user-font-scale');
-  else target.style.setProperty('--oc-user-font-scale', String(p.fontScale));
+  if (p.fontScale === 1) target.style.removeProperty('--pl-user-font-scale');
+  else target.style.setProperty('--pl-user-font-scale', String(p.fontScale));
   const doc = target.ownerDocument ?? document;
   if (p.colorFilter !== 'none') ensureColorFilters(doc);
   readingAids(target, p.readingGuide, p.readingMask);
   motionOff(target, p.motion === 'off');
   const Ev = doc.defaultView?.CustomEvent ?? globalThis.CustomEvent;
-  if (Ev) target.dispatchEvent(new Ev('oc-a11y-change', { detail: p, bubbles: true }));
+  if (Ev) target.dispatchEvent(new Ev('pl-a11y-change', { detail: p, bubbles: true }));
   return p;
 }
 
@@ -619,7 +619,7 @@ let panelSeq = 0;
 export function renderA11yPanelHTML(options = {}) {
   const { locale, labels: overrides, trigger = 'floating', triggerLabel, preview = true, groups, className } = options;
   panelSeq += 1;
-  const id = options.id ?? `oc-a11y-panel-${panelSeq}`;
+  const id = options.id ?? `pl-a11y-panel-${panelSeq}`;
   const L = getA11yLabels(locale ?? 'en', overrides);
   const p = normalizeA11yPrefs(options.prefs);
   const isAr = !!locale && String(locale).toLowerCase().startsWith('ar');
@@ -631,22 +631,22 @@ export function renderA11yPanelHTML(options = {}) {
     const t = L.controls[key];
     const labelId = `${id}-${key}-label`;
     const hintId = t.hint ? `${id}-${key}-hint` : '';
-    const hint = t.hint ? `<p id="${hintId}" class="oc-a11y-control__hint">${esc(t.hint)}</p>` : '';
+    const hint = t.hint ? `<p id="${hintId}" class="pl-a11y-control__hint">${esc(t.hint)}</p>` : '';
     const describedby = hintId ? ` aria-describedby="${hintId}"` : '';
     const value = p[key];
     if (type === 'switch') {
       const checked = on ? value === on : value === true;
       const values = on ? ` data-on="${on}" data-off="${off}"` : '';
-      return `<div class="oc-a11y-control oc-a11y-control--switch"><div class="oc-a11y-control__text"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span>${hint}</div><button type="button" role="switch" class="oc-switch" aria-checked="${checked}" aria-labelledby="${labelId}"${describedby} data-a11y-key="${key}"${values}></button></div>`;
+      return `<div class="pl-a11y-control pl-a11y-control--switch"><div class="pl-a11y-control__text"><span id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</span>${hint}</div><button type="button" role="switch" class="pl-switch" aria-checked="${checked}" aria-labelledby="${labelId}"${describedby} data-a11y-key="${key}"${values}></button></div>`;
     }
     if (type === 'select') {
       const opts = a11yOptions[key].map((o) => `<option value="${o}"${o === value ? ' selected' : ''}>${esc(L.options[key]?.[o] ?? o)}</option>`).join('');
-      return `<div class="oc-a11y-control"><label for="${id}-${key}" id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</label><select id="${id}-${key}" class="oc-select"${describedby} data-a11y-key="${key}">${opts}</select>${hint}</div>`;
+      return `<div class="pl-a11y-control"><label for="${id}-${key}" id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</label><select id="${id}-${key}" class="pl-select"${describedby} data-a11y-key="${key}">${opts}</select>${hint}</div>`;
     }
     if (type === 'scale') {
       const pct = `${Math.round(p.fontScale * 100)}%`;
       const dis = (cond) => (cond ? ' disabled' : '');
-      return `<div class="oc-a11y-control"><label for="${id}-${key}" id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</label><div class="oc-a11y-scale"><button type="button" class="oc-a11y-scale__btn oc-a11y-scale__btn--sm" aria-label="${esc(t.decrease)}" data-a11y-step="-0.1"${dis(p.fontScale <= FONT_SCALE_MIN)}>A</button><input id="${id}-${key}" type="range" class="oc-slider" min="${FONT_SCALE_MIN}" max="${FONT_SCALE_MAX}" step="0.05" value="${p.fontScale}" aria-valuetext="${pct}" data-a11y-key="${key}"><button type="button" class="oc-a11y-scale__btn oc-a11y-scale__btn--lg" aria-label="${esc(t.increase)}" data-a11y-step="0.1"${dis(p.fontScale >= FONT_SCALE_MAX)}>A</button><output for="${id}-${key}" class="oc-a11y-scale__value" aria-hidden="true" data-a11y-output>${pct}</output></div></div>`;
+      return `<div class="pl-a11y-control"><label for="${id}-${key}" id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</label><div class="pl-a11y-scale"><button type="button" class="pl-a11y-scale__btn pl-a11y-scale__btn--sm" aria-label="${esc(t.decrease)}" data-a11y-step="-0.1"${dis(p.fontScale <= FONT_SCALE_MIN)}>A</button><input id="${id}-${key}" type="range" class="pl-slider" min="${FONT_SCALE_MIN}" max="${FONT_SCALE_MAX}" step="0.05" value="${p.fontScale}" aria-valuetext="${pct}" data-a11y-key="${key}"><button type="button" class="pl-a11y-scale__btn pl-a11y-scale__btn--lg" aria-label="${esc(t.increase)}" data-a11y-step="0.1"${dis(p.fontScale >= FONT_SCALE_MAX)}>A</button><output for="${id}-${key}" class="pl-a11y-scale__value" aria-hidden="true" data-a11y-output>${pct}</output></div></div>`;
     }
     const radios = a11yOptions[key]
       .map((o) => {
@@ -655,36 +655,36 @@ export function renderA11yPanelHTML(options = {}) {
         const text = esc(L.options[key]?.[o] ?? o);
         if (type === 'tiles') {
           const sw = contrastSwatches[o];
-          const style = sw ? ` style="--oc-swatch-bg: ${sw[0]}; --oc-swatch-fg: ${sw[1]};"` : '';
-          return `<button ${attrs} class="oc-a11y-tile"><span class="oc-a11y-tile__swatch" data-swatch="${o}" aria-hidden="true"${style}><span>Aa</span></span><span>${text}</span><span class="oc-a11y-tile__check" aria-hidden="true">${ICON(a11yIcons.check)}</span></button>`;
+          const style = sw ? ` style="--pl-swatch-bg: ${sw[0]}; --pl-swatch-fg: ${sw[1]};"` : '';
+          return `<button ${attrs} class="pl-a11y-tile"><span class="pl-a11y-tile__swatch" data-swatch="${o}" aria-hidden="true"${style}><span>Aa</span></span><span>${text}</span><span class="pl-a11y-tile__check" aria-hidden="true">${ICON(a11yIcons.check)}</span></button>`;
         }
-        return `<button ${attrs} class="oc-segmented__item">${text}</button>`;
+        return `<button ${attrs} class="pl-segmented__item">${text}</button>`;
       })
       .join('');
     if (type === 'tiles') {
-      return `<div class="oc-a11y-control"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span>${hint}<div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="oc-a11y-tiles" data-a11y-key="${key}" data-columns="4">${radios}</div></div>`;
+      return `<div class="pl-a11y-control"><span id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</span>${hint}<div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="pl-a11y-tiles" data-a11y-key="${key}" data-columns="4">${radios}</div></div>`;
     }
-    return `<div class="oc-a11y-control"><span id="${labelId}" class="oc-a11y-control__label">${esc(t.label)}</span><div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="oc-segmented" data-a11y-key="${key}">${radios}</div>${hint}</div>`;
+    return `<div class="pl-a11y-control"><span id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</span><div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="pl-segmented" data-a11y-key="${key}">${radios}</div>${hint}</div>`;
   };
 
   const previewHtml = preview
-    ? `<div class="oc-a11y-preview" aria-hidden="true"><p class="oc-a11y-preview__label">${esc(L.preview)}</p><p class="oc-a11y-preview__title">${esc(L.previewTitle)}</p><p class="oc-a11y-preview__body">${esc(L.previewBody)}</p><div class="oc-a11y-preview__row"><span class="oc-a11y-preview__link">${esc(L.previewLink)}</span><span class="oc-btn oc-btn--primary oc-btn--sm">${esc(L.previewButton)}</span><span class="oc-badge oc-badge--success">${esc(L.previewStatus)}</span></div></div>`
+    ? `<div class="pl-a11y-preview" aria-hidden="true"><p class="pl-a11y-preview__label">${esc(L.preview)}</p><p class="pl-a11y-preview__title">${esc(L.previewTitle)}</p><p class="pl-a11y-preview__body">${esc(L.previewBody)}</p><div class="pl-a11y-preview__row"><span class="pl-a11y-preview__link">${esc(L.previewLink)}</span><span class="pl-btn pl-btn--primary pl-btn--sm">${esc(L.previewButton)}</span><span class="pl-badge pl-badge--success">${esc(L.previewStatus)}</span></div></div>`
     : '';
   const groupsHtml = shown
-    .map((g) => `<section class="oc-a11y-group" aria-labelledby="${id}-${g.id}"><h3 id="${id}-${g.id}" class="oc-a11y-group__title">${ICON(a11yIcons[g.id])}${esc(L.groups[g.id])}</h3>${g.controls.map(control).join('')}</section>`)
+    .map((g) => `<section class="pl-a11y-group" aria-labelledby="${id}-${g.id}"><h3 id="${id}-${g.id}" class="pl-a11y-group__title">${ICON(a11yIcons[g.id])}${esc(L.groups[g.id])}</h3>${g.controls.map(control).join('')}</section>`)
     .join('');
   const lang = locale ? ` lang="${isAr ? 'ar' : 'en'}" dir="${isAr ? 'rtl' : 'ltr'}"` : '';
-  const badge = `<span class="oc-a11y-trigger__badge" aria-hidden="true" data-a11y-badge${active ? '' : ' hidden'}>${active}</span>`;
+  const badge = `<span class="pl-a11y-trigger__badge" aria-hidden="true" data-a11y-badge${active ? '' : ' hidden'}>${active}</span>`;
   let triggerHtml = '';
   if (trigger === 'inline') {
-    triggerHtml = `<button type="button" class="oc-a11y-trigger oc-a11y-trigger--inline" aria-haspopup="dialog" aria-expanded="false" data-a11y-open>${ICON(a11yIcons.accessibility)}<span>${esc(triggerLabel ?? L.title)}</span><span class="oc-sr-only" data-a11y-active-sr>${active ? ` (${esc(activeText)})` : ''}</span>${badge}</button>`;
+    triggerHtml = `<button type="button" class="pl-a11y-trigger pl-a11y-trigger--inline" aria-haspopup="dialog" aria-expanded="false" data-a11y-open>${ICON(a11yIcons.accessibility)}<span>${esc(triggerLabel ?? L.title)}</span><span class="pl-sr-only" data-a11y-active-sr>${active ? ` (${esc(activeText)})` : ''}</span>${badge}</button>`;
   } else if (trigger !== 'none') {
-    triggerHtml = `<button type="button" class="oc-a11y-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(active ? `${L.trigger} (${activeText})` : L.trigger)}" data-a11y-open>${ICON(a11yIcons.accessibility)}${badge}</button>`;
+    triggerHtml = `<button type="button" class="pl-a11y-trigger" aria-haspopup="dialog" aria-expanded="false" aria-label="${esc(active ? `${L.trigger} (${activeText})` : L.trigger)}" data-a11y-open>${ICON(a11yIcons.accessibility)}${badge}</button>`;
   }
-  const header = `<div class="oc-a11y-panel__header"><span class="oc-a11y-panel__icon" aria-hidden="true">${ICON(a11yIcons.accessibility)}</span><div class="oc-a11y-panel__heading"><h2 id="${id}-title" class="oc-a11y-panel__title">${esc(L.title)}</h2><p class="oc-a11y-panel__subtitle">${esc(L.subtitle)}</p></div><button type="button" class="oc-close" aria-label="${esc(L.close)}" data-a11y-close>×</button></div>`;
-  const footer = `<div class="oc-a11y-panel__footer"><span class="oc-a11y-panel__count" data-a11y-count>${esc(activeText)}</span><button type="button" class="oc-btn oc-btn--secondary oc-btn--sm" data-a11y-reset${active ? '' : ' disabled'}>${esc(L.reset)}</button></div>`;
-  const panelClass = `oc-a11y-panel${className ? ` ${esc(className)}` : ''}`;
-  return `<div class="oc-a11y-root" data-oc-a11y-panel="${id}" data-labels="${esc(JSON.stringify(L))}">${triggerHtml}<div role="status" aria-live="polite" class="oc-sr-only" data-a11y-status></div><div class="oc-a11y-backdrop" hidden data-a11y-backdrop></div><div id="${id}" class="${panelClass}" data-labelledby="${id}-title" tabindex="-1" hidden${lang}>${header}<div class="oc-a11y-panel__body">${previewHtml}${groupsHtml}</div>${footer}</div></div>`;
+  const header = `<div class="pl-a11y-panel__header"><span class="pl-a11y-panel__icon" aria-hidden="true">${ICON(a11yIcons.accessibility)}</span><div class="pl-a11y-panel__heading"><h2 id="${id}-title" class="pl-a11y-panel__title">${esc(L.title)}</h2><p class="pl-a11y-panel__subtitle">${esc(L.subtitle)}</p></div><button type="button" class="pl-close" aria-label="${esc(L.close)}" data-a11y-close>×</button></div>`;
+  const footer = `<div class="pl-a11y-panel__footer"><span class="pl-a11y-panel__count" data-a11y-count>${esc(activeText)}</span><button type="button" class="pl-btn pl-btn--secondary pl-btn--sm" data-a11y-reset${active ? '' : ' disabled'}>${esc(L.reset)}</button></div>`;
+  const panelClass = `pl-a11y-panel${className ? ` ${esc(className)}` : ''}`;
+  return `<div class="pl-a11y-root" data-pl-a11y-panel="${id}" data-labels="${esc(JSON.stringify(L))}">${triggerHtml}<div role="status" aria-live="polite" class="pl-sr-only" data-a11y-status></div><div class="pl-a11y-backdrop" hidden data-a11y-backdrop></div><div id="${id}" class="${panelClass}" data-labelledby="${id}-title" tabindex="-1" hidden${lang}>${header}<div class="pl-a11y-panel__body">${previewHtml}${groupsHtml}</div>${footer}</div></div>`;
 }
 
 const FOCUSABLE_IN_PANEL = 'button:not(:disabled):not([tabindex="-1"]), select:not(:disabled), input:not(:disabled), [tabindex="0"]';
@@ -703,7 +703,7 @@ export function mountA11yPanel(root, options = {}) {
   const { persist = true, onChange, onOpenChange, portal = true } = options;
   const storageKey = persist === false ? null : typeof persist === 'string' ? persist : A11Y_STORAGE_KEY;
   const target = () => (typeof options.target === 'function' ? options.target() : options.target) ?? doc.documentElement;
-  const panel = root.querySelector('.oc-a11y-panel');
+  const panel = root.querySelector('.pl-a11y-panel');
   const backdrop = root.querySelector('[data-a11y-backdrop]');
   const trigger = root.querySelector('[data-a11y-open]');
   const status = root.querySelector('[data-a11y-status]');
@@ -762,7 +762,7 @@ export function mountA11yPanel(root, options = {}) {
     }
     const sr = root.querySelector('[data-a11y-active-sr]');
     if (sr) sr.textContent = n ? ` (${activeText})` : '';
-    if (trigger && !trigger.classList.contains('oc-a11y-trigger--inline')) trigger.setAttribute('aria-label', n ? `${labels.trigger} (${activeText})` : labels.trigger);
+    if (trigger && !trigger.classList.contains('pl-a11y-trigger--inline')) trigger.setAttribute('aria-label', n ? `${labels.trigger} (${activeText})` : labels.trigger);
   };
 
   const commit = (next, change) => {
@@ -771,7 +771,7 @@ export function mountA11yPanel(root, options = {}) {
     if (storageKey) saveA11yPrefs(prefs, storageKey);
     render();
     onChange?.(prefs, change);
-    root.dispatchEvent(new win.CustomEvent('oc-change', { bubbles: true, detail: { prefs, change } }));
+    root.dispatchEvent(new win.CustomEvent('pl-change', { bubbles: true, detail: { prefs, change } }));
   };
   const announce = (text) => {
     if (!status) return;

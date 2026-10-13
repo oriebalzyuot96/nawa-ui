@@ -1,8 +1,8 @@
-# orca_ui
+# pelagic_ui
 
-Accessible, themeable Flutter widgets from the **Orca UI** design system.
-The colors, tints and radii are generated from the same source as the Orca UI
-web packages, so a Flutter app and a web app built with Orca look the same.
+Accessible, themeable Flutter widgets from the **Pelagic UI** design system.
+The colors, tints and radii are generated from the same source as the Pelagic UI
+web packages, so a Flutter app and a web app built with Pelagic look the same.
 
 - Every color theme of the core source: light, dark and high contrast x each
   accent (violet, teal, indigo, rose, amber, emerald, slate), plus 3 shapes
@@ -13,12 +13,12 @@ web packages, so a Flutter app and a web app built with Orca look the same.
   motion, right-to-left layouts and large text.
 - Flutter SDK only, no third-party dependencies.
 
-Docs: https://oriebalzyuot96.github.io/orca-ui/
+Docs: https://oriebalzyuot96.github.io/pelagic-ui/
 
 ## Install
 
 ```sh
-flutter pub add orca_ui
+flutter pub add pelagic_ui
 ```
 
 Requires Flutter 3.24 or newer (Dart 3.5).
@@ -27,9 +27,9 @@ Requires Flutter 3.24 or newer (Dart 3.5).
 
 ```dart
 import 'package:flutter/material.dart';
-import 'package:orca_ui/orca_ui.dart';
+import 'package:pelagic_ui/pelagic_ui.dart';
 
-void main() => runApp(const OrcaApp(title: 'Demo', home: HomePage()));
+void main() => runApp(const PelagicApp(title: 'Demo', home: HomePage()));
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -40,12 +40,12 @@ class HomePage extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsetsDirectional.all(16),
         children: <Widget>[
-          const OrcaInput(label: 'Email', hint: 'We never share it.'),
+          const PelagicInput(label: 'Email', hint: 'We never share it.'),
           const SizedBox(height: 16),
-          OrcaButton(
+          PelagicButton(
             label: 'Delete',
-            variant: OrcaButtonVariant.danger,
-            onPressed: () => showOrcaDialog<void>(
+            variant: PelagicButtonVariant.danger,
+            onPressed: () => showPelagicDialog<void>(
               context: context,
               title: 'Delete file?',
               builder: (context) => const Text('This cannot be undone.'),
@@ -58,26 +58,26 @@ class HomePage extends StatelessWidget {
 }
 ```
 
-Widgets that use Material pieces (`OrcaInput`, `OrcaSlider`, `OrcaSelect`,
-dialogs, drawers and toasts) expect a `MaterialApp` (or `OrcaApp`) above them,
+Widgets that use Material pieces (`PelagicInput`, `PelagicSlider`, `PelagicSelect`,
+dialogs, drawers and toasts) expect a `MaterialApp` (or `PelagicApp`) above them,
 for the navigator, overlay and localizations.
 
 The `example/` app shows every widget with a theme switcher.
 
 ## Theming
 
-`OrcaApp` is a `MaterialApp` with Orca themes:
+`PelagicApp` is a `MaterialApp` with Pelagic themes:
 
 ```dart
-OrcaApp(
-  mode: OrcaThemeMode.system, // system | light | dark | hc
-  accent: OrcaAccent.indigo,
-  shape: OrcaShape.round,
+PelagicApp(
+  mode: PelagicThemeMode.system, // system | light | dark | hc
+  accent: PelagicAccent.indigo,
+  shape: PelagicShape.round,
   home: const HomePage(),
 );
 ```
 
-With `OrcaThemeMode.system` (the default) the app follows the platform
+With `PelagicThemeMode.system` (the default) the app follows the platform
 brightness and switches to the high-contrast theme when the platform asks for
 it (`MediaQuery.highContrastOf`).
 
@@ -85,37 +85,37 @@ You can also use your own `MaterialApp`:
 
 ```dart
 MaterialApp(
-  theme: OrcaThemeData.build(mode: OrcaMode.light, accent: OrcaAccent.teal),
-  darkTheme: OrcaThemeData.build(mode: OrcaMode.dark, accent: OrcaAccent.teal),
-  highContrastTheme: OrcaThemeData.build(mode: OrcaMode.hc),
-  highContrastDarkTheme: OrcaThemeData.build(mode: OrcaMode.hc),
+  theme: PelagicThemeData.build(mode: PelagicMode.light, accent: PelagicAccent.teal),
+  darkTheme: PelagicThemeData.build(mode: PelagicMode.dark, accent: PelagicAccent.teal),
+  highContrastTheme: PelagicThemeData.build(mode: PelagicMode.hc),
+  highContrastDarkTheme: PelagicThemeData.build(mode: PelagicMode.hc),
 );
 ```
 
-`OrcaThemeData.build` returns a Material 3 `ThemeData` whose `ColorScheme`,
+`PelagicThemeData.build` returns a Material 3 `ThemeData` whose `ColorScheme`,
 input decoration, button, checkbox, switch, slider, progress, divider, tooltip
-and snack bar themes use the Orca tokens, so stock Material widgets match too.
-To theme only part of the tree, use `OrcaThemeScope`.
+and snack bar themes use the Pelagic tokens, so stock Material widgets match too.
+To theme only part of the tree, use `PelagicThemeScope`.
 
 Read tokens in your own widgets:
 
 ```dart
-final orca = OrcaTheme.of(context);
+final pelagic = PelagicTheme.of(context);
 Container(
-  color: orca.colors.primarySoft,
-  child: Text('Hi', style: TextStyle(color: orca.colors.primaryInk)),
+  color: pelagic.colors.primarySoft,
+  child: Text('Hi', style: TextStyle(color: pelagic.colors.primaryInk)),
 );
 ```
 
-`OrcaSpace` and `OrcaFontSize` hold the spacing and type scales;
-`orca.radii.sm / md / lg` hold the corner radii of the current shape.
+`PelagicSpace` and `PelagicFontSize` hold the spacing and type scales;
+`pelagic.radii.sm / md / lg` hold the corner radii of the current shape.
 
 ### Where the tokens come from
 
 `lib/src/tokens.g.dart` is generated from `packages/core/src/themes.mjs` in the
-Orca UI monorepo, using the same resolver as the web build (soft tints are an
+Pelagic UI monorepo, using the same resolver as the web build (soft tints are an
 sRGB mix of the color into the surface, like CSS `color-mix`). The shape the
-web calls `default` is `OrcaShape.standard` in Dart, because `default` is a
+web calls `default` is `PelagicShape.standard` in Dart, because `default` is a
 reserved word. To regenerate after a theme change, from the monorepo root:
 
 ```sh

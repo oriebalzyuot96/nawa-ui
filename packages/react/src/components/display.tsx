@@ -1,5 +1,5 @@
 import { cloneElement, isValidElement, useEffect, useId, useRef, useState, type ReactNode, type RefObject } from 'react';
-import { inView, prefersReducedMotion } from '@orca-ui/core/motion';
+import { inView, prefersReducedMotion } from '@pelagic-ui/core/motion';
 import { cx } from '../utils';
 
 export type Variant = 'info' | 'success' | 'warning' | 'danger';
@@ -11,7 +11,7 @@ export interface BadgeProps {
 }
 
 export function Badge({ variant = 'neutral', children, className }: BadgeProps) {
-  return <span className={cx('oc-badge', variant !== 'neutral' && `oc-badge--${variant}`, className)}>{children}</span>;
+  return <span className={cx('pl-badge', variant !== 'neutral' && `pl-badge--${variant}`, className)}>{children}</span>;
 }
 
 export interface TagProps {
@@ -23,10 +23,10 @@ export interface TagProps {
 
 export function Tag({ children, removable = false, onRemove, className }: TagProps) {
   return (
-    <span className={cx('oc-tag', className)}>
+    <span className={cx('pl-tag', className)}>
       {children}
       {removable && (
-        <button type="button" className="oc-tag__remove" aria-label="Remove" onClick={onRemove}>
+        <button type="button" className="pl-tag__remove" aria-label="Remove" onClick={onRemove}>
           ×
         </button>
       )}
@@ -53,7 +53,7 @@ export function initialsOf(name: string): string {
 
 export function Avatar({ src, name, size = 'md', className }: AvatarProps) {
   return (
-    <span className={cx('oc-avatar', size !== 'md' && `oc-avatar--${size}`, className)} aria-label={name} role="img">
+    <span className={cx('pl-avatar', size !== 'md' && `pl-avatar--${size}`, className)} aria-label={name} role="img">
       {src ? <img src={src} alt="" /> : initialsOf(name)}
     </span>
   );
@@ -68,23 +68,23 @@ export interface CardProps {
 
 export function Card({ title, footer, children, className }: CardProps) {
   return (
-    <article className={cx('oc-card', className)}>
-      {title && <header className="oc-card__header">{title}</header>}
-      {children && <div className="oc-card__body">{children}</div>}
-      {footer && <footer className="oc-card__footer">{footer}</footer>}
+    <article className={cx('pl-card', className)}>
+      {title && <header className="pl-card__header">{title}</header>}
+      {children && <div className="pl-card__body">{children}</div>}
+      {footer && <footer className="pl-card__footer">{footer}</footer>}
     </article>
   );
 }
 
 export function Spinner({ size = 'md', label = 'Loading' }: { size?: 'md' | 'lg'; label?: string }) {
-  return <span role="status" aria-label={label} className={cx('oc-spinner', size === 'lg' && 'oc-spinner--lg')} />;
+  return <span role="status" aria-label={label} className={cx('pl-spinner', size === 'lg' && 'pl-spinner--lg')} />;
 }
 
 export function Skeleton({ width, height, circle = false, className }: { width?: number | string; height?: number | string; circle?: boolean; className?: string }) {
   return (
     <span
       aria-hidden="true"
-      className={cx('oc-skeleton', circle && 'oc-skeleton--circle', className)}
+      className={cx('pl-skeleton', circle && 'pl-skeleton--circle', className)}
       style={{ width: circle ? height ?? width : width, height }}
     />
   );
@@ -100,8 +100,8 @@ export interface SkeletonTextProps {
 /** Paragraph placeholder. The last line is shorter. Announced once as a loading status. */
 export function SkeletonText({ lines = 3, label = 'Loading…', className }: SkeletonTextProps) {
   return (
-    <div role="status" aria-busy="true" className={cx('oc-skeleton-text', className)}>
-      <span className="oc-sr-only">{label}</span>
+    <div role="status" aria-busy="true" className={cx('pl-skeleton-text', className)}>
+      <span className="pl-sr-only">{label}</span>
       {Array.from({ length: lines }, (_, i) => (
         <Skeleton key={i} height={12} />
       ))}
@@ -112,16 +112,16 @@ export function SkeletonText({ lines = 3, label = 'Loading…', className }: Ske
 /** Card placeholder: avatar, title lines and a body paragraph. */
 export function SkeletonCard({ lines = 3, label = 'Loading…', className }: SkeletonTextProps) {
   return (
-    <div role="status" aria-busy="true" className={cx('oc-skeleton-card', className)}>
-      <span className="oc-sr-only">{label}</span>
-      <div className="oc-skeleton-card__head">
+    <div role="status" aria-busy="true" className={cx('pl-skeleton-card', className)}>
+      <span className="pl-sr-only">{label}</span>
+      <div className="pl-skeleton-card__head">
         <Skeleton circle height={40} />
-        <div className="oc-skeleton-text" aria-hidden="true">
+        <div className="pl-skeleton-text" aria-hidden="true">
           <Skeleton height={12} width="50%" />
           <Skeleton height={10} width="30%" />
         </div>
       </div>
-      <div className="oc-skeleton-text" aria-hidden="true">
+      <div className="pl-skeleton-text" aria-hidden="true">
         {Array.from({ length: lines }, (_, i) => (
           <Skeleton key={i} height={12} />
         ))}
@@ -147,9 +147,9 @@ export function ProgressBar({ value, label = 'Progress', className }: ProgressBa
       aria-valuemin={0}
       aria-valuemax={100}
       aria-valuenow={clamped}
-      className={cx('oc-progress', indeterminate && 'oc-progress--indeterminate', className)}
+      className={cx('pl-progress', indeterminate && 'pl-progress--indeterminate', className)}
     >
-      <div className="oc-progress__bar" style={indeterminate ? undefined : { width: `${clamped}%` }} />
+      <div className="pl-progress__bar" style={indeterminate ? undefined : { width: `${clamped}%` }} />
     </div>
   );
 }
@@ -162,13 +162,13 @@ export interface StepperStep {
 /** `current` is the zero-based index of the active step. */
 export function Stepper({ steps, current, className }: { steps: StepperStep[]; current: number; className?: string }) {
   return (
-    <ol className={cx('oc-stepper', className)}>
+    <ol className={cx('pl-stepper', className)}>
       {steps.map((s, i) => {
         const state = i < current ? 'complete' : i === current ? 'current' : 'upcoming';
         return (
-          <li key={i} className="oc-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
+          <li key={i} className="pl-stepper__step" data-state={state} aria-current={state === 'current' ? 'step' : undefined}>
             <span>{s.label}</span>
-            {s.description && <span className="oc-stepper__desc">{s.description}</span>}
+            {s.description && <span className="pl-stepper__desc">{s.description}</span>}
           </li>
         );
       })}
@@ -299,50 +299,50 @@ function TimelineEntry({
         ? new Intl.DateTimeFormat(locale, { timeStyle: 'short' }).format(date)
         : null;
   const media = item.avatar ? (
-    item.avatar.src ? <img src={item.avatar.src} alt="" /> : <span className="oc-timeline__initials">{initialsOf(item.avatar.name)}</span>
+    item.avatar.src ? <img src={item.avatar.src} alt="" /> : <span className="pl-timeline__initials">{initialsOf(item.avatar.name)}</span>
   ) : (
     item.icon ?? null
   );
   return (
-    <li className="oc-timeline__item" data-status={item.status} data-side={side} aria-current={item.status === 'current' ? 'step' : undefined}>
+    <li className="pl-timeline__item" data-status={item.status} data-side={side} aria-current={item.status === 'current' ? 'step' : undefined}>
       <span
-        className={cx('oc-timeline__dot', item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`, Boolean(media) && 'oc-timeline__dot--media')}
+        className={cx('pl-timeline__dot', item.variant && item.variant !== 'primary' && `pl-timeline__dot--${item.variant}`, Boolean(media) && 'pl-timeline__dot--media')}
         aria-hidden="true"
       >
         {media}
       </span>
-      <div className="oc-timeline__content">
+      <div className="pl-timeline__content">
         {(item.time || date) && (
-          <div className="oc-timeline__time">
+          <div className="pl-timeline__time">
             {date ? (
               <>
                 <time dateTime={date.toISOString()} title={relative ? absolute : undefined} dir="auto" suppressHydrationWarning>
                   {label ?? item.time ?? absolute}
                 </time>
-                {relative && <span className="oc-sr-only" suppressHydrationWarning> ({absolute})</span>}
+                {relative && <span className="pl-sr-only" suppressHydrationWarning> ({absolute})</span>}
               </>
             ) : (
               item.time
             )}
           </div>
         )}
-        <div className="oc-timeline__title">
-          {item.avatar && <span className="oc-sr-only">{item.avatar.name}: </span>}
+        <div className="pl-timeline__title">
+          {item.avatar && <span className="pl-sr-only">{item.avatar.name}: </span>}
           {item.title}
-          {item.status === 'complete' && <span className="oc-sr-only"> ({labels.complete})</span>}
-          {item.status === 'current' && <span className="oc-sr-only"> ({labels.current})</span>}
+          {item.status === 'complete' && <span className="pl-sr-only"> ({labels.complete})</span>}
+          {item.status === 'current' && <span className="pl-sr-only"> ({labels.current})</span>}
         </div>
-        {item.description && <div className="oc-timeline__desc">{item.description}</div>}
-        {item.meta && <div className="oc-timeline__meta">{item.meta}</div>}
+        {item.description && <div className="pl-timeline__desc">{item.description}</div>}
+        {item.meta && <div className="pl-timeline__meta">{item.meta}</div>}
         {item.details && (
           <>
-            <button type="button" className="oc-timeline__toggle" aria-expanded={open} aria-controls={detailsId} onClick={() => setOpen((o) => !o)}>
+            <button type="button" className="pl-timeline__toggle" aria-expanded={open} aria-controls={detailsId} onClick={() => setOpen((o) => !o)}>
               {open ? labels.hideDetails : labels.showDetails}
               <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
                 <path d="M4 6l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             </button>
-            <div id={detailsId} className="oc-timeline__details" hidden={!open}>
+            <div id={detailsId} className="pl-timeline__details" hidden={!open}>
               {item.details}
             </div>
           </>
@@ -377,12 +377,12 @@ export function Timeline({
   const baseId = useId();
   const reference = now ?? new Date();
   const media = items.some((it) => it.icon || it.avatar);
-  const listClass = cx('oc-timeline', layout !== 'vertical' && `oc-timeline--${layout}`, media && 'oc-timeline--media');
+  const listClass = cx('pl-timeline', layout !== 'vertical' && `pl-timeline--${layout}`, media && 'pl-timeline--media');
 
   useEffect(() => {
     const root = rootRef.current;
     if (!reveal || !root || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') return;
-    const lis = Array.from(root.querySelectorAll<HTMLElement>('.oc-timeline__item'));
+    const lis = Array.from(root.querySelectorAll<HTMLElement>('.pl-timeline__item'));
     lis.forEach((li) => li.setAttribute('data-reveal', 'armed'));
     const stop = inView(lis, (entry) => {
       (entry.target as HTMLElement).setAttribute('data-reveal', 'in');
@@ -395,13 +395,13 @@ export function Timeline({
 
   if (loading) {
     return (
-      <div role="status" aria-busy="true" className={cx('oc-timeline-wrap', className)}>
-        <span className="oc-sr-only">{labels.loading}</span>
-        <ol className="oc-timeline oc-timeline--loading" aria-hidden="true">
+      <div role="status" aria-busy="true" className={cx('pl-timeline-wrap', className)}>
+        <span className="pl-sr-only">{labels.loading}</span>
+        <ol className="pl-timeline pl-timeline--loading" aria-hidden="true">
           {Array.from({ length: skeletonCount }, (_, i) => (
-            <li key={i} className="oc-timeline__item">
-              <span className="oc-timeline__dot" />
-              <div className="oc-timeline__content">
+            <li key={i} className="pl-timeline__item">
+              <span className="pl-timeline__dot" />
+              <div className="pl-timeline__content">
                 <Skeleton height={10} width="5rem" />
                 <Skeleton height={14} width={`${60 - (i % 3) * 12}%`} />
                 <Skeleton height={10} width="85%" />
@@ -442,7 +442,7 @@ export function Timeline({
 
   if (!groupBy) {
     return (
-      <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('oc-timeline-wrap', className)}>
+      <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('pl-timeline-wrap', className)}>
         {renderList(items, { 'aria-label': label })}
       </div>
     );
@@ -482,15 +482,15 @@ export function Timeline({
   const H = `h${headingLevel}` as 'h3';
   let offset = 0;
   return (
-    <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('oc-timeline-wrap oc-timeline-groups', className)} role={label ? 'group' : undefined} aria-label={label}>
+    <div ref={rootRef as RefObject<HTMLDivElement>} className={cx('pl-timeline-wrap pl-timeline-groups', className)} role={label ? 'group' : undefined} aria-label={label}>
       {groups.map((g, gi) => {
         const headingId = `${baseId}-g${gi}`;
         const list = renderList(g.items, { 'aria-labelledby': g.label ? headingId : undefined }, offset);
         offset += g.items.length;
         return (
-          <section key={g.key || '_'} className="oc-timeline__group" aria-labelledby={g.label ? headingId : undefined}>
+          <section key={g.key || '_'} className="pl-timeline__group" aria-labelledby={g.label ? headingId : undefined}>
             {g.label && (
-              <H id={headingId} className="oc-timeline__group-title" suppressHydrationWarning>
+              <H id={headingId} className="pl-timeline__group-title" suppressHydrationWarning>
                 {g.label}
               </H>
             )}
@@ -513,13 +513,13 @@ export interface AlertProps {
 export function Alert({ variant = 'info', title, children, onClose, className }: AlertProps) {
   const urgent = variant === 'danger' || variant === 'warning';
   return (
-    <div role={urgent ? 'alert' : 'status'} className={cx('oc-alert', variant !== 'info' && `oc-alert--${variant}`, className)}>
-      <div className="oc-alert__body">
-        {title && <div className="oc-alert__title">{title}</div>}
+    <div role={urgent ? 'alert' : 'status'} className={cx('pl-alert', variant !== 'info' && `pl-alert--${variant}`, className)}>
+      <div className="pl-alert__body">
+        {title && <div className="pl-alert__title">{title}</div>}
         {children}
       </div>
       {onClose && (
-        <button type="button" className="oc-close" aria-label="Dismiss" onClick={onClose}>
+        <button type="button" className="pl-close" aria-label="Dismiss" onClick={onClose}>
           ×
         </button>
       )}
@@ -535,8 +535,8 @@ export interface EmptyStateProps {
   description?: ReactNode;
   /**
    * Scene shown above (or beside) the text. Pass an element — e.g. `<NoResultsIllustration />`
-   * from `@orca-ui/illustrations/react` — or a scene name such as `"no-results"`, which renders
-   * `<oc-illustration>` (register it with `import '@orca-ui/illustrations/element'`).
+   * from `@pelagic-ui/illustrations/react` — or a scene name such as `"no-results"`, which renders
+   * `<pl-illustration>` (register it with `import '@pelagic-ui/illustrations/element'`).
    * Treated as decorative; `false` hides it.
    */
   illustration?: ReactNode | string | false;
@@ -584,28 +584,28 @@ export function EmptyState({
   const hasActions = Boolean(primaryAction || secondaryAction || actions || children);
   const media =
     typeof illustration === 'string' && illustration ? (
-      <oc-illustration name={illustration} compact={size === 'compact' ? '' : undefined} />
+      <pl-illustration name={illustration} compact={size === 'compact' ? '' : undefined} />
     ) : illustration || null;
   return (
     <div
       id={id}
       className={cx(
-        'oc-empty',
-        size !== 'default' && `oc-empty--${size}`,
-        align === 'start' && 'oc-empty--start',
-        layout === 'split' && 'oc-empty--split',
-        tone && `oc-empty--tone-${tone}`,
+        'pl-empty',
+        size !== 'default' && `pl-empty--${size}`,
+        align === 'start' && 'pl-empty--start',
+        layout === 'split' && 'pl-empty--split',
+        tone && `pl-empty--tone-${tone}`,
         className,
       )}
     >
-      <div className="oc-empty__inner">
-        {media && <div className="oc-empty__media">{media}</div>}
-        {icon && <div className="oc-empty__icon" aria-hidden="true">{icon}</div>}
-        <div className="oc-empty__body">
-          <Heading className="oc-empty__title">{title}</Heading>
-          {description && <p className="oc-empty__desc">{description}</p>}
+      <div className="pl-empty__inner">
+        {media && <div className="pl-empty__media">{media}</div>}
+        {icon && <div className="pl-empty__icon" aria-hidden="true">{icon}</div>}
+        <div className="pl-empty__body">
+          <Heading className="pl-empty__title">{title}</Heading>
+          {description && <p className="pl-empty__desc">{description}</p>}
           {hasActions && (
-            <div className="oc-empty__actions oc-empty__action">
+            <div className="pl-empty__actions pl-empty__action">
               {primaryAction}
               {secondaryAction}
               {actions}
@@ -622,7 +622,7 @@ declare module 'react' {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
-      'oc-illustration': { name: string; compact?: ''; label?: string; static?: '' };
+      'pl-illustration': { name: string; compact?: ''; label?: string; static?: '' };
     }
   }
 }
@@ -639,7 +639,7 @@ export function Tooltip({ text, placement = 'top', children, className }: { text
     : children;
   return (
     <span
-      className={cx('oc-tooltip', placement === 'bottom' && 'oc-tooltip--bottom', className)}
+      className={cx('pl-tooltip', placement === 'bottom' && 'pl-tooltip--bottom', className)}
       data-dismissed={dismissed ? '' : undefined}
       onKeyDown={(e) => {
         if (e.key === 'Escape') setDismissed(true);
@@ -648,7 +648,7 @@ export function Tooltip({ text, placement = 'top', children, className }: { text
       onBlur={() => setDismissed(false)}
     >
       {trigger}
-      <span role="tooltip" id={id} className="oc-tooltip__bubble">
+      <span role="tooltip" id={id} className="pl-tooltip__bubble">
         {text}
       </span>
     </span>
@@ -656,5 +656,5 @@ export function Tooltip({ text, placement = 'top', children, className }: { text
 }
 
 export function Divider({ className }: { className?: string }) {
-  return <hr className={cx('oc-divider', className)} />;
+  return <hr className={cx('pl-divider', className)} />;
 }

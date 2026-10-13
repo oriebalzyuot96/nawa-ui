@@ -12,7 +12,7 @@ export interface TabItem {
  * e.g. <template #panel-overview>…</template>.
  */
 export const Tabs = defineComponent({
-  name: 'OcTabs',
+  name: 'PlTabs',
   props: {
     tabs: { type: Array as PropType<TabItem[]>, required: true },
     modelValue: String,
@@ -20,7 +20,7 @@ export const Tabs = defineComponent({
   emits: ['update:modelValue', 'change'],
   setup(props, { emit, slots }) {
     const inner = ref(props.tabs[0]?.key);
-    const baseId = nextId('oc-tabs');
+    const baseId = nextId('pl-tabs');
     const buttons: Array<HTMLButtonElement | null> = [];
 
     const active = () => props.modelValue ?? inner.value;
@@ -48,10 +48,10 @@ export const Tabs = defineComponent({
     return () => {
       const current = active();
       const panel = slots[`panel-${current}`];
-      return h('div', { class: 'oc-tabs' }, [
+      return h('div', { class: 'pl-tabs' }, [
         h(
           'div',
-          { role: 'tablist', class: 'oc-tabs__list' },
+          { role: 'tablist', class: 'pl-tabs__list' },
           props.tabs.map((t, i) => {
             const selected = t.key === current;
             return h(
@@ -67,7 +67,7 @@ export const Tabs = defineComponent({
                 'aria-controls': `${baseId}-panel-${t.key}`,
                 tabindex: selected ? 0 : -1,
                 disabled: t.disabled,
-                class: 'oc-tabs__tab',
+                class: 'pl-tabs__tab',
                 onClick: () => select(t.key),
                 onKeydown: (e: KeyboardEvent) => onKeydown(e, i),
               },
@@ -82,7 +82,7 @@ export const Tabs = defineComponent({
                 role: 'tabpanel',
                 id: `${baseId}-panel-${current}`,
                 'aria-labelledby': `${baseId}-tab-${current}`,
-                class: 'oc-tabs__panel',
+                class: 'pl-tabs__panel',
               },
               panel(),
             )
@@ -93,7 +93,7 @@ export const Tabs = defineComponent({
 });
 
 export const Breadcrumb = defineComponent({
-  name: 'OcBreadcrumb',
+  name: 'PlBreadcrumb',
   props: {
     items: { type: Array as PropType<Array<{ label: string; href?: string }>>, required: true },
   },
@@ -102,12 +102,12 @@ export const Breadcrumb = defineComponent({
       h('nav', { 'aria-label': 'Breadcrumb' }, [
         h(
           'ol',
-          { class: 'oc-breadcrumb' },
+          { class: 'pl-breadcrumb' },
           props.items.map((item, i) => {
             const last = i === props.items.length - 1;
             return h(
               'li',
-              { class: 'oc-breadcrumb__item', 'aria-current': last ? 'page' : undefined },
+              { class: 'pl-breadcrumb__item', 'aria-current': last ? 'page' : undefined },
               item.href && !last ? [h('a', { href: item.href }, item.label)] : item.label,
             );
           }),
@@ -117,7 +117,7 @@ export const Breadcrumb = defineComponent({
 });
 
 export const Pagination = defineComponent({
-  name: 'OcPagination',
+  name: 'PlPagination',
   props: {
     /** 1-based current page. */
     modelValue: { type: Number, required: true },
@@ -126,23 +126,23 @@ export const Pagination = defineComponent({
   emits: ['update:modelValue'],
   setup(props, { emit }) {
     return () =>
-      h('nav', { 'aria-label': 'Pagination', class: 'oc-pagination' }, [
+      h('nav', { 'aria-label': 'Pagination', class: 'pl-pagination' }, [
         h('button', {
           type: 'button',
-          class: 'oc-pagination__btn',
+          class: 'pl-pagination__btn',
           'aria-label': 'Previous page',
           disabled: props.modelValue <= 1,
           onClick: () => emit('update:modelValue', props.modelValue - 1),
         }, '‹'),
         ...getPageItems(props.modelValue, props.pageCount).map((item, i) =>
           item === 'ellipsis'
-            ? h('span', { class: 'oc-pagination__ellipsis', 'aria-hidden': 'true', key: `e${i}` }, '…')
+            ? h('span', { class: 'pl-pagination__ellipsis', 'aria-hidden': 'true', key: `e${i}` }, '…')
             : h(
                 'button',
                 {
                   key: item,
                   type: 'button',
-                  class: 'oc-pagination__btn',
+                  class: 'pl-pagination__btn',
                   'aria-current': item === props.modelValue ? 'page' : undefined,
                   'aria-label': `Page ${item}`,
                   onClick: () => emit('update:modelValue', item),
@@ -152,7 +152,7 @@ export const Pagination = defineComponent({
         ),
         h('button', {
           type: 'button',
-          class: 'oc-pagination__btn',
+          class: 'pl-pagination__btn',
           'aria-label': 'Next page',
           disabled: props.modelValue >= props.pageCount,
           onClick: () => emit('update:modelValue', props.modelValue + 1),
@@ -163,7 +163,7 @@ export const Pagination = defineComponent({
 
 /** Accordion. Panel content goes in the slot named `panel-<key>`. */
 export const Accordion = defineComponent({
-  name: 'OcAccordion',
+  name: 'PlAccordion',
   props: {
     items: { type: Array as PropType<Array<{ key: string; title: string }>>, required: true },
     multiple: Boolean,
@@ -171,7 +171,7 @@ export const Accordion = defineComponent({
   },
   setup(props, { slots }) {
     const open = ref<string[]>([...props.defaultOpen]);
-    const baseId = nextId('oc-acc');
+    const baseId = nextId('pl-acc');
     const toggle = (key: string) => {
       if (open.value.includes(key)) {
         open.value = open.value.filter((k) => k !== key);
@@ -182,30 +182,30 @@ export const Accordion = defineComponent({
     return () =>
       h(
         'div',
-        { class: 'oc-accordion' },
+        { class: 'pl-accordion' },
         props.items.map((item) => {
           const expanded = open.value.includes(item.key);
           const panelId = `${baseId}-${item.key}-panel`;
           const panel = slots[`panel-${item.key}`];
-          return h('div', { class: 'oc-accordion__item', key: item.key }, [
+          return h('div', { class: 'pl-accordion__item', key: item.key }, [
             h('h3', { style: { margin: '0' } }, [
               h(
                 'button',
                 {
                   type: 'button',
-                  class: 'oc-accordion__trigger',
+                  class: 'pl-accordion__trigger',
                   'aria-expanded': String(expanded),
                   'aria-controls': panelId,
                   onClick: () => toggle(item.key),
                 },
                 [
                   item.title,
-                  h('span', { class: 'oc-accordion__icon', 'aria-hidden': 'true' }, '▾'),
+                  h('span', { class: 'pl-accordion__icon', 'aria-hidden': 'true' }, '▾'),
                 ],
               ),
             ]),
             expanded && panel
-              ? h('div', { id: panelId, role: 'region', class: 'oc-accordion__panel' }, panel())
+              ? h('div', { id: panelId, role: 'region', class: 'pl-accordion__panel' }, panel())
               : null,
           ]);
         }),

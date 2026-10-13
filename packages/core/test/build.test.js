@@ -15,11 +15,11 @@ let css;
 let built;
 
 beforeAll(async () => {
-  dir = mkdtempSync(join(tmpdir(), 'orca-core-build-'));
+  dir = mkdtempSync(join(tmpdir(), 'pelagic-core-build-'));
   cpSync(join(pkg, 'src'), join(dir, 'src'), { recursive: true });
   cpSync(join(pkg, 'scripts'), join(dir, 'scripts'), { recursive: true });
   execFileSync(process.execPath, [join(dir, 'scripts', 'build.mjs')], { cwd: dir, stdio: 'pipe' });
-  css = readFileSync(join(dir, 'orca-ui.css'), 'utf8');
+  css = readFileSync(join(dir, 'pelagic.css'), 'utf8');
   built = await import(pathToFileURL(join(dir, 'tokens.js')).href);
 });
 
@@ -29,7 +29,7 @@ afterAll(() => {
 
 const stripComments = (s) => s.replace(/\/\*[\s\S]*?\*\//g, '');
 
-describe('build output: orca-ui.css', () => {
+describe('build output: pelagic.css', () => {
   it('contains the default theme on :root', () => {
     expect(css).toContain(`:root, [data-accent="${defaultAccent}"] {`);
     expect(css).toContain(':root, [data-theme="light"] {');
@@ -40,7 +40,7 @@ describe('build output: orca-ui.css', () => {
     const block = css.match(new RegExp(`\\[data-theme="${mode}"\\] \\{([^}]*)\\}`));
     expect(block, `missing [data-theme="${mode}"]`).not.toBeNull();
     for (const v of ['surface', 'text', 'text-muted', 'border', 'control-border', 'danger', 'overlay']) {
-      expect(block[1]).toContain(`--oc-${v}:`);
+      expect(block[1]).toContain(`--pl-${v}:`);
     }
   });
 
@@ -48,13 +48,13 @@ describe('build output: orca-ui.css', () => {
     expect(css).toContain(`[data-accent="${accent}"]`);
     for (const mode of Object.keys(modes)) {
       const primary = accents[accent][mode].primary;
-      expect(css).toContain(`--oc-a-${mode}-primary: ${primary};`);
+      expect(css).toContain(`--pl-a-${mode}-primary: ${primary};`);
     }
   });
 
   it.each(Object.keys(shapes))('has a [data-shape="%s"] block', (shape) => {
     expect(css).toContain(`[data-shape="${shape}"]`);
-    expect(css).toContain(`--oc-radius: ${shapes[shape].md}px;`);
+    expect(css).toContain(`--pl-radius: ${shapes[shape].md}px;`);
   });
 
   it('follows the OS for dark mode and increased contrast', () => {
@@ -66,8 +66,8 @@ describe('build output: orca-ui.css', () => {
     for (const file of readdirSync(join(pkg, 'src/parts')).filter((f) => f.endsWith('.css'))) {
       expect(css).toContain(`/* ===== ${file} ===== */`);
     }
-    expect(css).toContain('.oc-btn');
-    expect(css).toContain('.oc-dialog');
+    expect(css).toContain('.pl-btn');
+    expect(css).toContain('.pl-dialog');
   });
 
   it('has balanced braces', () => {
@@ -89,7 +89,7 @@ describe('build output: orca-ui.css', () => {
     const withoutFallback = new Set(
       [...body.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)].map((m) => m[1]),
     );
-    // Variables a framework component sets inline (style={{ '--oc-i': i }}, setProperty('--x'), [style.--x]).
+    // Variables a framework component sets inline (style={{ '--pl-i': i }}, setProperty('--x'), [style.--x]).
     const runtime = new Set();
     const walk = (d) => {
       for (const name of readdirSync(d)) {
@@ -111,19 +111,19 @@ describe('build output: orca-ui.css', () => {
     expect(undefinedVars).toEqual([]);
   });
 
-  it('every --oc-* theme variable referenced by the binding layer is defined', () => {
+  it('every --pl-* theme variable referenced by the binding layer is defined', () => {
     const body = stripComments(css);
     const defined = new Set([...body.matchAll(/(--[\w-]+)\s*:/g)].map((m) => m[1]));
     for (const mode of Object.keys(modes)) {
       for (const key of ['primary', 'primary-hover', 'primary-ink', 'on-primary']) {
-        expect(defined.has(`--oc-a-${mode}-${key}`), `--oc-a-${mode}-${key}`).toBe(true);
+        expect(defined.has(`--pl-a-${mode}-${key}`), `--pl-a-${mode}-${key}`).toBe(true);
       }
     }
   });
 });
 
 describe('build output: tokens.js', () => {
-  it('matches the committed tokens.js (run `npm run build -w @orca-ui/core` if this fails)', () => {
+  it('matches the committed tokens.js (run `npm run build -w @pelagic-ui/core` if this fails)', () => {
     const committed = readFileSync(join(pkg, 'tokens.js'), 'utf8').replace(/\r\n/g, '\n');
     const fresh = readFileSync(join(dir, 'tokens.js'), 'utf8').replace(/\r\n/g, '\n');
     expect(fresh).toBe(committed);

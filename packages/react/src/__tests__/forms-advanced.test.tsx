@@ -642,7 +642,7 @@ describe('FloatLabel', () => {
   it('labels its child and adds a blank placeholder for :placeholder-shown', () => {
     render(
       <FloatLabel label="Email">
-        <input className="oc-input" />
+        <input className="pl-input" />
       </FloatLabel>,
     );
     const input = screen.getByRole('textbox', { name: 'Email' });
@@ -749,7 +749,7 @@ describe('ColorPicker (custom picker)', () => {
     const onChange = vi.fn();
     render(<ColorPicker label="Text" mode="inline" alpha defaultValue="#ff0000" contrastWith="#ffffff" onChange={onChange} />);
     expect(screen.getByText('Contrast 4.00:1 on #ffffff')).toBeInTheDocument();
-    const grades = document.querySelectorAll('.oc-colorpicker__grade');
+    const grades = document.querySelectorAll('.pl-colorpicker__grade');
     expect(grades[0]).toHaveTextContent('AA fail');
     expect(grades[1]).toHaveTextContent('AA Large pass');
     const alpha = screen.getByRole('slider', { name: 'Opacity' });
@@ -770,7 +770,7 @@ describe('InputOtp (premium)', () => {
     );
     const group = screen.getByRole('group', { name: 'Code' });
     expect(group).toHaveAttribute('dir', 'ltr');
-    expect(container.querySelector('.oc-otp__sep')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.pl-otp__sep')).toHaveAttribute('aria-hidden', 'true');
     const cells = screen.getAllByRole('textbox');
     expect(cells).toHaveLength(6);
     expect(cells[0]).toHaveAttribute('autocomplete', 'one-time-code');

@@ -1,6 +1,6 @@
 ---
 // WAI-ARIA tabs whose panels are code blocks, rendered from data (Astro slots can't be generated in a loop).
-// Uses the Orca tabs styles; src/scripts/site.ts handles clicks and arrow keys for [data-site-tabs].
+// Uses the Pelagic tabs styles; src/scripts/site.ts handles clicks and arrow keys for [data-site-tabs].
 import CodeBlock from './CodeBlock.astro';
 
 export interface CodeTab {
@@ -23,8 +23,8 @@ const { items, label, locale = 'en', class: className } = Astro.props;
 const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<div class:list={['oc-tabs', 'code-tabset', className]} data-site-tabs>
-  <div role="tablist" class="oc-tabs__list" aria-label={label}>
+<div class:list={['pl-tabs', 'code-tabset', className]} data-site-tabs>
+  <div role="tablist" class="pl-tabs__list" aria-label={label}>
     {
       items.map((t, i) => (
         <button
@@ -34,7 +34,7 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
           aria-controls={`${id}-panel-${t.key}`}
           aria-selected={i === 0 ? 'true' : 'false'}
           tabindex={i === 0 ? 0 : -1}
-          class="oc-tabs__tab"
+          class="pl-tabs__tab"
         >
           {t.label}
         </button>
@@ -43,7 +43,7 @@ const id = `ct-${Math.random().toString(36).slice(2, 8)}`;
   </div>
   {
     items.map((t, i) => (
-      <div role="tabpanel" id={`${id}-panel-${t.key}`} aria-labelledby={`${id}-tab-${t.key}`} class="oc-tabs__panel" hidden={i !== 0}>
+      <div role="tabpanel" id={`${id}-panel-${t.key}`} aria-labelledby={`${id}-tab-${t.key}`} class="pl-tabs__panel" hidden={i !== 0}>
         <CodeBlock code={t.code} lang={t.lang} file={t.file} lang_label={t.langLabel} locale={locale} />
       </div>
     ))

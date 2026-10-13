@@ -1,8 +1,8 @@
 name: Release to npm
 
-# Publishes every @orca-ui package to the npm registry (installable with npm, yarn, pnpm and bun).
+# Publishes every @pelagic-ui package to the npm registry (installable with npm, yarn, pnpm and bun).
 # Trigger: push a tag like v0.1.0. Requires the repository secret NPM_TOKEN (an npm "Automation" token
-# with publish rights on the @orca-ui organisation).
+# with publish rights on the @pelagic-ui organisation).
 
 on:
   push:

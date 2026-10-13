@@ -5,10 +5,10 @@ export * from './illustrations.js';
 const Base = typeof HTMLElement === 'undefined' ? class {} : HTMLElement;
 
 /**
- * `<oc-illustration name="no-results" [label="…"] [compact] [static]>`
+ * `<pl-illustration name="no-results" [label="…"] [compact] [static]>`
  * Renders in light DOM so theme tokens and page CSS apply. Decorative unless `label` is set.
  */
-export class OcIllustrationElement extends Base {
+export class PlIllustrationElement extends Base {
   static observedAttributes = ['name', 'label', 'compact', 'static'];
 
   connectedCallback() {
@@ -33,9 +33,9 @@ export class OcIllustrationElement extends Base {
 }
 
 /** Registers the element (idempotent). Called automatically on import in browsers. */
-export function defineIllustrationElement(tag = 'oc-illustration') {
+export function defineIllustrationElement(tag = 'pl-illustration') {
   if (typeof customElements === 'undefined' || customElements.get(tag)) return;
-  customElements.define(tag, tag === 'oc-illustration' ? OcIllustrationElement : class extends OcIllustrationElement {});
+  customElements.define(tag, tag === 'pl-illustration' ? PlIllustrationElement : class extends PlIllustrationElement {});
 }
 
 defineIllustrationElement();

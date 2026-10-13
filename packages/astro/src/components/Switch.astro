@@ -1,6 +1,6 @@
 ---
 // On/off switch (role="switch"). A hidden input carries the value in forms.
-// Listen for changes with: el.addEventListener('oc-change', (e) => e.detail.checked)
+// Listen for changes with: el.addEventListener('pl-change', (e) => e.detail.checked)
 interface Props {
   label: string;
   /** Show the label next to the switch. When false it is still the accessible name. */
@@ -12,20 +12,20 @@ interface Props {
 }
 
 const { label, showLabel = true, name, checked = false, disabled = false, id } = Astro.props;
-const switchId = id ?? `oc-switch-${Math.random().toString(36).slice(2, 8)}`;
+const switchId = id ?? `pl-switch-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<span class="oc-check">
+<span class="pl-check">
   <button
     id={switchId}
     type="button"
     role="switch"
-    class="oc-switch"
+    class="pl-switch"
     aria-checked={checked ? 'true' : 'false'}
     aria-label={showLabel ? undefined : label}
     aria-labelledby={showLabel ? `${switchId}-label` : undefined}
     disabled={disabled}
-    data-oc-switch
+    data-pl-switch
   ></button>
   {name && <input type="hidden" name={name} value={checked ? 'on' : ''} />}
   {showLabel && <span id={`${switchId}-label`}>{label}</span>}

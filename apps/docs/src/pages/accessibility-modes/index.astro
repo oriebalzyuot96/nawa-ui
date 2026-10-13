@@ -1,14 +1,14 @@
 ---
 import { Code } from 'astro:components';
 import Base from '../../layouts/Base.astro';
-import AccessibilityPanel from '@orca-ui/astro/components/AccessibilityPanel';
-import Badge from '@orca-ui/astro/components/Badge';
-import Button from '@orca-ui/astro/components/Button';
-import Checkbox from '@orca-ui/astro/components/Checkbox';
-import ProgressBar from '@orca-ui/astro/components/ProgressBar';
-import { a11yPanelLabels } from '@orca-ui/core/a11y-prefs';
-import { contrastPairs, contrastSchemes } from '@orca-ui/core/themes';
-import { contrastRatio, resolveTokens } from '@orca-ui/core/theme';
+import AccessibilityPanel from '@pelagic-ui/astro/components/AccessibilityPanel';
+import Badge from '@pelagic-ui/astro/components/Badge';
+import Button from '@pelagic-ui/astro/components/Button';
+import Checkbox from '@pelagic-ui/astro/components/Checkbox';
+import ProgressBar from '@pelagic-ui/astro/components/ProgressBar';
+import { a11yPanelLabels } from '@pelagic-ui/core/a11y-prefs';
+import { contrastPairs, contrastSchemes } from '@pelagic-ui/core/themes';
+import { contrastRatio, resolveTokens } from '@pelagic-ui/core/theme';
 
 const L = a11yPanelLabels.en;
 const schemeLabel = (s: string) => L.options.contrast?.[s] ?? s;
@@ -32,7 +32,7 @@ const modes = [
   ['Color vision', 'data-a11y-color-filter', 'protanopia · deuteranopia · tritanopia · achromatopsia', 'Daltonization filters (inline SVG feColorMatrix) move hues you cannot tell apart into ones you can.', '1.4.1'],
   ['Patterns', 'data-a11y-patterns', '(present)', 'Charts add hatching, dashes and markers. On automatically in gray, hc and achromatopsia.', '1.4.1'],
   ['Saturation', 'data-a11y-saturation', 'low · high', 'Low desaturates the page; high only boosts images and charts, so text contrast never drops.', ''],
-  ['Text size', 'data-a11y-font-scale + --oc-user-font-scale', '0.9 – 2', 'Scales every type token and the page text, without zooming the layout.', '1.4.4'],
+  ['Text size', 'data-a11y-font-scale + --pl-user-font-scale', '0.9 – 2', 'Scales every type token and the page text, without zooming the layout.', '1.4.4'],
   ['Line / letter / word / paragraph spacing', 'data-a11y-line-height · -letter-spacing · -word-spacing · -paragraph-spacing', 'wide · wider', '"wider" meets or exceeds the WCAG text-spacing values; components reflow without clipping. Arabic keeps letter-spacing at 0 so letters stay joined.', '1.4.12'],
   ['Readable font', 'data-a11y-font', 'readable', 'Atkinson Hyperlegible (self-hosted, SIL OFL), with an Arabic fallback.', ''],
   ['Align to start', 'data-a11y-text-align', 'start', 'No justified or centered paragraphs; start is right in RTL.', '1.4.8'],
@@ -47,7 +47,7 @@ const modes = [
 
 const coreCode = `import {
   applyA11yPrefs, loadA11yPrefs, saveA11yPrefs, resetA11yPrefs, watchSystemPrefs,
-} from '@orca-ui/core/a11y-prefs';
+} from '@pelagic-ui/core/a11y-prefs';
 
 // Restore what the user chose last time, then apply it to <html> (or any container).
 const prefs = applyA11yPrefs(loadA11yPrefs());
@@ -59,12 +59,12 @@ saveA11yPrefs(applyA11yPrefs({ ...prefs, contrast: 'yellow-black', fontScale: 1.
 const stop = watchSystemPrefs((os) => console.log(os.reducedMotion, os.contrast));`;
 
 const panelCode = `// React
-import { AccessibilityPanel } from '@orca-ui/react';
+import { AccessibilityPanel } from '@pelagic-ui/react';
 <AccessibilityPanel locale="ar" onChange={(prefs, change) => track(change)} />
 
 // Vue:     <AccessibilityPanel v-model="prefs" trigger="inline" />
 // Svelte:  <AccessibilityPanel bind:prefs bind:open />
-// Angular: <oc-accessibility-panel [(prefs)]="prefs" locale="ar" />
+// Angular: <pl-accessibility-panel [(prefs)]="prefs" locale="ar" />
 // Astro:   <AccessibilityPanel trigger="inline" locale={lang} />
 // HTML:    root.innerHTML = renderA11yPanelHTML({ locale: 'en' }); mountA11yPanel(root.firstElementChild);`;
 
@@ -75,7 +75,7 @@ const htmlCode = `<!-- No JavaScript needed for the CSS modes: set the attribute
 
 <Base
   title="Accessibility display modes"
-  description="Orca UI accessibility modes: yellow-on-black and other exact contrast schemes, color-vision filters, text size and spacing, readable font, reading guide and mask, motion off, big cursor and large targets, with a ready-made AccessibilityPanel for every framework."
+  description="Pelagic UI accessibility modes: yellow-on-black and other exact contrast schemes, color-vision filters, text size and spacing, readable font, reading guide and mask, motion off, big cursor and large targets, with a ready-made AccessibilityPanel for every framework."
 >
   <section class="section">
     <div class="container">
@@ -87,8 +87,8 @@ const htmlCode = `<!-- No JavaScript needed for the CSS modes: set the attribute
         mirrors in right-to-left languages, and is available as a ready-made settings panel in React, Vue, Svelte, Angular and Astro.
       </p>
       <div class="framework-row">
-        <button type="button" class="oc-btn oc-btn--primary" data-open-site-panel>Open the accessibility panel</button>
-        <a class="oc-btn oc-btn--secondary" href="#modes">See every mode</a>
+        <button type="button" class="pl-btn pl-btn--primary" data-open-site-panel>Open the accessibility panel</button>
+        <a class="pl-btn pl-btn--secondary" href="#modes">See every mode</a>
       </div>
     </div>
   </section>
@@ -215,17 +215,17 @@ const htmlCode = `<!-- No JavaScript needed for the CSS modes: set the attribute
 <style>
   .modes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(15rem, 100%), 1fr)); gap: 1rem; }
   .modes-card .theme-card__title { text-transform: none; }
-  .modes-card__text { margin: 0; font-size: var(--oc-text-md); }
-  .modes-card__text a { color: var(--oc-primary-ink); }
+  .modes-card__text { margin: 0; font-size: var(--pl-text-md); }
+  .modes-card__text a { color: var(--pl-primary-ink); }
   .modes-try { display: grid; gap: 1rem; justify-items: start; margin-top: 1rem; }
   .modes-sandbox { width: 100%; max-width: 46rem; }
-  .modes-sandbox h3 { margin: 0; font-size: var(--oc-text-xl); }
-  .modes-sandbox p { margin: 0; font-size: var(--oc-text-md); line-height: var(--oc-leading); }
-  .modes-sandbox a { color: var(--oc-primary-ink); }
-  .modes-swatch { display: inline-grid; place-items: center; width: 2rem; height: 1.5rem; border: 1px solid var(--oc-border); border-radius: 4px; font-weight: 700; font-size: 0.75rem; vertical-align: middle; forced-color-adjust: none; }
+  .modes-sandbox h3 { margin: 0; font-size: var(--pl-text-xl); }
+  .modes-sandbox p { margin: 0; font-size: var(--pl-text-md); line-height: var(--pl-leading); }
+  .modes-sandbox a { color: var(--pl-primary-ink); }
+  .modes-swatch { display: inline-grid; place-items: center; width: 2rem; height: 1.5rem; border: 1px solid var(--pl-border); border-radius: 4px; font-weight: 700; font-size: 0.75rem; vertical-align: middle; forced-color-adjust: none; }
   .modes-code h3 { margin-block: 0 0.5rem; }
-  .modes-code :global(pre) { margin: 0; overflow-x: auto; padding: 1rem; border-radius: var(--oc-radius); font-size: 0.8125rem; }
-  section :global(pre) { overflow-x: auto; padding: 1rem; border-radius: var(--oc-radius); font-size: 0.8125rem; }
+  .modes-code :global(pre) { margin: 0; overflow-x: auto; padding: 1rem; border-radius: var(--pl-radius); font-size: 0.8125rem; }
+  section :global(pre) { overflow-x: auto; padding: 1rem; border-radius: var(--pl-radius); font-size: 0.8125rem; }
   @media (max-width: 52rem) {
     .modes-code { grid-template-columns: minmax(0, 1fr); }
   }

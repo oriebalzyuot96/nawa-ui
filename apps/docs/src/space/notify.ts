@@ -7,7 +7,7 @@ export interface Notice {
   tone: NoticeTone;
 }
 
-const EVENT = 'orca-space:notice';
+const EVENT = 'pelagic-space:notice';
 let seq = 0;
 
 export function notify(message: string, tone: NoticeTone = 'success', detail?: string) {

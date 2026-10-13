@@ -21,7 +21,7 @@
     panel?: Snippet<[string]>;
   } = $props();
 
-  const baseId = nextId('oc-tabs');
+  const baseId = nextId('pl-tabs');
   let buttons: HTMLButtonElement[] = [];
 
   $effect.pre(() => {
@@ -49,8 +49,8 @@
   }
 </script>
 
-<div class="oc-tabs">
-  <div role="tablist" class="oc-tabs__list">
+<div class="pl-tabs">
+  <div role="tablist" class="pl-tabs__list">
     {#each tabs as t, i (t.key)}
       <button
         bind:this={buttons[i]}
@@ -61,7 +61,7 @@
         aria-controls="{baseId}-panel-{t.key}"
         tabindex={value === t.key ? 0 : -1}
         disabled={t.disabled}
-        class="oc-tabs__tab"
+        class="pl-tabs__tab"
         onclick={() => select(t.key)}
         onkeydown={(e) => onkeydown(e, i)}
       >
@@ -70,7 +70,7 @@
     {/each}
   </div>
   {#if panel && value}
-    <div role="tabpanel" id="{baseId}-panel-{value}" aria-labelledby="{baseId}-tab-{value}" class="oc-tabs__panel">
+    <div role="tabpanel" id="{baseId}-panel-{value}" aria-labelledby="{baseId}-tab-{value}" class="pl-tabs__panel">
       {@render panel(value)}
     </div>
   {/if}

@@ -2,56 +2,56 @@
 
 <img src="apps/docs/public/favicon.svg" width="72" height="72" alt="" />
 
-# Orca UI
+# Pelagic UI
 
 **Accessible, themeable UI components for every framework.**
 React · Vue · Angular · Svelte · Astro · React Native · Flutter
 
 WCAG 2.2 AA · 21 themes + your own brand colors · accessibility modes · charts · 3D · motion · sound · icons · RTL & Arabic · MIT
 
-[**Live docs & demos**](https://oriebalzyuot96.github.io/orca-ui/) · [Components](https://oriebalzyuot96.github.io/orca-ui/components/) · [Themes](https://oriebalzyuot96.github.io/orca-ui/themes/) · [Accessibility modes](https://oriebalzyuot96.github.io/orca-ui/accessibility-modes/) · [Space builder](https://oriebalzyuot96.github.io/orca-ui/space/) · [العربية](https://oriebalzyuot96.github.io/orca-ui/ar/)
+[**Live docs & demos**](https://oriebalzyuot96.github.io/pelagic-ui/) · [Components](https://oriebalzyuot96.github.io/pelagic-ui/components/) · [Themes](https://oriebalzyuot96.github.io/pelagic-ui/themes/) · [Accessibility modes](https://oriebalzyuot96.github.io/pelagic-ui/accessibility-modes/) · [Space builder](https://oriebalzyuot96.github.io/pelagic-ui/space/) · [العربية](https://oriebalzyuot96.github.io/pelagic-ui/ar/)
 
-<a href="docs/media/orca-ui-demo.mp4"><img src="docs/media/orca-ui-teaser.gif" alt="Orca UI demo: switching themes, a live React app, advanced inputs, charts, motion, accessibility modes and the Space builder" width="760" /></a>
+<a href="docs/media/pelagic-ui-demo.mp4"><img src="docs/media/pelagic-ui-teaser.gif" alt="Pelagic UI demo: switching themes, a live React app, advanced inputs, charts, motion, accessibility modes and the Space builder" width="760" /></a>
 
-▶️ [Watch the full 75-second video](docs/media/orca-ui-demo.mp4)
+▶️ [Watch the full 75-second video](docs/media/pelagic-ui-demo.mp4)
 
 </div>
 
 ---
 
-## What is Orca UI?
+## What is Pelagic UI?
 
-Orca UI is one design system shipped as native packages for seven platforms. Every component has the same name, the same props and the same look in React, Vue, Angular, Svelte, Astro, React Native and Flutter — and accessibility is tested on every build, not just promised.
+Pelagic UI is one design system shipped as native packages for seven platforms. Every component has the same name, the same props and the same look in React, Vue, Angular, Svelte, Astro, React Native and Flutter — and accessibility is tested on every build, not just promised.
 
 It covers everything PrimeNG-style libraries offer (forms, data, overlays, menus, media, feedback) and adds what most libraries don't: accessible charts, 3D, a motion engine, a UI sound engine, 239 original icons, 24 themeable illustrations, accessibility display modes, a theme generator for any brand color, and a drag-and-drop page builder.
 
 ## Install
 
 ```bash
-npm i orca-ui            # everything in one package
-# or: yarn add orca-ui · pnpm add orca-ui
+npm i pelagic            # everything in one package
+# or: yarn add pelagic · pnpm add pelagic
 ```
 
 ```ts
-import 'orca-ui/style.css';                       // once, in your app entry
-import { Button, DataTable, swal } from 'orca-ui/react';
+import 'pelagic/style.css'; // once, in your app entry
+import { Button, DataTable, swal } from 'pelagic/react';
 ```
 
 Framework packages (react, vue, @angular/*, svelte, astro, react-native, three) are optional peers — install only the one you use. Each target is also available as its own package:
 
 | Package | Platform |
 |---|---|
-| `@orca-ui/react` | React 18 / 19 — the most complete set (180+ components and building blocks) |
-| `@orca-ui/vue` | Vue 3 |
-| `@orca-ui/angular` | Angular 20–22 (standalone, signals, reactive forms) |
-| `@orca-ui/svelte` | Svelte 5 |
-| `@orca-ui/astro` | Astro 5 (server-rendered, zero JS by default) |
-| `@orca-ui/react-native` | React Native / Expo |
-| `orca_ui` (pub.dev) | Flutter |
-| `@orca-ui/three` | WebGL 3D components (three.js) |
-| `@orca-ui/icons` | 239 original duotone icons for every framework |
-| `@orca-ui/illustrations` | 24 themeable empty-state illustrations |
-| `@orca-ui/core` | Tokens, CSS, theme engine, accessibility, motion and sound engines |
+| `@pelagic-ui/react` | React 18 / 19 — the most complete set (180+ components and building blocks) |
+| `@pelagic-ui/vue` | Vue 3 |
+| `@pelagic-ui/angular` | Angular 20–22 (standalone, signals, reactive forms) |
+| `@pelagic-ui/svelte` | Svelte 5 |
+| `@pelagic-ui/astro` | Astro 5 (server-rendered, zero JS by default) |
+| `@pelagic-ui/react-native` | React Native / Expo |
+| `pelagic_ui` (pub.dev) | Flutter |
+| `@pelagic-ui/three` | WebGL 3D components (three.js) |
+| `@pelagic-ui/icons` | 239 original duotone icons for every framework |
+| `@pelagic-ui/illustrations` | 24 themeable empty-state illustrations |
+| `@pelagic-ui/core` | Tokens, CSS, theme engine, accessibility, motion and sound engines |
 
 ## Components
 
@@ -85,7 +85,7 @@ The full catalogue is in React; Vue, Svelte, Astro, Angular, React Native and Fl
 **Any brand color**, with contrast guaranteed:
 
 ```ts
-import { createTheme, applyCustomTheme } from 'orca-ui/core/theme';
+import { createTheme, applyCustomTheme } from 'pelagic/core/theme';
 applyCustomTheme(createTheme({ primary: '#ff6a00' })); // light, dark and high contrast, all WCAG AA
 ```
 
@@ -112,7 +112,7 @@ Built in, and checked automatically on every build:
 | Interaction | large targets (44px) |
 
 ```ts
-import { applyA11yPrefs } from 'orca-ui/core/a11y-prefs';
+import { applyA11yPrefs } from 'pelagic/core/a11y-prefs';
 applyA11yPrefs({ contrast: 'yellow-black', fontScale: 1.5, motion: 'off' });
 ```
 
@@ -121,28 +121,28 @@ applyA11yPrefs({ contrast: 'yellow-black', fontScale: 1.5, motion: 'off' });
 18 synthesized UI sounds in 4 themes (soft, crisp, playful, minimal). Off by default, never plays before a user gesture, respects mute and reduced-sound preferences, and never replaces visual feedback.
 
 ```tsx
-import { SoundProvider } from 'orca-ui/react';
+import { SoundProvider } from 'pelagic/react';
 <SoundProvider enabled theme="soft"><App /></SoundProvider>
 ```
 
-## Orca Space
+## Pelagic Space
 
-A drag-and-drop page builder in the docs: compose pages from 35 components and 16 sections, edit props, preview on desktop, tablet and mobile, switch themes and RTL — or **describe the page** in English or Arabic ("sales dashboard with 4 KPIs and an orders table") and it's built for you. Export to React, Vue, Angular or HTML. → [Open Space](https://oriebalzyuot96.github.io/orca-ui/space/)
+A drag-and-drop page builder in the docs: compose pages from 35 components and 16 sections, edit props, preview on desktop, tablet and mobile, switch themes and RTL — or **describe the page** in English or Arabic ("sales dashboard with 4 KPIs and an orders table") and it's built for you. Export to React, Vue, Angular or HTML. → [Open Space](https://oriebalzyuot96.github.io/pelagic-ui/space/)
 
 ## Related
 
-- [**Nawa Captcha**](https://github.com/oriebalzyuot96/nawa-captcha) — self-hosted, accessible puzzle CAPTCHA (38 challenge types, audio challenge, 3D themes) that follows Orca UI tokens automatically. `npm i nawa-captcha`.
+- [**Nawa Captcha**](https://github.com/oriebalzyuot96/nawa-captcha) — self-hosted, accessible puzzle CAPTCHA (38 challenge types, audio challenge, 3D themes) that follows Pelagic UI tokens automatically. `npm i nawa-captcha`.
 
 ## Development
 
 ```bash
 npm install
-npm run build -w @orca-ui/core      # generate CSS + tokens from src/themes.mjs
+npm run build -w @pelagic-ui/core   # generate CSS + tokens from src/themes.mjs
 npm test                            # every package's unit tests + contrast checks
 npm run typecheck
 npm run test:e2e                    # real-browser axe, keyboard and console checks (run the docs preview first)
 npm run docs:dev                    # docs site with live demos
-npm run build:umbrella              # build the single orca-ui package
+npm run build:umbrella              # build the single pelagic package
 ```
 
 Design rules live in [`packages/core/DESIGN.md`](packages/core/DESIGN.md).

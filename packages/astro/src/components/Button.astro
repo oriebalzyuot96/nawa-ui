@@ -15,11 +15,11 @@ const { variant = 'primary', size = 'md', block = false, iconOnly = false, loadi
 
 <button
   type={type}
-  class:list={['oc-btn', `oc-btn--${variant}`, size !== 'md' && `oc-btn--${size}`, block && 'oc-btn--block', iconOnly && 'oc-btn--icon']}
+  class:list={['pl-btn', `pl-btn--${variant}`, size !== 'md' && `pl-btn--${size}`, block && 'pl-btn--block', iconOnly && 'pl-btn--icon']}
   disabled={loading || rest.disabled}
   aria-busy={loading ? 'true' : undefined}
   {...rest}
 >
-  {loading && <span class="oc-spinner" aria-hidden="true"></span>}
+  {loading && <span class="pl-spinner" aria-hidden="true"></span>}
   <slot />
 </button>

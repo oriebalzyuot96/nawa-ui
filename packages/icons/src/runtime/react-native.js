@@ -21,7 +21,7 @@ function toNative(node, key, opts) {
     if (k === 'class' || k.startsWith('aria-') || k.startsWith('data-')) continue;
     props[camel(k)] = attrs[k];
   }
-  if (attrs.class === 'oc-icon__duo') {
+  if (attrs.class === 'pl-icon__duo') {
     if (opts.duotoneColor) props.fill = opts.duotoneColor;
     if (opts.duotoneOpacity != null) props.fillOpacity = opts.duotoneOpacity;
   }
@@ -59,7 +59,7 @@ function render(data, props, ref, id) {
 
 export function createIcon(data, displayName) {
   const C = React.forwardRef((props, ref) => render(data, props, ref, useRnId()));
-  C.displayName = displayName || 'OrcaIcon';
+  C.displayName = displayName || 'PelagicIcon';
   return C;
 }
 

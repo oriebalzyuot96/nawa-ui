@@ -1,15 +1,15 @@
-# @orca-ui/three
+# @pelagic-ui/three
 
 Accessible, theme-aware WebGL components for React, built on [three.js](https://threejs.org/) and the
-[Orca UI](https://oriieebgsmile96.github.io/orca-ui/) design tokens.
+[Pelagic UI](https://oriieebgsmile96.github.io/pelagic-ui/) design tokens.
 
 ```bash
-npm install @orca-ui/three @orca-ui/core three
+npm install @pelagic-ui/three @pelagic-ui/core three
 ```
 
 ```tsx
-import '@orca-ui/core/style.css';
-import { Globe3D, Chart3D } from '@orca-ui/three';
+import '@pelagic-ui/core/style.css';
+import { Globe3D, Chart3D } from '@pelagic-ui/three';
 
 <Globe3D markers={[{ label: 'Riyadh', lat: 24.7, lng: 46.7 }]} />
 <Chart3D title="Sales by region" data={[{ label: 'North', value: 1200 }, { label: 'South', value: 800 }]} />
@@ -35,7 +35,7 @@ Interactive views: drag to rotate, or focus and use **arrow keys** to rotate, **
 - `prefers-reduced-motion: reduce` renders a single static frame, with no animation loop.
 - Geometries, materials, textures and the renderer are disposed on unmount.
 - If WebGL is unavailable a static fallback is rendered instead of a canvas.
-- Colors come from `--oc-primary`, `--oc-surface`, etc., and are re-read when `data-theme` / `data-accent`
+- Colors come from `--pl-primary`, `--pl-surface`, etc., and are re-read when `data-theme` / `data-accent`
   change on `<html>` or the OS color scheme changes.
 
 `three` is a peer dependency (`>=0.160`, tested with 0.170). `GLTFLoader` is loaded with a dynamic import

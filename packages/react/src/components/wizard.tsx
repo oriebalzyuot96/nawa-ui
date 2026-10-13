@@ -10,7 +10,7 @@ import {
   type FormEvent,
   type ReactNode,
 } from 'react';
-import { animate, prefersReducedMotion } from '@orca-ui/core/motion';
+import { animate, prefersReducedMotion } from '@pelagic-ui/core/motion';
 import { cx } from '../utils';
 
 const useIsoLayoutEffect = typeof window !== 'undefined' ? useLayoutEffect : useEffect;
@@ -138,7 +138,7 @@ const CheckIcon = () => (
   </svg>
 );
 const Arrow = ({ back }: { back?: boolean }) => (
-  <svg className={cx('oc-wizard__arrow', back && 'oc-wizard__arrow--back')} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
+  <svg className={cx('pl-wizard__arrow', back && 'pl-wizard__arrow--back')} viewBox="0 0 16 16" width="16" height="16" aria-hidden="true" focusable="false">
     <path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
@@ -359,7 +359,7 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
       return;
     }
     headingRef.current?.focus({ preventScroll: true });
-    headingRef.current?.closest('.oc-wizard')?.scrollIntoView?.({ block: 'nearest', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
+    headingRef.current?.closest('.pl-wizard')?.scrollIntoView?.({ block: 'nearest', behavior: prefersReducedMotion() ? 'auto' : 'smooth' });
     setAnnouncement(L.announce(index + 1, total, textOf(current)));
     const panel = panelRef.current;
     if (panel && !prefersReducedMotion()) {
@@ -385,16 +385,16 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
   const H = `h${headingLevel}` as 'h2';
   const progress = total > 1 ? index / (total - 1) : 1;
   const content = current?.review && current.content === undefined ? (
-    <dl className="oc-wizard__review">
+    <dl className="pl-wizard__review">
       {steps.map((s, i) =>
         i === index || !s.summary ? null : (
-          <div key={s.id} className="oc-wizard__review-row">
+          <div key={s.id} className="pl-wizard__review-row">
             <dt>{s.title}</dt>
             <dd>
-              <div className="oc-wizard__review-value">{s.summary(values)}</div>
-              <button type="button" className="oc-btn oc-btn--ghost oc-btn--sm" onClick={() => goTo(i)}>
+              <div className="pl-wizard__review-value">{s.summary(values)}</div>
+              <button type="button" className="pl-btn pl-btn--ghost pl-btn--sm" onClick={() => goTo(i)}>
                 {L.edit}
-                <span className="oc-sr-only"> {textOf(s)}</span>
+                <span className="pl-sr-only"> {textOf(s)}</span>
               </button>
             </dd>
           </div>
@@ -409,8 +409,8 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
 
   if (done && renderComplete) {
     return (
-      <section className={cx('oc-wizard', className)} aria-label={label} data-orientation={orientation}>
-        <div ref={doneRef} tabIndex={-1} className="oc-wizard__done">
+      <section className={cx('pl-wizard', className)} aria-label={label} data-orientation={orientation}>
+        <div ref={doneRef} tabIndex={-1} className="pl-wizard__done">
           {renderComplete(values)}
         </div>
       </section>
@@ -418,9 +418,9 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
   }
 
   return (
-    <section className={cx('oc-wizard', className)} aria-label={label} data-orientation={orientation} style={{ '--oc-wizard-progress': progress } as CSSProperties}>
-      <nav className="oc-wizard__nav" aria-label={L.stepsNav}>
-        <ol className="oc-wizard__steps">
+    <section className={cx('pl-wizard', className)} aria-label={label} data-orientation={orientation} style={{ '--pl-wizard-progress': progress } as CSSProperties}>
+      <nav className="pl-wizard__nav" aria-label={L.stepsNav}>
+        <ol className="pl-wizard__steps">
           {steps.map((s, i) => {
             const st = viewStatuses[i];
             const reachable = linear ? i <= max : true;
@@ -428,33 +428,33 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
             const statusText = st === 'complete' || st === 'error' || st === 'skipped' ? L.status[st] : '';
             const inner = (
               <>
-                <span className="oc-wizard__marker" aria-hidden="true">
+                <span className="pl-wizard__marker" aria-hidden="true">
                   {st === 'complete' ? <CheckIcon /> : st === 'error' ? '!' : s.icon ?? i + 1}
                 </span>
-                <span className="oc-wizard__step-text">
-                  <span className="oc-wizard__step-title">
-                    <span className="oc-sr-only">{L.stepOf(i + 1, total)}: </span>
+                <span className="pl-wizard__step-text">
+                  <span className="pl-wizard__step-title">
+                    <span className="pl-sr-only">{L.stepOf(i + 1, total)}: </span>
                     {s.title}
-                    {statusText && <span className="oc-sr-only">, {statusText}</span>}
+                    {statusText && <span className="pl-sr-only">, {statusText}</span>}
                   </span>
                   {(s.description || s.optional) && ' '}
                   {(s.description || s.optional) && (
-                    <span className="oc-wizard__step-desc">
+                    <span className="pl-wizard__step-desc">
                       {s.description}
-                      {s.optional && <span className="oc-wizard__optional">{L.optional}</span>}
+                      {s.optional && <span className="pl-wizard__optional">{L.optional}</span>}
                     </span>
                   )}
                 </span>
               </>
             );
             return (
-              <li key={s.id} className="oc-wizard__step" data-state={st} data-current={isCurrent ? '' : undefined}>
+              <li key={s.id} className="pl-wizard__step" data-state={st} data-current={isCurrent ? '' : undefined}>
                 {reachable && !isCurrent ? (
-                  <button type="button" className="oc-wizard__step-btn" onClick={() => (linear ? goTo(i) : void leaveFree(i))}>
+                  <button type="button" className="pl-wizard__step-btn" onClick={() => (linear ? goTo(i) : void leaveFree(i))}>
                     {inner}
                   </button>
                 ) : (
-                  <span className="oc-wizard__step-btn" aria-current={isCurrent ? 'step' : undefined} aria-disabled={!isCurrent || undefined}>
+                  <span className="pl-wizard__step-btn" aria-current={isCurrent ? 'step' : undefined} aria-disabled={!isCurrent || undefined}>
                     {inner}
                   </span>
                 )}
@@ -462,26 +462,26 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
             );
           })}
         </ol>
-        <div className="oc-wizard__bar" aria-hidden="true">
-          <span className="oc-wizard__bar-fill" />
+        <div className="pl-wizard__bar" aria-hidden="true">
+          <span className="pl-wizard__bar-fill" />
         </div>
       </nav>
 
-      <form className="oc-wizard__body" noValidate onSubmit={onSubmit} aria-labelledby={`${id}-title`}>
-        <header className="oc-wizard__header">
-          <H ref={headingRef} id={`${id}-title`} tabIndex={-1} className="oc-wizard__title">
-            <span className="oc-wizard__eyebrow">
+      <form className="pl-wizard__body" noValidate onSubmit={onSubmit} aria-labelledby={`${id}-title`}>
+        <header className="pl-wizard__header">
+          <H ref={headingRef} id={`${id}-title`} tabIndex={-1} className="pl-wizard__title">
+            <span className="pl-wizard__eyebrow">
               {L.stepOf(index + 1, total)}
               {current?.optional && <> · {L.optional}</>}
             </span>
             {current?.title}
           </H>
-          {current?.description && <p className="oc-wizard__desc">{current.description}</p>}
+          {current?.description && <p className="pl-wizard__desc">{current.description}</p>}
         </header>
 
         {errorList.length > 0 && (
-          <div ref={summaryRef} className="oc-wizard__errors" tabIndex={-1} aria-labelledby={`${id}-errors`}>
-            <p id={`${id}-errors`} className="oc-wizard__errors-title">
+          <div ref={summaryRef} className="pl-wizard__errors" tabIndex={-1} aria-labelledby={`${id}-errors`}>
+            <p id={`${id}-errors`} className="pl-wizard__errors-title">
               {L.errorTitle(errorList.length)}
             </p>
             <ul>
@@ -510,39 +510,39 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
           </div>
         )}
 
-        <div ref={panelRef} className="oc-wizard__panel">
+        <div ref={panelRef} className="pl-wizard__panel">
           {content}
         </div>
 
-        <footer className="oc-wizard__footer">
+        <footer className="pl-wizard__footer">
           {index > 0 && (
-            <button type="button" className="oc-btn oc-btn--secondary" onClick={back} disabled={Boolean(busy)}>
+            <button type="button" className="pl-btn pl-btn--secondary" onClick={back} disabled={Boolean(busy)}>
               <Arrow back />
               {L.back}
             </button>
           )}
-          <span className="oc-wizard__spacer" />
+          <span className="pl-wizard__spacer" />
           {saveDraft && (
-            <span className="oc-wizard__draft">
+            <span className="pl-wizard__draft">
               {savedAt && (
-                <span className="oc-wizard__saved" aria-hidden="true">
+                <span className="pl-wizard__saved" aria-hidden="true">
                   {L.draftSaved}
                 </span>
               )}
-              <button type="button" className="oc-btn oc-btn--ghost" onClick={saveNow}>
+              <button type="button" className="pl-btn pl-btn--ghost" onClick={saveNow}>
                 {L.saveDraft}
               </button>
             </span>
           )}
           {current?.optional && index < total - 1 && (
-            <button type="button" className="oc-btn oc-btn--ghost" onClick={skip} disabled={Boolean(busy)}>
+            <button type="button" className="pl-btn pl-btn--ghost" onClick={skip} disabled={Boolean(busy)}>
               {L.skip}
             </button>
           )}
-          <button type="submit" className="oc-btn oc-btn--primary" aria-busy={busy ? true : undefined} aria-disabled={busy ? true : undefined}>
+          <button type="submit" className="pl-btn pl-btn--primary" aria-busy={busy ? true : undefined} aria-disabled={busy ? true : undefined}>
             {busy ? (
               <>
-                <span className="oc-spinner oc-wizard__spinner" aria-hidden="true" />
+                <span className="pl-spinner pl-wizard__spinner" aria-hidden="true" />
                 {L.checking}
               </>
             ) : index === total - 1 ? (
@@ -556,7 +556,7 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
           </button>
         </footer>
       </form>
-      <div className="oc-sr-only" role="status" aria-live="polite" aria-atomic="true">
+      <div className="pl-sr-only" role="status" aria-live="polite" aria-atomic="true">
         {announcement}
       </div>
     </section>
@@ -565,7 +565,7 @@ export function Wizard<D extends Record<string, unknown> = Record<string, unknow
 
 function noop() {}
 
-/** Props for an Orca Input bound to data[name] inside a step: id (the error-summary link target), value, error, onChange. */
+/** Props for a Pelagic Input bound to data[name] inside a step: id (the error-summary link target), value, error, onChange. */
 export function wizardField<D extends Record<string, unknown>>(ctx: WizardContext<D>, name: keyof D & string) {
   return {
     id: name,

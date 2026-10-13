@@ -1,12 +1,12 @@
 ---
-import '@orca-ui/core/style.css';
-import '@orca-ui/icons/css';
+import '@pelagic-ui/core/style.css';
+import '@pelagic-ui/icons/css';
 import '../styles/site.css';
 import '../styles/chrome.css';
 import '../styles/home.css';
 import '../styles/packages.css';
-import ThemeScript from '@orca-ui/astro/components/ThemeScript';
-import Toaster from '@orca-ui/astro/components/Toaster';
+import ThemeScript from '@pelagic-ui/astro/components/ThemeScript';
+import Toaster from '@pelagic-ui/astro/components/Toaster';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import CommandPalette from '../components/CommandPalette.astro';
@@ -27,7 +27,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const site = Astro.site!;
 const canonical = new URL(Astro.url.pathname, site).href;
 const ogImage = new URL(`${base}/og.png`, site).href;
-const fullTitle = title.includes('Orca UI') ? title : `${title} — Orca UI`;
+const fullTitle = title.includes('Pelagic UI') ? title : `${title} — Pelagic UI`;
 const isAr = lang === 'ar';
 // Where the language switch goes: the translated page when there is one, otherwise the other home page.
 const otherLangPath = (isAr ? alternate?.en : alternate?.ar) ?? (isAr ? '/' : '/ar/');
@@ -36,8 +36,8 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'SoftwareSourceCode',
-    name: 'Orca UI',
-    alternateName: ['orca-ui', 'أوركا UI'],
+    name: 'Pelagic UI',
+    alternateName: ['pelagic', 'بيلاجيك UI'],
     description:
       'Accessible, themeable UI component library for React, Vue, Angular, Svelte, Astro, React Native and Flutter. WCAG 2.2 AA, 21 themes, custom brand colors, dark mode, high contrast, accessibility modes, charts, 3D, RTL.',
     url: new URL(`${base}/`, site).href,
@@ -51,7 +51,7 @@ const jsonLd = [
   {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Orca UI',
+    name: 'Pelagic UI',
     url: new URL(`${base}/`, site).href,
     inLanguage: ['en', 'ar'],
   },
@@ -77,7 +77,7 @@ const jsonLd = [
     {alternate?.en && <link rel="alternate" hreflang="x-default" href={new URL(`${base}${alternate.en}`, site).href} />}
 
     <meta property="og:type" content="website" />
-    <meta property="og:site_name" content="Orca UI" />
+    <meta property="og:site_name" content="Pelagic UI" />
     <meta property="og:title" content={fullTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -96,12 +96,12 @@ const jsonLd = [
     <script is:inline>
       document.documentElement.classList.add('js');
       try {
-        if (localStorage.getItem('orca-docs-motion') === 'paused') document.documentElement.setAttribute('data-site-motion', 'paused');
+        if (localStorage.getItem('pelagic-docs-motion') === 'paused') document.documentElement.setAttribute('data-site-motion', 'paused');
       } catch (e) {}
     </script>
   </head>
   <body>
-    <a class="oc-skip-link" href="#main">{t[lang].skip}</a>
+    <a class="pl-skip-link" href="#main">{t[lang].skip}</a>
     <SiteHeader lang={lang} otherLangPath={otherLangPath} />
 
     <main id="main" tabindex="-1">
@@ -111,7 +111,7 @@ const jsonLd = [
     <SiteFooter lang={lang} otherLangPath={otherLangPath} />
     <CommandPalette lang={lang} />
     <Toaster />
-    <p class="oc-sr-only" role="status" aria-live="polite" data-site-live></p>
+    <p class="pl-sr-only" role="status" aria-live="polite" data-site-live></p>
 
     <script>
       import '../scripts/site.ts';

@@ -1,4 +1,4 @@
-// Framework-agnostic rendering core for Orca icons.
+// Framework-agnostic rendering core for Pelagic icons.
 // An icon renders to a tiny tree: string | [tag, attrs, children?].
 // Every framework adapter maps that tree to its own element factory.
 
@@ -40,9 +40,9 @@ export function iconTree(icon, options = {}) {
   const id = options.id ? safeId(options.id) : nextId();
   const flip = options.flipRtl ?? !!icon.rtlFlip;
 
-  const cls = ['oc-icon', `oc-icon-${icon.name}`, `oc-icon--${variant}`];
-  if (isOn(flip)) cls.push('oc-icon--flip-rtl');
-  if (isOn(options.spin)) cls.push('oc-icon--spin');
+  const cls = ['pl-icon', `pl-icon-${icon.name}`, `pl-icon--${variant}`];
+  if (isOn(flip)) cls.push('pl-icon--flip-rtl');
+  if (isOn(options.spin)) cls.push('pl-icon--spin');
   if (options.className) cls.push(String(options.className));
 
   const attrs = {
@@ -91,7 +91,7 @@ export function iconTree(icon, options = {}) {
     if (variant === 'duotone' && icon.duotone.length) {
       children.push([
         'g',
-        { class: 'oc-icon__duo', fill: 'currentColor', 'fill-opacity': String(DUOTONE_OPACITY), stroke: 'none' },
+        { class: 'pl-icon__duo', fill: 'currentColor', 'fill-opacity': String(DUOTONE_OPACITY), stroke: 'none' },
         icon.duotone,
       ]);
     }

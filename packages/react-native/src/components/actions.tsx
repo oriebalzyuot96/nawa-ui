@@ -1,5 +1,5 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text, type PressableProps, type StyleProp, type ViewStyle } from 'react-native';
-import { fontSize, radius, space, useOrcaTheme } from '../theme';
+import { fontSize, radius, space, usePelagicTheme } from '../theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
@@ -17,7 +17,7 @@ const heights: Record<ButtonSize, number> = { sm: 32, md: 40, lg: 48 };
 const fonts: Record<ButtonSize, number> = { sm: fontSize.sm, md: fontSize.md, lg: fontSize.lg };
 
 export function Button({ title, variant = 'primary', size = 'md', loading = false, block = false, disabled, style, ...rest }: ButtonProps) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const palette = {
     primary: { bg: t.primary, fg: t.onPrimary, border: 'transparent' },
     secondary: { bg: t.surfaceAlt, fg: t.text, border: t.border },

@@ -1,7 +1,7 @@
 import type { IconName, IconVariant } from './icons.js';
 
-/** `<oc-icon name="search" variant="duotone" size="20" label="Search">` */
-export declare class OcIconElement extends HTMLElement {
+/** `<pl-icon name="search" variant="duotone" size="20" label="Search">` */
+export declare class PlIconElement extends HTMLElement {
   static readonly observedAttributes: string[];
   name: IconName | (string & {}) | null;
   variant: IconVariant;
@@ -12,6 +12,6 @@ export declare class OcIconElement extends HTMLElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'oc-icon': OcIconElement;
+    'pl-icon': PlIconElement;
   }
 }

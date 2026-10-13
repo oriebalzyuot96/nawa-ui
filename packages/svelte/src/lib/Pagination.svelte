@@ -10,20 +10,20 @@
   }
 </script>
 
-<nav aria-label="Pagination" class="oc-pagination">
-  <button type="button" class="oc-pagination__btn" aria-label="Previous page" disabled={value <= 1} onclick={() => go(value - 1)}>‹</button>
+<nav aria-label="Pagination" class="pl-pagination">
+  <button type="button" class="pl-pagination__btn" aria-label="Previous page" disabled={value <= 1} onclick={() => go(value - 1)}>‹</button>
   {#each getPageItems(value, pageCount) as item, i (i)}
     {#if item === 'ellipsis'}
-      <span class="oc-pagination__ellipsis" aria-hidden="true">…</span>
+      <span class="pl-pagination__ellipsis" aria-hidden="true">…</span>
     {:else}
       <button
         type="button"
-        class="oc-pagination__btn"
+        class="pl-pagination__btn"
         aria-current={item === value ? 'page' : undefined}
         aria-label="Page {item}"
         onclick={() => go(item)}>{item}</button
       >
     {/if}
   {/each}
-  <button type="button" class="oc-pagination__btn" aria-label="Next page" disabled={value >= pageCount} onclick={() => go(value + 1)}>›</button>
+  <button type="button" class="pl-pagination__btn" aria-label="Next page" disabled={value >= pageCount} onclick={() => go(value + 1)}>›</button>
 </nav>

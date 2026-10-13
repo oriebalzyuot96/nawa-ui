@@ -14,9 +14,9 @@
   }: { name: string; options: Option[]; value?: string; label?: string; onchange?: (value: string) => void } = $props();
 </script>
 
-<div role="radiogroup" aria-label={label} class="oc-radio-group">
+<div role="radiogroup" aria-label={label} class="pl-radio-group">
   {#each options as o (o.value)}
-    <label class={['oc-check', o.disabled && 'oc-check--disabled']}>
+    <label class={['pl-check', o.disabled && 'pl-check--disabled']}>
       <input type="radio" {name} value={o.value} bind:group={value} disabled={o.disabled} onchange={() => onchange?.(o.value)} />
       {o.label}
     </label>

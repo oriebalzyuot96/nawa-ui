@@ -23,7 +23,7 @@ import {
   useDialog,
   useRipple,
   type DynamicDialogContentProps,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Output, Row } from './shared';
 
 function DialogDemo() {
@@ -107,7 +107,7 @@ function PopoverDemo() {
     >
       <div style={{ display: 'grid', gap: '0.75rem', minWidth: '16rem' }}>
         <strong>Share “Website redesign”</strong>
-        <Input label="Link" readOnly value="https://orca.dev/p/42" />
+        <Input label="Link" readOnly value="https://pelagic.dev/p/42" />
         <Button size="sm" onClick={() => setCopied(true)}>
           {copied ? 'Copied ✓' : 'Copy link'}
         </Button>
@@ -281,7 +281,7 @@ function ScrollTopDemo() {
   const box = useRef<HTMLDivElement>(null);
   return (
     <div className="demo-col">
-      <div ref={box} tabIndex={0} role="region" aria-label="Scrollable changelog" style={{ position: 'relative', height: 200, overflow: 'auto', padding: '0.75rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius)', background: 'var(--oc-surface)' }}>
+      <div ref={box} tabIndex={0} role="region" aria-label="Scrollable changelog" style={{ position: 'relative', height: 200, overflow: 'auto', padding: '0.75rem', border: '1px solid var(--pl-border)', borderRadius: 'var(--pl-radius)', background: 'var(--pl-surface)' }}>
         {Array.from({ length: 30 }, (_, i) => (
           <p key={i} style={{ margin: '0 0 0.5rem' }}>
             v0.{30 - i}.0 — improvements and fixes. Scroll down to reveal the button.
@@ -321,7 +321,7 @@ function FocusTrapDemo() {
         {active ? 'Trap active — press Tab' : 'Activate focus trap'}
       </Button>
       <FocusTrap active={active} className="focus-demo">
-        <div style={{ display: 'grid', gap: '0.75rem', padding: '1rem', border: `2px ${active ? 'solid var(--oc-primary)' : 'dashed var(--oc-border)'}`, borderRadius: 'var(--oc-radius)' }}>
+        <div style={{ display: 'grid', gap: '0.75rem', padding: '1rem', border: `2px ${active ? 'solid var(--pl-primary)' : 'dashed var(--pl-border)'}`, borderRadius: 'var(--pl-radius)' }}>
           <Input label="Title" />
           <Input label="Tag" />
           <Button onClick={() => setActive(false)}>Done (release trap)</Button>
@@ -353,14 +353,14 @@ function RippleDemo() {
   const ref = useRipple<HTMLButtonElement>();
   return (
     <>
-      <button type="button" className="oc-btn oc-btn--primary" style={{ position: 'relative', overflow: 'hidden' }}>
+      <button type="button" className="pl-btn pl-btn--primary" style={{ position: 'relative', overflow: 'hidden' }}>
         Click me
         <Ripple />
       </button>
       <button
         ref={ref}
         type="button"
-        style={{ border: 'none', font: 'inherit', position: 'relative', overflow: 'hidden', padding: '1.25rem 2rem', borderRadius: 'var(--oc-radius-lg)', background: 'var(--oc-primary-soft)', color: 'var(--oc-primary-ink)', fontWeight: 700, cursor: 'pointer' }}
+        style={{ border: 'none', font: 'inherit', position: 'relative', overflow: 'hidden', padding: '1.25rem 2rem', borderRadius: 'var(--pl-radius-lg)', background: 'var(--pl-primary-soft)', color: 'var(--pl-primary-ink)', fontWeight: 700, cursor: 'pointer' }}
       >
         Tile with useRipple()
       </button>

@@ -100,14 +100,14 @@ describe('swal', () => {
       open({ icon, title: 'Heads up' });
       const el = screen.getByRole(role);
       expect(el).toHaveAttribute('aria-modal', 'true');
-      expect(within(el).getByText(prefix, { exact: false })).toHaveClass('oc-sr-only');
+      expect(within(el).getByText(prefix, { exact: false })).toHaveClass('pl-sr-only');
       // The animated glyph is decorative.
-      expect(el.querySelector('svg.oc-glyph')).toHaveAttribute('aria-hidden', 'true');
+      expect(el.querySelector('svg.pl-glyph')).toHaveAttribute('aria-hidden', 'true');
       act(() => swal.close());
     }
     open({ icon: 'none', title: 'Plain' });
     expect(screen.getByRole('dialog')).toHaveAccessibleName('Plain');
-    expect(screen.getByRole('dialog').querySelector('.oc-glyph')).toBeNull();
+    expect(screen.getByRole('dialog').querySelector('.pl-glyph')).toBeNull();
   });
 
   it('validates input and returns the value', async () => {
@@ -261,7 +261,7 @@ describe('swal', () => {
     });
     const status = screen.getByRole('status');
     expect(status).not.toHaveAttribute('aria-modal');
-    expect(status.parentElement).toHaveClass('oc-swal--toast', 'oc-swal--bottom-end');
+    expect(status.parentElement).toHaveClass('pl-swal--toast', 'pl-swal--bottom-end');
     expect(here).toHaveFocus();
     expect(document.body.style.overflow).toBe('');
     act(() => swal.close());
@@ -362,8 +362,8 @@ describe('toaster', () => {
       toast('Sticky', { duration: Infinity });
       toast('Timed', { duration: 2000 });
     });
-    expect(screen.getByText('Timed').closest('li')!.querySelector('.oc-toaster__progress')).not.toBeNull();
-    expect(screen.getByText('Sticky').closest('li')!.querySelector('.oc-toaster__progress')).toBeNull();
+    expect(screen.getByText('Timed').closest('li')!.querySelector('.pl-toaster__progress')).not.toBeNull();
+    expect(screen.getByText('Sticky').closest('li')!.querySelector('.pl-toaster__progress')).toBeNull();
     act(() => vi.advanceTimersByTime(60_000));
     expect(screen.getByText('Sticky')).toBeInTheDocument();
     expect(screen.queryByText('Timed')).toBeNull();
@@ -428,7 +428,7 @@ describe('toaster', () => {
       toast('Two', { duration: Infinity });
       toast('Three', { duration: Infinity });
     });
-    expect(screen.getByRole('region')).toHaveClass('oc-toaster--top-start');
+    expect(screen.getByRole('region')).toHaveClass('pl-toaster--top-start');
     expect(screen.queryByText('One')).toBeNull();
     expect(screen.getByText('Three').closest('li')).toHaveAttribute('data-front', 'true');
     expect(screen.getByText('Two').closest('li')).toHaveAttribute('data-collapsed', 'true');
@@ -445,17 +445,17 @@ describe('loaders', () => {
     const { container } = render(<Loader type={type} label={`Loading ${type}`} />);
     const status = screen.getByRole('status');
     expect(status).toHaveTextContent(`Loading ${type}`);
-    expect(within(status).getByText(`Loading ${type}`)).toHaveClass('oc-sr-only');
-    expect(status).toHaveClass(`oc-loader--${type}`);
-    expect(container.querySelector('.oc-loader__art')).toHaveAttribute('aria-hidden', 'true');
+    expect(within(status).getByText(`Loading ${type}`)).toHaveClass('pl-sr-only');
+    expect(status).toHaveClass(`pl-loader--${type}`);
+    expect(container.querySelector('.pl-loader__art')).toHaveAttribute('aria-hidden', 'true');
   });
 
   it('shows the label visually with showLabel and exposes determinate progress', () => {
     render(<Loader type="progress-ring" value={42} label="Uploading" showLabel variant="block" size="lg" />);
-    expect(screen.getByText('Uploading')).toHaveClass('oc-loader__label');
+    expect(screen.getByText('Uploading')).toHaveClass('pl-loader__label');
     const bar = screen.getByRole('progressbar', { name: 'Uploading' });
     expect(bar).toHaveAttribute('aria-valuenow', '42');
-    expect(screen.getByRole('status')).toHaveClass('oc-loader--block', 'oc-loader--lg');
+    expect(screen.getByRole('status')).toHaveClass('pl-loader--block', 'pl-loader--lg');
   });
 
   it('LoaderOverlay marks the region busy and the content inert', () => {
@@ -465,7 +465,7 @@ describe('loaders', () => {
       </LoaderOverlay>,
     );
     const button = screen.getByText('Inside');
-    const region = button.closest('.oc-loader-overlay')!;
+    const region = button.closest('.pl-loader-overlay')!;
     expect(region).toHaveAttribute('aria-busy', 'true');
     expect(button.parentElement).toHaveAttribute('inert');
     expect(screen.getByRole('status')).toHaveTextContent('Refreshing');
@@ -481,14 +481,14 @@ describe('loaders', () => {
 
   it('PageLoader marks the page busy and fades out', () => {
     vi.useFakeTimers();
-    const { rerender } = render(<PageLoader active brand="Orca" label="Starting app" />);
+    const { rerender } = render(<PageLoader active brand="Pelagic" label="Starting app" />);
     expect(screen.getByRole('status')).toHaveTextContent('Starting app');
     expect(document.body).toHaveAttribute('aria-busy', 'true');
-    rerender(<PageLoader active={false} brand="Orca" label="Starting app" exitDuration={300} />);
-    expect(document.querySelector('.oc-page-loader')).toHaveAttribute('data-state', 'leaving');
+    rerender(<PageLoader active={false} brand="Pelagic" label="Starting app" exitDuration={300} />);
+    expect(document.querySelector('.pl-page-loader')).toHaveAttribute('data-state', 'leaving');
     expect(document.body).not.toHaveAttribute('aria-busy');
     act(() => vi.advanceTimersByTime(300));
-    expect(document.querySelector('.oc-page-loader')).toBeNull();
+    expect(document.querySelector('.pl-page-loader')).toBeNull();
   });
 
   it('topProgress start/inc/done drives the TopProgressBar', () => {
@@ -550,14 +550,14 @@ describe('swal illustrations, layouts and presets', () => {
     const dialog = screen.getByRole('dialog');
     expect(dialog).toHaveAttribute('data-layout', 'illustration');
     expect(dialog).toHaveAccessibleName('Success: Saved');
-    const art = dialog.querySelector('.oc-swal__art')!;
+    const art = dialog.querySelector('.pl-swal__art')!;
     expect(art).toHaveAttribute('aria-hidden', 'true');
     const svg = art.querySelector('svg[data-illustration]')!;
     expect(svg).toHaveAttribute('data-illustration', 'all-done');
     expect(svg).toHaveAttribute('aria-hidden', 'true');
     // The status glyph stays as a small badge, and the big icon is not duplicated.
-    expect(art.querySelector('.oc-swal__badge .oc-glyph--success')).not.toBeNull();
-    expect(dialog.querySelector('.oc-swal__icon')).toBeNull();
+    expect(art.querySelector('.pl-swal__badge .pl-glyph--success')).not.toBeNull();
+    expect(dialog.querySelector('.pl-swal__icon')).toBeNull();
   });
 
   it.each([
@@ -568,39 +568,39 @@ describe('swal illustrations, layouts and presets', () => {
   ] as const)('maps icon %s to the %s scene', (icon, scene) => {
     render(<SwalHost />);
     void open({ icon, title: 'T', illustration: true });
-    expect(document.querySelector(`.oc-swal__art svg[data-illustration="${scene}"]`)).not.toBeNull();
+    expect(document.querySelector(`.pl-swal__art svg[data-illustration="${scene}"]`)).not.toBeNull();
   });
 
   it('accepts a scene name, a custom node, the hero layout and `layout: "icon"`', () => {
     render(<SwalHost />);
     void open({ icon: 'info', title: 'Hero', illustration: 'upload', layout: 'hero' });
     const hero = screen.getByRole('dialog');
-    expect(hero).toHaveClass('oc-swal__popup--hero');
-    expect(hero.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', 'upload');
+    expect(hero).toHaveClass('pl-swal__popup--hero');
+    expect(hero.querySelector('.pl-swal__hero svg')).toHaveAttribute('data-illustration', 'upload');
     act(() => swal.close());
 
     void open({ title: 'Custom', illustration: <svg data-testid="mine" /> });
-    expect(screen.getByTestId('mine').closest('.oc-swal__art')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByTestId('mine').closest('.pl-swal__art')).toHaveAttribute('aria-hidden', 'true');
     act(() => swal.close());
 
     void open({ icon: 'success', title: 'Classic', illustration: true, layout: 'icon' });
     const classic = screen.getByRole('dialog');
-    expect(classic.querySelector('.oc-swal__art')).toBeNull();
-    expect(classic.querySelector('.oc-swal__icon .oc-glyph--success')).not.toBeNull();
+    expect(classic.querySelector('.pl-swal__art')).toBeNull();
+    expect(classic.querySelector('.pl-swal__icon .pl-glyph--success')).not.toBeNull();
     act(() => swal.close());
 
     // An illustrated layout without an explicit scene auto-picks one.
     void open({ icon: 'error', title: 'Hero auto', layout: 'hero' });
-    expect(document.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', 'error');
+    expect(document.querySelector('.pl-swal__hero svg')).toHaveAttribute('data-illustration', 'error');
   });
 
   it('ignores illustrations in toast mode and tints the backdrop by tone', () => {
     render(<SwalHost />);
     void open({ icon: 'warning', title: 'Careful', illustration: true });
-    expect(document.querySelector('.oc-swal')).toHaveAttribute('data-tone', 'warning');
+    expect(document.querySelector('.pl-swal')).toHaveAttribute('data-tone', 'warning');
     act(() => swal.close());
     void open({ toast: true, icon: 'success', title: 'Saved', illustration: true });
-    expect(document.querySelector('.oc-swal__art, .oc-swal__hero')).toBeNull();
+    expect(document.querySelector('.pl-swal__art, .pl-swal__hero')).toBeNull();
   });
 
   it('confirmDelete: alertdialog, danger confirm, cancel focused, resolves on confirm', async () => {
@@ -621,7 +621,7 @@ describe('swal illustrations, layouts and presets', () => {
     expect(dialog).toHaveAttribute('aria-modal', 'true');
     expect(screen.getByRole('button', { name: 'Cancel' })).toHaveFocus();
     const del = screen.getByRole('button', { name: 'Delete' });
-    expect(del).toHaveClass('oc-swal__btn--danger');
+    expect(del).toHaveClass('pl-swal__btn--danger');
     expect(dialog.querySelector('[data-illustration]')).not.toBeNull();
     await userEvent.click(del);
     await expect(p).resolves.toMatchObject({ isConfirmed: true });
@@ -646,7 +646,7 @@ describe('swal illustrations, layouts and presets', () => {
     act(() => {
       p = swal.sessionExpired();
     });
-    expect(screen.getByRole('dialog')).toHaveClass('oc-swal__popup--hero');
+    expect(screen.getByRole('dialog')).toHaveClass('pl-swal__popup--hero');
     fireEvent.keyDown(document, { key: 'Escape' });
     expect(swal.isOpen()).toBe(true);
     await userEvent.click(screen.getByRole('button', { name: 'Sign in again' }));
@@ -660,9 +660,9 @@ describe('swal illustrations, layouts and presets', () => {
       act(() => {
         void fn();
       });
-      const d = document.querySelector('.oc-swal__popup')!;
+      const d = document.querySelector('.pl-swal__popup')!;
       expect(d).toHaveAccessibleName(name);
-      expect(d.querySelector('.oc-swal__hero svg')).toHaveAttribute('data-illustration', scene);
+      expect(d.querySelector('.pl-swal__hero svg')).toHaveAttribute('data-illustration', scene);
       act(() => swal.close());
     }
   });
@@ -676,7 +676,7 @@ describe('swal illustrations, layouts and presets', () => {
     expect(dialog).toHaveAccessibleName('تحذير: حذف «\u2068التقرير\u2069»؟');
     expect(screen.getByRole('button', { name: 'حذف' })).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'إلغاء' })).toBeInTheDocument();
-    const root = document.querySelector('.oc-swal')!;
+    const root = document.querySelector('.pl-swal')!;
     expect(root).toHaveAttribute('lang', 'ar');
     expect(root).toHaveAttribute('dir', 'rtl');
     act(() => swal.close());
@@ -700,6 +700,6 @@ describe('swal illustrations, layouts and presets', () => {
   it('can opt out of the mobile bottom sheet', () => {
     render(<SwalHost />);
     void open({ title: 'No sheet', sheet: false });
-    expect(document.querySelector('.oc-swal')).toHaveAttribute('data-sheet', 'false');
+    expect(document.querySelector('.pl-swal')).toHaveAttribute('data-sheet', 'false');
   });
 });

@@ -4,7 +4,7 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export const Button = defineComponent({
-  name: 'OcButton',
+  name: 'PlButton',
   props: {
     variant: { type: String as PropType<ButtonVariant>, default: 'primary' },
     size: { type: String as PropType<ButtonSize>, default: 'md' },
@@ -22,16 +22,16 @@ export const Button = defineComponent({
         {
           type: props.type,
           class: [
-            'oc-btn',
-            `oc-btn--${props.variant}`,
-            props.size !== 'md' && `oc-btn--${props.size}`,
-            props.block && 'oc-btn--block',
-            props.iconOnly && 'oc-btn--icon',
+            'pl-btn',
+            `pl-btn--${props.variant}`,
+            props.size !== 'md' && `pl-btn--${props.size}`,
+            props.block && 'pl-btn--block',
+            props.iconOnly && 'pl-btn--icon',
           ],
           disabled: props.loading,
           'aria-busy': props.loading ? 'true' : undefined,
         },
-        [props.loading ? h('span', { class: 'oc-spinner', 'aria-hidden': 'true' }) : null, slots.default?.()],
+        [props.loading ? h('span', { class: 'pl-spinner', 'aria-hidden': 'true' }) : null, slots.default?.()],
       );
   },
 });

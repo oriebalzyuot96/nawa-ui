@@ -1,6 +1,6 @@
 // Visual review helper for the docs site: full-page screenshots and a no-horizontal-scroll check.
 //
-//   SHOT_URL=http://localhost:4533/orca-ui/ PUPPETEER_EXECUTABLE_PATH=<chromium> node tests/e2e/screenshots.mjs
+//   SHOT_URL=http://localhost:4533/pelagic-ui/ PUPPETEER_EXECUTABLE_PATH=<chromium> node tests/e2e/screenshots.mjs
 //
 // Screenshots go to .artifacts/screens/ at the repo root (git-ignored). Options:
 //   SHOT_PAGES=",packages/,ar/"   pages relative to SHOT_URL (default: the main pages)
@@ -15,7 +15,7 @@ const here = dirname(fileURLToPath(import.meta.url));
 const out = join(here, '..', '..', '.artifacts', 'screens');
 mkdirSync(out, { recursive: true });
 
-const BASE = (process.env.SHOT_URL ?? 'http://localhost:4533/orca-ui/').replace(/\/?$/, '/');
+const BASE = (process.env.SHOT_URL ?? 'http://localhost:4533/pelagic-ui/').replace(/\/?$/, '/');
 const PAGES = (process.env.SHOT_PAGES ?? ',ar/,packages/,ar/packages/,components/,components/forms/').split(',');
 const VIEWPORTS = [
   { name: '1440', width: 1440, height: 900 },
@@ -32,7 +32,7 @@ async function open(url, viewport, mode) {
   if (!process.env.SHOT_MOTION) await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
   await page.evaluateOnNewDocument((m) => {
     try {
-      localStorage.setItem('orca-ui-theme', JSON.stringify({ mode: m, accent: 'violet', shape: 'default' }));
+      localStorage.setItem('pelagic-ui-theme', JSON.stringify({ mode: m, accent: 'violet', shape: 'default' }));
     } catch {
       /* ignore */
     }

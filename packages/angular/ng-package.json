@@ -5,6 +5,6 @@
   "lib": {
     "entryFile": "src/public-api.ts"
   },
-  "allowedNonPeerDependencies": ["@orca-ui/core"],
+  "allowedNonPeerDependencies": ["@pelagic-ui/core"],
   "assets": ["README.md"]
 }

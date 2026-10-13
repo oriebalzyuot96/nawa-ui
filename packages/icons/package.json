@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/icons",
+  "name": "@pelagic-ui/icons",
   "version": "0.1.0",
-  "description": "Orca Icons: 239 original, accessible SVG icons in outline and duotone (plus solid) for React, Vue, Svelte, Angular, Astro, React Native, Web Components and plain SVG sprites.",
+  "description": "Pelagic Icons: 239 original, accessible SVG icons in outline and duotone (plus solid) for React, Vue, Svelte, Angular, Astro, React Native, Web Components and plain SVG sprites.",
   "type": "module",
   "sideEffects": [
     "*.css",
@@ -53,8 +53,8 @@
       "default": "./dist/icons/*.js"
     },
     "./sprite.svg": "./dist/sprite.svg",
-    "./css": "./dist/orca-icons.css",
-    "./orca-icons.css": "./dist/orca-icons.css",
+    "./css": "./dist/pelagic-icons.css",
+    "./pelagic-icons.css": "./dist/pelagic-icons.css",
     "./json": "./dist/icons.json",
     "./icons.json": "./dist/icons.json",
     "./package.json": "./package.json"
@@ -104,17 +104,17 @@
     "svelte-icons",
     "angular-icons",
     "icon-library",
-    "orca-ui",
+    "pelagic-ui",
     "accessible"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/icons"
   },
   "bugs": {
-    "url": "https://github.com/oriebalzyuot96/orca-ui/issues"
+    "url": "https://github.com/oriebalzyuot96/pelagic-ui/issues"
   },
   "author": "oriebalzyuot96",
   "license": "MIT",

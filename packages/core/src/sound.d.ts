@@ -28,7 +28,7 @@ export type SoundBlockedReason = 'destroyed' | 'unknown' | 'app-disabled' | 'dis
 export declare const UI_SOUNDS: readonly UiSoundName[];
 export declare const SOUND_THEMES: readonly SoundTheme[];
 /** Window event name dispatched by `emitUiSound`. */
-export declare const UI_SOUND_EVENT: 'oc:ui-sound';
+export declare const UI_SOUND_EVENT: 'pl:ui-sound';
 /** Default localStorage key for user sound preferences. */
 export declare const SOUND_STORAGE_KEY: string;
 
@@ -45,7 +45,7 @@ export interface SoundEngineOptions {
   reduced?: boolean;
   /** Persist user changes to localStorage. Default true. */
   persist?: boolean;
-  /** localStorage key. Default "oc-sound". */
+  /** localStorage key. Default "pl-sound". */
   storageKey?: string;
   /** Play sounds requested with `emitUiSound`. Default true. */
   listen?: boolean;

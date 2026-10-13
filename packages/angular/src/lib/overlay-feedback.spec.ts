@@ -1,24 +1,24 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { OcButton } from './button';
-import { OcDialog, OcDialogFooter, OcDrawer } from './overlay';
-import { OcTooltip } from './tooltip';
-import { OcToastService, OcToaster } from './toast';
-import { OrcaThemeService, provideOrcaTheme } from './theme';
-import { THEME_STORAGE_KEY } from '@orca-ui/core/theme';
+import { PlButton } from './button';
+import { PlDialog, PlDialogFooter, PlDrawer } from './overlay';
+import { PlTooltip } from './tooltip';
+import { PlToastService, PlToaster } from './toast';
+import { PelagicThemeService, providePelagicTheme } from './theme';
+import { THEME_STORAGE_KEY } from '@pelagic-ui/core/theme';
 
 const press = (key: string, target: EventTarget = document, init: KeyboardEventInit = {}) =>
   target.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true, ...init }));
 
-describe('OcDialog', () => {
+describe('PlDialog', () => {
   @Component({
-    imports: [OcDialog, OcDialogFooter, OcButton],
+    imports: [PlDialog, PlDialogFooter, PlButton],
     template: `
-      <button ocButton id="opener" (click)="open.set(true)">Open</button>
-      <oc-dialog [(open)]="open" title="Edit profile" (closed)="closedCount = closedCount + 1">
+      <button plButton id="opener" (click)="open.set(true)">Open</button>
+      <pl-dialog [(open)]="open" title="Edit profile" (closed)="closedCount = closedCount + 1">
         <input id="first" />
-        <div ocDialogFooter><button ocButton id="last">Save</button></div>
-      </oc-dialog>
+        <div plDialogFooter><button plButton id="last">Save</button></div>
+      </pl-dialog>
     `,
   })
   class Host {
@@ -48,7 +48,7 @@ describe('OcDialog', () => {
     expect(panel.getAttribute('aria-modal')).toBe('true');
     const title = document.getElementById(panel.getAttribute('aria-labelledby')!);
     expect(title?.textContent).toContain('Edit profile');
-    expect(panel.querySelector('.oc-dialog__footer #last')).not.toBeNull();
+    expect(panel.querySelector('.pl-dialog__footer #last')).not.toBeNull();
     expect(document.activeElement).toBe(panel);
     expect(document.body.style.overflow).toBe('hidden');
     fixture.destroy();
@@ -56,7 +56,7 @@ describe('OcDialog', () => {
 
   it('traps Tab inside the panel', async () => {
     const { fixture, panel } = await openDialog();
-    const close = panel.querySelector('.oc-close') as HTMLButtonElement;
+    const close = panel.querySelector('.pl-close') as HTMLButtonElement;
     const last = panel.querySelector('#last') as HTMLButtonElement;
     last.focus();
     const forward = press('Tab', last);
@@ -91,15 +91,15 @@ describe('OcDialog', () => {
   it('removes the portaled overlay when destroyed while open', async () => {
     const { fixture } = await openDialog();
     fixture.destroy();
-    expect(document.body.querySelector('.oc-overlay')).toBeNull();
+    expect(document.body.querySelector('.pl-overlay')).toBeNull();
     expect(document.body.style.overflow).toBe('');
   });
 });
 
-describe('OcDrawer', () => {
+describe('PlDrawer', () => {
   @Component({
-    imports: [OcDrawer],
-    template: `<oc-drawer [(open)]="open" title="Filters" side="left"><button id="inside">x</button></oc-drawer>`,
+    imports: [PlDrawer],
+    template: `<pl-drawer [(open)]="open" title="Filters" side="left"><button id="inside">x</button></pl-drawer>`,
   })
   class Host {
     open = signal(true);
@@ -108,20 +108,20 @@ describe('OcDrawer', () => {
   it('renders drawer classes and closes on Escape', async () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
-    const panel = document.body.querySelector('.oc-drawer') as HTMLElement;
+    const panel = document.body.querySelector('.pl-drawer') as HTMLElement;
     expect(panel.getAttribute('role')).toBe('dialog');
-    expect(panel.classList).not.toContain('oc-drawer--right');
-    expect(panel.parentElement?.className).toBe('oc-overlay oc-overlay--drawer');
+    expect(panel.classList).not.toContain('pl-drawer--right');
+    expect(panel.parentElement?.className).toBe('pl-overlay pl-overlay--drawer');
     press('Escape');
     await fixture.whenStable();
-    expect(document.body.querySelector('.oc-drawer')).toBeNull();
+    expect(document.body.querySelector('.pl-drawer')).toBeNull();
   });
 });
 
-describe('OcTooltip', () => {
+describe('PlTooltip', () => {
   @Component({
-    imports: [OcTooltip],
-    template: `<button id="t" ocTooltip="Copy link" aria-describedby="extra">Copy</button><span id="extra">x</span>`,
+    imports: [PlTooltip],
+    template: `<button id="t" plTooltip="Copy link" aria-describedby="extra">Copy</button><span id="extra">x</span>`,
   })
   class Host {}
 
@@ -152,37 +152,37 @@ describe('OcTooltip', () => {
   });
 });
 
-describe('OcToastService + oc-toaster', () => {
-  @Component({ imports: [OcToaster], template: `<oc-toaster />` })
+describe('PlToastService + pl-toaster', () => {
+  @Component({ imports: [PlToaster], template: `<pl-toaster />` })
   class Host {}
 
   afterEach(() => {
     vi.useRealTimers();
-    TestBed.inject(OcToastService).clear();
+    TestBed.inject(PlToastService).clear();
   });
 
   it('shows and dismisses toasts in a polite live region', async () => {
     const fixture = TestBed.createComponent(Host);
-    const toasts = TestBed.inject(OcToastService);
+    const toasts = TestBed.inject(PlToastService);
     await fixture.whenStable();
-    const stack = fixture.nativeElement.querySelector('oc-toaster') as HTMLElement;
+    const stack = fixture.nativeElement.querySelector('pl-toaster') as HTMLElement;
     expect(stack.getAttribute('role')).toBe('status');
     expect(stack.getAttribute('aria-live')).toBe('polite');
-    expect(stack.classList).toContain('oc-toast-stack');
+    expect(stack.classList).toContain('pl-toast-stack');
 
     const id = toasts.show({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
     toasts.show('Plain message');
     await fixture.whenStable();
-    const items = stack.querySelectorAll('.oc-toast');
+    const items = stack.querySelectorAll('.pl-toast');
     expect(items.length).toBe(2);
-    expect(items[0].className).toBe('oc-toast oc-toast--success');
-    expect(items[0].querySelector('.oc-toast__title')?.textContent).toBe('Saved');
+    expect(items[0].className).toBe('pl-toast pl-toast--success');
+    expect(items[0].querySelector('.pl-toast__title')?.textContent).toBe('Saved');
 
     toasts.dismiss(id);
     await fixture.whenStable();
-    expect(stack.querySelectorAll('.oc-toast').length).toBe(1);
+    expect(stack.querySelectorAll('.pl-toast').length).toBe(1);
 
-    (stack.querySelector('.oc-close') as HTMLButtonElement).click();
+    (stack.querySelector('.pl-close') as HTMLButtonElement).click();
     await fixture.whenStable();
     expect(toasts.toasts().length).toBe(0);
   });
@@ -191,8 +191,8 @@ describe('OcToastService + oc-toaster', () => {
     vi.useFakeTimers();
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const toasts = TestBed.inject(OcToastService);
-    const stack = fixture.nativeElement.querySelector('oc-toaster') as HTMLElement;
+    const toasts = TestBed.inject(PlToastService);
+    const stack = fixture.nativeElement.querySelector('pl-toaster') as HTMLElement;
 
     toasts.show({ message: 'Hi', duration: 1000 });
     vi.advanceTimersByTime(400);
@@ -224,19 +224,19 @@ describe('Theme', () => {
     for (const a of ['data-theme', 'data-accent', 'data-shape']) document.documentElement.removeAttribute(a);
   });
 
-  it('provideOrcaTheme applies the theme on startup', () => {
-    TestBed.configureTestingModule({ providers: [provideOrcaTheme({ mode: 'dark', accent: 'rose', shape: 'round' })] });
-    const service = TestBed.inject(OrcaThemeService);
+  it('providePelagicTheme applies the theme on startup', () => {
+    TestBed.configureTestingModule({ providers: [providePelagicTheme({ mode: 'dark', accent: 'rose', shape: 'round' })] });
+    const service = TestBed.inject(PelagicThemeService);
     expect(document.documentElement.getAttribute('data-theme')).toBe('dark');
     expect(document.documentElement.getAttribute('data-accent')).toBe('rose');
     expect(document.documentElement.getAttribute('data-shape')).toBe('round');
     expect(service.theme()).toEqual({ mode: 'dark', accent: 'rose', shape: 'round' });
   });
 
-  it('OrcaThemeService persists and restores a choice', () => {
+  it('PelagicThemeService persists and restores a choice', () => {
     localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify({ mode: 'hc' }));
-    TestBed.configureTestingModule({ providers: [provideOrcaTheme({ mode: 'light', accent: 'teal' })] });
-    const service = TestBed.inject(OrcaThemeService);
+    TestBed.configureTestingModule({ providers: [providePelagicTheme({ mode: 'light', accent: 'teal' })] });
+    const service = TestBed.inject(PelagicThemeService);
     expect(service.theme()).toEqual({ mode: 'hc', accent: 'teal' });
     service.set({ mode: 'system' }, { persist: true });
     expect(document.documentElement.hasAttribute('data-theme')).toBe(false);

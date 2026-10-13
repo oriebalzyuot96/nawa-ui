@@ -211,11 +211,11 @@ export const menus: CategoryDoc = {
       props: [['items', '{ label, href? }[]', 'Trail; the last item is the current page.']],
       a11y: 'A navigation landmark labelled “Breadcrumb”; the last item has aria-current="page".',
       code: {
-        react: `<Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Projects', href: '/projects' }, { label: 'Orca UI' }]} />`,
+        react: `<Breadcrumb items={[{ label: 'Home', href: '/' }, { label: 'Projects', href: '/projects' }, { label: 'Pelagic UI' }]} />`,
         vue: `<Breadcrumb :items="trail" />`,
         svelte: `<Breadcrumb items={trail} />`,
         astro: `<Breadcrumb items={trail} />`,
-        rn: `<Breadcrumb items={[{ label: 'Home', onPress: goHome }, { label: 'Orca UI' }]} />`,
+        rn: `<Breadcrumb items={[{ label: 'Home', onPress: goHome }, { label: 'Pelagic UI' }]} />`,
       },
     },
   ],

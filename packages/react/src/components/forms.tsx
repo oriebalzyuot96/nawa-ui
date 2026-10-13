@@ -16,8 +16,8 @@ export interface FieldMetaProps {
 }
 
 function fieldMessage(id: string, error?: string, hint?: string) {
-  if (error) return { describedBy: `${id}-err`, node: <span id={`${id}-err`} className="oc-error-text">{error}</span> };
-  if (hint) return { describedBy: `${id}-hint`, node: <span id={`${id}-hint`} className="oc-hint">{hint}</span> };
+  if (error) return { describedBy: `${id}-err`, node: <span id={`${id}-err`} className="pl-error-text">{error}</span> };
+  if (hint) return { describedBy: `${id}-hint`, node: <span id={`${id}-hint`} className="pl-hint">{hint}</span> };
   return { describedBy: undefined, node: null };
 }
 
@@ -31,12 +31,12 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
   const inputId = id ?? autoId;
   const msg = fieldMessage(inputId, error, hint);
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
-      {label && <label className="oc-label" htmlFor={inputId}>{label}</label>}
+    <div className={cx('pl-field', error && 'pl-field--error')}>
+      {label && <label className="pl-label" htmlFor={inputId}>{label}</label>}
       <input
         ref={ref}
         id={inputId}
-        className={cx('oc-input', className)}
+        className={cx('pl-input', className)}
         aria-invalid={error ? true : undefined}
         aria-describedby={msg.describedBy}
         {...rest}
@@ -56,12 +56,12 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(function 
   const inputId = id ?? autoId;
   const msg = fieldMessage(inputId, error, hint);
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
-      {label && <label className="oc-label" htmlFor={inputId}>{label}</label>}
+    <div className={cx('pl-field', error && 'pl-field--error')}>
+      {label && <label className="pl-label" htmlFor={inputId}>{label}</label>}
       <textarea
         ref={ref}
         id={inputId}
-        className={cx('oc-textarea', className)}
+        className={cx('pl-textarea', className)}
         aria-invalid={error ? true : undefined}
         aria-describedby={msg.describedBy}
         {...rest}
@@ -92,12 +92,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(function Select
   const selectId = id ?? autoId;
   const msg = fieldMessage(selectId, error, hint);
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
-      {label && <label className="oc-label" htmlFor={selectId}>{label}</label>}
+    <div className={cx('pl-field', error && 'pl-field--error')}>
+      {label && <label className="pl-label" htmlFor={selectId}>{label}</label>}
       <select
         ref={ref}
         id={selectId}
-        className={cx('oc-select', className)}
+        className={cx('pl-select', className)}
         aria-invalid={error ? true : undefined}
         aria-describedby={msg.describedBy}
         {...rest}
@@ -121,7 +121,7 @@ export interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement
 
 export function Checkbox({ label, className, disabled, ...rest }: CheckboxProps) {
   return (
-    <label className={cx('oc-check', disabled && 'oc-check--disabled', className)}>
+    <label className={cx('pl-check', disabled && 'pl-check--disabled', className)}>
       <input type="checkbox" disabled={disabled} {...rest} />
       {label}
     </label>
@@ -151,13 +151,13 @@ export function Switch({ checked, onChange, disabled, label, showLabel = false, 
       aria-label={showLabel ? undefined : label}
       aria-labelledby={showLabel ? `${switchId}-label` : undefined}
       disabled={disabled}
-      className="oc-switch"
+      className="pl-switch"
       onClick={() => onChange(!checked)}
     />
   );
   if (!showLabel) return button;
   return (
-    <span className={cx('oc-check', disabled && 'oc-check--disabled')}>
+    <span className={cx('pl-check', disabled && 'pl-check--disabled')}>
       {button}
       <span id={`${switchId}-label`} onClick={() => !disabled && onChange(!checked)}>
         {label}
@@ -183,9 +183,9 @@ export interface RadioGroupProps {
 
 export function RadioGroup({ name, options, value, onChange, label, className }: RadioGroupProps) {
   return (
-    <div role="radiogroup" aria-label={label} className={cx('oc-radio-group', className)}>
+    <div role="radiogroup" aria-label={label} className={cx('pl-radio-group', className)}>
       {options.map((o) => (
-        <label key={o.value} className={cx('oc-check', o.disabled && 'oc-check--disabled')}>
+        <label key={o.value} className={cx('pl-check', o.disabled && 'pl-check--disabled')}>
           <input
             type="radio"
             name={name}
@@ -217,17 +217,17 @@ export function Slider({ value, onChange, min = 0, max = 100, step = 1, label, s
   const autoId = useId();
   const sliderId = id ?? autoId;
   return (
-    <div className="oc-field">
+    <div className="pl-field">
       {label && (
-        <label className="oc-label" htmlFor={sliderId}>
+        <label className="pl-label" htmlFor={sliderId}>
           {label}
-          {showValue && <span className="oc-hint"> {value}</span>}
+          {showValue && <span className="pl-hint"> {value}</span>}
         </label>
       )}
       <input
         id={sliderId}
         type="range"
-        className="oc-slider"
+        className="pl-slider"
         min={min}
         max={max}
         step={step}
@@ -262,7 +262,7 @@ export function Segmented({ options, value, onChange, label, className }: Segmen
     (e.currentTarget.parentElement?.children[(index + dir + options.length) % options.length] as HTMLElement | undefined)?.focus();
   };
   return (
-    <div role="radiogroup" aria-label={label} className={cx('oc-segmented', className)}>
+    <div role="radiogroup" aria-label={label} className={cx('pl-segmented', className)}>
       {options.map((o, i) => {
         const checked = o.value === value;
         return (
@@ -272,7 +272,7 @@ export function Segmented({ options, value, onChange, label, className }: Segmen
             role="radio"
             aria-checked={checked}
             tabIndex={checked ? 0 : -1}
-            className="oc-segmented__item"
+            className="pl-segmented__item"
             onClick={() => onChange(o.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
           >

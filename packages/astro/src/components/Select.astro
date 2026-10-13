@@ -17,18 +17,18 @@ interface Props extends HTMLAttributes<'select'> {
 }
 
 const { label, hint, error, options = [], placeholder, value, id, class: className, ...rest } = Astro.props;
-const selectId = id ?? `oc-select-${Math.random().toString(36).slice(2, 8)}`;
+const selectId = id ?? `pl-select-${Math.random().toString(36).slice(2, 8)}`;
 const describedBy = error ? `${selectId}-err` : hint ? `${selectId}-hint` : undefined;
 ---
 
-<div class:list={['oc-field', error && 'oc-field--error']}>
-  {label && <label class="oc-label" for={selectId}>{label}</label>}
-  <select id={selectId} class:list={['oc-select', className]} aria-invalid={error ? 'true' : undefined} aria-describedby={describedBy} {...rest}>
+<div class:list={['pl-field', error && 'pl-field--error']}>
+  {label && <label class="pl-label" for={selectId}>{label}</label>}
+  <select id={selectId} class:list={['pl-select', className]} aria-invalid={error ? 'true' : undefined} aria-describedby={describedBy} {...rest}>
     {placeholder && <option value="">{placeholder}</option>}
     {options.map((o) => (
       <option value={o.value} selected={o.value === value} disabled={o.disabled}>{o.label}</option>
     ))}
     <slot />
   </select>
-  {error ? <span id={`${selectId}-err`} class="oc-error-text">{error}</span> : hint ? <span id={`${selectId}-hint`} class="oc-hint">{hint}</span> : null}
+  {error ? <span id={`${selectId}-err`} class="pl-error-text">{error}</span> : hint ? <span id={`${selectId}-hint`} class="pl-hint">{hint}</span> : null}
 </div>

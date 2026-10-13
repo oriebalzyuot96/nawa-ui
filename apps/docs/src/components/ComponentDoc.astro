@@ -14,7 +14,7 @@ const hasDemo = entry.demo !== 'none';
 <section class="doc" id={entry.id} aria-labelledby={headingId}>
   <h2 id={headingId} class="doc__title">
     {entry.name}
-    <a class="doc__anchor" href={`#${entry.id}`}><span aria-hidden="true">#</span><span class="oc-sr-only">Link to {entry.name}</span></a>
+    <a class="doc__anchor" href={`#${entry.id}`}><span aria-hidden="true">#</span><span class="pl-sr-only">Link to {entry.name}</span></a>
   </h2>
   <p class="doc__desc">{entry.description}</p>
   {entry.note && <p class="muted doc__note">{entry.note}</p>}
@@ -54,7 +54,7 @@ const hasDemo = entry.demo !== 'none';
       {
         entry.keys && entry.keys.length > 0 && (
           <table class="keys-table">
-            <caption class="oc-sr-only">{entry.name} keyboard support</caption>
+            <caption class="pl-sr-only">{entry.name} keyboard support</caption>
             <thead>
               <tr><th scope="col">Key</th><th scope="col">Action</th></tr>
             </thead>
@@ -73,6 +73,6 @@ const hasDemo = entry.demo !== 'none';
     </div>
   </div>
 
-  <h3 class="oc-sr-only">Code</h3>
+  <h3 class="pl-sr-only">Code</h3>
   <CodeTabs label={entry.name} code={entry.code} />
 </section>

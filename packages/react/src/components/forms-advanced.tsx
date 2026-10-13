@@ -27,7 +27,7 @@ import {
   type Ref,
   type RefObject,
 } from 'react';
-import { trapFocus } from '@orca-ui/core/a11y';
+import { trapFocus } from '@pelagic-ui/core/a11y';
 import { cx } from '../utils';
 import type { FieldMetaProps } from './forms';
 
@@ -88,8 +88,8 @@ function keepFocus(e: ReactMouseEvent) {
 }
 
 function fieldMessage(id: string, hint?: string, error?: string) {
-  if (error) return { describedBy: `${id}-err`, node: <span id={`${id}-err`} className="oc-error-text">{error}</span> };
-  if (hint) return { describedBy: `${id}-hint`, node: <span id={`${id}-hint`} className="oc-hint">{hint}</span> };
+  if (error) return { describedBy: `${id}-err`, node: <span id={`${id}-err`} className="pl-error-text">{error}</span> };
+  if (hint) return { describedBy: `${id}-hint`, node: <span id={`${id}-hint`} className="pl-hint">{hint}</span> };
   return { describedBy: undefined, node: null };
 }
 
@@ -171,12 +171,12 @@ const ComboTrigger = forwardRef<HTMLDivElement, ComboTriggerProps>(function Comb
       aria-invalid={p.invalid || undefined}
       aria-describedby={p.describedBy}
       aria-activedescendant={p.activeDescendant}
-      className={cx('oc-select-trigger', p.open && 'is-open', p.disabled && 'is-disabled')}
+      className={cx('pl-select-trigger', p.open && 'is-open', p.disabled && 'is-disabled')}
       onClick={() => !p.disabled && p.onToggle()}
       onKeyDown={p.disabled ? undefined : p.onKeyDown}
     >
-      <span className="oc-select-trigger__value">{p.children}</span>
-      <Chevron className="oc-select-trigger__icon" />
+      <span className="pl-select-trigger__value">{p.children}</span>
+      <Chevron className="pl-select-trigger__icon" />
     </div>
   );
 });
@@ -361,7 +361,7 @@ export const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(func
       aria-invalid={error ? true : undefined}
       aria-describedby={msg.describedBy}
       aria-busy={loading || undefined}
-      className={cx('oc-input', 'oc-autocomplete__input')}
+      className={cx('pl-input', 'pl-autocomplete__input')}
       placeholder={placeholder}
       disabled={disabled}
       value={query}
@@ -371,19 +371,19 @@ export const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(func
   );
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <label className="oc-label" htmlFor={inputId}>
+        <label className="pl-label" htmlFor={inputId}>
           {label}
         </label>
       )}
-      <div ref={rootRef} className={cx('oc-autocomplete', multiple && 'oc-autocomplete--multiple')} onBlur={onBlur}>
+      <div ref={rootRef} className={cx('pl-autocomplete', multiple && 'pl-autocomplete--multiple')} onBlur={onBlur}>
         {multiple ? (
-          <div className={cx('oc-autocomplete__control', disabled && 'is-disabled')}>
+          <div className={cx('pl-autocomplete__control', disabled && 'is-disabled')}>
             {chosen.map((o) => (
-              <span key={o.value} className="oc-tag oc-chip">
+              <span key={o.value} className="pl-tag pl-chip">
                 {o.label}
-                <button type="button" className="oc-tag__remove" aria-label={removeLabel(o)} disabled={disabled} onClick={() => remove(o)}>
+                <button type="button" className="pl-tag__remove" aria-label={removeLabel(o)} disabled={disabled} onClick={() => remove(o)}>
                   ×
                 </button>
               </span>
@@ -394,13 +394,13 @@ export const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(func
           input
         )}
         {open && (
-          <ul id={listId} role="listbox" aria-label={label} className="oc-popup oc-optionlist" onMouseDown={keepFocus}>
+          <ul id={listId} role="listbox" aria-label={label} className="pl-popup pl-optionlist" onMouseDown={keepFocus}>
             {loading ? (
-              <li role="presentation" className="oc-optionlist__message">
+              <li role="presentation" className="pl-optionlist__message">
                 {loadingMessage}
               </li>
             ) : items.length === 0 ? (
-              <li role="presentation" className="oc-optionlist__message">
+              <li role="presentation" className="pl-optionlist__message">
                 {emptyMessage}
               </li>
             ) : (
@@ -411,7 +411,7 @@ export const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(func
                   role="option"
                   aria-selected={i === active}
                   aria-disabled={o.disabled || undefined}
-                  className={cx('oc-option', i === active && 'is-active')}
+                  className={cx('pl-option', i === active && 'is-active')}
                   onMouseMove={() => !o.disabled && active !== i && setActive(i)}
                   onClick={() => pick(o)}
                 >
@@ -421,7 +421,7 @@ export const AutoComplete = forwardRef<HTMLInputElement, AutoCompleteProps>(func
             )}
           </ul>
         )}
-        <span role="status" className="oc-sr-only">
+        <span role="status" className="pl-sr-only">
           {status}
         </span>
       </div>
@@ -573,24 +573,24 @@ export function MultiSelect({
 
   const chosen = options.filter((o) => selectedSet.has(o.value));
   let shown: ReactNode;
-  if (!chosen.length) shown = <span className="oc-select-trigger__placeholder">{placeholder}</span>;
+  if (!chosen.length) shown = <span className="pl-select-trigger__placeholder">{placeholder}</span>;
   else if (chosen.length > maxSelectedLabels) shown = selectedItemsLabel.replace('{0}', String(chosen.length));
   else if (display === 'chip')
     shown = chosen.map((o) => (
-      <span key={o.value} className="oc-tag oc-chip">
+      <span key={o.value} className="pl-tag pl-chip">
         {o.label}
       </span>
     ));
   else shown = chosen.map((o) => o.label).join(', ');
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <span id={labelId} className="oc-label" onClick={() => triggerRef.current?.focus()}>
+        <span id={labelId} className="pl-label" onClick={() => triggerRef.current?.focus()}>
           {label}
         </span>
       )}
-      <div ref={rootRef} className={cx('oc-dropdown', showClear && chosen.length > 0 && 'oc-dropdown--clearable')} onBlur={onBlur}>
+      <div ref={rootRef} className={cx('pl-dropdown', showClear && chosen.length > 0 && 'pl-dropdown--clearable')} onBlur={onBlur}>
         <ComboTrigger
           ref={triggerRef}
           id={`${baseId}-trigger`}
@@ -611,7 +611,7 @@ export function MultiSelect({
         {showClear && chosen.length > 0 && !disabled && (
           <button
             type="button"
-            className="oc-dropdown__clear"
+            className="pl-dropdown__clear"
             aria-label={clearLabel}
             onClick={() => {
               setSelected([]);
@@ -622,11 +622,11 @@ export function MultiSelect({
           </button>
         )}
         {open && (
-          <div className="oc-popup oc-dropdown__panel" onMouseDown={keepFocus}>
+          <div className="pl-popup pl-dropdown__panel" onMouseDown={keepFocus}>
             {(showSelectAll || filter) && (
-              <div className="oc-dropdown__header">
+              <div className="pl-dropdown__header">
                 {showSelectAll && (
-                  <label className="oc-check">
+                  <label className="pl-check">
                     <input
                       type="checkbox"
                       ref={(el) => {
@@ -643,7 +643,7 @@ export function MultiSelect({
                   <input
                     ref={filterRef}
                     type="text"
-                    className="oc-input oc-dropdown__filter"
+                    className="pl-input pl-dropdown__filter"
                     aria-label={filterLabel}
                     aria-controls={listId}
                     aria-activedescendant={active >= 0 ? optionId(active) : undefined}
@@ -659,9 +659,9 @@ export function MultiSelect({
                 )}
               </div>
             )}
-            <ul id={listId} role="listbox" aria-multiselectable="true" aria-labelledby={label ? labelId : undefined} aria-label={label ? undefined : placeholder} className="oc-optionlist">
+            <ul id={listId} role="listbox" aria-multiselectable="true" aria-labelledby={label ? labelId : undefined} aria-label={label ? undefined : placeholder} className="pl-optionlist">
               {items.length === 0 ? (
-                <li role="presentation" className="oc-optionlist__message">
+                <li role="presentation" className="pl-optionlist__message">
                   {emptyMessage}
                 </li>
               ) : (
@@ -674,13 +674,13 @@ export function MultiSelect({
                       role="option"
                       aria-selected={isSel}
                       aria-disabled={o.disabled || undefined}
-                      className={cx('oc-option', i === active && 'is-active')}
+                      className={cx('pl-option', i === active && 'is-active')}
                       onClick={() => {
                         setActive(i);
                         toggle(o);
                       }}
                     >
-                      <span className="oc-option__check" aria-hidden="true">
+                      <span className="pl-option__check" aria-hidden="true">
                         {isSel && <CheckIcon />}
                       </span>
                       {o.label}
@@ -816,18 +816,18 @@ export function Listbox({
   };
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <span id={labelId} className="oc-label">
+        <span id={labelId} className="pl-label">
           {label}
         </span>
       )}
-      <div className={cx('oc-listbox', disabled && 'is-disabled')}>
+      <div className={cx('pl-listbox', disabled && 'is-disabled')}>
         {filter && (
-          <div className="oc-listbox__header">
+          <div className="pl-listbox__header">
             <input
               type="text"
-              className="oc-input"
+              className="pl-input"
               aria-label={filterLabel}
               aria-controls={listId}
               placeholder={filterPlaceholder}
@@ -858,7 +858,7 @@ export function Listbox({
           aria-disabled={disabled || undefined}
           aria-invalid={error ? true : undefined}
           aria-describedby={msg.describedBy}
-          className="oc-optionlist oc-listbox__list"
+          className="pl-optionlist pl-listbox__list"
           onFocus={() => {
             if (active >= 0) return;
             const i = items.findIndex((o) => selected.has(o.value) && !o.disabled);
@@ -867,7 +867,7 @@ export function Listbox({
           onKeyDown={onKeyDown}
         >
           {items.length === 0 ? (
-            <li role="presentation" className="oc-optionlist__message">
+            <li role="presentation" className="pl-optionlist__message">
               {emptyMessage}
             </li>
           ) : (
@@ -880,7 +880,7 @@ export function Listbox({
                   role="option"
                   aria-selected={isSel}
                   aria-disabled={o.disabled || undefined}
-                  className={cx('oc-option', i === active && 'is-active')}
+                  className={cx('pl-option', i === active && 'is-active')}
                   onMouseDown={(e) => e.preventDefault()}
                   onClick={() => {
                     setActive(i);
@@ -889,7 +889,7 @@ export function Listbox({
                   }}
                 >
                   {multiple && (
-                    <span className="oc-option__check" aria-hidden="true">
+                    <span className="pl-option__check" aria-hidden="true">
                       {isSel && <CheckIcon />}
                     </span>
                   )}
@@ -1030,7 +1030,7 @@ export function CascadeSelect({ label, hint, error, options, value, defaultValue
       id={depth === 0 ? treeId : undefined}
       aria-labelledby={depth === 0 && label ? labelId : undefined}
       aria-label={depth === 0 && !label ? placeholder : undefined}
-      className={cx('oc-optionlist', 'oc-cascade__list', depth === 0 ? 'oc-popup' : 'oc-cascade__sublist')}
+      className={cx('pl-optionlist', 'pl-cascade__list', depth === 0 ? 'pl-popup' : 'pl-cascade__sublist')}
       onKeyDown={depth === 0 ? onTreeKey : undefined}
       onMouseDown={depth === 0 ? keepFocus : undefined}
     >
@@ -1055,15 +1055,15 @@ export function CascadeSelect({ label, hint, error, options, value, defaultValue
             aria-selected={hasKids ? undefined : item.value === current}
             aria-disabled={item.disabled || undefined}
             tabIndex={focused ? 0 : -1}
-            className={cx('oc-option', 'oc-cascade__item', focused && 'is-active', onPath && 'is-on-path')}
+            className={cx('pl-option', 'pl-cascade__item', focused && 'is-active', onPath && 'is-on-path')}
             onClick={(e) => {
               e.stopPropagation();
               setPath(p);
               activate(p);
             }}
           >
-            <span className="oc-cascade__label">{item.label}</span>
-            {hasKids && <Chevron className="oc-cascade__arrow" />}
+            <span className="pl-cascade__label">{item.label}</span>
+            {hasKids && <Chevron className="pl-cascade__arrow" />}
             {expanded && renderLevel(item.children!, depth + 1, p)}
           </li>
         );
@@ -1072,13 +1072,13 @@ export function CascadeSelect({ label, hint, error, options, value, defaultValue
   );
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <span id={labelId} className="oc-label" onClick={() => triggerRef.current?.focus()}>
+        <span id={labelId} className="pl-label" onClick={() => triggerRef.current?.focus()}>
           {label}
         </span>
       )}
-      <div ref={rootRef} className="oc-dropdown oc-cascade" onBlur={onBlur}>
+      <div ref={rootRef} className="pl-dropdown pl-cascade" onBlur={onBlur}>
         <ComboTrigger
           ref={triggerRef}
           id={`${baseId}-trigger`}
@@ -1098,7 +1098,7 @@ export function CascadeSelect({ label, hint, error, options, value, defaultValue
             }
           }}
         >
-          {selectedOption ? selectedOption.label : <span className="oc-select-trigger__placeholder">{placeholder}</span>}
+          {selectedOption ? selectedOption.label : <span className="pl-select-trigger__placeholder">{placeholder}</span>}
         </ComboTrigger>
         {open && renderLevel(options, 0, [])}
       </div>
@@ -1303,18 +1303,18 @@ export function TreeSelect({
   const chosenLabels = checkbox
     ? allLeaves.filter((k) => selectedKeys.has(k)).map((k) => findTreeNode(nodes, k)?.label ?? k)
     : [...selectedKeys].map((k) => findTreeNode(nodes, k)?.label ?? k);
-  if (!chosenLabels.length) shown = <span className="oc-select-trigger__placeholder">{placeholder}</span>;
+  if (!chosenLabels.length) shown = <span className="pl-select-trigger__placeholder">{placeholder}</span>;
   else if (chosenLabels.length > maxSelectedLabels) shown = selectedItemsLabel.replace('{0}', String(chosenLabels.length));
   else shown = chosenLabels.join(', ');
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <span id={labelId} className="oc-label" onClick={() => triggerRef.current?.focus()}>
+        <span id={labelId} className="pl-label" onClick={() => triggerRef.current?.focus()}>
           {label}
         </span>
       )}
-      <div ref={rootRef} className="oc-dropdown oc-treeselect" onBlur={onBlur}>
+      <div ref={rootRef} className="pl-dropdown pl-treeselect" onBlur={onBlur}>
         <ComboTrigger
           ref={triggerRef}
           id={`${baseId}-trigger`}
@@ -1343,7 +1343,7 @@ export function TreeSelect({
             aria-labelledby={label ? labelId : undefined}
             aria-label={label ? undefined : placeholder}
             aria-multiselectable={checkbox || undefined}
-            className="oc-popup oc-optionlist oc-treeselect__tree"
+            className="pl-popup pl-optionlist pl-treeselect__tree"
             onKeyDown={onTreeKey}
             onMouseDown={keepFocus}
           >
@@ -1367,15 +1367,15 @@ export function TreeSelect({
                   aria-checked={state}
                   aria-disabled={node.disabled || undefined}
                   tabIndex={node.key === focusKey ? 0 : -1}
-                  className={cx('oc-option', 'oc-treeselect__item', node.key === focusKey && 'is-active')}
-                  style={{ '--oc-level': level - 1 } as CSSProperties}
+                  className={cx('pl-option', 'pl-treeselect__item', node.key === focusKey && 'is-active')}
+                  style={{ '--pl-level': level - 1 } as CSSProperties}
                   onClick={() => {
                     setFocusKey(node.key);
                     choose(node);
                   }}
                 >
                   <span
-                    className="oc-treeselect__toggle"
+                    className="pl-treeselect__toggle"
                     aria-hidden="true"
                     onClick={(e) => {
                       if (!hasKids) return;
@@ -1387,7 +1387,7 @@ export function TreeSelect({
                     {hasKids && <Chevron />}
                   </span>
                   {checkbox && (
-                    <span className="oc-option__check" aria-hidden="true">
+                    <span className="pl-option__check" aria-hidden="true">
                       {state === true ? <CheckIcon /> : state === 'mixed' ? <MinusIcon /> : null}
                     </span>
                   )}
@@ -1564,13 +1564,13 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
   const atMin = min !== undefined && num != null && num <= min;
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
+    <div className={cx('pl-field', error && 'pl-field--error')}>
       {label && (
-        <label className="oc-label" htmlFor={inputId}>
+        <label className="pl-label" htmlFor={inputId}>
           {label}
         </label>
       )}
-      <div className={cx('oc-inputnumber', showButtons && 'oc-inputnumber--buttons')}>
+      <div className={cx('pl-inputnumber', showButtons && 'pl-inputnumber--buttons')}>
         <input
           {...rest}
           ref={ref}
@@ -1585,7 +1585,7 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
           aria-valuetext={num == null ? undefined : format(num)}
           aria-invalid={error ? true : undefined}
           aria-describedby={joinIds(msg.describedBy, rest['aria-describedby'])}
-          className={cx('oc-input', className)}
+          className={cx('pl-input', className)}
           disabled={disabled}
           readOnly={readOnly}
           value={draft ?? format(num)}
@@ -1606,23 +1606,23 @@ export const InputNumber = forwardRef<HTMLInputElement, InputNumberProps>(functi
           onKeyDown={handleKeyDown}
         />
         {showButtons && (
-          <span className="oc-inputnumber__buttons">
+          <span className="pl-inputnumber__buttons">
             <button
               type="button"
               tabIndex={-1}
-              className="oc-inputnumber__btn"
+              className="pl-inputnumber__btn"
               aria-label={incrementLabel}
               aria-controls={inputId}
               disabled={disabled || readOnly || atMax}
               onMouseDown={(e) => e.preventDefault()}
               onClick={() => spin(1)}
             >
-              <Chevron className="oc-inputnumber__up" />
+              <Chevron className="pl-inputnumber__up" />
             </button>
             <button
               type="button"
               tabIndex={-1}
-              className="oc-inputnumber__btn"
+              className="pl-inputnumber__btn"
               aria-label={decrementLabel}
               aria-controls={inputId}
               disabled={disabled || readOnly || atMin}
@@ -1760,9 +1760,9 @@ export const InputMask = forwardRef<HTMLInputElement, InputMaskProps>(function I
   };
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
+    <div className={cx('pl-field', error && 'pl-field--error')}>
       {label && (
-        <label className="oc-label" htmlFor={inputId}>
+        <label className="pl-label" htmlFor={inputId}>
           {label}
         </label>
       )}
@@ -1775,7 +1775,7 @@ export const InputMask = forwardRef<HTMLInputElement, InputMaskProps>(function I
         id={inputId}
         type="text"
         autoComplete="off"
-        className={cx('oc-input', 'oc-inputmask', className)}
+        className={cx('pl-input', 'pl-inputmask', className)}
         aria-invalid={error ? true : undefined}
         aria-describedby={joinIds(msg.describedBy, rest['aria-describedby'])}
         value={focused || current ? masked(current) : ''}
@@ -1982,15 +1982,15 @@ export function InputOtp({
   const state = error ? 'error' : success ? 'success' : undefined;
   const hidden = mask && !revealed;
   const message = error ? (
-    <span id={msgId} className="oc-error-text" role="alert">
+    <span id={msgId} className="pl-error-text" role="alert">
       {error}
     </span>
   ) : typeof success === 'string' ? (
-    <span id={msgId} className="oc-otp__success" role="status">
+    <span id={msgId} className="pl-otp__success" role="status">
       {success}
     </span>
   ) : hint ? (
-    <span id={msgId} className="oc-hint">
+    <span id={msgId} className="pl-hint">
       {hint}
     </span>
   ) : null;
@@ -2000,7 +2000,7 @@ export function InputOtp({
     const ch = code[i] ?? '';
     const active = focused === i;
     cells.push(
-      <span key={`c${i}`} className="oc-otp__slot" data-active={active ? '' : undefined} data-filled={ch ? '' : undefined}>
+      <span key={`c${i}`} className="pl-otp__slot" data-active={active ? '' : undefined} data-filled={ch ? '' : undefined}>
         <input
           ref={(el) => {
             refs.current[i] = el;
@@ -2015,7 +2015,7 @@ export function InputOtp({
           autoFocus={autoFocus && i === 0}
           aria-label={cellLabel(i + 1, length)}
           aria-invalid={error ? true : undefined}
-          className="oc-input oc-otp__cell"
+          className="pl-input pl-otp__cell"
           disabled={disabled}
           value={ch}
           onFocus={(e) => {
@@ -2036,12 +2036,12 @@ export function InputOtp({
           onKeyDown={(e) => onKeyDown(e, i)}
           onPaste={(e) => onPaste(e, i)}
         />
-        <span className="oc-otp__caret" aria-hidden="true" />
+        <span className="pl-otp__caret" aria-hidden="true" />
       </span>,
     );
     if (groupEnds.has(i + 1)) {
       cells.push(
-        <span key={`s${i}`} className="oc-otp__sep" aria-hidden="true">
+        <span key={`s${i}`} className="pl-otp__sep" aria-hidden="true">
           {separator}
         </span>,
       );
@@ -2049,31 +2049,31 @@ export function InputOtp({
   }
 
   return (
-    <div className={cx('oc-field oc-otp-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field pl-otp-field', error && 'pl-field--error', className)}>
       {label && (
-        <span id={labelId} className="oc-label">
+        <span id={labelId} className="pl-label">
           {label}
         </span>
       )}
-      <div className="oc-otp__row">
+      <div className="pl-otp__row">
         <div
           ref={groupRef}
           role="group"
           dir="ltr"
           aria-labelledby={label ? labelId : undefined}
           aria-describedby={message ? msgId : undefined}
-          className="oc-otp"
+          className="pl-otp"
           data-state={state}
         >
           {cells}
           {success && !error && (
-            <span className="oc-otp__check" aria-hidden="true">
+            <span className="pl-otp__check" aria-hidden="true">
               <CheckIcon />
             </span>
           )}
         </div>
         {mask && revealable && (
-          <button type="button" className="oc-btn oc-btn--ghost oc-btn--sm oc-otp__reveal" aria-pressed={revealed} disabled={disabled} onClick={() => setRevealed((r) => !r)}>
+          <button type="button" className="pl-btn pl-btn--ghost pl-btn--sm pl-otp__reveal" aria-pressed={revealed} disabled={disabled} onClick={() => setRevealed((r) => !r)}>
             <EyeIcon off={revealed} />
             {revealed ? L.hide : L.show}
           </button>
@@ -2082,13 +2082,13 @@ export function InputOtp({
       {message}
       {resendSlot ??
         (resendAfter !== undefined && (
-          <div className="oc-otp__resend">
+          <div className="pl-otp__resend">
             {remaining > 0 ? (
-              <span className="oc-otp__countdown">{L.resendIn(remaining)}</span>
+              <span className="pl-otp__countdown">{L.resendIn(remaining)}</span>
             ) : (
               <button
                 type="button"
-                className="oc-btn oc-btn--ghost oc-btn--sm"
+                className="pl-btn pl-btn--ghost pl-btn--sm"
                 disabled={disabled}
                 onClick={() => {
                   onResend?.();
@@ -2191,19 +2191,19 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(function Pas
   const reqId = `${inputId}-reqs`;
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error')}>
+    <div className={cx('pl-field', error && 'pl-field--error')}>
       {label && (
-        <label className="oc-label" htmlFor={inputId}>
+        <label className="pl-label" htmlFor={inputId}>
           {label}
         </label>
       )}
-      <div className={cx('oc-password', toggleMask && 'oc-password--toggle')}>
+      <div className={cx('pl-password', toggleMask && 'pl-password--toggle')}>
         <input
           {...rest}
           ref={ref}
           id={inputId}
           type={visible ? 'text' : 'password'}
-          className={cx('oc-input', className)}
+          className={cx('pl-input', className)}
           aria-invalid={error ? true : undefined}
           aria-describedby={joinIds(msg.describedBy, feedback && strengthId, rules.length > 0 && reqId, rest['aria-describedby'])}
           {...(value !== undefined ? { value } : { defaultValue })}
@@ -2215,7 +2215,7 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(function Pas
         {toggleMask && (
           <button
             type="button"
-            className="oc-password__toggle"
+            className="pl-password__toggle"
             aria-label={showLabel}
             aria-pressed={visible}
             aria-controls={inputId}
@@ -2227,28 +2227,28 @@ export const Password = forwardRef<HTMLInputElement, PasswordProps>(function Pas
         )}
       </div>
       {feedback && (
-        <div className="oc-password__meter" data-strength={strength ?? undefined}>
-          <span className="oc-password__bars" aria-hidden="true">
+        <div className="pl-password__meter" data-strength={strength ?? undefined}>
+          <span className="pl-password__bars" aria-hidden="true">
             <span />
             <span />
             <span />
           </span>
-          <span id={strengthId} className="oc-password__strength" aria-live="polite">
+          <span id={strengthId} className="pl-password__strength" aria-live="polite">
             {strength ? `${strengthPrefix} ${labels[strength]}` : ''}
           </span>
         </div>
       )}
       {rules.length > 0 && (
-        <ul id={reqId} className="oc-password__reqs" aria-label={requirementsLabel}>
+        <ul id={reqId} className="pl-password__reqs" aria-label={requirementsLabel}>
           {rules.map((r) => {
             const met = r.test(current);
             return (
-              <li key={r.label} className={cx('oc-password__req', met && 'is-met')}>
-                <span aria-hidden="true" className="oc-password__req-icon">
+              <li key={r.label} className={cx('pl-password__req', met && 'is-met')}>
+                <span aria-hidden="true" className="pl-password__req-icon">
                   {met ? '✓' : '○'}
                 </span>
                 {r.label}
-                <span className="oc-sr-only">{met ? ' (met)' : ' (not met)'}</span>
+                <span className="pl-sr-only">{met ? ' (met)' : ' (not met)'}</span>
               </li>
             );
           })}
@@ -2309,9 +2309,9 @@ export function Rating({
 
   if (readOnly) {
     return (
-      <div role="img" aria-label={`${label}: ${current} out of ${stars}`} className={cx('oc-rating', 'oc-rating--readonly', className)}>
+      <div role="img" aria-label={`${label}: ${current} out of ${stars}`} className={cx('pl-rating', 'pl-rating--readonly', className)}>
         {range.map((n) => (
-          <span key={n} className={cx('oc-rating__star', n <= current && 'is-filled')}>
+          <span key={n} className={cx('pl-rating__star', n <= current && 'is-filled')}>
             <StarIcon />
           </span>
         ))}
@@ -2355,8 +2355,8 @@ export function Rating({
   };
 
   return (
-    <div className={cx('oc-rating', disabled && 'is-disabled', className)}>
-      <div role="radiogroup" aria-label={label} aria-disabled={disabled || undefined} className="oc-rating__stars">
+    <div className={cx('pl-rating', disabled && 'is-disabled', className)}>
+      <div role="radiogroup" aria-label={label} aria-disabled={disabled || undefined} className="pl-rating__stars">
         {range.map((n) => {
           const checked = current === n;
           return (
@@ -2371,7 +2371,7 @@ export function Rating({
               aria-label={starLabel(n)}
               tabIndex={(current ? checked : n === 1) ? 0 : -1}
               disabled={disabled}
-              className={cx('oc-rating__star', n <= current && 'is-filled')}
+              className={cx('pl-rating__star', n <= current && 'is-filled')}
               onClick={() => setCurrent(n)}
               onKeyDown={(e) => onKeyDown(e, n)}
             >
@@ -2381,7 +2381,7 @@ export function Rating({
         })}
       </div>
       {cancel && (
-        <button type="button" className="oc-rating__clear" aria-label={clearLabel} disabled={disabled || !current} onClick={() => setCurrent(0)}>
+        <button type="button" className="pl-rating__clear" aria-label={clearLabel} disabled={disabled || !current} onClick={() => setCurrent(0)}>
           ×
         </button>
       )}
@@ -2489,7 +2489,7 @@ export function Knob({
       aria-valuetext={text}
       aria-disabled={disabled || undefined}
       aria-readonly={readOnly || undefined}
-      className={cx('oc-knob', disabled && 'is-disabled', className)}
+      className={cx('pl-knob', disabled && 'is-disabled', className)}
       style={{ width: size, height: size }}
       onKeyDown={onKeyDown}
       onPointerDown={(e) => {
@@ -2509,10 +2509,10 @@ export function Knob({
       }}
     >
       <svg ref={svgRef} viewBox="0 0 100 100" width={size} height={size} aria-hidden="true" focusable="false">
-        <path d={knobArc(-KNOB_ARC, KNOB_ARC, r)} className="oc-knob__range" strokeWidth={strokeWidth} />
-        {v > min && <path d={knobArc(-KNOB_ARC, angle, r)} className="oc-knob__value" strokeWidth={strokeWidth} />}
+        <path d={knobArc(-KNOB_ARC, KNOB_ARC, r)} className="pl-knob__range" strokeWidth={strokeWidth} />
+        {v > min && <path d={knobArc(-KNOB_ARC, angle, r)} className="pl-knob__value" strokeWidth={strokeWidth} />}
         {showValue && (
-          <text x="50" y="50" textAnchor="middle" dominantBaseline="central" className="oc-knob__text">
+          <text x="50" y="50" textAnchor="middle" dominantBaseline="central" className="pl-knob__text">
             {text}
           </text>
         )}
@@ -2956,7 +2956,7 @@ export function ColorPicker({
   const textValue = formatColor({ ...rgba, a: alpha ? rgba.a : 1 }, fmt);
   const draftInvalid = draft !== null && draft !== '' && !parseColor(draft);
   const ratio = contrastWith ? contrastRatio({ ...rgba, a: alpha ? rgba.a : 1 }, contrastWith) : 0;
-  const checker = { '--oc-cp-color': formatColor({ ...rgba, a: alpha ? rgba.a : 1 }, 'rgb') } as CSSProperties;
+  const checker = { '--pl-cp-color': formatColor({ ...rgba, a: alpha ? rgba.a : 1 }, 'rgb') } as CSSProperties;
 
   const swatch = (hex: string, name: string, key: string) => {
     const normalized = toOutput(parseColor(hex) ?? parsed);
@@ -2964,8 +2964,8 @@ export function ColorPicker({
       <button
         key={key}
         type="button"
-        className="oc-colorpicker__swatch"
-        style={{ '--oc-cp-color': hex } as CSSProperties}
+        className="pl-colorpicker__swatch"
+        style={{ '--pl-cp-color': hex } as CSSProperties}
         aria-label={name}
         aria-pressed={normalized === currentHex}
         disabled={disabled}
@@ -2975,7 +2975,7 @@ export function ColorPicker({
   };
 
   const presetRow = presets && presets.length > 0 && (
-    <div role="group" aria-label={presetsLabel} className="oc-colorpicker__presets">
+    <div role="group" aria-label={presetsLabel} className="pl-colorpicker__presets">
       {presets.map((p) => {
         const preset = typeof p === 'string' ? { value: p, label: p } : p;
         return swatch(normalizeHex(preset.value) ?? preset.value, preset.label, preset.value);
@@ -2988,7 +2988,7 @@ export function ColorPicker({
       id={panelId}
       role={mode === 'popover' ? 'dialog' : 'group'}
       aria-label={pickerLabel}
-      className={cx('oc-colorpicker__panel', mode === 'popover' && 'oc-colorpicker__panel--popover')}
+      className={cx('pl-colorpicker__panel', mode === 'popover' && 'pl-colorpicker__panel--popover')}
       hidden={!open}
       dir="ltr"
       onKeyDown={(e) => {
@@ -2999,7 +2999,7 @@ export function ColorPicker({
         }
       }}
     >
-      <div className="oc-colorpicker__area" style={{ '--oc-cp-hue': `hsl(${hDeg} 100% 50%)` } as CSSProperties} {...area}>
+      <div className="pl-colorpicker__area" style={{ '--pl-cp-hue': `hsl(${hDeg} 100% 50%)` } as CSSProperties} {...area}>
         <div
           ref={areaThumbRef}
           role="slider"
@@ -3010,8 +3010,8 @@ export function ColorPicker({
           aria-valuenow={sPct}
           aria-valuetext={L.areaValue(sPct, vPct)}
           aria-disabled={disabled || undefined}
-          className="oc-colorpicker__thumb"
-          style={{ left: `${hsva.s * 100}%`, top: `${(1 - hsva.v) * 100}%`, '--oc-cp-color': opaqueHex } as CSSProperties}
+          className="pl-colorpicker__thumb"
+          style={{ left: `${hsva.s * 100}%`, top: `${(1 - hsva.v) * 100}%`, '--pl-cp-color': opaqueHex } as CSSProperties}
           onKeyDown={(e) => {
             if (disabled) return;
             const big = 10;
@@ -3028,8 +3028,8 @@ export function ColorPicker({
           onBlur={() => remember()}
         />
       </div>
-      <div className="oc-colorpicker__sliders">
-        <div className="oc-colorpicker__track oc-colorpicker__track--hue" {...hue}>
+      <div className="pl-colorpicker__sliders">
+        <div className="pl-colorpicker__track pl-colorpicker__track--hue" {...hue}>
           <div
             role="slider"
             tabIndex={disabled ? -1 : 0}
@@ -3040,8 +3040,8 @@ export function ColorPicker({
             aria-valuenow={hDeg}
             aria-valuetext={L.hueValue(hDeg, hueName(hsva.h))}
             aria-disabled={disabled || undefined}
-            className="oc-colorpicker__knob"
-            style={{ left: `${(hsva.h / 360) * 100}%`, '--oc-cp-color': `hsl(${hDeg} 100% 50%)` } as CSSProperties}
+            className="pl-colorpicker__knob"
+            style={{ left: `${(hsva.h / 360) * 100}%`, '--pl-cp-color': `hsl(${hDeg} 100% 50%)` } as CSSProperties}
             onKeyDown={(e) => {
               if (disabled) return;
               const n = sliderKey(e, hDeg, 0, 360, 1, 15);
@@ -3053,7 +3053,7 @@ export function ColorPicker({
           />
         </div>
         {alpha && (
-          <div className="oc-colorpicker__track oc-colorpicker__track--alpha" style={{ '--oc-cp-opaque': opaqueHex } as CSSProperties} {...alphaTrack}>
+          <div className="pl-colorpicker__track pl-colorpicker__track--alpha" style={{ '--pl-cp-opaque': opaqueHex } as CSSProperties} {...alphaTrack}>
             <div
               role="slider"
               tabIndex={disabled ? -1 : 0}
@@ -3064,8 +3064,8 @@ export function ColorPicker({
               aria-valuenow={aPct}
               aria-valuetext={`${aPct}%`}
               aria-disabled={disabled || undefined}
-              className="oc-colorpicker__knob"
-              style={{ left: `${hsva.a * 100}%`, '--oc-cp-color': formatColor(rgba, 'rgb') } as CSSProperties}
+              className="pl-colorpicker__knob"
+              style={{ left: `${hsva.a * 100}%`, '--pl-cp-color': formatColor(rgba, 'rgb') } as CSSProperties}
               onKeyDown={(e) => {
                 if (disabled) return;
                 const n = sliderKey(e, aPct, 0, 100, 1, 10);
@@ -3080,19 +3080,19 @@ export function ColorPicker({
       </div>
       {mode === 'inline' && presetRow}
       {recentMax > 0 && recentList.length > 0 && (
-        <div role="group" aria-label={L.recent} className="oc-colorpicker__presets oc-colorpicker__recent">
-          <span className="oc-colorpicker__caption" aria-hidden="true">
+        <div role="group" aria-label={L.recent} className="pl-colorpicker__presets pl-colorpicker__recent">
+          <span className="pl-colorpicker__caption" aria-hidden="true">
             {L.recent}
           </span>
           {recentList.map((h) => swatch(h, h, `recent-${h}`))}
         </div>
       )}
       {contrastWith && (
-        <div className="oc-colorpicker__contrast">
-          <span className="oc-colorpicker__sample" style={{ background: contrastWith, color: formatColor(rgba, 'rgb') }} aria-hidden="true">
+        <div className="pl-colorpicker__contrast">
+          <span className="pl-colorpicker__sample" style={{ background: contrastWith, color: formatColor(rgba, 'rgb') }} aria-hidden="true">
             Aa
           </span>
-          <span className="oc-colorpicker__ratio">{L.contrast(ratio.toFixed(2), contrastWith)}</span>
+          <span className="pl-colorpicker__ratio">{L.contrast(ratio.toFixed(2), contrastWith)}</span>
           {[
             ['AA', 4.5],
             ['AA Large', 3],
@@ -3100,8 +3100,8 @@ export function ColorPicker({
           ].map(([name, min]) => {
             const ok = ratio >= (min as number);
             return (
-              <span key={name} className="oc-colorpicker__grade" data-pass={ok ? '' : undefined}>
-                <span aria-hidden="true">{ok ? '✓' : '✕'}</span> {name} <span className="oc-sr-only">{ok ? L.pass : L.fail}</span>
+              <span key={name} className="pl-colorpicker__grade" data-pass={ok ? '' : undefined}>
+                <span aria-hidden="true">{ok ? '✓' : '✕'}</span> {name} <span className="pl-sr-only">{ok ? L.pass : L.fail}</span>
               </span>
             );
           })}
@@ -3116,23 +3116,23 @@ export function ColorPicker({
       role="group"
       aria-labelledby={label ? labelId : undefined}
       aria-label={label ? undefined : pickerLabel}
-      className={cx('oc-field oc-colorpicker-field', error && 'oc-field--error', className)}
+      className={cx('pl-field pl-colorpicker-field', error && 'pl-field--error', className)}
       onBlur={(e) => {
         if (mode === 'popover' && open && !rootRef.current?.contains(e.relatedTarget as Node | null)) setOpen(false);
       }}
     >
       {label && (
-        <span id={labelId} className="oc-label">
+        <span id={labelId} className="pl-label">
           {label}
         </span>
       )}
-      <div className="oc-colorpicker">
+      <div className="pl-colorpicker">
         {mode === 'popover' && (
           <button
             ref={triggerRef}
             id={baseId}
             type="button"
-            className="oc-colorpicker__trigger"
+            className="pl-colorpicker__trigger"
             aria-label={pickerLabel}
             aria-haspopup="dialog"
             aria-expanded={open}
@@ -3142,12 +3142,12 @@ export function ColorPicker({
             style={checker}
             onClick={() => setOpen((o) => !o)}
           >
-            <span className="oc-colorpicker__chip" />
+            <span className="pl-colorpicker__chip" />
           </button>
         )}
-        {mode === 'inline' && <span className="oc-colorpicker__preview" style={checker} aria-hidden="true" />}
+        {mode === 'inline' && <span className="pl-colorpicker__preview" style={checker} aria-hidden="true" />}
         {showInput && formats.length > 1 && (
-          <select className="oc-select oc-colorpicker__format" aria-label={L.format} value={fmt} disabled={disabled} onChange={(e) => setFmt(e.target.value as ColorFormat)}>
+          <select className="pl-select pl-colorpicker__format" aria-label={L.format} value={fmt} disabled={disabled} onChange={(e) => setFmt(e.target.value as ColorFormat)}>
             {formats.map((f) => (
               <option key={f} value={f}>
                 {f.toUpperCase()}
@@ -3159,7 +3159,7 @@ export function ColorPicker({
           <input
             id={mode === 'inline' ? baseId : undefined}
             type="text"
-            className="oc-input oc-colorpicker__hex"
+            className="pl-input pl-colorpicker__hex"
             data-format={fmt}
             aria-label={fmt === 'hex' ? hexLabel : L.value(fmt)}
             aria-invalid={error || draftInvalid ? true : undefined}
@@ -3190,7 +3190,7 @@ export function ColorPicker({
         {canDrop && (
           <button
             type="button"
-            className="oc-btn oc-btn--secondary oc-btn--icon oc-colorpicker__dropper"
+            className="pl-btn pl-btn--secondary pl-btn--icon pl-colorpicker__dropper"
             aria-label={L.eyeDropper}
             disabled={disabled}
             onClick={async () => {
@@ -3535,32 +3535,32 @@ export function DatePicker({
 
   const calendar = (
     <>
-      <div className="oc-datepicker__header">
-        <button type="button" className="oc-datepicker__nav" aria-label={L.previousMonth} disabled={prevDisabled} onClick={() => showMonth(view.year, view.month - 1)}>
-          <Chevron className="oc-datepicker__prev" />
+      <div className="pl-datepicker__header">
+        <button type="button" className="pl-datepicker__nav" aria-label={L.previousMonth} disabled={prevDisabled} onClick={() => showMonth(view.year, view.month - 1)}>
+          <Chevron className="pl-datepicker__prev" />
         </button>
-        <h2 id={headingId} className="oc-sr-only" aria-live="polite">
+        <h2 id={headingId} className="pl-sr-only" aria-live="polite">
           {fmt.title(view.year, view.month)}
         </h2>
-        <select className="oc-datepicker__select" aria-label={L.month} value={view.month} onChange={(e) => showMonth(view.year, Number(e.target.value))}>
+        <select className="pl-datepicker__select" aria-label={L.month} value={view.month} onChange={(e) => showMonth(view.year, Number(e.target.value))}>
           {fmt.months.map((m, i) => (
             <option key={m} value={i}>
               {m}
             </option>
           ))}
         </select>
-        <select className="oc-datepicker__select" aria-label={L.year} value={view.year} onChange={(e) => showMonth(Number(e.target.value), view.month)}>
+        <select className="pl-datepicker__select" aria-label={L.year} value={view.year} onChange={(e) => showMonth(Number(e.target.value), view.month)}>
           {years.map((y) => (
             <option key={y} value={y}>
               {fmt.num(y)}
             </option>
           ))}
         </select>
-        <button type="button" className="oc-datepicker__nav" aria-label={L.nextMonth} disabled={nextDisabled} onClick={() => showMonth(view.year, view.month + 1)}>
-          <Chevron className="oc-datepicker__next" />
+        <button type="button" className="pl-datepicker__nav" aria-label={L.nextMonth} disabled={nextDisabled} onClick={() => showMonth(view.year, view.month + 1)}>
+          <Chevron className="pl-datepicker__next" />
         </button>
       </div>
-      <table ref={gridRef} role="grid" aria-labelledby={headingId} aria-multiselectable={selectionMode !== 'single' || undefined} className="oc-datepicker__grid" onKeyDown={onGridKeyDown}>
+      <table ref={gridRef} role="grid" aria-labelledby={headingId} aria-multiselectable={selectionMode !== 'single' || undefined} className="pl-datepicker__grid" onKeyDown={onGridKeyDown}>
         <thead>
           <tr>
             {fmt.weekdays.map((w) => (
@@ -3574,7 +3574,7 @@ export function DatePicker({
           {weeks.map((week, wi) => (
             <tr key={wi}>
               {week.map((d, di) => {
-                if (!d) return <td key={di} role="presentation" className="oc-datepicker__empty" />;
+                if (!d) return <td key={di} role="presentation" className="pl-datepicker__empty" />;
                 const sel = isSelected(d);
                 const dis = isDisabled(d);
                 const isEdge = selectionMode === 'range' && (sameDay(d, rangeStart) || sameDay(d, rangeEnd));
@@ -3588,7 +3588,7 @@ export function DatePicker({
                     aria-current={sameDay(d, today) ? 'date' : undefined}
                     aria-label={fmt.day(d)}
                     className={cx(
-                      'oc-datepicker__day',
+                      'pl-datepicker__day',
                       sel && (selectionMode !== 'range' || isEdge) && 'is-selected',
                       sel && selectionMode === 'range' && !isEdge && 'is-in-range',
                       sameDay(d, today) && 'is-today',
@@ -3608,25 +3608,25 @@ export function DatePicker({
         </tbody>
       </table>
       {timeMode && (
-        <div className="oc-datepicker__time">
-          <label className="oc-datepicker__time-field">
+        <div className="pl-datepicker__time">
+          <label className="pl-datepicker__time-field">
             <span>{L.hour}</span>
-            <input type="number" className="oc-input" min={0} max={23} value={(selection[0] ?? focusDate).getHours()} onChange={(e) => setTime('h', Number(e.target.value))} />
+            <input type="number" className="pl-input" min={0} max={23} value={(selection[0] ?? focusDate).getHours()} onChange={(e) => setTime('h', Number(e.target.value))} />
           </label>
           <span aria-hidden="true">:</span>
-          <label className="oc-datepicker__time-field">
+          <label className="pl-datepicker__time-field">
             <span>{L.minute}</span>
-            <input type="number" className="oc-input" min={0} max={59} value={(selection[0] ?? focusDate).getMinutes()} onChange={(e) => setTime('m', Number(e.target.value))} />
+            <input type="number" className="pl-input" min={0} max={59} value={(selection[0] ?? focusDate).getMinutes()} onChange={(e) => setTime('m', Number(e.target.value))} />
           </label>
         </div>
       )}
       {(showButtonBar || (!inline && (selectionMode === 'multiple' || timeMode))) && (
-        <div className="oc-datepicker__footer">
+        <div className="pl-datepicker__footer">
           {showButtonBar && (
             <>
               <button
                 type="button"
-                className="oc-btn oc-btn--ghost oc-btn--sm"
+                className="pl-btn pl-btn--ghost pl-btn--sm"
                 onClick={() => {
                   goTo(today, false);
                   selectDate(today);
@@ -3636,7 +3636,7 @@ export function DatePicker({
               </button>
               <button
                 type="button"
-                className="oc-btn oc-btn--ghost oc-btn--sm"
+                className="pl-btn pl-btn--ghost pl-btn--sm"
                 onClick={() => {
                   emit([]);
                   if (!inline) closePopup();
@@ -3647,7 +3647,7 @@ export function DatePicker({
             </>
           )}
           {!inline && (
-            <button type="button" className="oc-btn oc-btn--primary oc-btn--sm oc-datepicker__done" onClick={() => closePopup()}>
+            <button type="button" className="pl-btn pl-btn--primary pl-btn--sm pl-datepicker__done" onClick={() => closePopup()}>
               {L.done}
             </button>
           )}
@@ -3658,13 +3658,13 @@ export function DatePicker({
 
   if (inline) {
     return (
-      <div className={cx('oc-field', error && 'oc-field--error', className)}>
+      <div className={cx('pl-field', error && 'pl-field--error', className)}>
         {label && (
-          <span id={labelId} className="oc-label">
+          <span id={labelId} className="pl-label">
             {label}
           </span>
         )}
-        <div role="group" aria-labelledby={label ? labelId : headingId} aria-describedby={msg.describedBy} className="oc-datepicker oc-datepicker__panel oc-datepicker--inline">
+        <div role="group" aria-labelledby={label ? labelId : headingId} aria-describedby={msg.describedBy} className="pl-datepicker pl-datepicker__panel pl-datepicker--inline">
           {calendar}
         </div>
         {msg.node}
@@ -3697,20 +3697,20 @@ export function DatePicker({
   };
 
   return (
-    <div className={cx('oc-field', error && 'oc-field--error', className)}>
+    <div className={cx('pl-field', error && 'pl-field--error', className)}>
       {label && (
-        <label className="oc-label" htmlFor={baseId}>
+        <label className="pl-label" htmlFor={baseId}>
           {label}
         </label>
       )}
-      <div ref={rootRef} className="oc-datepicker">
-        <div className="oc-datepicker__control">
+      <div ref={rootRef} className="pl-datepicker">
+        <div className="pl-datepicker__control">
           <input
             id={baseId}
             name={name}
             type="text"
             autoComplete="off"
-            className="oc-input oc-datepicker__input"
+            className="pl-input pl-datepicker__input"
             placeholder={placeholder ?? (formatDate ? undefined : timeMode ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD')}
             aria-invalid={error || draftInvalid ? true : undefined}
             aria-describedby={joinIds(msg.describedBy, formatId)}
@@ -3731,13 +3731,13 @@ export function DatePicker({
               }
             }}
           />
-          <span id={formatId} className="oc-sr-only">
+          <span id={formatId} className="pl-sr-only">
             {L.format}
           </span>
           <button
             ref={buttonRef}
             type="button"
-            className="oc-datepicker__trigger"
+            className="pl-datepicker__trigger"
             aria-label={L.chooseDate}
             aria-haspopup="dialog"
             aria-expanded={open}
@@ -3755,7 +3755,7 @@ export function DatePicker({
             role="dialog"
             aria-modal="true"
             aria-label={L.chooseDate}
-            className="oc-popup oc-datepicker__panel"
+            className="pl-popup pl-datepicker__panel"
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 e.preventDefault();
@@ -3802,13 +3802,13 @@ export const ToggleButton = forwardRef<HTMLButtonElement, ToggleButtonProps>(fun
       ref={ref}
       type="button"
       aria-pressed={on}
-      className={cx('oc-togglebutton', on && 'is-on', className)}
+      className={cx('pl-togglebutton', on && 'is-on', className)}
       onClick={(e) => {
         onClick?.(e);
         if (!e.defaultPrevented) setOn(!on);
       }}
     >
-      {(on ? onIcon : offIcon) && <span className="oc-togglebutton__icon" aria-hidden="true">{on ? onIcon : offIcon}</span>}
+      {(on ? onIcon : offIcon) && <span className="pl-togglebutton__icon" aria-hidden="true">{on ? onIcon : offIcon}</span>}
       {children ?? (on ? onLabel : offLabel)}
     </button>
   );
@@ -3842,14 +3842,14 @@ export function SelectButton({ options, value, defaultValue, onChange, multiple 
     }
   };
   return (
-    <div role="group" aria-label={label} className={cx('oc-selectbutton', className)}>
+    <div role="group" aria-label={label} className={cx('pl-selectbutton', className)}>
       {options.map((o) => (
         <button
           key={o.value}
           type="button"
           aria-pressed={selected.has(o.value)}
           disabled={disabled || o.disabled}
-          className="oc-selectbutton__item"
+          className="pl-selectbutton__item"
           onClick={() => press(o)}
         >
           {o.label}
@@ -3892,8 +3892,8 @@ function useLabelledChild(children: ReactElement, needsPlaceholder: boolean) {
 export function FloatLabel({ label, children, variant = 'over', className }: FloatLabelProps) {
   const { childId, element } = useLabelledChild(children, true);
   return (
-    <span className={cx('oc-floatlabel', `oc-floatlabel--${variant}`, className)}>
-      <label className="oc-floatlabel__label" htmlFor={childId}>
+    <span className={cx('pl-floatlabel', `pl-floatlabel--${variant}`, className)}>
+      <label className="pl-floatlabel__label" htmlFor={childId}>
         {label}
       </label>
       {element}
@@ -3911,8 +3911,8 @@ export interface IftaLabelProps {
 export function IftaLabel({ label, children, className }: IftaLabelProps) {
   const { childId, element } = useLabelledChild(children, false);
   return (
-    <span className={cx('oc-iftalabel', className)}>
-      <label className="oc-iftalabel__label" htmlFor={childId}>
+    <span className={cx('pl-iftalabel', className)}>
+      <label className="pl-iftalabel__label" htmlFor={childId}>
         {label}
       </label>
       {element}
@@ -3925,11 +3925,11 @@ export function IftaLabel({ label, children, className }: IftaLabelProps) {
  * ==================================================================== */
 
 export function InputGroup({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx('oc-inputgroup', className)} {...rest} />;
+  return <div className={cx('pl-inputgroup', className)} {...rest} />;
 }
 
 export function InputGroupAddon({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cx('oc-inputgroup__addon', className)} {...rest} />;
+  return <span className={cx('pl-inputgroup__addon', className)} {...rest} />;
 }
 
 export interface IconFieldProps extends HTMLAttributes<HTMLSpanElement> {
@@ -3937,12 +3937,12 @@ export interface IconFieldProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 export function IconField({ iconPosition = 'start', className, ...rest }: IconFieldProps) {
-  return <span className={cx('oc-iconfield', `oc-iconfield--${iconPosition}`, className)} {...rest} />;
+  return <span className={cx('pl-iconfield', `pl-iconfield--${iconPosition}`, className)} {...rest} />;
 }
 
 /** Decorative icon inside an IconField (hidden from assistive tech). */
 export function InputIcon({ className, ...rest }: HTMLAttributes<HTMLSpanElement>) {
-  return <span className={cx('oc-inputicon', className)} aria-hidden="true" {...rest} />;
+  return <span className={cx('pl-inputicon', className)} aria-hidden="true" {...rest} />;
 }
 
 /* ======================================================================

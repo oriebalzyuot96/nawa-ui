@@ -1,6 +1,6 @@
 /**
  * Component registry: every node type the builder knows, its palette entry, inspector fields,
- * defaults and how it renders with REAL @orca-ui/react components.
+ * defaults and how it renders with REAL @pelagic-ui/react components.
  */
 import { useState, type CSSProperties, type ReactNode } from 'react';
 import {
@@ -33,7 +33,7 @@ import {
   Tabs,
   Timeline,
   toast,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import type { NodeProps, NodeType, SpaceNode } from './types';
 import { cardBodyStyle, gridStyle, headingStyle, sectionInner, sectionOuter, spacerStyle, stackStyle, textStyle, type Css } from './styles';
 import { cells, chartModel, isNumericCell, lines, placeholderImage, rows, statusTone, toNumber } from './data';
@@ -149,8 +149,8 @@ function StatView({ p }: { p: NodeProps }) {
     .map((v) => toNumber(v))
     .filter((v) => !Number.isNaN(v));
   return (
-    <div className="oc-card sp-stat">
-      <div className="oc-card__body">
+    <div className="pl-card sp-stat">
+      <div className="pl-card__body">
         <p className="sp-stat__label">{S(p.label)}</p>
         <p className="sp-stat__value">{S(p.value)}</p>
         <div className="sp-stat__foot">

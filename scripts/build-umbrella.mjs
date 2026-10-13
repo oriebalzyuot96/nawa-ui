@@ -1,15 +1,15 @@
-// Builds the single installable package `orca-ui` (packages/orca-ui) from the built @orca-ui/* packages,
-// so developers can `npm i orca-ui` and import every target from one package:
-//   orca-ui/style.css, orca-ui/core/theme, orca-ui/react, orca-ui/vue, orca-ui/svelte, orca-ui/angular,
-//   orca-ui/astro/components/Button, orca-ui/react-native, orca-ui/three, orca-ui/icons/react, ...
-// Each package's export map is copied under its prefix, and cross-package imports ('@orca-ui/x/y')
+// Builds the single installable package `pelagic` (packages/pelagic) from the built @pelagic-ui/* packages,
+// so developers can `npm i pelagic` and import every target from one package:
+//   pelagic/style.css, pelagic/core/theme, pelagic/react, pelagic/vue, pelagic/svelte, pelagic/angular,
+//   pelagic/astro/components/Button, pelagic/react-native, pelagic/three, pelagic/icons/react, ...
+// Each package's export map is copied under its prefix, and cross-package imports ('@pelagic-ui/x/y')
 // inside the copied files are rewritten to relative paths. Run after building the packages.
 import { cpSync, existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from 'node:fs';
 import { dirname, join, posix, relative, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
-const umbrella = join(root, 'packages/orca-ui');
+const umbrella = join(root, 'packages/pelagic');
 const out = join(umbrella, 'dist');
 
 /** [prefix, package dir, publish dir relative to the package (Angular publishes its ng-packagr output)] */
@@ -32,12 +32,12 @@ const strip = (p) => p.replace(/^\.\//, '');
 rmSync(out, { recursive: true, force: true });
 
 const exportsMap = {
-  './style.css': './dist/core/orca-ui.css',
+  './style.css': './dist/core/pelagic.css',
   './package.json': './package.json',
 };
 const peers = {};
 const deps = {};
-/** name -> { prefix, exports } used to resolve '@orca-ui/<pkg>/<sub>' imports */
+/** name -> { prefix, exports } used to resolve '@pelagic-ui/<pkg>/<sub>' imports */
 const resolvers = new Map();
 
 /** Prefix every target in an export condition object or string. */
@@ -77,13 +77,13 @@ for (const [prefix, dir, publishDir] of packages) {
 
   for (const [name, range] of Object.entries(manifest.peerDependencies ?? {})) peers[name] = range;
   for (const [name, range] of Object.entries(manifest.dependencies ?? {})) {
-    if (!name.startsWith('@orca-ui/')) deps[name] = range;
+    if (!name.startsWith('@pelagic-ui/')) deps[name] = range;
   }
 }
 
-/** Resolve '@orca-ui/<pkg>[/sub]' to a file inside dist using that package's export map. */
+/** Resolve '@pelagic-ui/<pkg>[/sub]' to a file inside dist using that package's export map. */
 function resolveSpecifier(spec) {
-  const m = /^(@orca-ui\/[^/]+)(?:\/(.+))?$/.exec(spec);
+  const m = /^(@pelagic-ui\/[^/]+)(?:\/(.+))?$/.exec(spec);
   if (!m) return null;
   const info = resolvers.get(m[1]);
   if (!info) return null;
@@ -114,8 +114,8 @@ const rewritten = [];
     }
     if (!/\.(m?js|cjs|d\.m?ts|ts|tsx|svelte|astro|vue)$/.test(entry)) continue;
     const text = readFileSync(p, 'utf8');
-    if (!text.includes('@orca-ui/')) continue;
-    const next = text.replace(/(['"])(@orca-ui\/[^'"]+)\1/g, (all, q, spec) => {
+    if (!text.includes('@pelagic-ui/')) continue;
+    const next = text.replace(/(['"])(@pelagic-ui\/[^'"]+)\1/g, (all, q, spec) => {
       const file = resolveSpecifier(spec);
       if (!file) return all;
       let rel = toPosix(relative(dirname(p), file));
@@ -136,10 +136,10 @@ const leftovers = [];
   for (const entry of readdirSync(d)) {
     const p = join(d, entry);
     if (statSync(p).isDirectory()) scan(p);
-    else if (/\.(m?js|svelte|astro|tsx?)$/.test(entry) && !/\.d\.ts$/.test(entry) && /(['"])@orca-ui\//.test(readFileSync(p, 'utf8'))) leftovers.push(toPosix(relative(out, p)));
+    else if (/\.(m?js|svelte|astro|tsx?)$/.test(entry) && !/\.d\.ts$/.test(entry) && /(['"])@pelagic-ui\//.test(readFileSync(p, 'utf8'))) leftovers.push(toPosix(relative(out, p)));
   }
 })(out);
-if (leftovers.length) throw new Error(`Unresolved @orca-ui imports in:\n  ${leftovers.join('\n  ')}`);
+if (leftovers.length) throw new Error(`Unresolved @pelagic-ui imports in:\n  ${leftovers.join('\n  ')}`);
 
 const manifestPath = join(umbrella, 'package.json');
 const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'));
@@ -149,5 +149,5 @@ manifest.peerDependencies = Object.fromEntries(Object.entries(peers).sort());
 manifest.peerDependenciesMeta = Object.fromEntries(Object.keys(peers).sort().map((n) => [n, { optional: true }]));
 writeFileSync(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`);
 
-console.log(`Built packages/orca-ui/dist: ${packages.length} packages, ${Object.keys(exportsMap).length} export paths, ${rewritten.length} files rewritten.`);
+console.log(`Built packages/pelagic/dist: ${packages.length} packages, ${Object.keys(exportsMap).length} export paths, ${rewritten.length} files rewritten.`);
 void posix;

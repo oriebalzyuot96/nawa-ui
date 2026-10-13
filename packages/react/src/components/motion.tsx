@@ -1,5 +1,5 @@
 // motion — animation primitives (Motion, Presence, Reorder, Stagger, hooks) and animated components.
-// Built on @orca-ui/core/motion (dependency-free). Every effect is optional: under
+// Built on @pelagic-ui/core/motion (dependency-free). Every effect is optional: under
 // prefers-reduced-motion or <html data-a11y-motion="off"> things render in their end state,
 // decorative layers are aria-hidden, and anything that moves for more than 5 s can be paused.
 import {
@@ -44,7 +44,7 @@ import {
   type ScrollProgressOptions,
   type SpringConfig,
   type SpringValue,
-} from '@orca-ui/core/motion';
+} from '@pelagic-ui/core/motion';
 import { cx } from '../utils';
 
 export {
@@ -67,7 +67,7 @@ export {
   stagger,
   timeline,
   tween,
-} from '@orca-ui/core/motion';
+} from '@pelagic-ui/core/motion';
 export type {
   AnimationControls,
   AnimationOptions,
@@ -79,7 +79,7 @@ export type {
   SpringConfig,
   SpringValue,
   Timeline as MotionTimeline,
-} from '@orca-ui/core/motion';
+} from '@pelagic-ui/core/motion';
 
 /* ======================================================================
  * Shared helpers
@@ -137,7 +137,7 @@ function currentFrame(el: HTMLElement, frame: Record<string, string>) {
 /** "Pause animation" / "Play animation" toggle used by everything that can move for more than 5 s. */
 function MotionToggle({ paused, onToggle, pauseLabel = 'Pause animation', playLabel = 'Play animation', className }: { paused: boolean; onToggle: () => void; pauseLabel?: string; playLabel?: string; className?: string }) {
   return (
-    <button type="button" className={cx('oc-motion-toggle', className)} aria-label={paused ? playLabel : pauseLabel} onClick={onToggle}>
+    <button type="button" className={cx('pl-motion-toggle', className)} aria-label={paused ? playLabel : pauseLabel} onClick={onToggle}>
       {paused ? (
         <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true" focusable="false">
           <path d="M5 3.5v9l7-4.5z" fill="currentColor" />
@@ -514,9 +514,9 @@ export const Reveal = forwardRef<HTMLElement, RevealProps>(function Reveal(
         (elRef as MutableRefObject<HTMLElement | null>).current = el;
         assignRef(ref, el);
       }}
-      className={cx('oc-reveal', className)}
+      className={cx('pl-reveal', className)}
       data-reveal-effect={effect}
-      style={{ ...(delay ? { '--oc-reveal-delay': `${delay}ms` } : {}), ...(duration ? { '--oc-reveal-dur': `${duration}ms` } : {}), ...style } as CSSProperties}
+      style={{ ...(delay ? { '--pl-reveal-delay': `${delay}ms` } : {}), ...(duration ? { '--pl-reveal-dur': `${duration}ms` } : {}), ...style } as CSSProperties}
       {...rest}
     >
       {children}
@@ -554,7 +554,7 @@ export const Stagger = forwardRef<HTMLElement, StaggerProps>(function Stagger(
     const n = kids.length;
     kids.forEach((kid, i) => {
       const order = from === 'last' ? n - 1 - i : from === 'center' ? Math.abs(i - (n - 1) / 2) : i;
-      kid.style.setProperty('--oc-i', String(order));
+      kid.style.setProperty('--pl-i', String(order));
     });
   }, [count, from]);
   return (
@@ -563,9 +563,9 @@ export const Stagger = forwardRef<HTMLElement, StaggerProps>(function Stagger(
         (elRef as MutableRefObject<HTMLElement | null>).current = el;
         assignRef(ref, el);
       }}
-      className={cx('oc-stagger', className)}
+      className={cx('pl-stagger', className)}
       data-reveal-effect={effect}
-      style={{ '--oc-stagger-each': `${each}ms`, ...(delay ? { '--oc-reveal-delay': `${delay}ms` } : {}), ...(duration ? { '--oc-reveal-dur': `${duration}ms` } : {}), ...style } as CSSProperties}
+      style={{ '--pl-stagger-each': `${each}ms`, ...(delay ? { '--pl-reveal-delay': `${delay}ms` } : {}), ...(duration ? { '--pl-reveal-dur': `${duration}ms` } : {}), ...style } as CSSProperties}
       {...rest}
     >
       {children}
@@ -833,24 +833,24 @@ export function Reorder<T>({
   };
 
   return (
-    <div className={cx('oc-reorder', horizontal && 'oc-reorder--x', className)} data-dragging={dragging ? '' : undefined}>
-      <span id={`${id}-help`} className="oc-sr-only">
+    <div className={cx('pl-reorder', horizontal && 'pl-reorder--x', className)} data-dragging={dragging ? '' : undefined}>
+      <span id={`${id}-help`} className="pl-sr-only">
         {instructions}
       </span>
-      <ul ref={listRef} className="oc-reorder__list" aria-label={label}>
+      <ul ref={listRef} className="pl-reorder__list" aria-label={label}>
         {items.map((item, index) => {
           const key = getKey(item);
           const isGrabbed = grabbed === key;
           const isDragging = dragging === key;
           return (
-            <li key={key} className="oc-reorder__item" data-reorder-key={key} data-grabbed={isGrabbed ? '' : undefined} data-dragging={isDragging ? '' : undefined}>
+            <li key={key} className="pl-reorder__item" data-reorder-key={key} data-grabbed={isGrabbed ? '' : undefined} data-dragging={isDragging ? '' : undefined}>
               <button
                 ref={(el) => {
                   if (el) handles.current.set(key, el);
                   else handles.current.delete(key);
                 }}
                 type="button"
-                className="oc-reorder__handle"
+                className="pl-reorder__handle"
                 aria-label={handleLabel(getLabel(item))}
                 aria-describedby={`${id}-help`}
                 aria-pressed={isGrabbed}
@@ -866,12 +866,12 @@ export function Reorder<T>({
               >
                 <GripIcon />
               </button>
-              <div className="oc-reorder__content">{renderItem ? renderItem(item, { index, grabbed: isGrabbed, dragging: isDragging }) : getLabel(item)}</div>
+              <div className="pl-reorder__content">{renderItem ? renderItem(item, { index, grabbed: isGrabbed, dragging: isDragging }) : getLabel(item)}</div>
             </li>
           );
         })}
       </ul>
-      <div className="oc-sr-only" role="status" aria-live="assertive" aria-atomic="true">
+      <div className="pl-sr-only" role="status" aria-live="assertive" aria-atomic="true">
         {announcement}
       </div>
     </div>
@@ -947,23 +947,23 @@ export function Marquee({
   const copies = reduced ? 1 : Math.max(2, repeat);
   return (
     <Root
-      className={cx('oc-marquee', vertical && 'oc-marquee--vertical', className)}
+      className={cx('pl-marquee', vertical && 'pl-marquee--vertical', className)}
       aria-label={label}
       data-direction={direction}
       data-paused={paused ? '' : undefined}
       data-hover-pause={pauseOnHover ? '' : undefined}
       data-fade={fade ? '' : undefined}
       data-static={reduced ? '' : undefined}
-      style={{ ...(gap ? { '--oc-marquee-gap': gap } : {}), ...(duration ? { '--oc-marquee-duration': `${duration.toFixed(2)}s` } : {}), ...style } as CSSProperties}
+      style={{ ...(gap ? { '--pl-marquee-gap': gap } : {}), ...(duration ? { '--pl-marquee-duration': `${duration.toFixed(2)}s` } : {}), ...style } as CSSProperties}
     >
-      <div className="oc-marquee__viewport" tabIndex={reduced ? 0 : undefined} role={reduced ? 'group' : undefined} aria-label={reduced ? label ?? 'Scrollable content' : undefined}>
+      <div className="pl-marquee__viewport" tabIndex={reduced ? 0 : undefined} role={reduced ? 'group' : undefined} aria-label={reduced ? label ?? 'Scrollable content' : undefined}>
         {Array.from({ length: copies }, (_, i) => (
           <MarqueeGroup key={i} copy={i > 0} groupRef={i === 0 ? groupRef : undefined}>
             {children}
           </MarqueeGroup>
         ))}
       </div>
-      {!reduced && <MotionToggle className="oc-marquee__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
+      {!reduced && <MotionToggle className="pl-marquee__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
     </Root>
   );
 }
@@ -979,7 +979,7 @@ function MarqueeGroup({ copy, groupRef, children }: { copy: boolean; groupRef?: 
         (ref as MutableRefObject<HTMLDivElement | null>).current = el;
         if (groupRef) (groupRef as MutableRefObject<HTMLDivElement | null>).current = el;
       }}
-      className="oc-marquee__group"
+      className="pl-marquee__group"
       aria-hidden={copy || undefined}
     >
       {children}
@@ -1059,15 +1059,15 @@ export function NumberTicker({ value, from = 0, duration = 1600, delay = 0, loca
   }, [value, fmt]);
 
   return (
-    <span ref={ref} className={cx('oc-ticker', className)}>
-      <span aria-hidden="true" className="oc-ticker__visual">
+    <span ref={ref} className={cx('pl-ticker', className)}>
+      <span aria-hidden="true" className="pl-ticker__visual">
         {prefix}
-        <span ref={visualRef} className="oc-ticker__num">
+        <span ref={visualRef} className="pl-ticker__num">
           {fmt.format(value)}
         </span>
         {suffix}
       </span>
-      <span className="oc-sr-only" role={live ? 'status' : undefined}>
+      <span className="pl-sr-only" role={live ? 'status' : undefined}>
         {typeof prefix === 'string' ? prefix : ''}
         {announced}
         {typeof suffix === 'string' ? suffix : ''}
@@ -1110,17 +1110,17 @@ export function TextReveal({ text, as: Tag = 'p', by = 'word', each, effect = 'b
   return (
     <Tag
       ref={ref}
-      className={cx('oc-textreveal', className)}
+      className={cx('pl-textreveal', className)}
       data-reveal-effect={effect}
-      style={{ '--oc-stagger-each': `${each ?? (mode === 'char' ? 18 : 45)}ms`, ...(delay ? { '--oc-reveal-delay': `${delay}ms` } : {}), ...style } as CSSProperties}
+      style={{ '--pl-stagger-each': `${each ?? (mode === 'char' ? 18 : 45)}ms`, ...(delay ? { '--pl-reveal-delay': `${delay}ms` } : {}), ...style } as CSSProperties}
     >
-      <span className="oc-sr-only">{text}</span>
+      <span className="pl-sr-only">{text}</span>
       <span aria-hidden="true">
         {tokens.map((t, i) =>
           /^\s+$/.test(t) ? (
             t
           ) : (
-            <span key={i} className="oc-textreveal__token" style={{ '--oc-i': n++ } as CSSProperties}>
+            <span key={i} className="pl-textreveal__token" style={{ '--pl-i': n++ } as CSSProperties}>
               {t}
             </span>
           ),
@@ -1211,13 +1211,13 @@ export function TypingText({
   const shown = state && !reduced ? Array.from(phrases[state.word]).slice(0, state.count).join('') : finalText;
   const typing = Boolean(state && !state.done && !reduced);
   return (
-    <Tag ref={ref} className={cx('oc-typing', className)}>
-      <span className="oc-sr-only">{srText ?? (words?.length ? words.join(', ') : text)}</span>
-      <span aria-hidden="true" className="oc-typing__visual" data-typing={typing ? '' : undefined}>
+    <Tag ref={ref} className={cx('pl-typing', className)}>
+      <span className="pl-sr-only">{srText ?? (words?.length ? words.join(', ') : text)}</span>
+      <span aria-hidden="true" className="pl-typing__visual" data-typing={typing ? '' : undefined}>
         {shown}
-        {cursor && <span className="oc-typing__caret" />}
+        {cursor && <span className="pl-typing__caret" />}
       </span>
-      {loop && !reduced && phrases.length > 1 && <MotionToggle className="oc-typing__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
+      {loop && !reduced && phrases.length > 1 && <MotionToggle className="pl-typing__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
     </Tag>
   );
 }
@@ -1250,19 +1250,19 @@ export function MorphingText({ texts, interval = 3000, as: Tag = 'span', srText,
   }, [cycling, interval, texts.length]);
   const current = reduced ? 0 : index;
   return (
-    <Tag className={cx('oc-morph', className)}>
-      <span className="oc-sr-only">{srText ?? texts.join(', ')}</span>
-      <span className="oc-morph__stage" aria-hidden="true">
+    <Tag className={cx('pl-morph', className)}>
+      <span className="pl-sr-only">{srText ?? texts.join(', ')}</span>
+      <span className="pl-morph__stage" aria-hidden="true">
         {prev !== null && !reduced && prev !== current && (
-          <span key={`out-${prev}-${current}`} className="oc-morph__text" data-state="out" onAnimationEnd={() => setPrev(null)}>
+          <span key={`out-${prev}-${current}`} className="pl-morph__text" data-state="out" onAnimationEnd={() => setPrev(null)}>
             {texts[prev]}
           </span>
         )}
-        <span key={`in-${current}`} className="oc-morph__text" data-state={prev !== null ? 'in' : undefined}>
+        <span key={`in-${current}`} className="pl-morph__text" data-state={prev !== null ? 'in' : undefined}>
           {texts[current]}
         </span>
       </span>
-      {!reduced && texts.length > 1 && <MotionToggle className="oc-morph__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
+      {!reduced && texts.length > 1 && <MotionToggle className="pl-morph__toggle" paused={paused} onToggle={() => setPaused((p) => !p)} pauseLabel={pauseLabel} playLabel={playLabel} />}
     </Tag>
   );
 }
@@ -1292,8 +1292,8 @@ export const SpotlightCard = forwardRef<HTMLElement, SpotlightCardProps>(functio
   return (
     <Tag
       ref={ref}
-      className={cx('oc-spotlight', padded && 'oc-spotlight--padded', className)}
-      style={{ '--oc-spot-size': `${size}px`, ...(color ? { '--oc-spot-color': color } : {}), ...style } as CSSProperties}
+      className={cx('pl-spotlight', padded && 'pl-spotlight--padded', className)}
+      style={{ '--pl-spot-size': `${size}px`, ...(color ? { '--pl-spot-color': color } : {}), ...style } as CSSProperties}
       onPointerMove={(e: ReactPointerEvent<HTMLElement>) => {
         onPointerMove?.(e);
         const el = e.currentTarget;
@@ -1301,8 +1301,8 @@ export const SpotlightCard = forwardRef<HTMLElement, SpotlightCardProps>(functio
         cancelAnimationFrame(frame.current);
         frame.current = requestAnimationFrame(() => {
           const r = el.getBoundingClientRect();
-          el.style.setProperty('--oc-spot-x', `${clientX - r.left}px`);
-          el.style.setProperty('--oc-spot-y', `${clientY - r.top}px`);
+          el.style.setProperty('--pl-spot-x', `${clientX - r.left}px`);
+          el.style.setProperty('--pl-spot-y', `${clientY - r.top}px`);
           el.setAttribute('data-lit', '');
         });
       }}
@@ -1338,16 +1338,16 @@ export function BorderBeam({ duration = 8, delay = 0, size = 70, width, colorFro
   return (
     <span
       aria-hidden="true"
-      className={cx('oc-beam', className)}
+      className={cx('pl-beam', className)}
       data-reverse={reverse ? '' : undefined}
       style={
         {
-          '--oc-beam-dur': `${Math.max(2, duration)}s`,
-          '--oc-beam-delay': `${-delay}s`,
-          '--oc-beam-size': `${size}deg`,
-          ...(width ? { '--oc-beam-width': width } : {}),
-          ...(colorFrom ? { '--oc-beam-from': colorFrom } : {}),
-          ...(colorTo ? { '--oc-beam-to': colorTo } : {}),
+          '--pl-beam-dur': `${Math.max(2, duration)}s`,
+          '--pl-beam-delay': `${-delay}s`,
+          '--pl-beam-size': `${size}deg`,
+          ...(width ? { '--pl-beam-width': width } : {}),
+          ...(colorFrom ? { '--pl-beam-from': colorFrom } : {}),
+          ...(colorTo ? { '--pl-beam-to': colorTo } : {}),
         } as CSSProperties
       }
     />
@@ -1370,8 +1370,8 @@ export const AnimatedBorder = forwardRef<HTMLElement, AnimatedBorderProps>(funct
   ref,
 ) {
   return (
-    <Tag ref={ref} className={cx('oc-animborder', padded && 'oc-animborder--padded', variant === 'gradient' && 'oc-animborder--gradient', className)} {...rest}>
-      {variant === 'beam' ? <BorderBeam duration={duration} /> : <span aria-hidden="true" className="oc-animborder__ring" style={duration ? ({ '--oc-beam-dur': `${duration}s` } as CSSProperties) : undefined} />}
+    <Tag ref={ref} className={cx('pl-animborder', padded && 'pl-animborder--padded', variant === 'gradient' && 'pl-animborder--gradient', className)} {...rest}>
+      {variant === 'beam' ? <BorderBeam duration={duration} /> : <span aria-hidden="true" className="pl-animborder__ring" style={duration ? ({ '--pl-beam-dur': `${duration}s` } as CSSProperties) : undefined} />}
       {children}
     </Tag>
   );
@@ -1385,9 +1385,9 @@ export interface ShimmerButtonProps extends ButtonHTMLAttributes<HTMLButtonEleme
 /** Button with a light sheen sweeping across it every few seconds (not flashing). Plain button under reduced motion. */
 export const ShimmerButton = forwardRef<HTMLButtonElement, ShimmerButtonProps>(function ShimmerButton({ variant = 'primary', size = 'md', className, children, type = 'button', ...rest }, ref) {
   return (
-    <button ref={ref} type={type} className={cx('oc-btn', `oc-btn--${variant}`, size !== 'md' && `oc-btn--${size}`, 'oc-shimmer', className)} {...rest}>
-      <span className="oc-shimmer__label">{children}</span>
-      <span aria-hidden="true" className="oc-shimmer__sheen" />
+    <button ref={ref} type={type} className={cx('pl-btn', `pl-btn--${variant}`, size !== 'md' && `pl-btn--${size}`, 'pl-shimmer', className)} {...rest}>
+      <span className="pl-shimmer__label">{children}</span>
+      <span aria-hidden="true" className="pl-shimmer__sheen" />
     </button>
   );
 });
@@ -1406,13 +1406,13 @@ export interface AuroraBackgroundProps extends HTMLAttributes<HTMLElement> {
 /** Section with a slow, soft aurora behind its content. The aurora is decorative (aria-hidden) and still under reduced motion. */
 export function AuroraBackground({ as: Tag = 'section', intensity = 0.55, className, style, children, ...rest }: AuroraBackgroundProps) {
   return (
-    <Tag className={cx('oc-aurora', className)} style={{ '--oc-aurora-o': intensity, ...style } as CSSProperties} {...rest}>
-      <span aria-hidden="true" className="oc-aurora__layer">
-        <span className="oc-aurora__blob" />
-        <span className="oc-aurora__blob" />
-        <span className="oc-aurora__blob" />
+    <Tag className={cx('pl-aurora', className)} style={{ '--pl-aurora-o': intensity, ...style } as CSSProperties} {...rest}>
+      <span aria-hidden="true" className="pl-aurora__layer">
+        <span className="pl-aurora__blob" />
+        <span className="pl-aurora__blob" />
+        <span className="pl-aurora__blob" />
       </span>
-      <div className="oc-aurora__content">{children}</div>
+      <div className="pl-aurora__content">{children}</div>
     </Tag>
   );
 }
@@ -1438,7 +1438,7 @@ export interface GridPatternProps extends PatternProps {
 export function GridPattern({ size = 32, strokeWidth = 1, dash, squares = [], fade = 'radial', className, style }: GridPatternProps) {
   const id = useId().replace(/:/g, '');
   return (
-    <svg aria-hidden="true" focusable="false" className={cx('oc-pattern oc-pattern--grid', className)} data-fade={fade} style={style}>
+    <svg aria-hidden="true" focusable="false" className={cx('pl-pattern pl-pattern--grid', className)} data-fade={fade} style={style}>
       <defs>
         <pattern id={`${id}-grid`} width={size} height={size} patternUnits="userSpaceOnUse" x="-1" y="-1">
           <path d={`M.5 ${size}V.5H${size}`} fill="none" strokeWidth={strokeWidth} strokeDasharray={dash} />
@@ -1446,7 +1446,7 @@ export function GridPattern({ size = 32, strokeWidth = 1, dash, squares = [], fa
       </defs>
       <rect width="100%" height="100%" fill={`url(#${id}-grid)`} />
       {squares.map(([x, y]) => (
-        <rect key={`${x}-${y}`} className="oc-pattern__cell" width={size - 1} height={size - 1} x={x * size} y={y * size} />
+        <rect key={`${x}-${y}`} className="pl-pattern__cell" width={size - 1} height={size - 1} x={x * size} y={y * size} />
       ))}
     </svg>
   );
@@ -1461,7 +1461,7 @@ export interface DotPatternProps extends PatternProps {
 export function DotPattern({ size = 20, radius = 1.25, fade = 'radial', className, style }: DotPatternProps) {
   const id = useId().replace(/:/g, '');
   return (
-    <svg aria-hidden="true" focusable="false" className={cx('oc-pattern oc-pattern--dots', className)} data-fade={fade} style={style}>
+    <svg aria-hidden="true" focusable="false" className={cx('pl-pattern pl-pattern--dots', className)} data-fade={fade} style={style}>
       <defs>
         <pattern id={`${id}-dots`} width={size} height={size} patternUnits="userSpaceOnUse">
           <circle cx={size / 2} cy={size / 2} r={radius} />
@@ -1485,11 +1485,11 @@ export function Meteors({ count = 14, angle = 215, className }: MeteorsProps) {
   const reduced = useReducedMotion();
   if (reduced) return null;
   return (
-    <span aria-hidden="true" className={cx('oc-meteors', className)} style={{ '--oc-meteor-angle': `${angle}deg` } as CSSProperties}>
+    <span aria-hidden="true" className={cx('pl-meteors', className)} style={{ '--pl-meteor-angle': `${angle}deg` } as CSSProperties}>
       {Array.from({ length: count }, (_, i) => (
         <span
           key={i}
-          className="oc-meteor"
+          className="pl-meteor"
           style={
             {
               left: `${Math.round(seeded(i + 1) * 110) - 5}%`,
@@ -1620,7 +1620,7 @@ export function Particles({ count = 60, speed = 0.35, interactive = true, color,
       parent?.removeEventListener('pointerleave', onLeave);
     };
   }, [count, speed, interactive, color, reduced]);
-  return <canvas ref={canvasRef} aria-hidden="true" className={cx('oc-particles', className)} />;
+  return <canvas ref={canvasRef} aria-hidden="true" className={cx('pl-particles', className)} />;
 }
 
 export interface RippleRingsProps {
@@ -1634,9 +1634,9 @@ export interface RippleRingsProps {
 /** Decorative concentric rings that pulse outward slowly (aria-hidden). Still under reduced motion. */
 export function RippleRings({ count = 6, size = 140, className }: RippleRingsProps) {
   return (
-    <span aria-hidden="true" className={cx('oc-ripples', className)}>
+    <span aria-hidden="true" className={cx('pl-ripples', className)}>
       {Array.from({ length: count }, (_, i) => (
-        <span key={i} className="oc-ripples__ring" style={{ '--oc-i': i, width: size + i * 70, height: size + i * 70, opacity: Math.max(0.08, 0.55 - i * 0.08) } as CSSProperties} />
+        <span key={i} className="pl-ripples__ring" style={{ '--pl-i': i, width: size + i * 70, height: size + i * 70, opacity: Math.max(0.08, 0.55 - i * 0.08) } as CSSProperties} />
       ))}
     </span>
   );
@@ -1671,13 +1671,13 @@ export function AnimatedList<T>({ items, getKey, renderItem, label, announce, cl
   }, [items, getKey, announce]);
   return (
     <>
-      <ul className={cx('oc-animlist', className)} aria-label={label}>
+      <ul className={cx('pl-animlist', className)} aria-label={label}>
         <Presence initial={false}>
           {items.map((item, i) => (
             <Motion
               as="li"
               key={getKey(item)}
-              className="oc-animlist__item"
+              className="pl-animlist__item"
               layout
               initial={{ opacity: 0, y: -14, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -1691,7 +1691,7 @@ export function AnimatedList<T>({ items, getKey, renderItem, label, announce, cl
         </Presence>
       </ul>
       {announce && (
-        <div className="oc-sr-only" role="status" aria-live="polite">
+        <div className="pl-sr-only" role="status" aria-live="polite">
           {message}
         </div>
       )}
@@ -1724,7 +1724,7 @@ export function ScrollProgressBar({ target, position = 'fixed', label, className
     return scrollProgress(
       t,
       (p) => {
-        el.style.setProperty('--oc-progress', p.toFixed(4));
+        el.style.setProperty('--pl-progress', p.toFixed(4));
         if (label) el.setAttribute('aria-valuenow', String(Math.round(p * 100)));
       },
       { within: Boolean(target) },
@@ -1733,7 +1733,7 @@ export function ScrollProgressBar({ target, position = 'fixed', label, className
   return (
     <div
       ref={ref}
-      className={cx('oc-scrollbar', position === 'fixed' && 'oc-scrollbar--fixed', className)}
+      className={cx('pl-scrollbar', position === 'fixed' && 'pl-scrollbar--fixed', className)}
       aria-hidden={label ? undefined : true}
       role={label ? 'progressbar' : undefined}
       aria-label={label}
@@ -1741,7 +1741,7 @@ export function ScrollProgressBar({ target, position = 'fixed', label, className
       aria-valuemax={label ? 100 : undefined}
       aria-valuenow={label ? 0 : undefined}
     >
-      <div className="oc-scrollbar__fill" />
+      <div className="pl-scrollbar__fill" />
     </div>
   );
 }
@@ -1762,16 +1762,16 @@ export function Parallax({ as: Tag = 'section', background, speed = 0.25, classN
   useEffect(() => {
     const el = ref.current;
     if (!el || reduced) return;
-    return scrollProgress(el, (p) => el.style.setProperty('--oc-parallax-p', (p - 0.5).toFixed(4)));
+    return scrollProgress(el, (p) => el.style.setProperty('--pl-parallax-p', (p - 0.5).toFixed(4)));
   }, [reduced]);
   return (
-    <Tag ref={ref} className={cx('oc-parallax-section', className)} style={{ '--oc-parallax-speed': speed, ...style } as CSSProperties} {...rest}>
+    <Tag ref={ref} className={cx('pl-parallax-section', className)} style={{ '--pl-parallax-speed': speed, ...style } as CSSProperties} {...rest}>
       {background && (
-        <div aria-hidden="true" className="oc-parallax-section__bg">
+        <div aria-hidden="true" className="pl-parallax-section__bg">
           {background}
         </div>
       )}
-      <div className="oc-parallax-section__content">{children}</div>
+      <div className="pl-parallax-section__content">{children}</div>
     </Tag>
   );
 }
@@ -1857,9 +1857,9 @@ export function AnimatedTabs({ tabs, value, defaultValue, onChange, label, varia
 
   const active = tabs.find((t) => t.value === selected);
   return (
-    <div className={cx('oc-atabs', `oc-atabs--${variant}`, fullWidth && 'oc-atabs--full', className)}>
-      <div ref={listRef} role="tablist" aria-label={label} className="oc-atabs__list" onKeyDown={onKeyDown}>
-        <span ref={indicatorRef} aria-hidden="true" className="oc-atabs__indicator" />
+    <div className={cx('pl-atabs', `pl-atabs--${variant}`, fullWidth && 'pl-atabs--full', className)}>
+      <div ref={listRef} role="tablist" aria-label={label} className="pl-atabs__list" onKeyDown={onKeyDown}>
+        <span ref={indicatorRef} aria-hidden="true" className="pl-atabs__indicator" />
         {tabs.map((t) => {
           const isSel = t.value === selected;
           return (
@@ -1876,11 +1876,11 @@ export function AnimatedTabs({ tabs, value, defaultValue, onChange, label, varia
               aria-controls={isSel ? `${id}-panel` : undefined}
               tabIndex={isSel ? 0 : -1}
               disabled={t.disabled}
-              className="oc-atabs__tab"
+              className="pl-atabs__tab"
               onClick={() => select(t.value)}
             >
               {t.icon && (
-                <span aria-hidden="true" className="oc-atabs__icon">
+                <span aria-hidden="true" className="pl-atabs__icon">
                   {t.icon}
                 </span>
               )}
@@ -1890,7 +1890,7 @@ export function AnimatedTabs({ tabs, value, defaultValue, onChange, label, varia
         })}
       </div>
       {active?.content !== undefined && (
-        <div key={active.value} role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active.value}`} tabIndex={0} className="oc-atabs__panel">
+        <div key={active.value} role="tabpanel" id={`${id}-panel`} aria-labelledby={`${id}-tab-${active.value}`} tabIndex={0} className="pl-atabs__panel">
           {active.content}
         </div>
       )}

@@ -1,9 +1,9 @@
 /**
- * Orca Space — drag-and-drop page builder and "describe it, see it" playground for Orca UI.
+ * Pelagic Space — drag-and-drop page builder and "describe it, see it" playground for Pelagic UI.
  * Pointer-event drag and drop (no dependency) with a full keyboard alternative (WCAG 2.5.7).
  */
 import { useCallback, useEffect, useId, useReducer, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Button, Segmented, Tabs, Toaster } from '@orca-ui/react';
+import { Button, Segmented, Tabs, Toaster } from '@pelagic-ui/react';
 import { notify, onNotice, type Notice } from './notify';
 import { Canvas, type CanvasHandlers, type Device } from './Canvas';
 import { Inspector, Layers, Palette, type ArrangeAction, type PaletteItem } from './Panels';
@@ -521,7 +521,7 @@ export default function SpaceApp() {
       notify(`Imported “${parsed.name}”`);
       announce(`Imported ${parsed.name}.`);
     } catch {
-      notify('That file is not an Orca Space JSON export', 'error');
+      notify('That file is not a Pelagic Space JSON export', 'error');
     }
   };
 
@@ -563,7 +563,7 @@ export default function SpaceApp() {
           />
           <ToolButton icon="share" label="Share link" onClick={share} />
           <ToolButton icon="upload" label="Import JSON" onClick={() => fileRef.current?.click()} />
-          <ToolButton icon="download" label="Export JSON" onClick={() => downloadFile(`${doc.name || 'page'}.orca-space.json`, JSON.stringify(doc, null, 2), 'application/json')} />
+          <ToolButton icon="download" label="Export JSON" onClick={() => downloadFile(`${doc.name || 'page'}.pelagic-space.json`, JSON.stringify(doc, null, 2), 'application/json')} />
           <ToolButton
             icon="trash"
             label="Clear"
@@ -583,9 +583,9 @@ export default function SpaceApp() {
           ref={fileRef}
           type="file"
           accept="application/json,.json"
-          className="oc-sr-only"
+          className="pl-sr-only"
           tabIndex={-1}
-          aria-label="Import an Orca Space JSON file"
+          aria-label="Import a Pelagic Space JSON file"
           onChange={(e) => {
             importJson(e.target.files?.[0]);
             e.target.value = '';
@@ -595,7 +595,7 @@ export default function SpaceApp() {
 
       <div className="sp-workspace">
         <section className="sp-panel sp-panel--left" aria-labelledby="sp-left-title" data-open={sheet === 'left' || undefined}>
-          <h2 id="sp-left-title" className="oc-sr-only">Components and layers</h2>
+          <h2 id="sp-left-title" className="pl-sr-only">Components and layers</h2>
           <div className="sp-sheet-head">
             <span>{leftTab === 'add' ? 'Add components' : 'Layers'}</span>
             <button type="button" className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
@@ -622,7 +622,7 @@ export default function SpaceApp() {
         </section>
 
         <section className="sp-center" aria-labelledby="sp-canvas-title">
-          <h2 id="sp-canvas-title" className="oc-sr-only">Canvas</h2>
+          <h2 id="sp-canvas-title" className="pl-sr-only">Canvas</h2>
           <div className="sp-toolbar" role="group" aria-label="Canvas tools">
             <span className="sp-toolbar__group">
               <ToolButton icon="undo" label="Undo" showLabel={false} onClick={undo} disabled={!state.past.length} shortcut="Control+Z" />
@@ -654,7 +654,7 @@ export default function SpaceApp() {
             >
               <span className="sp-swatch" data-accent={doc.theme.accent} aria-hidden="true" />
               <span className="sp-tb__text">Theme</span>
-              <span className="oc-sr-only"> settings for the canvas</span>
+              <span className="pl-sr-only"> settings for the canvas</span>
               <span aria-hidden="true" className="sp-caret">▾</span>
             </Button>
             <span className="sp-toolbar__group">
@@ -673,7 +673,7 @@ export default function SpaceApp() {
               <span className="sp-help">Scoped to the canvas only; exported code carries the same data-theme attributes.</span>
             </div>
           )}
-          <p id="sp-canvas-help" className="oc-sr-only">
+          <p id="sp-canvas-help" className="pl-sr-only">
             Arrow keys select components. Alt plus arrow keys move the selection. Control D duplicates, Delete removes, Enter edits properties.
           </p>
           <div className="sp-canvas-scroll" ref={canvasScrollRef}>
@@ -682,7 +682,7 @@ export default function SpaceApp() {
         </section>
 
         <section className="sp-panel sp-panel--right" aria-labelledby="sp-inspector-title" data-open={sheet === 'inspect' || undefined} ref={inspectorRef}>
-          <h2 id="sp-inspector-title" className="oc-sr-only">Inspector</h2>
+          <h2 id="sp-inspector-title" className="pl-sr-only">Inspector</h2>
           <div className="sp-sheet-head">
             <span>{selectedNode ? `Edit ${REGISTRY[selectedNode.type].label}` : 'Page settings'}</span>
             <button type="button" className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
@@ -739,7 +739,7 @@ export default function SpaceApp() {
         />
       )}
 
-      <div className="oc-sr-only" role="status" aria-live="polite" aria-atomic="true">
+      <div className="pl-sr-only" role="status" aria-live="polite" aria-atomic="true">
         {live.msg}
         {live.n % 2 ? '​' : ''}
       </div>

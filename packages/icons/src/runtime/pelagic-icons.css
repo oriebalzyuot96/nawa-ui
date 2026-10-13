@@ -1,0 +1,51 @@
+/* @pelagic-ui/icons — base styles for inline SVG and sprite icons. */
+.pl-icon {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: -0.125em;
+  color: inherit;
+  overflow: visible;
+}
+
+/* Size helpers (the width/height attributes win unless these classes are used). */
+.pl-icon--1em { width: 1em; height: 1em; }
+.pl-icon--xs { width: 12px; height: 12px; }
+.pl-icon--sm { width: 16px; height: 16px; }
+.pl-icon--md { width: 20px; height: 20px; }
+.pl-icon--lg { width: 24px; height: 24px; }
+.pl-icon--xl { width: 32px; height: 32px; }
+.pl-icon--2xl { width: 48px; height: 48px; }
+
+/* Duotone layer: soft secondary fill. Customise per theme or per icon:
+   --pl-icon-duotone: colour of the layer (defaults to currentColor)
+   --pl-icon-duotone-opacity: strength of the layer (defaults to 0.22) */
+.pl-icon__duo {
+  fill: var(--pl-icon-duotone, currentColor);
+  fill-opacity: var(--pl-icon-duotone-opacity, 0.22);
+}
+
+/* Optional stroke override for inline icons. */
+.pl-icon[data-stroke='thin'] { stroke-width: 1.5; }
+.pl-icon[data-stroke='bold'] { stroke-width: 2; }
+
+/* Spin (loader, refresh). Respect reduced motion: slow and steady, never removed silently. */
+.pl-icon--spin {
+  animation: pl-icon-spin 0.9s linear infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes pl-icon-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .pl-icon--spin { animation-duration: 2.4s; }
+}
+
+/* RTL mirroring for directional icons (arrows, undo/redo, send…). */
+[dir='rtl'] .pl-icon--flip-rtl { transform: scaleX(-1); }
+/* Separate rule: an unsupported :dir() must not invalidate the rule above. */
+.pl-icon--flip-rtl:dir(rtl) { transform: scaleX(-1); }
+[dir='rtl'] [dir='ltr'] .pl-icon--flip-rtl { transform: none; }
+
+/* Forced colours: strokes follow currentColor (the system colour); the duotone
+   layer stays a faint, non-essential tint. */
+@media (forced-colors: active) {
+  .pl-icon__duo { fill: currentColor; fill-opacity: 0.18; }
+}

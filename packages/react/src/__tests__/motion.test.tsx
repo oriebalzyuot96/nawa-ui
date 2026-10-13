@@ -33,7 +33,7 @@ import {
   useReducedMotion,
   useSpring,
 } from '../index';
-import { normalizeKeyframes } from '@orca-ui/core/motion';
+import { normalizeKeyframes } from '@pelagic-ui/core/motion';
 
 function mockMatchMedia(reduced: boolean) {
   vi.stubGlobal(
@@ -317,7 +317,7 @@ describe('Marquee', () => {
       </Marquee>,
     );
     const region = screen.getByRole('region', { name: 'Customers' });
-    const groups = container.querySelectorAll('.oc-marquee__group');
+    const groups = container.querySelectorAll('.pl-marquee__group');
     expect(groups).toHaveLength(2);
     expect(groups[1]).toHaveAttribute('aria-hidden', 'true');
     expect(groups[1]).toHaveAttribute('inert');
@@ -334,7 +334,7 @@ describe('Marquee', () => {
         <span>Acme</span>
       </Marquee>,
     );
-    expect(container.querySelectorAll('.oc-marquee__group')).toHaveLength(1);
+    expect(container.querySelectorAll('.pl-marquee__group')).toHaveLength(1);
     expect(screen.queryByRole('button')).toBeNull();
     expect(screen.getByRole('group', { name: 'Customers' })).toHaveAttribute('tabindex', '0');
   });
@@ -344,28 +344,28 @@ describe('Text & number effects', () => {
   it('NumberTicker exposes only the final value to screen readers', () => {
     mockMatchMedia(true);
     const { container } = render(<NumberTicker value={12500} locale="en-US" prefix="$" live />);
-    expect(container.querySelector('.oc-ticker__visual')).toHaveAttribute('aria-hidden', 'true');
-    expect(container.querySelector('.oc-ticker__num')).toHaveTextContent('12,500');
+    expect(container.querySelector('.pl-ticker__visual')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.pl-ticker__num')).toHaveTextContent('12,500');
     expect(screen.getByRole('status')).toHaveTextContent('$12,500');
   });
 
   it('TextReveal reads the whole text once and splits Arabic by word', () => {
     const { container } = render(<TextReveal text="مرحبا بالعالم" by="char" />);
-    expect(container.querySelector('.oc-sr-only')).toHaveTextContent('مرحبا بالعالم');
-    expect(container.querySelectorAll('.oc-textreveal__token')).toHaveLength(2);
-    expect(container.querySelector('.oc-textreveal__token')?.closest('[aria-hidden="true"]')).not.toBeNull();
+    expect(container.querySelector('.pl-sr-only')).toHaveTextContent('مرحبا بالعالم');
+    expect(container.querySelectorAll('.pl-textreveal__token')).toHaveLength(2);
+    expect(container.querySelector('.pl-textreveal__token')?.closest('[aria-hidden="true"]')).not.toBeNull();
   });
 
   it('TypingText shows the full text under reduced motion and offers pause when looping', () => {
     mockMatchMedia(true);
     const { container, unmount } = render(<TypingText text="Accessible by default" />);
-    expect(container.querySelector('.oc-typing__visual')).toHaveTextContent('Accessible by default');
-    expect(container.querySelector('.oc-sr-only')).toHaveTextContent('Accessible by default');
+    expect(container.querySelector('.pl-typing__visual')).toHaveTextContent('Accessible by default');
+    expect(container.querySelector('.pl-sr-only')).toHaveTextContent('Accessible by default');
     unmount();
     mockMatchMedia(false);
     render(<TypingText words={['fast', 'accessible']} loop />);
     expect(screen.getByRole('button', { name: 'Pause typing animation' })).toBeInTheDocument();
-    expect(screen.getByText('fast, accessible')).toHaveClass('oc-sr-only');
+    expect(screen.getByText('fast, accessible')).toHaveClass('pl-sr-only');
   });
 
   it('MorphingText can be paused and is static under reduced motion', async () => {
@@ -390,15 +390,15 @@ describe('Decorative and interactive pieces', () => {
         <Meteors count={3} />
       </AuroraBackground>,
     );
-    expect(container.querySelector('.oc-aurora__layer')).toHaveAttribute('aria-hidden', 'true');
-    for (const sel of ['.oc-pattern--grid', '.oc-pattern--dots', '.oc-beam', '.oc-meteors']) {
+    expect(container.querySelector('.pl-aurora__layer')).toHaveAttribute('aria-hidden', 'true');
+    for (const sel of ['.pl-pattern--grid', '.pl-pattern--dots', '.pl-beam', '.pl-meteors']) {
       expect(container.querySelector(sel)).toHaveAttribute('aria-hidden', 'true');
     }
-    expect(container.querySelectorAll('.oc-meteor')).toHaveLength(3);
+    expect(container.querySelectorAll('.pl-meteor')).toHaveLength(3);
     unmount();
     mockMatchMedia(true);
     const reduced = render(<Meteors count={3} />);
-    expect(reduced.container.querySelector('.oc-meteors')).toBeNull();
+    expect(reduced.container.querySelector('.pl-meteors')).toBeNull();
   });
 
   it('ShimmerButton is a real button and ScrollProgressBar is decorative unless labelled', () => {
@@ -411,7 +411,7 @@ describe('Decorative and interactive pieces', () => {
     );
     expect(screen.getByRole('button', { name: 'Get started' })).toHaveAttribute('type', 'button');
     expect(screen.getByRole('progressbar', { name: 'Reading progress' })).toHaveAttribute('aria-valuenow', '0');
-    expect(document.querySelectorAll('.oc-scrollbar[aria-hidden="true"]')).toHaveLength(1);
+    expect(document.querySelectorAll('.pl-scrollbar[aria-hidden="true"]')).toHaveLength(1);
   });
 
   it('AnimatedList announces new items', async () => {
@@ -450,7 +450,7 @@ describe('AnimatedTabs', () => {
     expect(first).toHaveAttribute('aria-selected', 'true');
     expect(first).toHaveAttribute('tabindex', '0');
     expect(screen.getByRole('tabpanel', { name: 'Overview' })).toHaveTextContent('Overview panel');
-    expect(container.querySelector('.oc-atabs__indicator')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.pl-atabs__indicator')).toHaveAttribute('aria-hidden', 'true');
     first.focus();
     fireEvent.keyDown(list, { key: 'ArrowRight' });
     expect(screen.getByRole('tab', { name: 'Specs' })).toHaveFocus();

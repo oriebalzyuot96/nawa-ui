@@ -1,5 +1,5 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
-import { Loader } from '@orca-ui/react';
+import { Loader } from '@pelagic-ui/react';
 import { DemoFrame } from './shared';
 
 // three.js (~600 KB) is split into its own chunk and fetched only when this island becomes visible.

@@ -26,7 +26,7 @@ import {
   type SyntheticEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { getFocusable, lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { getFocusable, lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
 import { cx } from '../utils';
 import { Button, type ButtonSize, type ButtonVariant } from './actions';
 import { Dialog } from './overlay';
@@ -381,8 +381,8 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
     if (!submenu || !el) return;
     const r = el.getBoundingClientRect();
     const rtl = isRtl(el);
-    if ((!rtl && r.right > window.innerWidth) || (rtl && r.left < 0)) el.classList.add('oc-menu--flip');
-    if (r.bottom > window.innerHeight && r.height < window.innerHeight) el.classList.add('oc-menu--flip-y');
+    if ((!rtl && r.right > window.innerWidth) || (rtl && r.left < 0)) el.classList.add('pl-menu--flip');
+    if (r.bottom > window.innerHeight && r.height < window.innerHeight) el.classList.add('pl-menu--flip-y');
   }, [submenu]);
 
   const openSub = (i: number, edge?: 'first' | 'last') => {
@@ -482,7 +482,7 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
 
   let navIndex = 0;
   const renderItem = (item: MenuItem, key: string): ReactNode => {
-    if (item.separator) return <li key={key} role="separator" className="oc-menu__separator" />;
+    if (item.separator) return <li key={key} role="separator" className="pl-menu__separator" />;
     const i = navIndex++;
     const sub = hasSub(item);
     const open = sub && openIdx === i;
@@ -494,7 +494,7 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
       id: itemId(i),
       role: 'menuitem',
       tabIndex: roving && focusIndex === i ? 0 : -1,
-      className: cx('oc-menu__link', item.danger && 'oc-menu__link--danger'),
+      className: cx('pl-menu__link', item.danger && 'pl-menu__link--danger'),
       'aria-disabled': item.disabled || undefined,
       'aria-haspopup': sub ? ('menu' as const) : undefined,
       'aria-expanded': sub ? open : undefined,
@@ -515,22 +515,22 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
     const content = (
       <>
         {item.icon && (
-          <span className="oc-menu__icon" aria-hidden="true">
+          <span className="pl-menu__icon" aria-hidden="true">
             {item.icon}
           </span>
         )}
-        <span className="oc-menu__label">{item.label}</span>
-        {item.badge != null && <span className="oc-menu__badge">{item.badge}</span>}
+        <span className="pl-menu__label">{item.label}</span>
+        {item.badge != null && <span className="pl-menu__badge">{item.badge}</span>}
         {item.shortcut && (
-          <kbd className="oc-menu__shortcut" aria-hidden="true">
+          <kbd className="pl-menu__shortcut" aria-hidden="true">
             {item.shortcut}
           </kbd>
         )}
-        {sub && <span className="oc-menu__caret" aria-hidden="true" />}
+        {sub && <span className="pl-menu__caret" aria-hidden="true" />}
       </>
     );
     return (
-      <li key={key} role="none" className={cx('oc-menu__item', sub && 'oc-menu__item--parent')}>
+      <li key={key} role="none" className={cx('pl-menu__item', sub && 'pl-menu__item--parent')}>
         {item.url && !sub && !item.disabled ? (
           <a {...common} href={item.url} target={item.target}>
             {content}
@@ -562,7 +562,7 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
       role="menu"
       aria-label={ariaLabel}
       aria-labelledby={ariaLabelledBy}
-      className={cx('oc-menu', submenu && 'oc-menu--sub', className)}
+      className={cx('pl-menu', submenu && 'pl-menu--sub', className)}
       onKeyDown={onKeyDown}
     >
       {items.map((item, k) => {
@@ -570,11 +570,11 @@ function MenuList({ items, mode, id, ariaLabel, ariaLabelledBy, className, autoF
         if (mode === 'grouped' && isGroup(item)) {
           const headerId = `${baseId}-group-${k}`;
           return (
-            <li key={key} role="none" className="oc-menu__group">
-              <span id={headerId} className="oc-menu__header">
+            <li key={key} role="none" className="pl-menu__group">
+              <span id={headerId} className="pl-menu__header">
                 {item.label}
               </span>
-              <ul role="group" aria-labelledby={headerId} className="oc-menu__group-list">
+              <ul role="group" aria-labelledby={headerId} className="pl-menu__group-list">
                 {item.items!.map((child, c) => renderItem(child, child.key ?? `${k}-${c}`))}
               </ul>
             </li>
@@ -618,7 +618,7 @@ function MenuPopup({ items, mode, id, ariaLabel, ariaLabelledBy, className, getA
   const host = trigger?.closest(LANDMARKS) ?? document.body;
   return createPortal(
     <MenuRootContext.Provider value={ctx}>
-      <div ref={ref} className={cx('oc-floating', 'oc-menu-popup', className)} dir={rtl ? 'rtl' : 'ltr'}>
+      <div ref={ref} className={cx('pl-floating', 'pl-menu-popup', className)} dir={rtl ? 'rtl' : 'ltr'}>
         <MenuList items={items} mode={mode} id={id} ariaLabel={ariaLabel} ariaLabelledBy={ariaLabelledBy} autoFocus={autoFocus} onEscape={() => onClose(true)} />
       </div>
     </MenuRootContext.Provider>,
@@ -703,7 +703,7 @@ function useMenuBase(mode: 'grouped' | 'tiered', props: MenuProps, ref: Forwarde
         id={menuId}
         ariaLabel={props['aria-label']}
         ariaLabelledBy={props['aria-labelledby']}
-        className={cx('oc-menu--inline', mode === 'tiered' && 'oc-menu--tiered', className)}
+        className={cx('pl-menu--inline', mode === 'tiered' && 'pl-menu--tiered', className)}
       />
     );
   }
@@ -800,7 +800,7 @@ export const ContextMenu = forwardRef<ContextMenuHandle, ContextMenuProps>(funct
     const onContext = (event: Event) => {
       const e = event as globalThis.MouseEvent;
       const el = e.target instanceof Element ? e.target : null;
-      if (el?.closest('.oc-menu-popup')) {
+      if (el?.closest('.pl-menu-popup')) {
         e.preventDefault();
         return;
       }
@@ -832,7 +832,7 @@ export const ContextMenu = forwardRef<ContextMenuHandle, ContextMenuProps>(funct
       mode="tiered"
       items={model}
       ariaLabel={ariaLabel}
-      className={cx('oc-contextmenu', className)}
+      className={cx('pl-contextmenu', className)}
       getAnchor={() => pointRect(point.x, point.y)}
       rtl={point.rtl}
       offset={0}
@@ -969,19 +969,19 @@ export function Menubar({ model, 'aria-label': ariaLabel, start, end, breakpoint
   };
 
   return (
-    <div ref={rootRef} className={cx('oc-menubar', collapsed && 'oc-menubar--collapsed', mobileOpen && 'is-open', className)} onBlur={onBlur}>
-      {start && <div className="oc-menubar__start">{start}</div>}
+    <div ref={rootRef} className={cx('pl-menubar', collapsed && 'pl-menubar--collapsed', mobileOpen && 'is-open', className)} onBlur={onBlur}>
+      {start && <div className="pl-menubar__start">{start}</div>}
       {collapsed && (
         <button
           ref={toggleRef}
           type="button"
-          className="oc-menubar__toggle"
+          className="pl-menubar__toggle"
           aria-label={toggleLabel}
           aria-expanded={mobileOpen}
           aria-controls={listId}
           onClick={() => setMobileOpen(!mobileOpen)}
         >
-          <span className="oc-menubar__bars" aria-hidden="true" />
+          <span className="pl-menubar__bars" aria-hidden="true" />
         </button>
       )}
       <MenuRootContext.Provider value={ctx}>
@@ -990,7 +990,7 @@ export function Menubar({ model, 'aria-label': ariaLabel, start, end, breakpoint
           role="menubar"
           aria-label={ariaLabel}
           aria-orientation={collapsed ? 'vertical' : 'horizontal'}
-          className="oc-menubar__list"
+          className="pl-menubar__list"
           hidden={collapsed && !mobileOpen}
           onKeyDown={onKeyDown}
         >
@@ -1004,7 +1004,7 @@ export function Menubar({ model, 'aria-label': ariaLabel, start, end, breakpoint
               id: itemId(i),
               role: 'menuitem',
               tabIndex: active === i ? 0 : -1,
-              className: cx('oc-menubar__link', item.danger && 'oc-menu__link--danger'),
+              className: cx('pl-menubar__link', item.danger && 'pl-menu__link--danger'),
               'aria-disabled': item.disabled || undefined,
               'aria-haspopup': item.items?.length ? ('menu' as const) : undefined,
               'aria-expanded': item.items?.length ? open : undefined,
@@ -1033,17 +1033,17 @@ export function Menubar({ model, 'aria-label': ariaLabel, start, end, breakpoint
             const content = (
               <>
                 {item.icon && (
-                  <span className="oc-menu__icon" aria-hidden="true">
+                  <span className="pl-menu__icon" aria-hidden="true">
                     {item.icon}
                   </span>
                 )}
-                <span className="oc-menu__label">{item.label}</span>
-                {item.badge != null && <span className="oc-menu__badge">{item.badge}</span>}
-                {sub && <span className="oc-menubar__caret" aria-hidden="true" />}
+                <span className="pl-menu__label">{item.label}</span>
+                {item.badge != null && <span className="pl-menu__badge">{item.badge}</span>}
+                {sub && <span className="pl-menubar__caret" aria-hidden="true" />}
               </>
             );
             return (
-              <li key={item.key ?? i} role="none" className={cx('oc-menubar__item', open && 'is-open')}>
+              <li key={item.key ?? i} role="none" className={cx('pl-menubar__item', open && 'is-open')}>
                 {item.url && !sub && !item.disabled ? (
                   <a {...common} href={item.url} target={item.target}>
                     {content}
@@ -1078,7 +1078,7 @@ export function Menubar({ model, 'aria-label': ariaLabel, start, end, breakpoint
           })}
         </ul>
       </MenuRootContext.Provider>
-      {end && <div className="oc-menubar__end">{end}</div>}
+      {end && <div className="pl-menubar__end">{end}</div>}
     </div>
   );
 }
@@ -1147,7 +1147,7 @@ export function MegaMenu({ model, orientation = 'horizontal', 'aria-label': aria
       } else if (e.key === 'Escape' && openIdx !== null) setOpenIdx(null);
       else handled = false;
     } else {
-      const panel = target.closest<HTMLElement>('.oc-megamenu__panel');
+      const panel = target.closest<HTMLElement>('.pl-megamenu__panel');
       if (!panel) return;
       const idx = Number(panel.dataset.index);
       const links = panelLinks(idx);
@@ -1184,12 +1184,12 @@ export function MegaMenu({ model, orientation = 'horizontal', 'aria-label': aria
     const content = (
       <>
         {item.icon && (
-          <span className="oc-menu__icon" aria-hidden="true">
+          <span className="pl-menu__icon" aria-hidden="true">
             {item.icon}
           </span>
         )}
-        <span className="oc-menu__label">{item.label}</span>
-        {item.badge != null && <span className="oc-menu__badge">{item.badge}</span>}
+        <span className="pl-menu__label">{item.label}</span>
+        {item.badge != null && <span className="pl-menu__badge">{item.badge}</span>}
       </>
     );
     return item.url && !item.disabled ? (
@@ -1204,54 +1204,54 @@ export function MegaMenu({ model, orientation = 'horizontal', 'aria-label': aria
   };
 
   return (
-    <nav ref={rootRef} aria-label={ariaLabel} className={cx('oc-megamenu', `oc-megamenu--${orientation}`, className)} onKeyDown={onKeyDown} onBlur={onBlur}>
-      <ul className="oc-megamenu__root">
+    <nav ref={rootRef} aria-label={ariaLabel} className={cx('pl-megamenu', `pl-megamenu--${orientation}`, className)} onKeyDown={onKeyDown} onBlur={onBlur}>
+      <ul className="pl-megamenu__root">
         {model.map((item, i) => {
           const setRef = (el: HTMLElement | null) => {
             topRefs.current[i] = el;
           };
           if (!item.items?.length) {
             return (
-              <li key={item.key ?? i} className="oc-megamenu__item">
-                {renderLink(item as MenuItem, 'oc-megamenu__top', setRef)}
+              <li key={item.key ?? i} className="pl-megamenu__item">
+                {renderLink(item as MenuItem, 'pl-megamenu__top', setRef)}
               </li>
             );
           }
           const open = openIdx === i;
           return (
-            <li key={item.key ?? i} className={cx('oc-megamenu__item', open && 'is-open')}>
+            <li key={item.key ?? i} className={cx('pl-megamenu__item', open && 'is-open')}>
               <button
                 ref={setRef}
                 type="button"
-                className="oc-megamenu__top"
+                className="pl-megamenu__top"
                 aria-expanded={open}
                 aria-controls={panelId(i)}
                 disabled={item.disabled}
                 onClick={() => setOpenIdx(open ? null : i)}
               >
                 {item.icon && (
-                  <span className="oc-menu__icon" aria-hidden="true">
+                  <span className="pl-menu__icon" aria-hidden="true">
                     {item.icon}
                   </span>
                 )}
-                <span className="oc-menu__label">{item.label}</span>
-                <span className="oc-menubar__caret" aria-hidden="true" />
+                <span className="pl-menu__label">{item.label}</span>
+                <span className="pl-menubar__caret" aria-hidden="true" />
               </button>
-              <div id={panelId(i)} className="oc-megamenu__panel" data-index={i} hidden={!open}>
+              <div id={panelId(i)} className="pl-megamenu__panel" data-index={i} hidden={!open}>
                 {item.items.map((column, c) => (
-                  <div key={c} className="oc-megamenu__column">
+                  <div key={c} className="pl-megamenu__column">
                     {column.map((group, g) => {
                       const headerId = `${baseId}-h-${i}-${c}-${g}`;
                       return (
-                        <div key={group.key ?? g} className="oc-megamenu__group">
+                        <div key={group.key ?? g} className="pl-megamenu__group">
                           {group.label && (
-                            <div id={headerId} className="oc-megamenu__header">
+                            <div id={headerId} className="pl-megamenu__header">
                               {group.label}
                             </div>
                           )}
-                          <ul className="oc-megamenu__list" aria-labelledby={group.label ? headerId : undefined}>
+                          <ul className="pl-megamenu__list" aria-labelledby={group.label ? headerId : undefined}>
                             {(group.items ?? []).map((link, l) => (
-                              <li key={link.key ?? l}>{renderLink(link, 'oc-megamenu__link')}</li>
+                              <li key={link.key ?? l}>{renderLink(link, 'pl-megamenu__link')}</li>
                             ))}
                           </ul>
                         </div>
@@ -1339,13 +1339,13 @@ export function PanelMenu({ model, multiple = false, defaultExpandedKeys = [], '
   const label = (item: MenuItem, caret: boolean) => (
     <>
       {item.icon && (
-        <span className="oc-menu__icon" aria-hidden="true">
+        <span className="pl-menu__icon" aria-hidden="true">
           {item.icon}
         </span>
       )}
-      <span className="oc-menu__label">{item.label}</span>
-      {item.badge != null && <span className="oc-menu__badge">{item.badge}</span>}
-      {caret && <span className="oc-panelmenu__caret" aria-hidden="true" />}
+      <span className="pl-menu__label">{item.label}</span>
+      {item.badge != null && <span className="pl-menu__badge">{item.badge}</span>}
+      {caret && <span className="pl-panelmenu__caret" aria-hidden="true" />}
     </>
   );
 
@@ -1361,17 +1361,17 @@ export function PanelMenu({ model, multiple = false, defaultExpandedKeys = [], '
     );
 
   const renderList = (items: MenuItem[], parentPath: string): ReactNode => (
-    <ul className="oc-panelmenu__list">
+    <ul className="pl-panelmenu__list">
       {items.map((item, i) => {
-        if (item.separator) return <li key={i} role="separator" className="oc-menu__separator" />;
+        if (item.separator) return <li key={i} role="separator" className="pl-menu__separator" />;
         const path = `${parentPath}-${i}`;
         const key = keyOf(item, path);
-        if (!item.items?.length) return <li key={key}>{leaf(item, 'oc-panelmenu__link')}</li>;
+        if (!item.items?.length) return <li key={key}>{leaf(item, 'pl-panelmenu__link')}</li>;
         const open = expanded.has(key);
         const subId = domId(`${path}-list`);
         return (
           <li key={key}>
-            <button data-pm-item type="button" className="oc-panelmenu__link" aria-expanded={open} aria-controls={subId} disabled={item.disabled} onClick={() => toggle(key, false)}>
+            <button data-pm-item type="button" className="pl-panelmenu__link" aria-expanded={open} aria-controls={subId} disabled={item.disabled} onClick={() => toggle(key, false)}>
               {label(item, true)}
             </button>
             <div id={subId} data-pm-group="" hidden={!open}>
@@ -1384,13 +1384,13 @@ export function PanelMenu({ model, multiple = false, defaultExpandedKeys = [], '
   );
 
   return (
-    <nav ref={rootRef} aria-label={ariaLabel} className={cx('oc-panelmenu', className)} onKeyDown={onKeyDown}>
+    <nav ref={rootRef} aria-label={ariaLabel} className={cx('pl-panelmenu', className)} onKeyDown={onKeyDown}>
       {model.map((item, i) => {
         const key = rootKeys[i];
         if (!item.items?.length) {
           return (
-            <div key={key} className="oc-panelmenu__panel">
-              {leaf(item, 'oc-panelmenu__header')}
+            <div key={key} className="pl-panelmenu__panel">
+              {leaf(item, 'pl-panelmenu__header')}
             </div>
           );
         }
@@ -1398,12 +1398,12 @@ export function PanelMenu({ model, multiple = false, defaultExpandedKeys = [], '
         const headerId = domId(`${i}-header`);
         const contentId = domId(`${i}-content`);
         return (
-          <div key={key} className={cx('oc-panelmenu__panel', open && 'is-open')}>
+          <div key={key} className={cx('pl-panelmenu__panel', open && 'is-open')}>
             <button
               data-pm-item
               id={headerId}
               type="button"
-              className="oc-panelmenu__header"
+              className="pl-panelmenu__header"
               aria-expanded={open}
               aria-controls={contentId}
               disabled={item.disabled}
@@ -1411,7 +1411,7 @@ export function PanelMenu({ model, multiple = false, defaultExpandedKeys = [], '
             >
               {label(item, true)}
             </button>
-            <div id={contentId} role="region" aria-labelledby={headerId} data-pm-group="" className="oc-panelmenu__content" hidden={!open}>
+            <div id={contentId} role="region" aria-labelledby={headerId} data-pm-group="" className="pl-panelmenu__content" hidden={!open}>
               {renderList(item.items, String(i))}
             </div>
           </div>
@@ -1437,17 +1437,17 @@ export interface DockProps {
 
 export function Dock({ model, position = 'bottom', magnification = true, 'aria-label': ariaLabel = 'Dock', className }: DockProps) {
   return (
-    <nav aria-label={ariaLabel} className={cx('oc-dock', `oc-dock--${position}`, magnification && 'oc-dock--magnify', className)}>
-      <ul className="oc-dock__list">
+    <nav aria-label={ariaLabel} className={cx('pl-dock', `pl-dock--${position}`, magnification && 'pl-dock--magnify', className)}>
+      <ul className="pl-dock__list">
         {model
           .filter((item) => !item.separator)
           .map((item, i) => {
             const inner = (
               <>
-                <span className="oc-dock__icon" aria-hidden="true">
+                <span className="pl-dock__icon" aria-hidden="true">
                   {item.icon}
                 </span>
-                <span className="oc-dock__tooltip" aria-hidden="true">
+                <span className="pl-dock__tooltip" aria-hidden="true">
                   {item.label}
                 </span>
               </>
@@ -1460,13 +1460,13 @@ export function Dock({ model, position = 'bottom', magnification = true, 'aria-l
               item.command?.({ item, originalEvent: e });
             };
             return (
-              <li key={item.key ?? i} className="oc-dock__item">
+              <li key={item.key ?? i} className="pl-dock__item">
                 {item.url && !item.disabled ? (
-                  <a className="oc-dock__action" href={item.url} target={item.target} aria-label={item.label} onClick={onClick}>
+                  <a className="pl-dock__action" href={item.url} target={item.target} aria-label={item.label} onClick={onClick}>
                     {inner}
                   </a>
                 ) : (
-                  <button type="button" className="oc-dock__action" aria-label={item.label} disabled={item.disabled} onClick={onClick}>
+                  <button type="button" className="pl-dock__action" aria-label={item.label} disabled={item.disabled} onClick={onClick}>
                     {inner}
                   </button>
                 )}
@@ -1511,8 +1511,8 @@ export function SplitButton({ label, onClick, model, icon, variant = 'primary', 
   }, []);
 
   return (
-    <div ref={groupRef} className={cx('oc-splitbutton', className)}>
-      <Button variant={variant} size={size} disabled={disabled} onClick={onClick} className="oc-splitbutton__main">
+    <div ref={groupRef} className={cx('pl-splitbutton', className)}>
+      <Button variant={variant} size={size} disabled={disabled} onClick={onClick} className="pl-splitbutton__main">
         {icon && <span aria-hidden="true">{icon}</span>}
         {label}
       </Button>
@@ -1527,7 +1527,7 @@ export function SplitButton({ label, onClick, model, icon, variant = 'primary', 
         aria-haspopup="menu"
         aria-expanded={open}
         aria-controls={open ? menuId : undefined}
-        className="oc-splitbutton__toggle"
+        className="pl-splitbutton__toggle"
         onClick={() => {
           setEdge('first');
           setOpen(!open);
@@ -1540,7 +1540,7 @@ export function SplitButton({ label, onClick, model, icon, variant = 'primary', 
           }
         }}
       >
-        <span className="oc-splitbutton__caret" aria-hidden="true" />
+        <span className="pl-splitbutton__caret" aria-hidden="true" />
       </Button>
       {open && (
         <MenuPopup
@@ -1697,13 +1697,13 @@ export function SpeedDial({
   return (
     <div
       ref={rootRef}
-      className={cx('oc-speeddial', `oc-speeddial--${direction}`, type === 'linear' ? 'oc-speeddial--linear' : 'oc-speeddial--radial', open && 'is-open', className)}
+      className={cx('pl-speeddial', `pl-speeddial--${direction}`, type === 'linear' ? 'pl-speeddial--linear' : 'pl-speeddial--radial', open && 'is-open', className)}
       onBlur={onBlur}
     >
       <button
         ref={triggerRef}
         type="button"
-        className="oc-speeddial__button"
+        className="pl-speeddial__button"
         aria-label={ariaLabel}
         aria-haspopup="menu"
         aria-expanded={open}
@@ -1715,9 +1715,9 @@ export function SpeedDial({
         }}
         onKeyDown={onTriggerKeyDown}
       >
-        {open ? (hideIcon ?? showIcon ?? <span className="oc-speeddial__plus" aria-hidden="true" />) : (showIcon ?? <span className="oc-speeddial__plus" aria-hidden="true" />)}
+        {open ? (hideIcon ?? showIcon ?? <span className="pl-speeddial__plus" aria-hidden="true" />) : (showIcon ?? <span className="pl-speeddial__plus" aria-hidden="true" />)}
       </button>
-      <ul ref={listRef} id={listId} role="menu" aria-label={ariaLabel} className="oc-speeddial__list" onKeyDown={onListKeyDown}>
+      <ul ref={listRef} id={listId} role="menu" aria-label={ariaLabel} className="pl-speeddial__list" onKeyDown={onListKeyDown}>
         {actions.map((item, i) => {
           const onClick = (e: ReactMouseEvent<HTMLElement>) => {
             if (item.disabled) {
@@ -1733,7 +1733,7 @@ export function SpeedDial({
             },
             role: 'menuitem',
             tabIndex: -1,
-            className: 'oc-speeddial__action',
+            className: 'pl-speeddial__action',
             'aria-label': item.label,
             'aria-disabled': item.disabled || undefined,
             onClick,
@@ -1741,13 +1741,13 @@ export function SpeedDial({
           const inner = (
             <>
               <span aria-hidden="true">{item.icon}</span>
-              <span className="oc-speeddial__tooltip" aria-hidden="true">
+              <span className="pl-speeddial__tooltip" aria-hidden="true">
                 {item.label}
               </span>
             </>
           );
           return (
-            <li key={item.key ?? i} role="none" className="oc-speeddial__item" style={radialStyle(i)}>
+            <li key={item.key ?? i} role="none" className="pl-speeddial__item" style={radialStyle(i)}>
               {item.url && !item.disabled ? (
                 <a {...props} href={item.url} target={item.target}>
                   {inner}
@@ -1884,7 +1884,7 @@ export const Popover = forwardRef<PopoverHandle, PopoverProps>(function Popover(
             aria-labelledby={ariaLabelledBy}
             tabIndex={-1}
             dir={isRtl(getAnchor()) ? 'rtl' : 'ltr'}
-            className={cx('oc-floating', 'oc-popover', className)}
+            className={cx('pl-floating', 'pl-popover', className)}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 e.stopPropagation();
@@ -1892,10 +1892,10 @@ export const Popover = forwardRef<PopoverHandle, PopoverProps>(function Popover(
               }
             }}
           >
-            <span ref={arrowRef} className="oc-popover__arrow" aria-hidden="true" />
-            <div className="oc-popover__content">{children}</div>
+            <span ref={arrowRef} className="pl-popover__arrow" aria-hidden="true" />
+            <div className="pl-popover__content">{children}</div>
             {showCloseIcon && (
-              <button type="button" className="oc-close oc-popover__close" aria-label={closeLabel} onClick={() => close()}>
+              <button type="button" className="pl-close pl-popover__close" aria-label={closeLabel} onClick={() => close()}>
                 ×
               </button>
             )}
@@ -1977,7 +1977,7 @@ export function ConfirmDialog({
   });
   if (!open || typeof document === 'undefined') return null;
   return createPortal(
-    <div className="oc-overlay">
+    <div className="pl-overlay">
       <div
         ref={panelRef}
         role="alertdialog"
@@ -1985,7 +1985,7 @@ export function ConfirmDialog({
         aria-labelledby={titleId}
         aria-describedby={messageId}
         tabIndex={-1}
-        className={cx('oc-dialog', 'oc-dialog--sm', 'oc-confirm', severity && `oc-confirm--${severity}`, className)}
+        className={cx('pl-dialog', 'pl-dialog--sm', 'pl-confirm', severity && `pl-confirm--${severity}`, className)}
         onKeyDown={(e) => {
           if (e.key === 'Escape') {
             e.stopPropagation();
@@ -1993,22 +1993,22 @@ export function ConfirmDialog({
           }
         }}
       >
-        <div className="oc-dialog__header">
-          <h2 id={titleId} className="oc-dialog__title">
+        <div className="pl-dialog__header">
+          <h2 id={titleId} className="pl-dialog__title">
             {header}
           </h2>
         </div>
-        <div className="oc-dialog__body oc-confirm__body">
+        <div className="pl-dialog__body pl-confirm__body">
           {icon && (
-            <span className="oc-confirm__icon" aria-hidden="true">
+            <span className="pl-confirm__icon" aria-hidden="true">
               {icon}
             </span>
           )}
-          <div id={messageId} className="oc-confirm__message">
+          <div id={messageId} className="pl-confirm__message">
             {message}
           </div>
         </div>
-        <div className="oc-dialog__footer">
+        <div className="pl-dialog__footer">
           <ConfirmActions acceptLabel={acceptLabel} rejectLabel={rejectLabel} severity={severity} onAccept={onAccept} onReject={onReject} acceptRef={acceptRef} rejectRef={rejectRef} />
         </div>
       </div>
@@ -2075,7 +2075,7 @@ export function ConfirmPopup({
       aria-label={header ? undefined : 'Confirmation'}
       tabIndex={-1}
       dir={isRtl(target) ? 'rtl' : 'ltr'}
-      className={cx('oc-floating', 'oc-popover', 'oc-confirm-popup', severity && `oc-confirm--${severity}`, className)}
+      className={cx('pl-floating', 'pl-popover', 'pl-confirm-popup', severity && `pl-confirm--${severity}`, className)}
       onKeyDown={(e) => {
         if (e.key === 'Escape') {
           e.stopPropagation();
@@ -2083,24 +2083,24 @@ export function ConfirmPopup({
         }
       }}
     >
-      <span ref={arrowRef} className="oc-popover__arrow" aria-hidden="true" />
-      <div className="oc-popover__content">
+      <span ref={arrowRef} className="pl-popover__arrow" aria-hidden="true" />
+      <div className="pl-popover__content">
         {header && (
-          <div id={titleId} className="oc-confirm-popup__header">
+          <div id={titleId} className="pl-confirm-popup__header">
             {header}
           </div>
         )}
-        <div className="oc-confirm__body">
+        <div className="pl-confirm__body">
           {icon && (
-            <span className="oc-confirm__icon" aria-hidden="true">
+            <span className="pl-confirm__icon" aria-hidden="true">
               {icon}
             </span>
           )}
-          <div id={messageId} className="oc-confirm__message">
+          <div id={messageId} className="pl-confirm__message">
             {message}
           </div>
         </div>
-        <div className="oc-confirm-popup__footer">
+        <div className="pl-confirm-popup__footer">
           <ConfirmActions size="sm" acceptLabel={acceptLabel} rejectLabel={rejectLabel} severity={severity} onAccept={onAccept} onReject={onReject} acceptRef={acceptRef} rejectRef={rejectRef} />
         </div>
       </div>
@@ -2324,14 +2324,14 @@ export function BlockUI({ blocked, fullScreen = false, label = 'Loading', spinne
   }, [blocked, fullScreen]);
 
   const mask = blocked ? (
-    <div ref={maskRef} role="status" className={cx('oc-blockui__mask', fullScreen && 'oc-blockui__mask--full')}>
+    <div ref={maskRef} role="status" className={cx('pl-blockui__mask', fullScreen && 'pl-blockui__mask--full')}>
       {template ?? (
-        <div className="oc-blockui__card">
-          {spinner && <span className="oc-spinner oc-spinner--lg" aria-hidden="true" />}
-          {label && <span className="oc-blockui__label">{label}</span>}
+        <div className="pl-blockui__card">
+          {spinner && <span className="pl-spinner pl-spinner--lg" aria-hidden="true" />}
+          {label && <span className="pl-blockui__label">{label}</span>}
         </div>
       )}
-      {template && <span className="oc-sr-only">{label}</span>}
+      {template && <span className="pl-sr-only">{label}</span>}
     </div>
   ) : null;
 
@@ -2344,8 +2344,8 @@ export function BlockUI({ blocked, fullScreen = false, label = 'Loading', spinne
     );
   }
   return (
-    <div className={cx('oc-blockui', className)}>
-      <div ref={contentRef} className="oc-blockui__content" aria-busy={blocked || undefined}>
+    <div className={cx('pl-blockui', className)}>
+      <div ref={contentRef} className="pl-blockui__content" aria-busy={blocked || undefined}>
         {children}
       </div>
       {mask}
@@ -2387,11 +2387,11 @@ export function ScrollTop({ target = 'window', threshold = 400, label = 'Scroll 
   return (
     <button
       type="button"
-      className={cx('oc-scrolltop', target !== 'window' && 'oc-scrolltop--sticky', className)}
+      className={cx('pl-scrolltop', target !== 'window' && 'pl-scrolltop--sticky', className)}
       aria-label={label}
       onClick={() => getScroller()?.scrollTo({ top: 0, behavior: prefersReducedMotion() ? 'auto' : behavior })}
     >
-      {icon ?? <span className="oc-scrolltop__icon" aria-hidden="true" />}
+      {icon ?? <span className="pl-scrolltop__icon" aria-hidden="true" />}
     </button>
   );
 }
@@ -2446,11 +2446,11 @@ export function Inplace({
   const close = () => setActive(false);
 
   return (
-    <div className={cx('oc-inplace', active && 'is-active', className)}>
+    <div className={cx('pl-inplace', active && 'is-active', className)}>
       {active ? (
         <div
           ref={contentRef}
-          className="oc-inplace__content"
+          className="pl-inplace__content"
           tabIndex={-1}
           onKeyDown={(e) => {
             if (e.key === 'Escape') {
@@ -2461,13 +2461,13 @@ export function Inplace({
         >
           {typeof children === 'function' ? children(close) : children}
           {closable && (
-            <button type="button" className="oc-close" aria-label={closeLabel} onClick={close}>
+            <button type="button" className="pl-close" aria-label={closeLabel} onClick={close}>
               ×
             </button>
           )}
         </div>
       ) : (
-        <button ref={displayRef} type="button" className="oc-inplace__display" disabled={disabled} aria-label={ariaLabel} onClick={() => setActive(true)}>
+        <button ref={displayRef} type="button" className="pl-inplace__display" disabled={disabled} aria-label={ariaLabel} onClick={() => setActive(true)}>
           {display}
         </button>
       )}
@@ -2481,7 +2481,7 @@ export function Inplace({
 
 export interface AnimateOnScrollProps {
   children?: ReactNode;
-  /** Class added when the element enters the viewport. Default "oc-aos--visible" (fade + rise). */
+  /** Class added when the element enters the viewport. Default "pl-aos--visible" (fade + rise). */
   enterClass?: string;
   /** Animate only the first time (default) or every time it re-enters. */
   once?: boolean;
@@ -2491,7 +2491,7 @@ export interface AnimateOnScrollProps {
   className?: string;
 }
 
-export function AnimateOnScroll({ children, enterClass = 'oc-aos--visible', once = true, threshold = 0.15, rootMargin, as: Tag = 'div', className }: AnimateOnScrollProps) {
+export function AnimateOnScroll({ children, enterClass = 'pl-aos--visible', once = true, threshold = 0.15, rootMargin, as: Tag = 'div', className }: AnimateOnScrollProps) {
   const ref = useRef<HTMLElement>(null);
   // 'static' = no animation (SSR, reduced motion, no IntersectionObserver): content is simply visible.
   const [phase, setPhase] = useState<'static' | 'hidden' | 'shown'>('static');
@@ -2516,7 +2516,7 @@ export function AnimateOnScroll({ children, enterClass = 'oc-aos--visible', once
   }, [once, threshold, rootMargin]);
 
   return (
-    <Tag ref={ref} className={cx(phase !== 'static' && 'oc-aos', phase === 'hidden' && 'oc-aos--hidden', phase === 'shown' && enterClass, className)}>
+    <Tag ref={ref} className={cx(phase !== 'static' && 'pl-aos', phase === 'hidden' && 'pl-aos--hidden', phase === 'shown' && enterClass, className)}>
       {children}
     </Tag>
   );
@@ -2527,8 +2527,8 @@ export function AnimateOnScroll({ children, enterClass = 'oc-aos--visible', once
  * ========================================================================= */
 
 function attachRipple(host: HTMLElement): () => void {
-  const addedClass = !host.classList.contains('oc-ripple');
-  host.classList.add('oc-ripple');
+  const addedClass = !host.classList.contains('pl-ripple');
+  host.classList.add('pl-ripple');
   const waves = new Set<HTMLElement>();
   const timers = new Set<ReturnType<typeof setTimeout>>();
   const onPointerDown = (e: PointerEvent) => {
@@ -2536,7 +2536,7 @@ function attachRipple(host: HTMLElement): () => void {
     const rect = host.getBoundingClientRect();
     const size = Math.max(rect.width, rect.height) * 2;
     const wave = document.createElement('span');
-    wave.className = 'oc-ripple__wave';
+    wave.className = 'pl-ripple__wave';
     wave.setAttribute('aria-hidden', 'true');
     wave.style.width = wave.style.height = `${size}px`;
     wave.style.left = `${e.clientX - rect.left - size / 2}px`;
@@ -2559,7 +2559,7 @@ function attachRipple(host: HTMLElement): () => void {
     host.removeEventListener('pointerdown', onPointerDown);
     timers.forEach(clearTimeout);
     waves.forEach((w) => w.remove());
-    if (addedClass) host.classList.remove('oc-ripple');
+    if (addedClass) host.classList.remove('pl-ripple');
   };
 }
 
@@ -2582,7 +2582,7 @@ export function Ripple() {
     if (!host) return;
     return attachRipple(host);
   }, []);
-  return <span ref={ref} className="oc-ripple__anchor" aria-hidden="true" />;
+  return <span ref={ref} className="pl-ripple__anchor" aria-hidden="true" />;
 }
 
 /* =========================================================================
@@ -2605,7 +2605,7 @@ export function FocusTrap({ children, active = true, autoFocus = true, restoreFo
   const ref = useRef<HTMLElement>(null);
   useFocusScope(active, ref, { trap: true, autoFocus, restoreFocus: () => restoreFocus });
   return (
-    <Tag ref={ref} tabIndex={-1} className={cx('oc-focustrap', className)}>
+    <Tag ref={ref} tabIndex={-1} className={cx('pl-focustrap', className)}>
       {children}
     </Tag>
   );

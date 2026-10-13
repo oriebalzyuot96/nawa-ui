@@ -385,7 +385,7 @@ export const BLOCKS: Record<BlockId, BlockDef> = {
     build: (p) => [
       n('section', { padding: 'md', width: 'normal', align: 'center', tone: 'inverse' }, [
         n('heading', { text: t(p.lang, 'Ready to ship your next page?', 'جاهز لإطلاق صفحتك التالية؟'), level: 2, align: 'center' }),
-        n('text', { text: t(p.lang, 'Join 12,000 teams building with Orca UI.', 'انضم إلى 12,000 فريق يبني باستخدام Orca UI.'), tone: 'muted', align: 'center' }),
+        n('text', { text: t(p.lang, 'Join 12,000 teams building with Pelagic UI.', 'انضم إلى 12,000 فريق يبني باستخدام Pelagic UI.'), tone: 'muted', align: 'center' }),
         n('button', { text: t(p.lang, 'Start for free', 'ابدأ مجانًا'), variant: 'primary', size: 'lg' }),
       ]),
     ],

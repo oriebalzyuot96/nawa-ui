@@ -4,7 +4,7 @@
 //      black-white, gray, gray-dark)
 //   3. the inverted rendering (data-a11y-contrast="invert": filter invert(1) hue-rotate(180deg)) of all 21 themes
 //   4. the saturation filters (data-a11y-saturation low / high) of all 21 themes
-//   5. custom brand themes from createTheme(): a fixed sample of brand colors, plus --brand / orca.config.json
+//   5. custom brand themes from createTheme(): a fixed sample of brand colors, plus --brand / pelagic.config.json
 // Exits 1 on any failure. Pair list: contrastPairs in src/themes.mjs.
 import { contrastPairs, contrastSchemes } from '../src/themes.mjs';
 import { auditTheme, createTheme, parseColor, resolveTokens, rgbToHex } from '../src/theme.js';

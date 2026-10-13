@@ -26,7 +26,7 @@ import {
   useKeyFilter,
   type DatePickerValue,
   type FormOption,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Output } from './shared';
 
 const countries: FormOption[] = [
@@ -303,13 +303,13 @@ function FloatLabelDemo() {
   return (
     <>
       <FloatLabel label="Username">
-        <input className="oc-input" value={user} onChange={(e) => setUser(e.target.value)} />
+        <input className="pl-input" value={user} onChange={(e) => setUser(e.target.value)} />
       </FloatLabel>
       <FloatLabel label="City (in)" variant="in">
-        <input className="oc-input" />
+        <input className="pl-input" />
       </FloatLabel>
       <FloatLabel label="Company (on)" variant="on">
-        <input className="oc-input" />
+        <input className="pl-input" />
       </FloatLabel>
     </>
   );
@@ -319,10 +319,10 @@ function IftaDemo() {
   return (
     <>
       <IftaLabel label="Email">
-        <input className="oc-input" type="email" autoComplete="email" />
+        <input className="pl-input" type="email" autoComplete="email" />
       </IftaLabel>
       <IftaLabel label="Amount">
-        <input className="oc-input" inputMode="decimal" defaultValue="250.00" />
+        <input className="pl-input" inputMode="decimal" defaultValue="250.00" />
       </IftaLabel>
     </>
   );
@@ -333,12 +333,12 @@ function InputGroupDemo() {
     <div className="demo-col" style={{ maxWidth: '28rem' }}>
       <InputGroup>
         <InputGroupAddon>https://</InputGroupAddon>
-        <input className="oc-input" aria-label="Website address" placeholder="orca-ui.dev" />
+        <input className="pl-input" aria-label="Website address" placeholder="pelagic.dev" />
         <Button>Go</Button>
       </InputGroup>
       <InputGroup>
         <InputGroupAddon>$</InputGroupAddon>
-        <input className="oc-input" aria-label="Price in US dollars" inputMode="decimal" defaultValue="49" />
+        <input className="pl-input" aria-label="Price in US dollars" inputMode="decimal" defaultValue="49" />
         <InputGroupAddon>.00</InputGroupAddon>
       </InputGroup>
     </div>
@@ -350,11 +350,11 @@ function IconFieldDemo() {
     <>
       <IconField iconPosition="start">
         <InputIcon>🔍</InputIcon>
-        <input className="oc-input" type="search" aria-label="Search components" placeholder="Search" />
+        <input className="pl-input" type="search" aria-label="Search components" placeholder="Search" />
       </IconField>
       <IconField iconPosition="end">
         <InputIcon>✉️</InputIcon>
-        <input className="oc-input" type="email" aria-label="Email" placeholder="you@example.com" />
+        <input className="pl-input" type="email" aria-label="Email" placeholder="you@example.com" />
       </IconField>
     </>
   );

@@ -38,7 +38,7 @@ const key = (el: Element, k: string) => {
 
 describe('client/tabs', () => {
   const markup = `
-    <div class="oc-tabs" data-oc-tabs>
+    <div class="pl-tabs" data-pl-tabs>
       <div role="tablist">
         <button role="tab" id="t-a" aria-controls="p-a" aria-selected="true" tabindex="0">A</button>
         <button role="tab" id="t-b" aria-controls="p-b" aria-selected="false" tabindex="-1" disabled>B</button>
@@ -89,8 +89,8 @@ describe('client/tabs', () => {
     expect(selected()).toEqual(['t-c']);
   });
 
-  it('only handles tabs inside [data-oc-tabs]', () => {
-    document.body.innerHTML = '<div class="oc-tabs"><button role="tab" id="x" aria-selected="false">X</button></div>';
+  it('only handles tabs inside [data-pl-tabs]', () => {
+    document.body.innerHTML = '<div class="pl-tabs"><button role="tab" id="x" aria-selected="false">X</button></div>';
     $('x').click();
     expect($('x').getAttribute('aria-selected')).toBe('false');
   });
@@ -98,13 +98,13 @@ describe('client/tabs', () => {
 
 describe('client/overlay', () => {
   const markup = `
-    <button id="open" data-oc-open="dlg" aria-expanded="false">Open</button>
-    <dialog id="dlg" class="oc-dialog"><button id="x" data-oc-close aria-label="Close">×</button><p id="content">Body</p></dialog>
-    <button id="open-drawer" data-oc-open="drw"><span id="inner">Filters</span></button>
-    <dialog id="drw" class="oc-drawer oc-drawer--right"><button data-oc-close>Done</button></dialog>`;
+    <button id="open" data-pl-open="dlg" aria-expanded="false">Open</button>
+    <dialog id="dlg" class="pl-dialog"><button id="x" data-pl-close aria-label="Close">×</button><p id="content">Body</p></dialog>
+    <button id="open-drawer" data-pl-open="drw"><span id="inner">Filters</span></button>
+    <dialog id="drw" class="pl-drawer pl-drawer--right"><button data-pl-close>Done</button></dialog>`;
   const $ = (id: string) => document.getElementById(id)!;
 
-  it('opens with data-oc-open, mirrors aria-expanded and closes with data-oc-close', () => {
+  it('opens with data-pl-open, mirrors aria-expanded and closes with data-pl-close', () => {
     document.body.innerHTML = markup;
     $('open').click();
     expect(($('dlg') as HTMLDialogElement).open).toBe(true);
@@ -134,7 +134,7 @@ describe('client/overlay', () => {
   });
 
   it('does not reopen an open dialog or touch unknown ids', () => {
-    document.body.innerHTML = markup + '<button id="ghost" data-oc-open="nope">?</button>';
+    document.body.innerHTML = markup + '<button id="ghost" data-pl-open="nope">?</button>';
     const spy = vi.spyOn(HTMLDialogElement.prototype, 'showModal');
     $('open').click();
     $('open').click();
@@ -147,11 +147,11 @@ describe('client/overlay', () => {
 describe('client/tooltip', () => {
   it('links the trigger with aria-describedby (keeping existing ids) and Escape dismisses until leave/blur', () => {
     document.body.innerHTML = `
-      <span class="oc-tooltip" data-oc-tooltip id="wrap">
+      <span class="pl-tooltip" data-pl-tooltip id="wrap">
         <button id="trigger" aria-describedby="help">Copy</button>
         <span role="tooltip" id="tip">Copy link</span>
       </span>
-      <span class="oc-tooltip" data-oc-tooltip id="wrap2"><span role="tooltip" id="tip2">orphan</span></span>`;
+      <span class="pl-tooltip" data-pl-tooltip id="wrap2"><span role="tooltip" id="tip2">orphan</span></span>`;
     document.dispatchEvent(new Event('astro:page-load'));
     const wrap = document.getElementById('wrap')!;
     const trigger = document.getElementById('trigger')!;
@@ -168,7 +168,7 @@ describe('client/tooltip', () => {
   });
 
   it('wires each tooltip only once', () => {
-    document.body.innerHTML = `<span class="oc-tooltip" data-oc-tooltip><button id="b">B</button><span role="tooltip" id="t">T</span></span>`;
+    document.body.innerHTML = `<span class="pl-tooltip" data-pl-tooltip><button id="b">B</button><span role="tooltip" id="t">T</span></span>`;
     document.dispatchEvent(new Event('astro:page-load'));
     document.dispatchEvent(new Event('astro:page-load'));
     expect(document.getElementById('b')!.getAttribute('aria-describedby')).toBe('t');
@@ -176,14 +176,14 @@ describe('client/tooltip', () => {
 });
 
 describe('client/switch', () => {
-  it('toggles aria-checked, mirrors a hidden input and emits oc-change', () => {
+  it('toggles aria-checked, mirrors a hidden input and emits pl-change', () => {
     document.body.innerHTML = `
-      <span class="oc-check"><button type="button" role="switch" class="oc-switch" aria-checked="false" data-oc-switch id="s"></button><input type="hidden" name="wifi" value="" id="h" /></span>
-      <button type="button" role="switch" class="oc-switch" aria-checked="false" data-oc-switch id="d" disabled></button>`;
+      <span class="pl-check"><button type="button" role="switch" class="pl-switch" aria-checked="false" data-pl-switch id="s"></button><input type="hidden" name="wifi" value="" id="h" /></span>
+      <button type="button" role="switch" class="pl-switch" aria-checked="false" data-pl-switch id="d" disabled></button>`;
     const sw = document.getElementById('s')!;
     const hidden = document.getElementById('h') as HTMLInputElement;
     const events: boolean[] = [];
-    document.addEventListener('oc-change', (e) => events.push((e as CustomEvent<{ checked: boolean }>).detail.checked));
+    document.addEventListener('pl-change', (e) => events.push((e as CustomEvent<{ checked: boolean }>).detail.checked));
     sw.click();
     expect(sw.getAttribute('aria-checked')).toBe('true');
     expect(hidden.value).toBe('on');
@@ -201,8 +201,8 @@ describe('client/slider', () => {
   it('keeps the <output> in sync with the range input', () => {
     document.body.innerHTML = `
       <label for="r">Volume <output id="r-out" for="r">50</output></label>
-      <input id="r" type="range" class="oc-slider" value="50" data-oc-output="r-out" />
-      <input id="plain" type="range" class="oc-slider" value="10" />`;
+      <input id="r" type="range" class="pl-slider" value="50" data-pl-output="r-out" />
+      <input id="plain" type="range" class="pl-slider" value="10" />`;
     const input = document.getElementById('r') as HTMLInputElement;
     input.value = '72';
     input.dispatchEvent(new Event('input', { bubbles: true }));
@@ -214,18 +214,18 @@ describe('client/slider', () => {
 });
 
 describe('client/toast', () => {
-  const region = () => document.querySelector('[data-oc-toaster]')!;
+  const region = () => document.querySelector('[data-pl-toaster]')!;
   const mount = () => {
-    document.body.innerHTML = '<div class="oc-toast-stack" role="status" aria-live="polite" data-oc-toaster></div>';
+    document.body.innerHTML = '<div class="pl-toast-stack" role="status" aria-live="polite" data-pl-toaster></div>';
   };
 
-  it('window.orcaToast appends a toast with title, message, variant and a labelled dismiss button', () => {
+  it('window.pelagicToast appends a toast with title, message, variant and a labelled dismiss button', () => {
     mount();
-    window.orcaToast({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
-    const toast = region().querySelector('.oc-toast')!;
-    expect(toast.className).toBe('oc-toast oc-toast--success');
-    expect(toast.querySelector('.oc-toast__title')!.textContent).toBe('Saved');
-    expect(toast.querySelector('.oc-toast__message')!.textContent).toBe('All good');
+    window.pelagicToast({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
+    const toast = region().querySelector('.pl-toast')!;
+    expect(toast.className).toBe('pl-toast pl-toast--success');
+    expect(toast.querySelector('.pl-toast__title')!.textContent).toBe('Saved');
+    expect(toast.querySelector('.pl-toast__message')!.textContent).toBe('All good');
     const close = toast.querySelector('button')!;
     expect(close.getAttribute('aria-label')).toBe('Dismiss');
     expect(close.type).toBe('button');
@@ -235,17 +235,17 @@ describe('client/toast', () => {
 
   it('treats text as text (no HTML injection)', () => {
     mount();
-    window.orcaToast({ message: '<img src=x onerror=alert(1)>', duration: 0 });
+    window.pelagicToast({ message: '<img src=x onerror=alert(1)>', duration: 0 });
     expect(region().querySelector('img')).toBeNull();
-    expect(region().querySelector('.oc-toast')!.className).toBe('oc-toast');
-    expect(region().querySelector('.oc-toast__title')).toBeNull();
+    expect(region().querySelector('.pl-toast')!.className).toBe('pl-toast');
+    expect(region().querySelector('.pl-toast__title')).toBeNull();
   });
 
   it('auto-dismisses after the duration and pauses while hovered or focused', () => {
     vi.useFakeTimers();
     mount();
-    window.orcaToast({ message: 'Bye', duration: 1000 });
-    const toast = region().querySelector('.oc-toast')!;
+    window.pelagicToast({ message: 'Bye', duration: 1000 });
+    const toast = region().querySelector('.pl-toast')!;
     vi.advanceTimersByTime(600);
     toast.dispatchEvent(new MouseEvent('mouseenter'));
     vi.advanceTimersByTime(5000);
@@ -264,8 +264,8 @@ describe('client/toast', () => {
   it('defaults to a 5 s timeout; duration 0 stays until closed', () => {
     vi.useFakeTimers();
     mount();
-    window.orcaToast({ message: 'Default' });
-    window.orcaToast({ message: 'Sticky', duration: 0 });
+    window.pelagicToast({ message: 'Default' });
+    window.pelagicToast({ message: 'Sticky', duration: 0 });
     vi.advanceTimersByTime(4999);
     expect(region().children).toHaveLength(2);
     vi.advanceTimersByTime(1);
@@ -273,7 +273,7 @@ describe('client/toast', () => {
   });
 
   it('does nothing without a Toaster on the page', () => {
-    expect(() => window.orcaToast({ message: 'nowhere' })).not.toThrow();
-    expect(document.querySelector('.oc-toast')).toBeNull();
+    expect(() => window.pelagicToast({ message: 'nowhere' })).not.toThrow();
+    expect(document.querySelector('.pl-toast')).toBeNull();
   });
 });

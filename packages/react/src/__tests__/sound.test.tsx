@@ -177,7 +177,7 @@ describe('sound engine', () => {
     engine.setEnabled(true);
     engine.setTheme('crisp');
     engine.setVolume(0.3);
-    expect(JSON.parse(localStorage.getItem('oc-sound')!)).toMatchObject({ enabled: true, theme: 'crisp', volume: 0.3 });
+    expect(JSON.parse(localStorage.getItem('pl-sound')!)).toMatchObject({ enabled: true, theme: 'crisp', volume: 0.3 });
     const { engine: next } = make({ enabled: false, theme: 'playful', volume: 1 });
     expect(next.getState()).toMatchObject({ enabled: true, theme: 'crisp', volume: 0.3 });
   });
@@ -199,15 +199,15 @@ describe('sound engine', () => {
   it('can opt out of persistence', () => {
     const { engine } = make({ persist: false });
     engine.setEnabled(true);
-    expect(localStorage.getItem('oc-sound')).toBeNull();
+    expect(localStorage.getItem('pl-sound')).toBeNull();
   });
 
   it('emitUiSound dispatches a window event and ignores unknown names', () => {
     const spy = vi.fn();
-    window.addEventListener('oc:ui-sound', spy);
+    window.addEventListener('pl:ui-sound', spy);
     emitUiSound('success');
     emitUiSound('nope' as never);
-    window.removeEventListener('oc:ui-sound', spy);
+    window.removeEventListener('pl:ui-sound', spy);
     expect(spy).toHaveBeenCalledTimes(1);
     expect((spy.mock.calls[0][0] as CustomEvent).detail).toEqual({ name: 'success' });
   });
@@ -258,7 +258,7 @@ describe('SoundProvider / useSound', () => {
     expect(screen.getByTestId('state')).toHaveTextContent('true|true|soft');
     fireEvent.click(screen.getByText('playful'));
     expect(screen.getByTestId('state')).toHaveTextContent('true|true|playful');
-    expect(JSON.parse(localStorage.getItem('oc-sound')!)).toMatchObject({ enabled: true, theme: 'playful' });
+    expect(JSON.parse(localStorage.getItem('pl-sound')!)).toMatchObject({ enabled: true, theme: 'playful' });
   });
 
   it('works without a provider (no-op controls)', () => {
@@ -271,7 +271,7 @@ describe('SoundProvider / useSound', () => {
     const { engine, started } = make({ persist: false });
     const heard: string[] = [];
     const listener = (e: Event) => heard.push((e as CustomEvent).detail.name);
-    window.addEventListener('oc:ui-sound', listener);
+    window.addEventListener('pl:ui-sound', listener);
     render(
       <SoundProvider engine={engine}>
         <SwalHost />
@@ -307,13 +307,13 @@ describe('SoundProvider / useSound', () => {
     });
     fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
     expect(heard).toEqual(['open', 'close']);
-    window.removeEventListener('oc:ui-sound', listener);
+    window.removeEventListener('pl:ui-sound', listener);
   });
 
   it('loaders request a sound when they finish, not on mount', () => {
     const heard: string[] = [];
     const listener = (e: Event) => heard.push((e as CustomEvent).detail.name);
-    window.addEventListener('oc:ui-sound', listener);
+    window.addEventListener('pl:ui-sound', listener);
     const { rerender } = render(<LoaderOverlay active={false}>x</LoaderOverlay>);
     expect(heard).toEqual([]);
     rerender(<LoaderOverlay active>x</LoaderOverlay>);
@@ -322,6 +322,6 @@ describe('SoundProvider / useSound', () => {
     rerender(<LoaderOverlay active doneSound={false}>x</LoaderOverlay>);
     rerender(<LoaderOverlay active={false} doneSound={false}>x</LoaderOverlay>);
     expect(heard).toEqual(['pop']);
-    window.removeEventListener('oc:ui-sound', listener);
+    window.removeEventListener('pl:ui-sound', listener);
   });
 });

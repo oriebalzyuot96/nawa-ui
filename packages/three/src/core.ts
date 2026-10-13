@@ -1,4 +1,4 @@
-// Shared lifecycle for every @orca-ui/three component: lazy renderer, DPR cap, off-screen / hidden-tab pausing,
+// Shared lifecycle for every @pelagic-ui/three component: lazy renderer, DPR cap, off-screen / hidden-tab pausing,
 // reduced-motion single frame, theme colors from CSS custom properties, orbit controls, full disposal.
 import { useEffect, useRef, useState, type RefObject } from 'react';
 import { Color, PerspectiveCamera, Scene, Spherical, Vector3, WebGLRenderer, type Material, type Object3D, type Texture } from 'three';
@@ -41,19 +41,19 @@ export interface ThemeColors {
 }
 
 const TOKENS: Record<keyof ThemeColors, [string, string]> = {
-  primary: ['--oc-primary', '#0d7377'],
-  primaryInk: ['--oc-primary-ink', '#0b6b6b'],
-  onPrimary: ['--oc-on-primary', '#ffffff'],
-  surface: ['--oc-surface', '#ffffff'],
-  surfaceAlt: ['--oc-surface-alt', '#f6f8f8'],
-  surfaceMuted: ['--oc-surface-muted', '#eef2f2'],
-  text: ['--oc-text', '#14201f'],
-  textMuted: ['--oc-text-muted', '#4a5a59'],
-  border: ['--oc-border', '#d5dede'],
-  success: ['--oc-success', '#15803d'],
-  warning: ['--oc-warning', '#a16207'],
-  danger: ['--oc-danger', '#b91c1c'],
-  info: ['--oc-info', '#1d4ed8'],
+  primary: ['--pl-primary', '#0d7377'],
+  primaryInk: ['--pl-primary-ink', '#0b6b6b'],
+  onPrimary: ['--pl-on-primary', '#ffffff'],
+  surface: ['--pl-surface', '#ffffff'],
+  surfaceAlt: ['--pl-surface-alt', '#f6f8f8'],
+  surfaceMuted: ['--pl-surface-muted', '#eef2f2'],
+  text: ['--pl-text', '#14201f'],
+  textMuted: ['--pl-text-muted', '#4a5a59'],
+  border: ['--pl-border', '#d5dede'],
+  success: ['--pl-success', '#15803d'],
+  warning: ['--pl-warning', '#a16207'],
+  danger: ['--pl-danger', '#b91c1c'],
+  info: ['--pl-info', '#1d4ed8'],
 };
 
 const SIMPLE_COLOR = /^(#[0-9a-f]{3,8}|rgba?\(|hsla?\()/i;
@@ -84,7 +84,7 @@ function parseColor(value: string, fallback: string): Color {
   return color;
 }
 
-/** Read Orca theme tokens (--oc-primary etc.) as three.js Colors, scoped to `el` (so nested data-theme works). */
+/** Read Pelagic theme tokens (--pl-primary etc.) as three.js Colors, scoped to `el` (so nested data-theme works). */
 export function readThemeColors(el?: Element | null): ThemeColors {
   const target = el ?? (typeof document !== 'undefined' ? document.documentElement : null);
   const style = target && typeof getComputedStyle === 'function' ? getComputedStyle(target) : null;

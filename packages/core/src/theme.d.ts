@@ -25,13 +25,13 @@ export type CustomThemeMode = 'light' | 'dark' | 'hc';
 export interface CreateThemeOptions {
   /** Brand color: hex, rgb(), hsl(), oklch(), oklab() or a common color name. */
   primary: string;
-  /** Optional second brand color, exposed as --oc-secondary, --oc-secondary-hover, --oc-secondary-ink, --oc-on-secondary. */
+  /** Optional second brand color, exposed as --pl-secondary, --pl-secondary-hover, --pl-secondary-ink, --pl-on-secondary. */
   secondary?: string;
   /** Tint the neutrals (surfaces, text, borders) with this color's hue. */
   neutral?: string;
   /** Corner radius in px (controls), or a built-in shape. */
   radius?: number | ThemeShape;
-  /** CSS font-family for --oc-font. */
+  /** CSS font-family for --pl-font. */
   font?: string;
   /** Theme name, used as the data-accent value. Default 'custom'. */
   name?: string;

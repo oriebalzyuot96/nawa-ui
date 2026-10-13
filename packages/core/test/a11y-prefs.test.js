@@ -85,7 +85,7 @@ describe('applyA11yPrefs', () => {
     expect(html.hasAttribute('data-a11y-patterns')).toBe(true);
     expect(html.getAttribute('data-a11y-saturation')).toBe('low');
     expect(html.getAttribute('data-a11y-font-scale')).toBe('1.5');
-    expect(html.style.getPropertyValue('--oc-user-font-scale')).toBe('1.5');
+    expect(html.style.getPropertyValue('--pl-user-font-scale')).toBe('1.5');
     expect(html.getAttribute('data-a11y-line-height')).toBe('wide');
     expect(html.getAttribute('data-a11y-letter-spacing')).toBe('wider');
     expect(html.getAttribute('data-a11y-word-spacing')).toBe('wide');
@@ -99,14 +99,14 @@ describe('applyA11yPrefs', () => {
     expect(html.getAttribute('data-a11y-images')).toBe('hide');
     expect(html.getAttribute('data-a11y-targets')).toBe('large');
     // JS-only parts: SVG filters and the reading aids.
-    expect(document.getElementById('oc-a11y-filters')?.querySelector('#oc-a11y-deuteranopia')).not.toBeNull();
-    expect(document.querySelector('.oc-a11y-reading-guide')).not.toBeNull();
-    expect(document.querySelector('.oc-a11y-reading-mask')).not.toBeNull();
+    expect(document.getElementById('pl-a11y-filters')?.querySelector('#pl-a11y-deuteranopia')).not.toBeNull();
+    expect(document.querySelector('.pl-a11y-reading-guide')).not.toBeNull();
+    expect(document.querySelector('.pl-a11y-reading-mask')).not.toBeNull();
 
     applyA11yPrefs({});
     expect(a11yAttrs()).toEqual([]);
-    expect(html.style.getPropertyValue('--oc-user-font-scale')).toBe('');
-    expect(document.querySelector('.oc-a11y-reading-guide')).toBeNull();
+    expect(html.style.getPropertyValue('--pl-user-font-scale')).toBe('');
+    expect(document.querySelector('.pl-a11y-reading-guide')).toBeNull();
   });
 
   it('moves the reading guide with the pointer', async () => {
@@ -114,21 +114,21 @@ describe('applyA11yPrefs', () => {
     document.dispatchEvent(Object.assign(new Event('pointermove'), { clientY: 321 }));
     await new Promise((r) => requestAnimationFrame(r));
     await new Promise((r) => setTimeout(r, 20));
-    expect(document.querySelector('.oc-a11y-reading-guide').style.getPropertyValue('--oc-a11y-guide-y')).toBe('321px');
+    expect(document.querySelector('.pl-a11y-reading-guide').style.getPropertyValue('--pl-a11y-guide-y')).toBe('321px');
   });
 
-  it('targets a container and dispatches oc-a11y-change', () => {
+  it('targets a container and dispatches pl-a11y-change', () => {
     const box = document.createElement('div');
     document.body.appendChild(box);
     const seen = vi.fn();
-    document.addEventListener('oc-a11y-change', seen);
+    document.addEventListener('pl-a11y-change', seen);
     applyA11yPrefs({ contrast: 'gray', fontScale: 1.25 }, box);
     expect(box.getAttribute('data-a11y-contrast')).toBe('gray');
-    expect(box.style.getPropertyValue('--oc-user-font-scale')).toBe('1.25');
+    expect(box.style.getPropertyValue('--pl-user-font-scale')).toBe('1.25');
     expect(html.hasAttribute('data-a11y-contrast')).toBe(false);
     expect(seen).toHaveBeenCalledTimes(1);
     expect(seen.mock.calls[0][0].detail.contrast).toBe('gray');
-    document.removeEventListener('oc-a11y-change', seen);
+    document.removeEventListener('pl-a11y-change', seen);
   });
 
   it('pauses autoplaying media when motion is off', () => {
@@ -203,7 +203,7 @@ describe('system preferences', () => {
 
 describe('panel model and CSS', () => {
   const css = readFileSync(join(pkg, 'src/parts/a11y-modes.css'), 'utf8');
-  const built = readFileSync(join(pkg, 'orca-ui.css'), 'utf8');
+  const built = readFileSync(join(pkg, 'pelagic.css'), 'utf8');
 
   it('labels every control and option in English and Arabic', () => {
     for (const locale of ['en', 'ar']) {
@@ -239,8 +239,8 @@ describe('panel model and CSS', () => {
       "[data-a11y-links='highlight']",
       "[data-a11y-focus='large']",
       "[data-a11y-cursor='large']",
-      '.oc-a11y-reading-guide',
-      '.oc-a11y-reading-mask',
+      '.pl-a11y-reading-guide',
+      '.pl-a11y-reading-mask',
       "[data-a11y-motion='off']",
       "[data-a11y-images='hide']",
       "[data-a11y-targets='large']",
@@ -250,9 +250,9 @@ describe('panel model and CSS', () => {
     // The scheme palettes override every theme: all tokens are !important.
     const block = built.match(/\[data-a11y-contrast="yellow-black"\],[^{]*\{([^}]*)\}/);
     expect(block).not.toBeNull();
-    expect(block[1]).toContain('--oc-surface: #000000 !important;');
-    expect(block[1]).toContain('--oc-text: #ffff00 !important;');
-    // Self-hosted readable font, relative to orca-ui.css.
+    expect(block[1]).toContain('--pl-surface: #000000 !important;');
+    expect(block[1]).toContain('--pl-text: #ffff00 !important;');
+    // Self-hosted readable font, relative to pelagic.css.
     expect(css).toContain("url('./fonts/atkinson-hyperlegible-latin-400-normal.woff2')");
   });
 
@@ -261,11 +261,11 @@ describe('panel model and CSS', () => {
     expect(out).toContain('&lt;b&gt;&quot;Display&quot;&lt;/b&gt;');
     expect(out).not.toContain('<b>"Display"</b>');
     const doc = new DOMParser().parseFromString(out, 'text/html');
-    expect(doc.querySelectorAll('.oc-a11y-group')).toHaveLength(a11yPanelSchema.length);
+    expect(doc.querySelectorAll('.pl-a11y-group')).toHaveLength(a11yPanelSchema.length);
     expect(doc.querySelector('[data-value="gray"]').getAttribute('aria-checked')).toBe('true');
     expect(doc.querySelector('[data-a11y-key="readableFont"]').getAttribute('aria-checked')).toBe('true');
     expect(doc.querySelector('[data-a11y-count]').textContent).toBe('2 active');
-    expect(doc.querySelector('.oc-a11y-panel').getAttribute('data-labelledby')).toBe('x-title');
+    expect(doc.querySelector('.pl-a11y-panel').getAttribute('data-labelledby')).toBe('x-title');
     expect(doc.querySelector('[role="dialog"]')).toBeNull();
     const ids = [...doc.querySelectorAll('[id]')].map((e) => e.id);
     expect(new Set(ids).size).toBe(ids.length);
@@ -285,7 +285,7 @@ describe('panel model and CSS', () => {
     expect(changes).toEqual([{ key: 'contrast', value: 'invert' }]);
     expect(loadA11yPrefs().contrast).toBe('invert');
     ctl.destroy();
-    expect(document.querySelector('#host .oc-a11y-panel')).not.toBeNull();
+    expect(document.querySelector('#host .pl-a11y-panel')).not.toBeNull();
   });
 
   it('ships valid color-vision matrices (rows of 5, alpha preserved)', () => {

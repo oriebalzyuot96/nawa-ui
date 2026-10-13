@@ -1,10 +1,10 @@
 ---
 // Live region for toasts. Place once per page, then call from any client script:
-//   window.orcaToast({ title: 'Saved', message: 'Your changes are live', variant: 'success' })
+//   window.pelagicToast({ title: 'Saved', message: 'Your changes are live', variant: 'success' })
 // Auto-dismiss pauses while a toast is hovered or focused.
 ---
 
-<div class="oc-toast-stack" role="status" aria-live="polite" data-oc-toaster></div>
+<div class="pl-toast-stack" role="status" aria-live="polite" data-pl-toaster></div>
 
 <script>
   import '../client/toast';

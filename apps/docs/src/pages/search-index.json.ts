@@ -17,7 +17,7 @@ export const GET: APIRoute = () => {
     { t: 'Themes', ta: 'الثيمات', u: '/themes/', d: '21 themes, shapes and custom brand colors', da: '21 ثيماً وأشكال وألوان العلامة' },
     { t: 'Accessibility', ta: 'إمكانية الوصول', u: '/accessibility/', d: 'WCAG 2.2 AA commitment and checklist', da: 'الالتزام بـ WCAG 2.2 AA' },
     { t: 'Accessibility modes', ta: 'أوضاع إمكانية الوصول', u: '/accessibility-modes/', d: 'Contrast, color vision, text, reading and motion modes', da: 'أوضاع التباين والألوان والنص والقراءة والحركة' },
-    { t: 'Orca Space', ta: 'أوركا سبيس', u: '/space/', d: 'Drag-and-drop page builder', da: 'منشئ صفحات بالسحب والإفلات' },
+    { t: 'Pelagic Space', ta: 'بيلاجيك سبيس', u: '/space/', d: 'Drag-and-drop page builder', da: 'منشئ صفحات بالسحب والإفلات' },
   ].map((p) => ({ g: 'page', ...p, u: `${base}${p.u}` }));
 
   const cats = categories.map((c) => ({ g: 'category', t: c.h1, u: `${base}/components/${c.slug}/`, d: `${c.entries.length} components`, s: c.slug }));

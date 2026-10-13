@@ -11,6 +11,6 @@
   );
 </script>
 
-<span role="img" aria-label={name} class={['oc-avatar', size !== 'md' && `oc-avatar--${size}`]}>
+<span role="img" aria-label={name} class={['pl-avatar', size !== 'md' && `pl-avatar--${size}`]}>
   {#if src}<img {src} alt="" />{:else}{initials}{/if}
 </span>

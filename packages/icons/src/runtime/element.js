@@ -1,19 +1,19 @@
-// <oc-icon> — framework-free custom element.
-//   <oc-icon name="search"></oc-icon>
-//   <oc-icon name="bell" variant="duotone" size="20" label="Notifications"></oc-icon>
+// <pl-icon> — framework-free custom element.
+//   <pl-icon name="search"></pl-icon>
+//   <pl-icon name="bell" variant="duotone" size="20" label="Notifications"></pl-icon>
 import { icons } from './icons.js';
 import { iconTree, nextId, SVG_NS } from './core.js';
 
 const CSS = `:host{display:inline-flex;vertical-align:-0.125em;line-height:0;flex-shrink:0;color:inherit}
 :host([hidden]){display:none}
 svg{display:block;overflow:visible}
-.oc-icon__duo{fill:var(--oc-icon-duotone,currentColor);fill-opacity:var(--oc-icon-duotone-opacity,.22)}
-:host(:dir(rtl)) .oc-icon--flip-rtl{transform:scaleX(-1)}
-:host([data-dir=rtl]) .oc-icon--flip-rtl{transform:scaleX(-1)}
-.oc-icon--spin{animation:oc-icon-spin .9s linear infinite;transform-origin:50% 50%}
-@keyframes oc-icon-spin{to{transform:rotate(360deg)}}
-@media (prefers-reduced-motion:reduce){.oc-icon--spin{animation-duration:2.4s}}
-@media (forced-colors:active){.oc-icon__duo{fill:currentColor;fill-opacity:.18}}`;
+.pl-icon__duo{fill:var(--pl-icon-duotone,currentColor);fill-opacity:var(--pl-icon-duotone-opacity,.22)}
+:host(:dir(rtl)) .pl-icon--flip-rtl{transform:scaleX(-1)}
+:host([data-dir=rtl]) .pl-icon--flip-rtl{transform:scaleX(-1)}
+.pl-icon--spin{animation:pl-icon-spin .9s linear infinite;transform-origin:50% 50%}
+@keyframes pl-icon-spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.pl-icon--spin{animation-duration:2.4s}}
+@media (forced-colors:active){.pl-icon__duo{fill:currentColor;fill-opacity:.18}}`;
 
 const Base = typeof HTMLElement === 'undefined' ? class {} : HTMLElement;
 let sheet;
@@ -32,7 +32,7 @@ const flag = (el, attr) => {
   return v === null ? undefined : v !== 'false';
 };
 
-export class OcIconElement extends Base {
+export class PlIconElement extends Base {
   static get observedAttributes() {
     return ['name', 'variant', 'size', 'label', 'stroke-width', 'flip-rtl', 'spin'];
   }
@@ -95,6 +95,6 @@ export class OcIconElement extends Base {
   }
 }
 
-if (typeof customElements !== 'undefined' && !customElements.get('oc-icon')) {
-  customElements.define('oc-icon', OcIconElement);
+if (typeof customElements !== 'undefined' && !customElements.get('pl-icon')) {
+  customElements.define('pl-icon', PlIconElement);
 }

@@ -22,7 +22,7 @@
   }: {
     title: string;
     description?: string;
-    /** Snippet (e.g. `<Illustration name="no-results" />` from @orca-ui/illustrations/svelte) or a scene name rendered as `<oc-illustration>`; `false` hides it. */
+    /** Snippet (e.g. `<Illustration name="no-results" />` from @pelagic-ui/illustrations/svelte) or a scene name rendered as `<pl-illustration>`; `false` hides it. */
     illustration?: Snippet | string | false;
     /** Legacy decorative glyph. */
     icon?: Snippet;
@@ -43,11 +43,11 @@
 
   const classes = $derived(
     [
-      'oc-empty',
-      size !== 'default' && `oc-empty--${size}`,
-      align === 'start' && 'oc-empty--start',
-      layout === 'split' && 'oc-empty--split',
-      tone && `oc-empty--tone-${tone}`,
+      'pl-empty',
+      size !== 'default' && `pl-empty--${size}`,
+      align === 'start' && 'pl-empty--start',
+      layout === 'split' && 'pl-empty--split',
+      tone && `pl-empty--tone-${tone}`,
       className,
     ]
       .filter(Boolean)
@@ -58,18 +58,18 @@
 </script>
 
 <div class={classes}>
-  <div class="oc-empty__inner">
+  <div class="pl-empty__inner">
     {#if typeof illustration === 'string' && illustration}
-      <div class="oc-empty__media"><oc-illustration name={illustration} compact={size === 'compact' ? '' : undefined}></oc-illustration></div>
+      <div class="pl-empty__media"><pl-illustration name={illustration} compact={size === 'compact' ? '' : undefined}></pl-illustration></div>
     {:else if typeof illustration === 'function'}
-      <div class="oc-empty__media">{@render illustration()}</div>
+      <div class="pl-empty__media">{@render illustration()}</div>
     {/if}
-    {#if icon}<div class="oc-empty__icon" aria-hidden="true">{@render icon()}</div>{/if}
-    <div class="oc-empty__body">
-      <svelte:element this={tag} class="oc-empty__title">{title}</svelte:element>
-      {#if description}<p class="oc-empty__desc">{description}</p>{/if}
+    {#if icon}<div class="pl-empty__icon" aria-hidden="true">{@render icon()}</div>{/if}
+    <div class="pl-empty__body">
+      <svelte:element this={tag} class="pl-empty__title">{title}</svelte:element>
+      {#if description}<p class="pl-empty__desc">{description}</p>{/if}
       {#if hasActions}
-        <div class="oc-empty__actions oc-empty__action">
+        <div class="pl-empty__actions pl-empty__action">
           {#if primaryAction}{@render primaryAction()}{/if}
           {#if secondaryAction}{@render secondaryAction()}{/if}
           {#if actions}{@render actions()}{/if}

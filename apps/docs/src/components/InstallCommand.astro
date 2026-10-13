@@ -2,7 +2,7 @@
 // Install command with a package-manager switch and a copy button.
 // Every install command on the page follows the last package manager the visitor picked
 // (remembered in localStorage by src/scripts/site.ts).
-import Icon from '@orca-ui/icons/astro';
+import Icon from '@pelagic-ui/icons/astro';
 import type { InstallOption } from '../data/packages';
 import { t } from '../data/site';
 
@@ -12,7 +12,7 @@ interface Props {
   /** Hide the package-manager switch (the command still follows the visitor's choice). */
   compact?: boolean;
   size?: 'md' | 'lg';
-  /** Accessible name of the command, e.g. "Install @orca-ui/react". */
+  /** Accessible name of the command, e.g. "Install @pelagic-ui/react". */
   label?: string;
   class?: string;
 }

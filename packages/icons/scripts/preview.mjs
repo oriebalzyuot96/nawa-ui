@@ -9,7 +9,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const lib = await import(pathToFileURL(path.join(ROOT, 'dist', 'icons.js')).href);
 const meta = JSON.parse(fs.readFileSync(path.join(ROOT, 'dist', 'icons.json'), 'utf8'));
-const css = fs.readFileSync(path.join(ROOT, 'dist', 'orca-icons.css'), 'utf8');
+const css = fs.readFileSync(path.join(ROOT, 'dist', 'pelagic-icons.css'), 'utf8');
 
 const SIZES = [16, 20, 24, 32];
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;');
@@ -41,7 +41,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Orca Icons — contact sheet</title>
+<title>Pelagic Icons — contact sheet</title>
 <style>
 ${css}
 :root { --accent: #4f46e5; }
@@ -62,8 +62,8 @@ h3 small { font-weight: 400; color: #6b6b7b; }
 .row { display: flex; align-items: center; gap: 10px; height: 36px; }
 .v { width: 10px; font-size: 10px; opacity: .5; text-transform: uppercase; }
 .cell { display: inline-flex; width: 32px; justify-content: center; }
-.theme.light .oc-icon--duotone { color: #2b2bb0; }
-.theme.dark .oc-icon--duotone { color: #a5b4fc; }
+.theme.light .pl-icon--duotone { color: #2b2bb0; }
+.theme.dark .pl-icon--duotone { color: #a5b4fc; }
 figcaption { font-size: 11px; color: #6b6b7b; display: flex; gap: 6px; align-items: center; margin-top: 2px; }
 .flag { font-size: 9px; padding: 0 4px; border-radius: 4px; background: rgb(127 127 140 / .2); }
 .review { display: none; }
@@ -78,7 +78,7 @@ figcaption { font-size: 11px; color: #6b6b7b; display: flex; gap: 6px; align-ite
 </head>
 <body>
 <header>
-  <h1>Orca Icons <small>v${meta.version}</small></h1>
+  <h1>Pelagic Icons <small>v${meta.version}</small></h1>
   <p>${meta.count} icons · outline + duotone${meta.icons.some((i) => i.variants.includes('solid')) ? ` · ${meta.icons.filter((i) => i.variants.includes('solid')).length} solid` : ''} · rows: o = outline, d = duotone, s = solid · sizes 16 / 20 / 24 / 32 px · 24×24 grid, 1.75 stroke, round caps &amp; joins</p>
 </header>
 ${section('light')}

@@ -84,7 +84,7 @@ const { value: email } = await swal.fire({
       id: 'swal-illustrated',
       name: 'Illustrated swal & presets',
       description:
-        'Dialogs with themeable scenes from @orca-ui/illustrations: an illustration layout with a status badge, a full-bleed hero band, tone-tinted backdrops, and ready presets with English and Arabic copy.',
+        'Dialogs with themeable scenes from @pelagic-ui/illustrations: an illustration layout with a status badge, a full-bleed hero band, tone-tinted backdrops, and ready presets with English and Arabic copy.',
       props: [
         ['illustration', "IllustrationName | ReactElement | true", 'A scene name (e.g. "offline"), any node, or true to pick one from the icon type.'],
         ['layout', "'icon' | 'illustration' | 'hero'", 'Icon = animated glyph; illustration = scene + status badge; hero = large scene on a tinted band.'],
@@ -121,11 +121,11 @@ swal.configure({ locale: 'ar', illustration: true }); // app-wide defaults`,
         'Optional UI sounds synthesized with the Web Audio API — no audio files. Off by default, never before a user gesture, silent in hidden tabs, with four themes, master volume and a reduced mode. Swal, toasts and loaders request sounds through emitUiSound.',
       props: [
         ['<SoundProvider>', 'enabled theme volume allowed reduced', 'enabled/theme/volume are defaults for users without a saved choice; allowed=false silences the whole app.'],
-        ['useSound()', 'UseSound', '{ enabled, theme, volume, reduced, unlocked, supported, play, setEnabled, toggle, setTheme, setVolume, setReduced }. User changes persist to localStorage ("oc-sound").'],
+        ['useSound()', 'UseSound', '{ enabled, theme, volume, reduced, unlocked, supported, play, setEnabled, toggle, setTheme, setVolume, setReduced }. User changes persist to localStorage ("pl-sound").'],
         ['UiSoundName', '18 sounds', 'click · toggle-on · toggle-off · select · success · error · warning · info · notification · delete · send · pop · swipe · open · close · drag-start · drop · typing.'],
         ['themes', "'soft' | 'crisp' | 'playful' | 'minimal'", 'Timbre presets.'],
-        ['emitUiSound(name)', '@orca-ui/core/sound', 'Request a sound from any code without depending on the engine.'],
-        ['createSoundEngine(options)', '@orca-ui/core/sound', 'Framework-agnostic engine (play, setEnabled, setVolume, setTheme, isEnabled, subscribe, destroy).'],
+        ['emitUiSound(name)', '@pelagic-ui/core/sound', 'Request a sound from any code without depending on the engine.'],
+        ['createSoundEngine(options)', '@pelagic-ui/core/sound', 'Framework-agnostic engine (play, setEnabled, setVolume, setTheme, isEnabled, subscribe, destroy).'],
         ['<html data-sound="off | reduced">', 'attribute', 'Page-level mute or reduced mode (e.g. from an accessibility panel).'],
       ],
       a11y:
@@ -141,7 +141,7 @@ function SoundToggle() {
 }
 
 // Anywhere, framework-agnostic:
-import { emitUiSound } from '@orca-ui/core/sound';
+import { emitUiSound } from '@pelagic-ui/core/sound';
 emitUiSound('send');`,
       },
     },

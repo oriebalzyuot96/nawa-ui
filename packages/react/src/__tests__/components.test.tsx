@@ -70,7 +70,7 @@ describe('Button', () => {
   it('applies variant and size classes', () => {
     render(<Button variant="outline" size="lg">Save</Button>);
     const btn = screen.getByRole('button', { name: 'Save' });
-    expect(btn).toHaveClass('oc-btn', 'oc-btn--outline', 'oc-btn--lg');
+    expect(btn).toHaveClass('pl-btn', 'pl-btn--outline', 'pl-btn--lg');
     expect(btn).toHaveAttribute('type', 'button');
   });
 
@@ -199,32 +199,32 @@ describe('EmptyState', () => {
         <button type="button">Legacy</button>
       </EmptyState>,
     );
-    expect(screen.getByRole('heading', { level: 3, name: 'No results' })).toHaveClass('oc-empty__title');
-    expect(screen.getByText('Try another search')).toHaveClass('oc-empty__desc');
-    const names = within(document.querySelector('.oc-empty__actions') as HTMLElement).getAllByRole('button').map((b) => b.textContent);
+    expect(screen.getByRole('heading', { level: 3, name: 'No results' })).toHaveClass('pl-empty__title');
+    expect(screen.getByText('Try another search')).toHaveClass('pl-empty__desc');
+    const names = within(document.querySelector('.pl-empty__actions') as HTMLElement).getAllByRole('button').map((b) => b.textContent);
     expect(names).toEqual(['Clear filters', 'Help', 'Legacy']);
   });
 
   it('supports size, align, layout, tone and headingLevel', () => {
     const { container, rerender } = render(<EmptyState title="Down" size="page" align="start" layout="split" tone="danger" headingLevel={1} />);
     const root = container.firstElementChild!;
-    expect(root.className).toBe('oc-empty oc-empty--page oc-empty--start oc-empty--split oc-empty--tone-danger');
+    expect(root.className).toBe('pl-empty pl-empty--page pl-empty--start pl-empty--split pl-empty--tone-danger');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Down');
     rerender(<EmptyState title="Inline" size="compact" headingLevel={false} />);
     expect(screen.queryByRole('heading')).toBeNull();
     expect(screen.getByText('Inline').tagName).toBe('P');
-    expect(container.querySelector('.oc-empty__actions')).toBeNull();
+    expect(container.querySelector('.pl-empty__actions')).toBeNull();
   });
 
   it('renders an illustration node or a scene name, and hides it with false', () => {
     const { container, rerender } = render(<EmptyState title="Empty" illustration={<svg data-testid="art" aria-hidden="true" />} />);
-    expect(container.querySelector('.oc-empty__media [data-testid="art"]')).not.toBeNull();
+    expect(container.querySelector('.pl-empty__media [data-testid="art"]')).not.toBeNull();
     rerender(<EmptyState title="Empty" illustration="no-results" size="compact" />);
-    const el = container.querySelector('.oc-empty__media oc-illustration')!;
+    const el = container.querySelector('.pl-empty__media pl-illustration')!;
     expect(el.getAttribute('name')).toBe('no-results');
     expect(el.hasAttribute('compact')).toBe(true);
     rerender(<EmptyState title="Empty" illustration={false} icon="★" />);
-    expect(container.querySelector('.oc-empty__media')).toBeNull();
-    expect(container.querySelector('.oc-empty__icon')).toHaveAttribute('aria-hidden', 'true');
+    expect(container.querySelector('.pl-empty__media')).toBeNull();
+    expect(container.querySelector('.pl-empty__icon')).toHaveAttribute('aria-hidden', 'true');
   });
 });

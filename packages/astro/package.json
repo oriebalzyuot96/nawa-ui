@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/astro",
+  "name": "@pelagic-ui/astro",
   "version": "0.1.0",
-  "description": "Orca UI for Astro — accessible, zero-JS server-rendered components with 21 themes.",
+  "description": "Pelagic UI for Astro — accessible, zero-JS server-rendered components with 21 themes.",
   "type": "module",
   "files": [
     "src",
@@ -18,7 +18,7 @@
     "astro": "^5.0.0"
   },
   "dependencies": {
-    "@orca-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.1.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.4",
@@ -32,7 +32,7 @@
     "astro-component",
     "withastro",
     "astro-ui",
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -48,13 +48,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/astro"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

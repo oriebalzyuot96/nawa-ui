@@ -2,8 +2,8 @@
 // Accessibility settings drawer: color schemes, color-vision filters, text size and spacing, reading aids,
 // motion and interaction aids. Server-rendered markup; src/client/a11y-panel.ts makes it interactive,
 // restores saved preferences and keeps them in localStorage.
-// Listen for changes with: el.addEventListener('oc-change', (e) => e.detail.prefs)
-import { renderA11yPanelHTML, type A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
+// Listen for changes with: el.addEventListener('pl-change', (e) => e.detail.prefs)
+import { renderA11yPanelHTML, type A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
 
 interface Props {
   /** 'en' (default) or 'ar'. */
@@ -29,9 +29,9 @@ interface Props {
 const { locale, labels, trigger = 'floating', triggerLabel, preview = true, groups, persist, target, id, class: className } = Astro.props;
 // Only a page-level panel that persists restores early; scoped or unsaved panels apply after load.
 const restore = persist !== false && !target;
-const storageKey = typeof persist === 'string' ? persist : 'orca-ui-a11y';
+const storageKey = typeof persist === 'string' ? persist : 'pelagic-ui-a11y';
 const html = renderA11yPanelHTML({
-  id: id ?? `oc-a11y-${Math.random().toString(36).slice(2, 8)}`,
+  id: id ?? `pl-a11y-${Math.random().toString(36).slice(2, 8)}`,
   locale,
   labels,
   trigger,
@@ -42,7 +42,7 @@ const html = renderA11yPanelHTML({
 });
 ---
 
-<div class="oc-a11y-host" data-oc-a11y-host data-persist={persist === false ? 'false' : persist} data-target={target} style="display: contents">
+<div class="pl-a11y-host" data-pl-a11y-host data-persist={persist === false ? 'false' : persist} data-target={target} style="display: contents">
   <Fragment set:html={html} />
 </div>
 
@@ -65,7 +65,7 @@ const html = renderA11yPanelHTML({
       for (var f in flags) if (p[f] === true) r.setAttribute(flags[f][0], flags[f][1]);
       if (typeof p.fontScale === 'number' && p.fontScale !== 1) {
         r.setAttribute('data-a11y-font-scale', String(p.fontScale));
-        r.style.setProperty('--oc-user-font-scale', String(p.fontScale));
+        r.style.setProperty('--pl-user-font-scale', String(p.fontScale));
       }
     } catch (e) {}
   })();

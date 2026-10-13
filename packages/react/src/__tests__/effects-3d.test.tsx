@@ -28,8 +28,8 @@ describe('FlipCard', () => {
     render(<FlipCard front={<p>Front side</p>} back={<a href="#x">Back link</a>} />);
     const button = screen.getByRole('button', { name: 'Show back' });
     expect(button).toHaveAttribute('aria-pressed', 'false');
-    const back = screen.getByText('Back link').closest('.oc-flip__face')!;
-    const front = screen.getByText('Front side').closest('.oc-flip__face')!;
+    const back = screen.getByText('Back link').closest('.pl-flip__face')!;
+    const front = screen.getByText('Front side').closest('.pl-flip__face')!;
     expect(back).toHaveAttribute('aria-hidden', 'true');
     expect(back).toHaveAttribute('inert');
     expect(screen.queryByRole('link', { name: 'Back link' })).toBeNull();
@@ -103,10 +103,10 @@ describe('TiltCard', () => {
     mockMatchMedia(true);
     const raf = vi.spyOn(window, 'requestAnimationFrame');
     const { container } = render(<TiltCard>Hi</TiltCard>);
-    const root = container.querySelector('.oc-tilt') as HTMLElement;
+    const root = container.querySelector('.pl-tilt') as HTMLElement;
     fireEvent.pointerMove(root, { clientX: 10, clientY: 10, pointerType: 'mouse' });
     expect(raf).not.toHaveBeenCalled();
-    expect(root.style.getPropertyValue('--oc-tilt-x')).toBe('');
+    expect(root.style.getPropertyValue('--pl-tilt-x')).toBe('');
     expect(root).not.toHaveAttribute('data-active');
     raf.mockRestore();
   });
@@ -118,13 +118,13 @@ describe('TiltCard', () => {
       return 1;
     });
     const { container } = render(<TiltCard maxTilt={10}>Hi</TiltCard>);
-    const root = container.querySelector('.oc-tilt') as HTMLElement;
+    const root = container.querySelector('.pl-tilt') as HTMLElement;
     root.getBoundingClientRect = () => ({ left: 0, top: 0, width: 100, height: 100, right: 100, bottom: 100, x: 0, y: 0, toJSON() {} }) as DOMRect;
     // jsdom's PointerEvent lacks coordinates; a MouseEvent typed "pointermove" carries them.
     root.dispatchEvent(new MouseEvent('pointermove', { bubbles: true, clientX: 100, clientY: 50 }));
-    expect(root.style.getPropertyValue('--oc-tilt-y')).toBe('10.00deg');
+    expect(root.style.getPropertyValue('--pl-tilt-y')).toBe('10.00deg');
     fireEvent.pointerLeave(root);
-    expect(root.style.getPropertyValue('--oc-tilt-y')).toBe('');
+    expect(root.style.getPropertyValue('--pl-tilt-y')).toBe('');
     vi.restoreAllMocks();
   });
 });
@@ -139,7 +139,7 @@ describe('decorative and list semantics', () => {
       </>,
     );
     expect(screen.getByRole('heading', { level: 1, name: 'Deep title' })).toBeInTheDocument();
-    expect(screen.getByText('★').closest('.oc-float3d')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByText('★').closest('.pl-float3d')).toHaveAttribute('aria-hidden', 'true');
     expect(screen.getByRole('list', { name: 'Plans' }).querySelectorAll('li')).toHaveLength(3);
   });
 });
@@ -160,10 +160,10 @@ describe('Carousel3D', () => {
       expect(region).toHaveAttribute('data-mode', mode);
       expect(screen.getByRole('group', { name: '1 of 4: Charts' })).toHaveAttribute('aria-roledescription', 'slide');
       // Neighbours are visible in 3D but hidden from AT and inert.
-      const hidden = container.querySelector('.oc-c3d__slide[data-pos="after"]')!;
+      const hidden = container.querySelector('.pl-c3d__slide[data-pos="after"]')!;
       expect(hidden).toHaveAttribute('aria-hidden', 'true');
       expect(hidden).toHaveAttribute('inert');
-      expect(container.querySelector('.oc-c3d__stage')).toHaveAttribute('aria-live', 'polite');
+      expect(container.querySelector('.pl-c3d__stage')).toHaveAttribute('aria-live', 'polite');
       unmount();
     }
   });

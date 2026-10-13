@@ -28,7 +28,7 @@
   }
 </script>
 
-<div role="radiogroup" aria-label={label} class="oc-segmented">
+<div role="radiogroup" aria-label={label} class="pl-segmented">
   {#each options as o, i (o.value)}
     <button
       bind:this={buttons[i]}
@@ -36,7 +36,7 @@
       role="radio"
       aria-checked={o.value === value}
       tabindex={o.value === value ? 0 : -1}
-      class="oc-segmented__item"
+      class="pl-segmented__item"
       onclick={() => select(o.value)}
       onkeydown={(e) => onkeydown(e, i)}>{o.label}</button
     >

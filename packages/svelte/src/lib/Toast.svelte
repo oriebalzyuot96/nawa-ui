@@ -10,14 +10,14 @@
   let { items, ondismiss }: { items: Item[]; ondismiss: (id: string | number) => void } = $props();
 </script>
 
-<div role="status" aria-live="polite" class="oc-toast-stack">
+<div role="status" aria-live="polite" class="pl-toast-stack">
   {#each items as t (t.id)}
-    <div class={['oc-toast', t.variant && t.variant !== 'info' && `oc-toast--${t.variant}`]}>
-      <div class="oc-toast__body">
-        {#if t.title}<div class="oc-toast__title">{t.title}</div>{/if}
-        <div class="oc-toast__message">{t.message}</div>
+    <div class={['pl-toast', t.variant && t.variant !== 'info' && `pl-toast--${t.variant}`]}>
+      <div class="pl-toast__body">
+        {#if t.title}<div class="pl-toast__title">{t.title}</div>{/if}
+        <div class="pl-toast__message">{t.message}</div>
       </div>
-      <button type="button" class="oc-close" aria-label="Dismiss" onclick={() => ondismiss(t.id)}>×</button>
+      <button type="button" class="pl-close" aria-label="Dismiss" onclick={() => ondismiss(t.id)}>×</button>
     </div>
   {/each}
 </div>

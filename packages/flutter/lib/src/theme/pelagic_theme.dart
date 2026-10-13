@@ -4,7 +4,7 @@ import '../tokens.g.dart';
 import 'colors.dart';
 
 /// Spacing scale shared with the React Native package.
-abstract final class OrcaSpace {
+abstract final class PelagicSpace {
   /// 4
   static const double xs = 4;
 
@@ -22,7 +22,7 @@ abstract final class OrcaSpace {
 }
 
 /// Font size scale (logical pixels, before the user's text scaling).
-abstract final class OrcaFontSize {
+abstract final class PelagicFontSize {
   /// 12
   static const double xs = 12;
 
@@ -40,11 +40,11 @@ abstract final class OrcaFontSize {
 }
 
 /// Minimum interactive size (Material and WCAG 2.5.8 guidance).
-const double orcaMinTapTarget = 48;
+const double pelagicMinTapTarget = 48;
 
 /// Theme mode setting. [system] follows the platform brightness and the
 /// platform high-contrast setting (`MediaQuery.highContrastOf`).
-enum OrcaThemeMode {
+enum PelagicThemeMode {
   /// Follow the device: high contrast when requested, else light or dark.
   system,
 
@@ -58,29 +58,29 @@ enum OrcaThemeMode {
   hc,
 }
 
-/// Orca UI design tokens, attached to [ThemeData.extensions].
+/// Pelagic UI design tokens, attached to [ThemeData.extensions].
 ///
-/// Read them with `OrcaTheme.of(context)`.
+/// Read them with `PelagicTheme.of(context)`.
 @immutable
-class OrcaTheme extends ThemeExtension<OrcaTheme> {
+class PelagicTheme extends ThemeExtension<PelagicTheme> {
   /// Creates a theme extension from resolved tokens.
-  const OrcaTheme({
+  const PelagicTheme({
     required this.colors,
     required this.radii,
-    this.mode = orcaDefaultMode,
-    this.accent = orcaDefaultAccent,
-    this.shape = orcaDefaultShape,
+    this.mode = pelagicDefaultMode,
+    this.accent = pelagicDefaultAccent,
+    this.shape = pelagicDefaultShape,
   });
 
   /// Looks up the generated tokens for [mode] x [accent] and [shape].
-  factory OrcaTheme.resolve({
-    OrcaMode mode = orcaDefaultMode,
-    OrcaAccent accent = orcaDefaultAccent,
-    OrcaShape shape = orcaDefaultShape,
+  factory PelagicTheme.resolve({
+    PelagicMode mode = pelagicDefaultMode,
+    PelagicAccent accent = pelagicDefaultAccent,
+    PelagicShape shape = pelagicDefaultShape,
   }) {
-    return OrcaTheme(
-      colors: orcaColorThemes[mode]![accent]!,
-      radii: orcaShapes[shape]!,
+    return PelagicTheme(
+      colors: pelagicColorThemes[mode]![accent]!,
+      radii: pelagicShapes[shape]!,
       mode: mode,
       accent: accent,
       shape: shape,
@@ -88,50 +88,50 @@ class OrcaTheme extends ThemeExtension<OrcaTheme> {
   }
 
   /// Resolved colors.
-  final OrcaColors colors;
+  final PelagicColors colors;
 
   /// Corner radii.
-  final OrcaRadii radii;
+  final PelagicRadii radii;
 
   /// Color mode these tokens were resolved for.
-  final OrcaMode mode;
+  final PelagicMode mode;
 
   /// Accent these tokens were resolved for.
-  final OrcaAccent accent;
+  final PelagicAccent accent;
 
   /// Shape these tokens were resolved for.
-  final OrcaShape shape;
+  final PelagicShape shape;
 
   /// True for the high-contrast mode. Widgets draw thicker borders.
-  bool get isHighContrast => mode == OrcaMode.hc;
+  bool get isHighContrast => mode == PelagicMode.hc;
 
   /// Width of control borders (2 in high contrast, else 1).
   double get borderWidth => isHighContrast ? 2 : 1;
 
-  /// The Orca tokens of the nearest [Theme].
+  /// The Pelagic tokens of the nearest [Theme].
   ///
-  /// When the theme was not built with [OrcaThemeData.build], falls back to the
+  /// When the theme was not built with [PelagicThemeData.build], falls back to the
   /// default accent in the light or dark mode matching the theme brightness.
-  static OrcaTheme of(BuildContext context) {
+  static PelagicTheme of(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    return theme.extension<OrcaTheme>() ??
-        OrcaTheme.resolve(
-          mode: theme.brightness == Brightness.dark ? OrcaMode.dark : OrcaMode.light,
+    return theme.extension<PelagicTheme>() ??
+        PelagicTheme.resolve(
+          mode: theme.brightness == Brightness.dark ? PelagicMode.dark : PelagicMode.light,
         );
   }
 
-  /// The Orca tokens of the nearest [Theme], or null when none are attached.
-  static OrcaTheme? maybeOf(BuildContext context) => Theme.of(context).extension<OrcaTheme>();
+  /// The Pelagic tokens of the nearest [Theme], or null when none are attached.
+  static PelagicTheme? maybeOf(BuildContext context) => Theme.of(context).extension<PelagicTheme>();
 
   @override
-  OrcaTheme copyWith({
-    OrcaColors? colors,
-    OrcaRadii? radii,
-    OrcaMode? mode,
-    OrcaAccent? accent,
-    OrcaShape? shape,
+  PelagicTheme copyWith({
+    PelagicColors? colors,
+    PelagicRadii? radii,
+    PelagicMode? mode,
+    PelagicAccent? accent,
+    PelagicShape? shape,
   }) {
-    return OrcaTheme(
+    return PelagicTheme(
       colors: colors ?? this.colors,
       radii: radii ?? this.radii,
       mode: mode ?? this.mode,
@@ -141,11 +141,11 @@ class OrcaTheme extends ThemeExtension<OrcaTheme> {
   }
 
   @override
-  OrcaTheme lerp(covariant ThemeExtension<OrcaTheme>? other, double t) {
-    if (other is! OrcaTheme) return this;
-    return OrcaTheme(
-      colors: OrcaColors.lerp(colors, other.colors, t),
-      radii: OrcaRadii.lerp(radii, other.radii, t),
+  PelagicTheme lerp(covariant ThemeExtension<PelagicTheme>? other, double t) {
+    if (other is! PelagicTheme) return this;
+    return PelagicTheme(
+      colors: PelagicColors.lerp(colors, other.colors, t),
+      radii: PelagicRadii.lerp(radii, other.radii, t),
       mode: t < 0.5 ? mode : other.mode,
       accent: t < 0.5 ? accent : other.accent,
       shape: t < 0.5 ? shape : other.shape,
@@ -154,7 +154,7 @@ class OrcaTheme extends ThemeExtension<OrcaTheme> {
 
   @override
   bool operator ==(Object other) =>
-      other is OrcaTheme &&
+      other is PelagicTheme &&
       other.colors == colors &&
       other.radii == radii &&
       other.mode == mode &&
@@ -165,39 +165,39 @@ class OrcaTheme extends ThemeExtension<OrcaTheme> {
   int get hashCode => Object.hash(colors, radii, mode, accent, shape);
 }
 
-/// Builds Material 3 [ThemeData] wired to the Orca tokens.
-abstract final class OrcaThemeData {
-  /// Resolves a [OrcaThemeMode] against the platform settings in [context].
+/// Builds Material 3 [ThemeData] wired to the Pelagic tokens.
+abstract final class PelagicThemeData {
+  /// Resolves a [PelagicThemeMode] against the platform settings in [context].
   ///
-  /// [OrcaThemeMode.system] returns [OrcaMode.hc] when the platform asks for
+  /// [PelagicThemeMode.system] returns [PelagicMode.hc] when the platform asks for
   /// high contrast, otherwise light or dark from the platform brightness.
-  static OrcaMode resolveMode(BuildContext context, OrcaThemeMode mode) {
+  static PelagicMode resolveMode(BuildContext context, PelagicThemeMode mode) {
     switch (mode) {
-      case OrcaThemeMode.light:
-        return OrcaMode.light;
-      case OrcaThemeMode.dark:
-        return OrcaMode.dark;
-      case OrcaThemeMode.hc:
-        return OrcaMode.hc;
-      case OrcaThemeMode.system:
-        if (MediaQuery.maybeHighContrastOf(context) ?? false) return OrcaMode.hc;
+      case PelagicThemeMode.light:
+        return PelagicMode.light;
+      case PelagicThemeMode.dark:
+        return PelagicMode.dark;
+      case PelagicThemeMode.hc:
+        return PelagicMode.hc;
+      case PelagicThemeMode.system:
+        if (MediaQuery.maybeHighContrastOf(context) ?? false) return PelagicMode.hc;
         final Brightness brightness =
             MediaQuery.maybePlatformBrightnessOf(context) ?? Brightness.light;
-        return brightness == Brightness.dark ? OrcaMode.dark : OrcaMode.light;
+        return brightness == Brightness.dark ? PelagicMode.dark : PelagicMode.light;
     }
   }
 
-  /// A Material 3 theme for one mode x accent x shape, with [OrcaTheme] attached.
+  /// A Material 3 theme for one mode x accent x shape, with [PelagicTheme] attached.
   static ThemeData build({
-    OrcaMode mode = orcaDefaultMode,
-    OrcaAccent accent = orcaDefaultAccent,
-    OrcaShape shape = orcaDefaultShape,
+    PelagicMode mode = pelagicDefaultMode,
+    PelagicAccent accent = pelagicDefaultAccent,
+    PelagicShape shape = pelagicDefaultShape,
     String? fontFamily,
   }) {
-    final OrcaTheme orca = OrcaTheme.resolve(mode: mode, accent: accent, shape: shape);
-    final OrcaColors c = orca.colors;
-    final OrcaRadii r = orca.radii;
-    final double bw = orca.borderWidth;
+    final PelagicTheme pelagic = PelagicTheme.resolve(mode: mode, accent: accent, shape: shape);
+    final PelagicColors c = pelagic.colors;
+    final PelagicRadii r = pelagic.radii;
+    final double bw = pelagic.borderWidth;
 
     final ColorScheme scheme = ColorScheme(
       brightness: c.brightness,
@@ -243,8 +243,8 @@ abstract final class OrcaThemeData {
           borderRadius: BorderRadius.circular(r.md),
           borderSide: BorderSide(color: color, width: width),
         );
-    const Size minButton = Size(orcaMinTapTarget, orcaMinTapTarget);
-    const EdgeInsetsGeometry buttonPadding = EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.lg);
+    const Size minButton = Size(pelagicMinTapTarget, pelagicMinTapTarget);
+    const EdgeInsetsGeometry buttonPadding = EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.lg);
 
     return ThemeData(
       useMaterial3: true,
@@ -260,7 +260,7 @@ abstract final class OrcaThemeData {
       disabledColor: c.textMuted,
       materialTapTargetSize: MaterialTapTargetSize.padded,
       visualDensity: VisualDensity.standard,
-      extensions: <ThemeExtension<dynamic>>[orca],
+      extensions: <ThemeExtension<dynamic>>[pelagic],
       iconTheme: IconThemeData(color: c.text),
       textSelectionTheme: TextSelectionThemeData(
         cursorColor: c.primary,
@@ -272,8 +272,8 @@ abstract final class OrcaThemeData {
         fillColor: c.surface,
         isDense: false,
         contentPadding: const EdgeInsetsDirectional.symmetric(
-          horizontal: OrcaSpace.md,
-          vertical: OrcaSpace.md,
+          horizontal: PelagicSpace.md,
+          vertical: PelagicSpace.md,
         ),
         hintStyle: TextStyle(color: c.textMuted),
         labelStyle: TextStyle(color: c.text),
@@ -369,7 +369,7 @@ abstract final class OrcaThemeData {
           color: c.text,
           borderRadius: BorderRadius.circular(r.sm),
         ),
-        textStyle: TextStyle(color: c.surface, fontSize: OrcaFontSize.sm),
+        textStyle: TextStyle(color: c.surface, fontSize: PelagicFontSize.sm),
         waitDuration: const Duration(milliseconds: 400),
       ),
       snackBarTheme: SnackBarThemeData(
@@ -382,26 +382,26 @@ abstract final class OrcaThemeData {
   }
 }
 
-/// Applies an Orca theme to a subtree, resolving [OrcaThemeMode.system]
+/// Applies a Pelagic theme to a subtree, resolving [PelagicThemeMode.system]
 /// against the platform brightness and high-contrast setting.
-class OrcaThemeScope extends StatelessWidget {
+class PelagicThemeScope extends StatelessWidget {
   /// Creates a theme scope.
-  const OrcaThemeScope({
+  const PelagicThemeScope({
     super.key,
-    this.mode = OrcaThemeMode.system,
-    this.accent = orcaDefaultAccent,
-    this.shape = orcaDefaultShape,
+    this.mode = PelagicThemeMode.system,
+    this.accent = pelagicDefaultAccent,
+    this.shape = pelagicDefaultShape,
     required this.child,
   });
 
   /// Mode setting.
-  final OrcaThemeMode mode;
+  final PelagicThemeMode mode;
 
   /// Accent.
-  final OrcaAccent accent;
+  final PelagicAccent accent;
 
   /// Shape.
-  final OrcaShape shape;
+  final PelagicShape shape;
 
   /// Subtree.
   final Widget child;
@@ -409,8 +409,8 @@ class OrcaThemeScope extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Theme(
-      data: OrcaThemeData.build(
-        mode: OrcaThemeData.resolveMode(context, mode),
+      data: PelagicThemeData.build(
+        mode: PelagicThemeData.resolveMode(context, mode),
         accent: accent,
         shape: shape,
       ),
@@ -419,18 +419,18 @@ class OrcaThemeScope extends StatelessWidget {
   }
 }
 
-/// A [MaterialApp] preconfigured with Orca themes.
+/// A [MaterialApp] preconfigured with Pelagic themes.
 ///
-/// With [mode] set to [OrcaThemeMode.system] (the default) the app follows the
+/// With [mode] set to [PelagicThemeMode.system] (the default) the app follows the
 /// platform brightness, and switches to the high-contrast theme when the
 /// platform requests it (`MediaQuery.highContrastOf`).
-class OrcaApp extends StatelessWidget {
-  /// Creates an Orca-themed Material app.
-  const OrcaApp({
+class PelagicApp extends StatelessWidget {
+  /// Creates a Pelagic-themed Material app.
+  const PelagicApp({
     super.key,
-    this.mode = OrcaThemeMode.system,
-    this.accent = orcaDefaultAccent,
-    this.shape = orcaDefaultShape,
+    this.mode = PelagicThemeMode.system,
+    this.accent = pelagicDefaultAccent,
+    this.shape = pelagicDefaultShape,
     this.fontFamily,
     this.title = '',
     this.home,
@@ -447,13 +447,13 @@ class OrcaApp extends StatelessWidget {
   });
 
   /// Mode setting.
-  final OrcaThemeMode mode;
+  final PelagicThemeMode mode;
 
   /// Accent.
-  final OrcaAccent accent;
+  final PelagicAccent accent;
 
   /// Shape.
-  final OrcaShape shape;
+  final PelagicShape shape;
 
   /// Optional font family for all text.
   final String? fontFamily;
@@ -494,8 +494,8 @@ class OrcaApp extends StatelessWidget {
   /// See [MaterialApp.debugShowCheckedModeBanner].
   final bool debugShowCheckedModeBanner;
 
-  ThemeData _theme(OrcaMode m) =>
-      OrcaThemeData.build(mode: m, accent: accent, shape: shape, fontFamily: fontFamily);
+  ThemeData _theme(PelagicMode m) =>
+      PelagicThemeData.build(mode: m, accent: accent, shape: shape, fontFamily: fontFamily);
 
   @override
   Widget build(BuildContext context) {
@@ -504,23 +504,23 @@ class OrcaApp extends StatelessWidget {
     final ThemeData? hcTheme;
     final ThemeMode themeMode;
     switch (mode) {
-      case OrcaThemeMode.system:
-        theme = _theme(OrcaMode.light);
-        darkTheme = _theme(OrcaMode.dark);
-        hcTheme = _theme(OrcaMode.hc);
+      case PelagicThemeMode.system:
+        theme = _theme(PelagicMode.light);
+        darkTheme = _theme(PelagicMode.dark);
+        hcTheme = _theme(PelagicMode.hc);
         themeMode = ThemeMode.system;
-      case OrcaThemeMode.light:
-        theme = _theme(OrcaMode.light);
+      case PelagicThemeMode.light:
+        theme = _theme(PelagicMode.light);
         darkTheme = null;
         hcTheme = null;
         themeMode = ThemeMode.light;
-      case OrcaThemeMode.dark:
-        theme = _theme(OrcaMode.dark);
+      case PelagicThemeMode.dark:
+        theme = _theme(PelagicMode.dark);
         darkTheme = theme;
         hcTheme = null;
         themeMode = ThemeMode.dark;
-      case OrcaThemeMode.hc:
-        theme = _theme(OrcaMode.hc);
+      case PelagicThemeMode.hc:
+        theme = _theme(PelagicMode.hc);
         darkTheme = theme;
         hcTheme = theme;
         themeMode = ThemeMode.light;

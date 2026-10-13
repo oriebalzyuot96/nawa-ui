@@ -1,6 +1,6 @@
 ---
 // A package as a rich card: mark, registry, what it includes, a headline number and its install command.
-import Icon from '@orca-ui/icons/astro';
+import Icon from '@pelagic-ui/icons/astro';
 import Mark from './Mark.astro';
 import InstallCommand from './InstallCommand.astro';
 import type { PackageInfo } from '../data/packages';
@@ -46,9 +46,9 @@ const headingId = `pkg-card-${pkg.id}`;
   <InstallCommand options={pkg.install} locale={locale} compact label={ar ? `تثبيت ${pkg.name}` : `Install ${pkg.name}`} />
   <div class="pkg-card__foot">
     <a class="pkg-card__more" href={detail}>
-      {ar ? 'التفاصيل' : 'Details'}<span class="oc-sr-only"> {pkg.name}</span>
+      {ar ? 'التفاصيل' : 'Details'}<span class="pl-sr-only"> {pkg.name}</span>
       <Icon name="arrow-right" size={16} flipRtl />
     </a>
-    <span class="pkg-card__size" dir="ltr">{pkg.size.packed !== '—' ? pkg.size.packed : pkg.size.unpacked}<span class="oc-sr-only">{ar ? ' الحجم' : ' size'}</span></span>
+    <span class="pkg-card__size" dir="ltr">{pkg.size.packed !== '—' ? pkg.size.packed : pkg.size.unpacked}<span class="pl-sr-only">{ar ? ' الحجم' : ' size'}</span></span>
   </div>
 </article>

@@ -84,12 +84,12 @@ export function DataTable<T extends Record<string, unknown>>({
     typeof label === 'string' || typeof label === 'number' ? String(label) : undefined;
 
   const alignClass = (align?: DataColumn<T>['align']) =>
-    align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
+    align === 'end' ? 'pl-table__align-end' : align === 'center' ? 'pl-table__align-center' : undefined;
 
   return (
-    <div className={cx('oc-table-wrap', className)} data-responsive="stack">
-      <table className="oc-table" aria-busy={loading || undefined}>
-        {caption && <caption className={captionVisible ? undefined : 'oc-sr-only'}>{caption}</caption>}
+    <div className={cx('pl-table-wrap', className)} data-responsive="stack">
+      <table className="pl-table" aria-busy={loading || undefined}>
+        {caption && <caption className={captionVisible ? undefined : 'pl-sr-only'}>{caption}</caption>}
         <thead>
           <tr>
             {columns.map((col) => {
@@ -101,7 +101,7 @@ export function DataTable<T extends Record<string, unknown>>({
                   aria-sort={col.sortable && active ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
                 >
                   {col.sortable ? (
-                    <button type="button" className="oc-table__sort" onClick={() => toggleSort(col.key)}>
+                    <button type="button" className="pl-table__sort" onClick={() => toggleSort(col.key)}>
                       {col.label}
                       <span aria-hidden="true">{active ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
                     </button>
@@ -126,7 +126,7 @@ export function DataTable<T extends Record<string, unknown>>({
             ))
           ) : sortedRows.length === 0 ? (
             <tr>
-              <td className="oc-table__empty" colSpan={columns.length}>
+              <td className="pl-table__empty" colSpan={columns.length}>
                 {emptyMessage}
               </td>
             </tr>

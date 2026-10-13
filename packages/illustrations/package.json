@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/illustrations",
+  "name": "@pelagic-ui/illustrations",
   "version": "0.1.0",
-  "description": "Orca UI illustrations — 24 original, themeable SVG empty-state scenes (no data, no results, offline, 404, …) that follow every Orca theme through CSS variables. Zero dependencies; React, Vue, Svelte, Angular, Astro, web component and React Native entry points.",
+  "description": "Pelagic UI illustrations — 24 original, themeable SVG empty-state scenes (no data, no results, offline, 404, …) that follow every Pelagic theme through CSS variables. Zero dependencies; React, Vue, Svelte, Angular, Astro, web component and React Native entry points.",
   "type": "module",
   "main": "./dist/illustrations.js",
   "module": "./dist/illustrations.js",
@@ -70,7 +70,7 @@
     "vue": { "optional": true }
   },
   "keywords": [
-    "orca-ui",
+    "pelagic-ui",
     "illustrations",
     "empty-state",
     "empty-states",
@@ -89,13 +89,13 @@
     "react-native",
     "design-system"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/illustrations"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

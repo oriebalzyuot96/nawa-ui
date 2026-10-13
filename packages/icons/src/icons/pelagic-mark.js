@@ -1,7 +1,7 @@
 /** @type {import('../types').IconSource} */
 export default {
-  name: 'orca-mark',
-  category: 'orca',
+  name: 'pelagic-mark',
+  category: 'pelagic',
   tags: ['logo', 'nucleus', 'brand'],
   outline: [
     '<path d="M18.72 18.72A9.5 4 45 0 1 5.28 5.28A9.5 4 45 0 1 18.72 18.72Z"/>',

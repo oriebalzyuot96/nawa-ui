@@ -2,9 +2,9 @@
 //
 //   node packages/core/scripts/build.mjs --brand "#ff6a00" [--brand-name acme] [--neutral "#334155"]
 //                                        [--secondary "#0ea5e9"] [--brand-default]
-//   node packages/core/scripts/build.mjs --config path/to/orca.config.json
+//   node packages/core/scripts/build.mjs --config path/to/pelagic.config.json
 //
-// Without flags, `orca.config.json` in the current directory is used when it exists:
+// Without flags, `pelagic.config.json` in the current directory is used when it exists:
 //   { "brands": [{ "name": "acme", "primary": "#ff6a00", "neutral": "#334155", "default": true }] }
 //   (or a single object under "brand")
 import { existsSync, readFileSync } from 'node:fs';
@@ -18,7 +18,7 @@ function flag(argv, name) {
   return eq ? eq.slice(name.length + 3) : undefined;
 }
 
-/** Brand definitions from CLI flags or orca.config.json. Returns [] when there are none. */
+/** Brand definitions from CLI flags or pelagic.config.json. Returns [] when there are none. */
 export function readBrandConfig(argv = process.argv.slice(2), cwd = process.cwd()) {
   const brand = flag(argv, 'brand');
   if (typeof brand === 'string') {
@@ -33,7 +33,7 @@ export function readBrandConfig(argv = process.argv.slice(2), cwd = process.cwd(
     ];
   }
   const explicit = flag(argv, 'config');
-  const file = typeof explicit === 'string' ? resolve(cwd, explicit) : resolve(cwd, 'orca.config.json');
+  const file = typeof explicit === 'string' ? resolve(cwd, explicit) : resolve(cwd, 'pelagic.config.json');
   if (!existsSync(file)) {
     if (typeof explicit === 'string') throw new Error(`Config file not found: ${file}`);
     return [];

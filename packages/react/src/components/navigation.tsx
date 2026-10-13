@@ -47,8 +47,8 @@ export function Tabs({ tabs, value, defaultValue, onChange, className }: TabsPro
   const activeTab = tabs.find((t) => t.key === active);
 
   return (
-    <div className={cx('oc-tabs', className)}>
-      <div role="tablist" className="oc-tabs__list">
+    <div className={cx('pl-tabs', className)}>
+      <div role="tablist" className="pl-tabs__list">
         {tabs.map((t, i) => {
           const selected = t.key === active;
           return (
@@ -64,7 +64,7 @@ export function Tabs({ tabs, value, defaultValue, onChange, className }: TabsPro
               aria-controls={`${baseId}-panel-${t.key}`}
               tabIndex={selected ? 0 : -1}
               disabled={t.disabled}
-              className="oc-tabs__tab"
+              className="pl-tabs__tab"
               onClick={() => select(t.key)}
               onKeyDown={(e) => onKeyDown(e, i)}
             >
@@ -74,7 +74,7 @@ export function Tabs({ tabs, value, defaultValue, onChange, className }: TabsPro
         })}
       </div>
       {activeTab && (
-        <div role="tabpanel" id={`${baseId}-panel-${active}`} aria-labelledby={`${baseId}-tab-${active}`} className="oc-tabs__panel">
+        <div role="tabpanel" id={`${baseId}-panel-${active}`} aria-labelledby={`${baseId}-tab-${active}`} className="pl-tabs__panel">
           {activeTab.content}
         </div>
       )}
@@ -91,11 +91,11 @@ export interface BreadcrumbItem {
 export function Breadcrumb({ items, label = 'Breadcrumb', className }: { items: BreadcrumbItem[]; label?: string; className?: string }) {
   return (
     <nav aria-label={label}>
-      <ol className={cx('oc-breadcrumb', className)}>
+      <ol className={cx('pl-breadcrumb', className)}>
         {items.map((item, i) => {
           const last = i === items.length - 1;
           return (
-            <li key={i} className="oc-breadcrumb__item" aria-current={last ? 'page' : undefined}>
+            <li key={i} className="pl-breadcrumb__item" aria-current={last ? 'page' : undefined}>
               {item.href && !last ? <a href={item.href}>{item.label}</a> : item.label}
             </li>
           );
@@ -117,20 +117,20 @@ export interface PaginationProps {
 
 export function Pagination({ value, pageCount, onChange, label = 'Pagination', className }: PaginationProps) {
   return (
-    <nav aria-label={label} className={cx('oc-pagination', className)}>
-      <button type="button" className="oc-pagination__btn" aria-label="Previous page" disabled={value <= 1} onClick={() => onChange(value - 1)}>
+    <nav aria-label={label} className={cx('pl-pagination', className)}>
+      <button type="button" className="pl-pagination__btn" aria-label="Previous page" disabled={value <= 1} onClick={() => onChange(value - 1)}>
         ‹
       </button>
       {getPageItems(value, pageCount).map((item, i) =>
         item === 'ellipsis' ? (
-          <span key={`e${i}`} className="oc-pagination__ellipsis" aria-hidden="true">
+          <span key={`e${i}`} className="pl-pagination__ellipsis" aria-hidden="true">
             …
           </span>
         ) : (
           <button
             key={item}
             type="button"
-            className="oc-pagination__btn"
+            className="pl-pagination__btn"
             aria-current={item === value ? 'page' : undefined}
             aria-label={`Page ${item}`}
             onClick={() => onChange(item)}
@@ -139,7 +139,7 @@ export function Pagination({ value, pageCount, onChange, label = 'Pagination', c
           </button>
         ),
       )}
-      <button type="button" className="oc-pagination__btn" aria-label="Next page" disabled={value >= pageCount} onClick={() => onChange(value + 1)}>
+      <button type="button" className="pl-pagination__btn" aria-label="Next page" disabled={value >= pageCount} onClick={() => onChange(value + 1)}>
         ›
       </button>
     </nav>
@@ -170,28 +170,28 @@ export function Accordion({ items, multiple = false, defaultOpen = [], className
     });
 
   return (
-    <div className={cx('oc-accordion', className)}>
+    <div className={cx('pl-accordion', className)}>
       {items.map((item) => {
         const expanded = open.includes(item.key);
         const panelId = `${baseId}-${item.key}-panel`;
         return (
-          <div key={item.key} className="oc-accordion__item">
+          <div key={item.key} className="pl-accordion__item">
             <h3 style={{ margin: 0 }}>
               <button
                 type="button"
-                className="oc-accordion__trigger"
+                className="pl-accordion__trigger"
                 aria-expanded={expanded}
                 aria-controls={panelId}
                 onClick={() => toggle(item.key)}
               >
                 {item.title}
-                <span className="oc-accordion__icon" aria-hidden="true">
+                <span className="pl-accordion__icon" aria-hidden="true">
                   ▾
                 </span>
               </button>
             </h3>
             {expanded && (
-              <div id={panelId} role="region" className="oc-accordion__panel">
+              <div id={panelId} role="region" className="pl-accordion__panel">
                 {item.content}
               </div>
             )}

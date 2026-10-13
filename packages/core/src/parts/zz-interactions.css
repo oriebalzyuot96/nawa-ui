@@ -1,125 +1,125 @@
 /* ==========================================================================
- * Orca interaction layer — loaded last so the state model is identical everywhere (DESIGN.md §States).
- *   rest → hover (accent-tinted wash, --oc-tint-hover) → pressed (--oc-tint-press / squeeze)
- *   focus-visible: 2px outline (survives forced colors) + soft halo (--oc-halo)
- *   selected: --oc-primary-soft + the 3px "notch" · disabled: 0.45–0.5 opacity, no hover
+ * Pelagic interaction layer — loaded last so the state model is identical everywhere (DESIGN.md §States).
+ *   rest → hover (accent-tinted wash, --pl-tint-hover) → pressed (--pl-tint-press / squeeze)
+ *   focus-visible: 2px outline (survives forced colors) + soft halo (--pl-halo)
+ *   selected: --pl-primary-soft + the 3px "notch" · disabled: 0.45–0.5 opacity, no hover
  *   invalid: danger border + inline-start bar + message · loading: aria-busy, progress cursor
  * Reduced motion and forced colors neutralise everything below.
  * ======================================================================== */
 
 /* ---------- Focus: outline + halo ---------- */
-[class*='oc-']:focus-visible { box-shadow: var(--oc-halo); }
-.oc-option:focus-visible,
-.oc-menu__link:focus-visible,
-.oc-tree__item:focus-visible,
-.oc-tabs__tab:focus-visible { box-shadow: none; }
+[class*='pl-']:focus-visible { box-shadow: var(--pl-halo); }
+.pl-option:focus-visible,
+.pl-menu__link:focus-visible,
+.pl-tree__item:focus-visible,
+.pl-tabs__tab:focus-visible { box-shadow: none; }
 
 /* ---------- Hover washes (accent-tinted, never plain grey) ---------- */
-.oc-input:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
-.oc-textarea:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
-.oc-select:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']) { border-color: var(--oc-text-muted); }
-.oc-field--error .oc-input:hover,
-.oc-field--error .oc-textarea:hover,
-.oc-field--error .oc-select:hover { border-color: var(--oc-danger); }
+.pl-input:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
+.pl-textarea:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']),
+.pl-select:hover:not(:disabled):not(:focus-visible):not([aria-invalid='true']) { border-color: var(--pl-text-muted); }
+.pl-field--error .pl-input:hover,
+.pl-field--error .pl-textarea:hover,
+.pl-field--error .pl-select:hover { border-color: var(--pl-danger); }
 
-.oc-tabs__tab:hover:not(:disabled):not([aria-selected='true']),
-.oc-pagination__btn:hover:not(:disabled):not([aria-current='page']),
-.oc-accordion__trigger:hover,
-.oc-close:hover { background: var(--oc-tint-hover); color: var(--oc-primary-ink); }
-.oc-pagination__btn[aria-current='page']:hover { background: var(--oc-primary-hover); }
-.oc-accordion__trigger:hover .oc-accordion__icon { background: var(--oc-tint-press); color: var(--oc-primary-ink); }
+.pl-tabs__tab:hover:not(:disabled):not([aria-selected='true']),
+.pl-pagination__btn:hover:not(:disabled):not([aria-current='page']),
+.pl-accordion__trigger:hover,
+.pl-close:hover { background: var(--pl-tint-hover); color: var(--pl-primary-ink); }
+.pl-pagination__btn[aria-current='page']:hover { background: var(--pl-primary-hover); }
+.pl-accordion__trigger:hover .pl-accordion__icon { background: var(--pl-tint-press); color: var(--pl-primary-ink); }
 
 /* ---------- Pressed ---------- */
-.oc-tabs__tab:active:not(:disabled),
-.oc-pagination__btn:active:not(:disabled):not([aria-current='page']),
-.oc-accordion__trigger:active,
-.oc-close:active,
-.oc-segmented__item:active { background: var(--oc-tint-press); }
+.pl-tabs__tab:active:not(:disabled),
+.pl-pagination__btn:active:not(:disabled):not([aria-current='page']),
+.pl-accordion__trigger:active,
+.pl-close:active,
+.pl-segmented__item:active { background: var(--pl-tint-press); }
 
 /* ---------- Interactive cards lift (only where hover exists) ---------- */
-a.oc-card,
-button.oc-card,
-.oc-card[data-interactive] {
+a.pl-card,
+button.pl-card,
+.pl-card[data-interactive] {
   color: inherit;
   text-align: start;
   text-decoration: none;
   cursor: pointer;
-  transition: transform var(--oc-dur-2) var(--oc-ease), box-shadow var(--oc-dur-2) var(--oc-ease), border-color var(--oc-dur-2) var(--oc-ease);
+  transition: transform var(--pl-dur-2) var(--pl-ease), box-shadow var(--pl-dur-2) var(--pl-ease), border-color var(--pl-dur-2) var(--pl-ease);
 }
 @media (hover: hover) {
-  a.oc-card:hover,
-  button.oc-card:hover,
-  .oc-card[data-interactive]:hover {
+  a.pl-card:hover,
+  button.pl-card:hover,
+  .pl-card[data-interactive]:hover {
     transform: translateY(-2px);
-    border-color: color-mix(in srgb, var(--oc-primary) 32%, var(--oc-border));
-    box-shadow: var(--oc-sheen), var(--oc-shadow-lg);
+    border-color: color-mix(in srgb, var(--pl-primary) 32%, var(--pl-border));
+    box-shadow: var(--pl-sheen), var(--pl-shadow-lg);
   }
 }
-a.oc-card:active,
-button.oc-card:active,
-.oc-card[data-interactive]:active { transform: translateY(0) scale(0.995); box-shadow: var(--oc-elev-1); }
+a.pl-card:active,
+button.pl-card:active,
+.pl-card[data-interactive]:active { transform: translateY(0) scale(0.995); box-shadow: var(--pl-elev-1); }
 
 /* ---------- Disabled & loading are uniform ---------- */
-[class*='oc-'][aria-disabled='true'] { cursor: not-allowed; }
-[class*='oc-'][aria-busy='true'] { cursor: progress; }
+[class*='pl-'][aria-disabled='true'] { cursor: not-allowed; }
+[class*='pl-'][aria-busy='true'] { cursor: progress; }
 
 /* ---------- Touch: 44px targets, no sticky hover transforms ---------- */
 @media (pointer: coarse) {
-  .oc-tabs__tab,
-  .oc-pagination__btn,
-  .oc-menu__link,
-  .oc-menubar__link,
-  .oc-megamenu__top,
-  .oc-megamenu__link,
-  .oc-panelmenu__link,
-  .oc-option,
-  .oc-selectlist__option,
-  .oc-segmented__item,
-  .oc-selectbutton__item,
-  .oc-togglebutton,
-  .oc-inplace__display,
-  .oc-tree__row { min-height: 2.75rem; }
-  .oc-pagination__btn { min-width: 2.75rem; }
-  .oc-close,
-  .oc-carousel__nav,
-  .oc-datepicker__nav,
-  .oc-datepicker__trigger,
-  .oc-password__toggle { min-width: 2.75rem; min-height: 2.75rem; }
-  .oc-datepicker__day { width: 2.75rem; height: 2.75rem; }
-  .oc-rating__star { min-width: 2.75rem; min-height: 2.75rem; }
-  .oc-check { min-height: 2.75rem; }
-  .oc-check input[type='checkbox'],
-  .oc-check input[type='radio'] { width: 1.375rem; height: 1.375rem; }
-  .oc-switch { --oc-switch-w: 3rem; --oc-switch-h: 1.75rem; }
-  .oc-switch::before { content: ''; position: absolute; inset: -0.5rem -0.25rem; }
-  .oc-carousel__dot { width: 2.75rem; height: 2.75rem; }
-  .oc-carousel__dot[aria-current='true'] { width: 3.25rem; }
-  .oc-carousel__dot::after { inset: 1.125rem 1rem; }
-  .oc-carousel__dot[aria-current='true']::after { inset: 1.0625rem 0.875rem; }
+  .pl-tabs__tab,
+  .pl-pagination__btn,
+  .pl-menu__link,
+  .pl-menubar__link,
+  .pl-megamenu__top,
+  .pl-megamenu__link,
+  .pl-panelmenu__link,
+  .pl-option,
+  .pl-selectlist__option,
+  .pl-segmented__item,
+  .pl-selectbutton__item,
+  .pl-togglebutton,
+  .pl-inplace__display,
+  .pl-tree__row { min-height: 2.75rem; }
+  .pl-pagination__btn { min-width: 2.75rem; }
+  .pl-close,
+  .pl-carousel__nav,
+  .pl-datepicker__nav,
+  .pl-datepicker__trigger,
+  .pl-password__toggle { min-width: 2.75rem; min-height: 2.75rem; }
+  .pl-datepicker__day { width: 2.75rem; height: 2.75rem; }
+  .pl-rating__star { min-width: 2.75rem; min-height: 2.75rem; }
+  .pl-check { min-height: 2.75rem; }
+  .pl-check input[type='checkbox'],
+  .pl-check input[type='radio'] { width: 1.375rem; height: 1.375rem; }
+  .pl-switch { --pl-switch-w: 3rem; --pl-switch-h: 1.75rem; }
+  .pl-switch::before { content: ''; position: absolute; inset: -0.5rem -0.25rem; }
+  .pl-carousel__dot { width: 2.75rem; height: 2.75rem; }
+  .pl-carousel__dot[aria-current='true'] { width: 3.25rem; }
+  .pl-carousel__dot::after { inset: 1.125rem 1rem; }
+  .pl-carousel__dot[aria-current='true']::after { inset: 1.0625rem 0.875rem; }
 }
 
 /* ---------- Reduced motion: keep state changes, drop movement ---------- */
 @media (prefers-reduced-motion: reduce) {
-  a.oc-card:hover,
-  button.oc-card:hover,
-  .oc-card[data-interactive]:hover,
-  .oc-btn:active:not(:disabled) { transform: none; }
+  a.pl-card:hover,
+  button.pl-card:hover,
+  .pl-card[data-interactive]:hover,
+  .pl-btn:active:not(:disabled) { transform: none; }
   /* Scroll-driven edge fades are not motion; keep them working. */
-  .oc-tabs__list,
-  .oc-segmented,
-  .oc-galleria__thumbs { animation-duration: auto !important; }
+  .pl-tabs__list,
+  .pl-segmented,
+  .pl-galleria__thumbs { animation-duration: auto !important; }
 }
 
 /* ---------- Forced colors ---------- */
 @media (forced-colors: active) {
-  [class*='oc-']:focus-visible { outline: 2px solid Highlight; }
-  .oc-check input[type='checkbox'],
-  .oc-check input[type='radio'] { appearance: auto; }
-  .oc-error-text::before { background: CanvasText; }
-  .oc-alert::before,
-  .oc-toast::before,
-  .oc-toaster__toast::before { background: CanvasText; forced-color-adjust: none; }
-  .oc-stepper__step[data-state='complete']::before,
-  .oc-stepper__step[data-state='current']::before { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
-  .oc-stepper__step::after { background: CanvasText; }
+  [class*='pl-']:focus-visible { outline: 2px solid Highlight; }
+  .pl-check input[type='checkbox'],
+  .pl-check input[type='radio'] { appearance: auto; }
+  .pl-error-text::before { background: CanvasText; }
+  .pl-alert::before,
+  .pl-toast::before,
+  .pl-toaster__toast::before { background: CanvasText; forced-color-adjust: none; }
+  .pl-stepper__step[data-state='complete']::before,
+  .pl-stepper__step[data-state='current']::before { forced-color-adjust: none; border-color: Highlight; background: Highlight; color: HighlightText; }
+  .pl-stepper__step::after { background: CanvasText; }
 }

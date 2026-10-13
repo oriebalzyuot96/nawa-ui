@@ -8,7 +8,7 @@ interface Props {
 const { lines = 3, label = 'Loading…' } = Astro.props;
 ---
 
-<div role="status" aria-busy="true" class="oc-skeleton-text">
-  <span class="oc-sr-only">{label}</span>
-  {Array.from({ length: lines }, () => <span class="oc-skeleton" aria-hidden="true" style="height:12px"></span>)}
+<div role="status" aria-busy="true" class="pl-skeleton-text">
+  <span class="pl-sr-only">{label}</span>
+  {Array.from({ length: lines }, () => <span class="pl-skeleton" aria-hidden="true" style="height:12px"></span>)}
 </div>

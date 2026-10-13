@@ -11,7 +11,7 @@ import {
   type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
-import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
 import {
   A11Y_STORAGE_KEY,
   FONT_SCALE_MAX,
@@ -33,10 +33,10 @@ import {
   type A11yPanelLabels,
   type A11yPrefKey,
   type A11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
+} from '@pelagic-ui/core/a11y-prefs';
 import { cx } from '../utils';
 
-export type { A11yPrefs, A11yPrefKey, A11yPanelLabels, A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
+export type { A11yPrefs, A11yPrefKey, A11yPanelLabels, A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
 export {
   applyA11yPrefs,
   loadA11yPrefs,
@@ -46,9 +46,9 @@ export {
   getSystemPrefs,
   defaultA11yPrefs,
   normalizeA11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@orca-ui/core/theme';
-export type { CustomTheme, CreateThemeOptions } from '@orca-ui/core/theme';
+} from '@pelagic-ui/core/a11y-prefs';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
+export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';
 
 type Target = HTMLElement | null | undefined | (() => HTMLElement | null | undefined);
 const resolveTarget = (t: Target): HTMLElement | null =>
@@ -191,7 +191,7 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
   const hintId = text.hint ? `${idBase}-${key}-hint` : undefined;
   const value = prefs[key];
   const hint = text.hint ? (
-    <p id={hintId} className="oc-a11y-control__hint">
+    <p id={hintId} className="pl-a11y-control__hint">
       {text.hint}
     </p>
   ) : null;
@@ -200,9 +200,9 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
     const on = control.on ? value === control.on : value === true;
     const next = control.on ? (on ? control.off : control.on) : !on;
     return (
-      <div className="oc-a11y-control oc-a11y-control--switch">
-        <div className="oc-a11y-control__text">
-          <span id={labelId} className="oc-a11y-control__label">
+      <div className="pl-a11y-control pl-a11y-control--switch">
+        <div className="pl-a11y-control__text">
+          <span id={labelId} className="pl-a11y-control__label">
             {text.label}
           </span>
           {hint}
@@ -210,7 +210,7 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
         <button
           type="button"
           role="switch"
-          className="oc-switch"
+          className="pl-switch"
           aria-checked={on}
           aria-labelledby={labelId}
           aria-describedby={hintId}
@@ -224,11 +224,11 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
   if (type === 'select') {
     const id = `${idBase}-${key}`;
     return (
-      <div className="oc-a11y-control">
-        <label htmlFor={id} id={labelId} className="oc-a11y-control__label">
+      <div className="pl-a11y-control">
+        <label htmlFor={id} id={labelId} className="pl-a11y-control__label">
           {text.label}
         </label>
-        <select id={id} className="oc-select" value={String(value)} aria-describedby={hintId} data-a11y-key={key} onChange={(e) => onSet(key, e.target.value)}>
+        <select id={id} className="pl-select" value={String(value)} aria-describedby={hintId} data-a11y-key={key} onChange={(e) => onSet(key, e.target.value)}>
           {(a11yOptions as Record<string, readonly string[]>)[key].map((o) => (
             <option key={o} value={o}>
               {labels.options[key]?.[o] ?? o}
@@ -246,18 +246,18 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
     const pct = `${Math.round(scale * 100)}%`;
     const step = (d: number) => onSet('fontScale', Math.round(Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, scale + d)) * 100) / 100);
     return (
-      <div className="oc-a11y-control">
-        <label htmlFor={id} id={labelId} className="oc-a11y-control__label">
+      <div className="pl-a11y-control">
+        <label htmlFor={id} id={labelId} className="pl-a11y-control__label">
           {text.label}
         </label>
-        <div className="oc-a11y-scale">
-          <button type="button" className="oc-a11y-scale__btn oc-a11y-scale__btn--sm" aria-label={text.decrease} disabled={scale <= FONT_SCALE_MIN} onClick={() => step(-0.1)}>
+        <div className="pl-a11y-scale">
+          <button type="button" className="pl-a11y-scale__btn pl-a11y-scale__btn--sm" aria-label={text.decrease} disabled={scale <= FONT_SCALE_MIN} onClick={() => step(-0.1)}>
             A
           </button>
           <input
             id={id}
             type="range"
-            className="oc-slider"
+            className="pl-slider"
             min={FONT_SCALE_MIN}
             max={FONT_SCALE_MAX}
             step={0.05}
@@ -266,10 +266,10 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
             data-a11y-key={key}
             onChange={(e) => onSet('fontScale', Number(e.target.value))}
           />
-          <button type="button" className="oc-a11y-scale__btn oc-a11y-scale__btn--lg" aria-label={text.increase} disabled={scale >= FONT_SCALE_MAX} onClick={() => step(0.1)}>
+          <button type="button" className="pl-a11y-scale__btn pl-a11y-scale__btn--lg" aria-label={text.increase} disabled={scale >= FONT_SCALE_MAX} onClick={() => step(0.1)}>
             A
           </button>
-          <output htmlFor={id} className="oc-a11y-scale__value" aria-hidden="true">
+          <output htmlFor={id} className="pl-a11y-scale__value" aria-hidden="true">
             {pct}
           </output>
         </div>
@@ -280,12 +280,12 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
   const options = (a11yOptions as Record<string, readonly string[]>)[key];
   if (type === 'tiles') {
     return (
-      <div className="oc-a11y-control">
-        <span id={labelId} className="oc-a11y-control__label">
+      <div className="pl-a11y-control">
+        <span id={labelId} className="pl-a11y-control__label">
           {text.label}
         </span>
         {hint}
-        <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} className="oc-a11y-tiles" data-a11y-key={key}>
+        <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} className="pl-a11y-tiles" data-a11y-key={key}>
           {options.map((o) => {
             const sw = (contrastSwatches as Record<string, [string, string] | null>)[o];
             const checked = value === o;
@@ -296,21 +296,21 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
                 role="radio"
                 aria-checked={checked}
                 tabIndex={checked ? 0 : -1}
-                className="oc-a11y-tile"
+                className="pl-a11y-tile"
                 data-value={o}
                 onClick={() => onSet(key, o)}
                 onKeyDown={(e) => radioKeys(e, options, String(value), (v) => onSet(key, v), 4)}
               >
                 <span
-                  className="oc-a11y-tile__swatch"
+                  className="pl-a11y-tile__swatch"
                   data-swatch={o}
                   aria-hidden="true"
-                  style={sw ? ({ '--oc-swatch-bg': sw[0], '--oc-swatch-fg': sw[1] } as CSSProperties) : undefined}
+                  style={sw ? ({ '--pl-swatch-bg': sw[0], '--pl-swatch-fg': sw[1] } as CSSProperties) : undefined}
                 >
                   <span>Aa</span>
                 </span>
                 <span>{labels.options[key]?.[o] ?? o}</span>
-                <span className="oc-a11y-tile__check" aria-hidden="true">
+                <span className="pl-a11y-tile__check" aria-hidden="true">
                   <CheckIcon />
                 </span>
               </button>
@@ -323,11 +323,11 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
 
   // segmented
   return (
-    <div className="oc-a11y-control">
-      <span id={labelId} className="oc-a11y-control__label">
+    <div className="pl-a11y-control">
+      <span id={labelId} className="pl-a11y-control__label">
         {text.label}
       </span>
-      <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} className="oc-segmented" data-a11y-key={key}>
+      <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} className="pl-segmented" data-a11y-key={key}>
         {options.map((o) => {
           const checked = value === o;
           return (
@@ -337,7 +337,7 @@ function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
               role="radio"
               aria-checked={checked}
               tabIndex={checked ? 0 : -1}
-              className="oc-segmented__item"
+              className="pl-segmented__item"
               data-value={o}
               onClick={() => onSet(key, o)}
               onKeyDown={(e) => radioKeys(e, options, String(value), (v) => onSet(key, v))}
@@ -404,7 +404,7 @@ export function AccessibilityPanel({
   );
   const [message, setMessage] = useState('');
   const uid = useId().replace(/:/g, '');
-  const panelId = `oc-a11y-panel-${uid}`;
+  const panelId = `pl-a11y-panel-${uid}`;
   const titleId = `${panelId}-title`;
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -457,7 +457,7 @@ export function AccessibilityPanel({
 
   const panel = open ? (
     <>
-      <div className="oc-a11y-backdrop" onMouseDown={() => setOpen(false)} />
+      <div className="pl-a11y-backdrop" onMouseDown={() => setOpen(false)} />
       <div
         ref={panelRef}
         id={panelId}
@@ -465,40 +465,40 @@ export function AccessibilityPanel({
         aria-modal="true"
         aria-labelledby={titleId}
         tabIndex={-1}
-        className={cx('oc-a11y-panel', className)}
+        className={cx('pl-a11y-panel', className)}
         {...langProps}
       >
-        <div className="oc-a11y-panel__header">
-          <span className="oc-a11y-panel__icon" aria-hidden="true">
+        <div className="pl-a11y-panel__header">
+          <span className="pl-a11y-panel__icon" aria-hidden="true">
             <AccessibilityIcon />
           </span>
-          <div className="oc-a11y-panel__heading">
-            <h2 id={titleId} className="oc-a11y-panel__title">
+          <div className="pl-a11y-panel__heading">
+            <h2 id={titleId} className="pl-a11y-panel__title">
               {labels.title}
             </h2>
-            <p className="oc-a11y-panel__subtitle">{labels.subtitle}</p>
+            <p className="pl-a11y-panel__subtitle">{labels.subtitle}</p>
           </div>
-          <button type="button" className="oc-close" aria-label={labels.close} onClick={() => setOpen(false)}>
+          <button type="button" className="pl-close" aria-label={labels.close} onClick={() => setOpen(false)}>
             ×
           </button>
         </div>
-        <div className="oc-a11y-panel__body">
+        <div className="pl-a11y-panel__body">
           {preview && (
             // A visual sample only (screen readers get the announcements instead), so it holds no controls.
-            <div className="oc-a11y-preview" aria-hidden="true">
-              <p className="oc-a11y-preview__label">{labels.preview}</p>
-              <p className="oc-a11y-preview__title">{labels.previewTitle}</p>
-              <p className="oc-a11y-preview__body">{labels.previewBody}</p>
-              <div className="oc-a11y-preview__row">
-                <span className="oc-a11y-preview__link">{labels.previewLink}</span>
-                <span className="oc-btn oc-btn--primary oc-btn--sm">{labels.previewButton}</span>
-                <span className="oc-badge oc-badge--success">{labels.previewStatus}</span>
+            <div className="pl-a11y-preview" aria-hidden="true">
+              <p className="pl-a11y-preview__label">{labels.preview}</p>
+              <p className="pl-a11y-preview__title">{labels.previewTitle}</p>
+              <p className="pl-a11y-preview__body">{labels.previewBody}</p>
+              <div className="pl-a11y-preview__row">
+                <span className="pl-a11y-preview__link">{labels.previewLink}</span>
+                <span className="pl-btn pl-btn--primary pl-btn--sm">{labels.previewButton}</span>
+                <span className="pl-badge pl-badge--success">{labels.previewStatus}</span>
               </div>
             </div>
           )}
           {shownGroups.map((group) => (
-            <section key={group.id} className="oc-a11y-group" aria-labelledby={`${panelId}-${group.id}`}>
-              <h3 id={`${panelId}-${group.id}`} className="oc-a11y-group__title">
+            <section key={group.id} className="pl-a11y-group" aria-labelledby={`${panelId}-${group.id}`}>
+              <h3 id={`${panelId}-${group.id}`} className="pl-a11y-group__title">
                 {groupIcons[group.id]}
                 {labels.groups[group.id]}
               </h3>
@@ -508,9 +508,9 @@ export function AccessibilityPanel({
             </section>
           ))}
         </div>
-        <div className="oc-a11y-panel__footer">
-          <span className="oc-a11y-panel__count">{activeText}</span>
-          <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={onReset} disabled={active === 0}>
+        <div className="pl-a11y-panel__footer">
+          <span className="pl-a11y-panel__count">{activeText}</span>
+          <button type="button" className="pl-btn pl-btn--secondary pl-btn--sm" onClick={onReset} disabled={active === 0}>
             {labels.reset}
           </button>
         </div>
@@ -524,7 +524,7 @@ export function AccessibilityPanel({
         <button
           ref={triggerRef}
           type="button"
-          className={cx('oc-a11y-trigger', trigger === 'inline' && 'oc-a11y-trigger--inline')}
+          className={cx('pl-a11y-trigger', trigger === 'inline' && 'pl-a11y-trigger--inline')}
           aria-haspopup="dialog"
           aria-expanded={open}
           aria-controls={open ? panelId : undefined}
@@ -533,15 +533,15 @@ export function AccessibilityPanel({
         >
           <AccessibilityIcon />
           {trigger === 'inline' && <span>{triggerLabel ?? labels.title}</span>}
-          {trigger === 'inline' && active > 0 && <span className="oc-sr-only"> ({activeText})</span>}
+          {trigger === 'inline' && active > 0 && <span className="pl-sr-only"> ({activeText})</span>}
           {active > 0 && (
-            <span className="oc-a11y-trigger__badge" aria-hidden="true">
+            <span className="pl-a11y-trigger__badge" aria-hidden="true">
               {active}
             </span>
           )}
         </button>
       )}
-      <div role="status" aria-live="polite" className="oc-sr-only">
+      <div role="status" aria-live="polite" className="pl-sr-only">
         {message}
       </div>
       {mounted && panel ? createPortal(panel, document.body) : null}

@@ -1,7 +1,7 @@
 // Site chrome behaviour: appearance (theme) controls, mobile menu, ⌘K palette, copy buttons,
 // package-manager memory, the home studio, motion pause, scroll-spy and small visual touches.
 // Everything degrades gracefully: without this script the pages are complete, readable documents.
-import { applyTheme, loadTheme, saveTheme } from '@orca-ui/core/theme';
+import { applyTheme, loadTheme, saveTheme } from '@pelagic-ui/core/theme';
 
 const doc = document.documentElement;
 const ar = doc.lang === 'ar';
@@ -60,7 +60,7 @@ function disclosure(button: HTMLElement | null, panel: HTMLElement | null, opts:
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && isOpen()) {
       // Let open dialogs (palette, a11y panel) handle their own Escape first.
-      if (document.querySelector('dialog[open], .oc-a11y-panel[data-open], [role="dialog"][aria-modal="true"]:not([hidden])')) return;
+      if (document.querySelector('dialog[open], .pl-a11y-panel[data-open], [role="dialog"][aria-modal="true"]:not([hidden])')) return;
       set(false, true);
     }
   });
@@ -87,7 +87,7 @@ if (menu) {
 }
 
 /* ---------- Motion: the site's own pause control ---------- */
-const MOTION_KEY = 'orca-docs-motion';
+const MOTION_KEY = 'pelagic-docs-motion';
 function setMotion(paused: boolean, persist = true) {
   if (paused) doc.setAttribute('data-site-motion', 'paused');
   else doc.removeAttribute('data-site-motion');
@@ -151,7 +151,7 @@ document.addEventListener('click', async (e) => {
 });
 
 /* ---------- Package manager memory ---------- */
-const PM_KEY = 'orca-docs-pm';
+const PM_KEY = 'pelagic-docs-pm';
 function applyPm(pm: string) {
   for (const root of document.querySelectorAll<HTMLElement>('[data-install]')) {
     const cmds = JSON.parse(root.dataset.cmds ?? '{}') as Record<string, string>;
@@ -196,8 +196,8 @@ for (const studio of document.querySelectorAll<HTMLElement>('[data-studio]')) {
     else stage.removeAttribute('dir');
   });
   studio.querySelector('[data-studio-deploy]')?.addEventListener('click', () => {
-    const w = window as unknown as { orcaToast?: (o: { title?: string; message: string; variant?: string }) => void };
-    w.orcaToast?.({ title: studio.dataset.toastTitle, message: studio.dataset.toastMsg ?? '', variant: 'success' });
+    const w = window as unknown as { pelagicToast?: (o: { title?: string; message: string; variant?: string }) => void };
+    w.pelagicToast?.({ title: studio.dataset.toastTitle, message: studio.dataset.toastMsg ?? '', variant: 'success' });
   });
 }
 

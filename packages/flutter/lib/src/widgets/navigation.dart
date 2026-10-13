@@ -4,15 +4,15 @@ import '../foundation/group_focus.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
-/// A tab of [OrcaTabs].
+/// A tab of [PelagicTabs].
 @immutable
-class OrcaTabItem {
+class PelagicTabItem {
   /// Creates a tab.
-  const OrcaTabItem({required this.id, required this.label, this.disabled = false, this.content});
+  const PelagicTabItem({required this.id, required this.label, this.disabled = false, this.content});
 
   /// Unique id.
   final String id;
@@ -32,12 +32,12 @@ class OrcaTabItem {
 /// Keyboard: Left / Right move to the previous / next tab (mirrored in RTL)
 /// and select it, Home / End jump to the first / last tab. Only the selected
 /// tab is in the Tab order (roving focus), like the web tabs.
-class OrcaTabs extends StatefulWidget {
+class PelagicTabs extends StatefulWidget {
   /// Creates tabs. Pass [value] to control the selection, or [initialValue].
-  const OrcaTabs({super.key, required this.tabs, this.value, this.initialValue, this.onChanged, this.label});
+  const PelagicTabs({super.key, required this.tabs, this.value, this.initialValue, this.onChanged, this.label});
 
   /// Tabs.
-  final List<OrcaTabItem> tabs;
+  final List<PelagicTabItem> tabs;
 
   /// Selected id (controlled).
   final String? value;
@@ -52,11 +52,11 @@ class OrcaTabs extends StatefulWidget {
   final String? label;
 
   @override
-  State<OrcaTabs> createState() => _OrcaTabsState();
+  State<PelagicTabs> createState() => _PelagicTabsState();
 }
 
-class _OrcaTabsState extends State<OrcaTabs> {
-  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaTab');
+class _PelagicTabsState extends State<PelagicTabs> {
+  final PelagicGroupFocus _focus = PelagicGroupFocus('PelagicTab');
   String? _inner;
 
   @override
@@ -85,11 +85,11 @@ class _OrcaTabsState extends State<OrcaTabs> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final int length = widget.tabs.length;
-    final int activeIndex = widget.tabs.indexWhere((OrcaTabItem tab) => tab.id == _active);
-    final int tabStop = activeIndex >= 0 ? activeIndex : orcaEdgeEnabled(false, length, _enabled);
+    final int activeIndex = widget.tabs.indexWhere((PelagicTabItem tab) => tab.id == _active);
+    final int tabStop = activeIndex >= 0 ? activeIndex : pelagicEdgeEnabled(false, length, _enabled);
     final Widget? panel = activeIndex >= 0 ? widget.tabs[activeIndex].content : null;
 
     return Column(
@@ -104,16 +104,16 @@ class _OrcaTabsState extends State<OrcaTabs> {
             label: widget.label,
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
-              child: OrcaArrowKeys(
+              child: PelagicArrowKeys(
                 onMove: (int delta) {
                   final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-                  _select(orcaNextEnabled(from, delta, length, _enabled));
+                  _select(pelagicNextEnabled(from, delta, length, _enabled));
                 },
-                onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
+                onEdge: (bool last) => _select(pelagicEdgeEnabled(last, length, _enabled)),
                 child: Row(
                   children: <Widget>[
                     for (int i = 0; i < length; i++)
-                      OrcaPressable(
+                      PelagicPressable(
                         focusNode: _focus[i]..skipTraversal = i != tabStop,
                         requestFocusOnTap: true,
                         selected: i == activeIndex,
@@ -121,7 +121,7 @@ class _OrcaTabsState extends State<OrcaTabs> {
                         onPressed: _enabled(i) ? () => _select(i) : null,
                         borderRadius: BorderRadius.circular(t.radii.sm),
                         child: Container(
-                          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md, vertical: OrcaSpace.md),
+                          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.md, vertical: PelagicSpace.md),
                           decoration: BoxDecoration(
                             border: Border(
                               bottom: BorderSide(
@@ -137,7 +137,7 @@ class _OrcaTabsState extends State<OrcaTabs> {
                                   ? c.primaryInk
                                   : (_enabled(i) ? c.textMuted : c.border),
                               fontWeight: FontWeight.w600,
-                              fontSize: OrcaFontSize.md,
+                              fontSize: PelagicFontSize.md,
                             ),
                           ),
                         ),
@@ -154,7 +154,7 @@ class _OrcaTabsState extends State<OrcaTabs> {
             explicitChildNodes: true,
             label: activeIndex >= 0 ? widget.tabs[activeIndex].label : null,
             child: Padding(
-              padding: const EdgeInsetsDirectional.symmetric(vertical: OrcaSpace.md),
+              padding: const EdgeInsetsDirectional.symmetric(vertical: PelagicSpace.md),
               child: KeyedSubtree(key: ValueKey<String>(widget.tabs[activeIndex].id), child: panel),
             ),
           ),
@@ -163,11 +163,11 @@ class _OrcaTabsState extends State<OrcaTabs> {
   }
 }
 
-/// A section of [OrcaAccordion].
+/// A section of [PelagicAccordion].
 @immutable
-class OrcaAccordionItem {
+class PelagicAccordionItem {
   /// Creates a section.
-  const OrcaAccordionItem({required this.id, required this.title, required this.content});
+  const PelagicAccordionItem({required this.id, required this.title, required this.content});
 
   /// Unique id.
   final String id;
@@ -180,12 +180,12 @@ class OrcaAccordionItem {
 }
 
 /// Expandable sections.
-class OrcaAccordion extends StatefulWidget {
+class PelagicAccordion extends StatefulWidget {
   /// Creates an accordion.
-  const OrcaAccordion({super.key, required this.items, this.multiple = false, this.initiallyOpen = const <String>{}});
+  const PelagicAccordion({super.key, required this.items, this.multiple = false, this.initiallyOpen = const <String>{}});
 
   /// Sections.
-  final List<OrcaAccordionItem> items;
+  final List<PelagicAccordionItem> items;
 
   /// Allow several open sections.
   final bool multiple;
@@ -194,10 +194,10 @@ class OrcaAccordion extends StatefulWidget {
   final Set<String> initiallyOpen;
 
   @override
-  State<OrcaAccordion> createState() => _OrcaAccordionState();
+  State<PelagicAccordion> createState() => _PelagicAccordionState();
 }
 
-class _OrcaAccordionState extends State<OrcaAccordion> {
+class _PelagicAccordionState extends State<PelagicAccordion> {
   late Set<String> _open = <String>{...widget.initiallyOpen};
 
   void _toggle(String id) {
@@ -212,8 +212,8 @@ class _OrcaAccordionState extends State<OrcaAccordion> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final Duration duration = _reduceMotion(context) ? Duration.zero : const Duration(milliseconds: 180);
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -229,18 +229,18 @@ class _OrcaAccordionState extends State<OrcaAccordion> {
           for (int i = 0; i < widget.items.length; i++) ...<Widget>[
             if (i > 0) Container(height: 1, color: c.border),
             Builder(builder: (BuildContext context) {
-              final OrcaAccordionItem item = widget.items[i];
+              final PelagicAccordionItem item = widget.items[i];
               final bool expanded = _open.contains(item.id);
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  OrcaPressable(
+                  PelagicPressable(
                     onPressed: () => _toggle(item.id),
                     semanticValue: expanded ? 'Expanded' : 'Collapsed',
                     semanticHint: expanded ? 'Activate to collapse' : 'Activate to expand',
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
+                      padding: const EdgeInsetsDirectional.all(PelagicSpace.lg),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -248,7 +248,7 @@ class _OrcaAccordionState extends State<OrcaAccordion> {
                               header: true,
                               child: Text(
                                 item.title,
-                                style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: OrcaFontSize.md),
+                                style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: PelagicFontSize.md),
                               ),
                             ),
                           ),
@@ -269,10 +269,10 @@ class _OrcaAccordionState extends State<OrcaAccordion> {
                     child: expanded
                         ? Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                              OrcaSpace.lg,
+                              PelagicSpace.lg,
                               0,
-                              OrcaSpace.lg,
-                              OrcaSpace.lg,
+                              PelagicSpace.lg,
+                              PelagicSpace.lg,
                             ),
                             child: item.content,
                           )
@@ -288,11 +288,11 @@ class _OrcaAccordionState extends State<OrcaAccordion> {
   }
 }
 
-/// A crumb of [OrcaBreadcrumb].
+/// A crumb of [PelagicBreadcrumb].
 @immutable
-class OrcaBreadcrumbItem {
+class PelagicBreadcrumbItem {
   /// Creates a crumb.
-  const OrcaBreadcrumbItem({required this.label, this.onPressed});
+  const PelagicBreadcrumbItem({required this.label, this.onPressed});
 
   /// Text.
   final String label;
@@ -302,20 +302,20 @@ class OrcaBreadcrumbItem {
 }
 
 /// Trail of links to parent pages. The last item is the current page.
-class OrcaBreadcrumb extends StatelessWidget {
+class PelagicBreadcrumb extends StatelessWidget {
   /// Creates a breadcrumb.
-  const OrcaBreadcrumb({super.key, required this.items, this.label = 'Breadcrumb'});
+  const PelagicBreadcrumb({super.key, required this.items, this.label = 'Breadcrumb'});
 
   /// Crumbs, root first.
-  final List<OrcaBreadcrumbItem> items;
+  final List<PelagicBreadcrumbItem> items;
 
   /// Accessible name of the trail.
   final String label;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -327,15 +327,15 @@ class OrcaBreadcrumb extends StatelessWidget {
             if (i > 0)
               ExcludeSemantics(
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs),
-                  child: Text('/', style: TextStyle(color: c.controlBorder, fontSize: OrcaFontSize.sm)),
+                  padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xs),
+                  child: Text('/', style: TextStyle(color: c.controlBorder, fontSize: PelagicFontSize.sm)),
                 ),
               ),
             if (i == items.length - 1 || items[i].onPressed == null)
               Semantics(
                 hint: i == items.length - 1 ? 'Current page' : null,
                 child: ConstrainedBox(
-                  constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
+                  constraints: const BoxConstraints(minHeight: pelagicMinTapTarget),
                   child: Align(
                     widthFactor: 1,
                     heightFactor: 1,
@@ -344,20 +344,20 @@ class OrcaBreadcrumb extends StatelessWidget {
                       style: TextStyle(
                         color: c.text,
                         fontWeight: i == items.length - 1 ? FontWeight.w700 : FontWeight.w500,
-                        fontSize: OrcaFontSize.sm,
+                        fontSize: PelagicFontSize.sm,
                       ),
                     ),
                   ),
                 ),
               )
             else
-              OrcaPressable(
+              PelagicPressable(
                 link: true,
                 onPressed: items[i].onPressed,
                 borderRadius: BorderRadius.circular(t.radii.sm),
-                minSize: const Size(orcaMinTapTarget, orcaMinTapTarget),
+                minSize: const Size(pelagicMinTapTarget, pelagicMinTapTarget),
                 child: Padding(
-                  padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs),
+                  padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xs),
                   child: Center(
                     widthFactor: 1,
                     heightFactor: 1,
@@ -366,7 +366,7 @@ class OrcaBreadcrumb extends StatelessWidget {
                       style: TextStyle(
                         color: c.primaryInk,
                         fontWeight: FontWeight.w500,
-                        fontSize: OrcaFontSize.sm,
+                        fontSize: PelagicFontSize.sm,
                         decoration: TextDecoration.underline,
                         decorationColor: c.primaryInk,
                       ),
@@ -385,9 +385,9 @@ class OrcaBreadcrumb extends StatelessWidget {
 ///
 /// Keyboard: Left / Right go to the previous / next page (mirrored in RTL),
 /// Home / End to the first / last page.
-class OrcaPagination extends StatelessWidget {
+class PelagicPagination extends StatelessWidget {
   /// Creates pagination.
-  const OrcaPagination({
+  const PelagicPagination({
     super.key,
     required this.page,
     required this.pageCount,
@@ -428,8 +428,8 @@ class OrcaPagination extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     Widget pageButton({
       required Widget child,
       required String semanticLabel,
@@ -437,7 +437,7 @@ class OrcaPagination extends StatelessWidget {
       required bool enabled,
       bool selected = false,
     }) {
-      return OrcaPressable(
+      return PelagicPressable(
         onPressed: enabled ? () => _go(target) : null,
         selected: selected,
         semanticLabel: semanticLabel,
@@ -445,9 +445,9 @@ class OrcaPagination extends StatelessWidget {
         excludeChildSemantics: true,
         borderRadius: BorderRadius.circular(t.radii.md),
         child: Container(
-          constraints: const BoxConstraints(minWidth: orcaMinTapTarget, minHeight: orcaMinTapTarget),
+          constraints: const BoxConstraints(minWidth: pelagicMinTapTarget, minHeight: pelagicMinTapTarget),
           alignment: Alignment.center,
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.sm),
           decoration: BoxDecoration(
             color: selected ? c.primary : null,
             borderRadius: BorderRadius.circular(t.radii.md),
@@ -456,7 +456,7 @@ class OrcaPagination extends StatelessWidget {
             style: TextStyle(
               color: selected ? c.onPrimary : (enabled ? c.text : c.border),
               fontWeight: FontWeight.w600,
-              fontSize: OrcaFontSize.md,
+              fontSize: PelagicFontSize.md,
             ),
             child: IconTheme.merge(
               data: IconThemeData(color: enabled ? c.text : c.border),
@@ -472,12 +472,12 @@ class OrcaPagination extends StatelessWidget {
       explicitChildNodes: true,
       label: label,
       value: 'Page $page of $pageCount',
-      child: OrcaArrowKeys(
+      child: PelagicArrowKeys(
         onMove: (int delta) => _go(page + delta),
         onEdge: (bool last) => _go(last ? pageCount : 1),
         child: Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: OrcaSpace.xs,
+          spacing: PelagicSpace.xs,
           children: <Widget>[
             pageButton(
               // chevron_left / chevron_right mirror automatically in RTL (matchTextDirection).
@@ -486,12 +486,12 @@ class OrcaPagination extends StatelessWidget {
               target: page - 1,
               enabled: page > 1,
             ),
-            for (final int? item in orcaPageItems(page, pageCount))
+            for (final int? item in pelagicPageItems(page, pageCount))
               if (item == null)
                 ExcludeSemantics(
                   child: SizedBox(
                     width: 24,
-                    height: orcaMinTapTarget,
+                    height: pelagicMinTapTarget,
                     child: Center(child: Text('…', style: TextStyle(color: c.textMuted))),
                   ),
                 )

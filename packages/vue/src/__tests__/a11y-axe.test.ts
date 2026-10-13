@@ -70,7 +70,7 @@ const Page = defineComponent({
   setup() {
     return () =>
       h('main', [
-        h('h1', 'Orca UI (Vue)'),
+        h('h1', 'Pelagic UI (Vue)'),
         // Accordion renders its triggers inside <h3>, so give it a realistic outline.
         h('h2', 'Components'),
         h(Breadcrumb, { items: [{ label: 'Home', href: '/' }, { label: 'Docs', href: '/docs' }, { label: 'All' }] }),

@@ -7,11 +7,11 @@ const { items } = Astro.props;
 ---
 
 <nav aria-label="Breadcrumb">
-  <ol class="oc-breadcrumb">
+  <ol class="pl-breadcrumb">
     {items.map((item, i) => {
       const last = i === items.length - 1;
       return (
-        <li class="oc-breadcrumb__item" aria-current={last ? 'page' : undefined}>
+        <li class="pl-breadcrumb__item" aria-current={last ? 'page' : undefined}>
           {item.href && !last ? <a href={item.href}>{item.label}</a> : item.label}
         </li>
       );

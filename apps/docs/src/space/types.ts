@@ -1,4 +1,4 @@
-/** Orca Space document model. A page is a tree of nodes; every node maps to one registry entry. */
+/** Pelagic Space document model. A page is a tree of nodes; every node maps to one registry entry. */
 
 export type NodeType =
   // Layout

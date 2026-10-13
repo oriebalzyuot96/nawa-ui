@@ -20,36 +20,36 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Build tokens and CSS
-        run: npm run build -w @orca-ui/core && npm run build -w @orca-ui/illustrations && npm run build -w @orca-ui/icons
+        run: npm run build -w @pelagic-ui/core && npm run build -w @pelagic-ui/illustrations && npm run build -w @pelagic-ui/icons
       - name: Core (tokens, a11y helpers, theme, build output, WCAG contrast)
         run: |
-          npm run test:contrast -w @orca-ui/core
-          npm test -w @orca-ui/core
+          npm run test:contrast -w @pelagic-ui/core
+          npm test -w @pelagic-ui/core
       - name: React tests (incl. axe-core)
-        run: npm test -w @orca-ui/react
+        run: npm test -w @pelagic-ui/react
       - name: Vue tests (incl. axe-core)
-        run: npm test -w @orca-ui/vue
+        run: npm test -w @pelagic-ui/vue
       - name: Svelte tests
-        run: npm test -w @orca-ui/svelte
+        run: npm test -w @pelagic-ui/svelte
       - name: Astro tests (container rendering + client scripts)
-        run: npm test -w @orca-ui/astro
+        run: npm test -w @pelagic-ui/astro
       - name: React Native tests
-        run: npm test -w @orca-ui/react-native
+        run: npm test -w @pelagic-ui/react-native
       - name: Three tests
-        run: npm test -w @orca-ui/three
+        run: npm test -w @pelagic-ui/three
       - name: Angular tests
-        run: npm test -w @orca-ui/angular
+        run: npm test -w @pelagic-ui/angular
       - name: Typecheck all packages
         run: |
-          npm run typecheck -w @orca-ui/react
-          npm run typecheck -w @orca-ui/vue
-          npm run typecheck -w @orca-ui/svelte
-          npm run typecheck -w @orca-ui/react-native
-          npm run typecheck -w @orca-ui/astro
+          npm run typecheck -w @pelagic-ui/react
+          npm run typecheck -w @pelagic-ui/vue
+          npm run typecheck -w @pelagic-ui/svelte
+          npm run typecheck -w @pelagic-ui/react-native
+          npm run typecheck -w @pelagic-ui/astro
       - name: Build libraries
         run: |
-          npm run build -w @orca-ui/react
-          npm run build -w @orca-ui/vue
+          npm run build -w @pelagic-ui/react
+          npm run build -w @pelagic-ui/vue
 
   e2e:
     name: E2E, axe (real browser) and visual smoke
@@ -66,19 +66,19 @@ jobs:
         working-directory: tests/e2e
       - name: Build core, React, Three and the docs
         run: |
-          npm run build -w @orca-ui/core
-          npm run build -w @orca-ui/illustrations
-          npm run build -w @orca-ui/icons
-          npm run build -w @orca-ui/react
-          npm run build -w @orca-ui/three
-          npm run build -w @orca-ui/docs
+          npm run build -w @pelagic-ui/core
+          npm run build -w @pelagic-ui/illustrations
+          npm run build -w @pelagic-ui/icons
+          npm run build -w @pelagic-ui/react
+          npm run build -w @pelagic-ui/three
+          npm run build -w @pelagic-ui/docs
       - name: Start astro preview
         working-directory: apps/docs
         # Runs in the background; the suite waits up to 60 s for E2E_URL to respond.
         run: nohup npx astro preview --host 127.0.0.1 --port 4329 > ../../preview.log 2>&1 &
       - name: Run e2e suite
         env:
-          E2E_URL: http://127.0.0.1:4329/orca-ui/
+          E2E_URL: http://127.0.0.1:4329/pelagic-ui/
           CI: 'true'
         run: npm run test:e2e
       - name: Upload screenshots and axe report

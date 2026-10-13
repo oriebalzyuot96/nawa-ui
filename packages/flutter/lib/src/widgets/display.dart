@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 
 /// Semantic color tone shared by badges, alerts, toasts and timelines.
-enum OrcaTone {
+enum PelagicTone {
   /// Neutral gray.
   neutral,
 
@@ -26,35 +26,35 @@ enum OrcaTone {
   danger,
 }
 
-/// Foreground and soft background colors for a [OrcaTone].
-({Color fg, Color bg}) orcaToneColors(OrcaColors c, OrcaTone tone) {
+/// Foreground and soft background colors for a [PelagicTone].
+({Color fg, Color bg}) pelagicToneColors(PelagicColors c, PelagicTone tone) {
   switch (tone) {
-    case OrcaTone.success:
+    case PelagicTone.success:
       return (fg: c.success, bg: c.successSoft);
-    case OrcaTone.warning:
+    case PelagicTone.warning:
       return (fg: c.warning, bg: c.warningSoft);
-    case OrcaTone.danger:
+    case PelagicTone.danger:
       return (fg: c.danger, bg: c.dangerSoft);
-    case OrcaTone.info:
+    case PelagicTone.info:
       return (fg: c.info, bg: c.infoSoft);
-    case OrcaTone.primary:
+    case PelagicTone.primary:
       return (fg: c.primaryInk, bg: c.primarySoft);
-    case OrcaTone.neutral:
+    case PelagicTone.neutral:
       return (fg: c.text, bg: c.surfaceMuted);
   }
 }
 
-IconData _toneIcon(OrcaTone tone) {
+IconData _toneIcon(PelagicTone tone) {
   switch (tone) {
-    case OrcaTone.success:
+    case PelagicTone.success:
       return Icons.check_circle_outline;
-    case OrcaTone.warning:
+    case PelagicTone.warning:
       return Icons.warning_amber_outlined;
-    case OrcaTone.danger:
+    case PelagicTone.danger:
       return Icons.error_outline;
-    case OrcaTone.info:
-    case OrcaTone.primary:
-    case OrcaTone.neutral:
+    case PelagicTone.info:
+    case PelagicTone.primary:
+    case PelagicTone.neutral:
       return Icons.info_outline;
   }
 }
@@ -62,37 +62,37 @@ IconData _toneIcon(OrcaTone tone) {
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
 /// Small status label.
-class OrcaBadge extends StatelessWidget {
+class PelagicBadge extends StatelessWidget {
   /// Creates a badge.
-  const OrcaBadge({super.key, required this.label, this.tone = OrcaTone.neutral, this.semanticLabel});
+  const PelagicBadge({super.key, required this.label, this.tone = PelagicTone.neutral, this.semanticLabel});
 
   /// Text.
   final String label;
 
   /// Color tone.
-  final OrcaTone tone;
+  final PelagicTone tone;
 
   /// Accessible text when [label] alone is not descriptive (e.g. "3 unread").
   final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final ({Color fg, Color bg}) c = orcaToneColors(t.colors, tone);
+    final PelagicTheme t = PelagicTheme.of(context);
+    final ({Color fg, Color bg}) c = pelagicToneColors(t.colors, tone);
     return Semantics(
       label: semanticLabel,
       excludeSemantics: semanticLabel != null,
       child: DecoratedBox(
         decoration: BoxDecoration(
           color: c.bg,
-          borderRadius: BorderRadius.circular(OrcaRadii.pill),
+          borderRadius: BorderRadius.circular(PelagicRadii.pill),
           border: t.isHighContrast ? Border.all(color: c.fg) : null,
         ),
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: 2),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.sm, vertical: 2),
           child: Text(
             label,
-            style: TextStyle(color: c.fg, fontSize: OrcaFontSize.xs, fontWeight: FontWeight.w600),
+            style: TextStyle(color: c.fg, fontSize: PelagicFontSize.xs, fontWeight: FontWeight.w600),
           ),
         ),
       ),
@@ -130,9 +130,9 @@ class _TagPainter extends CustomPainter {
 }
 
 /// Label chip, optionally removable. The remove button has a 48x48 hit area.
-class OrcaTag extends StatelessWidget {
+class PelagicTag extends StatelessWidget {
   /// Creates a tag.
-  const OrcaTag({super.key, required this.label, this.onRemove, this.removeLabel});
+  const PelagicTag({super.key, required this.label, this.onRemove, this.removeLabel});
 
   /// Text.
   final String label;
@@ -145,7 +145,7 @@ class OrcaTag extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     final bool removable = onRemove != null;
     return CustomPaint(
       painter: _TagPainter(
@@ -156,19 +156,19 @@ class OrcaTag extends StatelessWidget {
       ),
       child: Padding(
         padding: EdgeInsetsDirectional.only(
-          start: OrcaSpace.sm + 2,
-          end: removable ? 0 : OrcaSpace.sm + 2,
-          top: removable ? 0 : OrcaSpace.xs,
-          bottom: removable ? 0 : OrcaSpace.xs,
+          start: PelagicSpace.sm + 2,
+          end: removable ? 0 : PelagicSpace.sm + 2,
+          top: removable ? 0 : PelagicSpace.xs,
+          bottom: removable ? 0 : PelagicSpace.xs,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Flexible(
-              child: Text(label, style: TextStyle(color: t.colors.text, fontSize: OrcaFontSize.sm)),
+              child: Text(label, style: TextStyle(color: t.colors.text, fontSize: PelagicFontSize.sm)),
             ),
             if (removable)
-              OrcaPressable(
+              PelagicPressable(
                 onPressed: onRemove,
                 semanticLabel: removeLabel ?? 'Remove $label',
                 excludeChildSemantics: true,
@@ -187,7 +187,7 @@ class OrcaTag extends StatelessWidget {
 }
 
 /// Avatar size.
-enum OrcaAvatarSize {
+enum PelagicAvatarSize {
   /// 32
   sm,
 
@@ -199,9 +199,9 @@ enum OrcaAvatarSize {
 }
 
 /// Round avatar showing an image, or the initials of [name].
-class OrcaAvatar extends StatelessWidget {
+class PelagicAvatar extends StatelessWidget {
   /// Creates an avatar.
-  const OrcaAvatar({super.key, required this.name, this.image, this.size = OrcaAvatarSize.md});
+  const PelagicAvatar({super.key, required this.name, this.image, this.size = PelagicAvatarSize.md});
 
   /// Person or entity name (also the accessible label).
   final String name;
@@ -210,22 +210,22 @@ class OrcaAvatar extends StatelessWidget {
   final ImageProvider<Object>? image;
 
   /// Size.
-  final OrcaAvatarSize size;
+  final PelagicAvatarSize size;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     final double dim = switch (size) {
-      OrcaAvatarSize.sm => 32.0,
-      OrcaAvatarSize.md => 40.0,
-      OrcaAvatarSize.lg => 56.0,
+      PelagicAvatarSize.sm => 32.0,
+      PelagicAvatarSize.md => 40.0,
+      PelagicAvatarSize.lg => 56.0,
     };
     final Widget initials = Center(
       child: Padding(
         padding: EdgeInsets.all(dim * 0.18),
         child: FittedBox(
           child: Text(
-            orcaInitials(name),
+            pelagicInitials(name),
             style: TextStyle(color: c.primaryInk, fontWeight: FontWeight.w600, fontSize: dim * 0.38),
           ),
         ),
@@ -257,15 +257,15 @@ class OrcaAvatar extends StatelessWidget {
 }
 
 /// Bordered container with optional title and footer.
-class OrcaCard extends StatelessWidget {
+class PelagicCard extends StatelessWidget {
   /// Creates a card.
-  const OrcaCard({
+  const PelagicCard({
     super.key,
     this.title,
     this.trailing,
     this.child,
     this.footer,
-    this.padding = const EdgeInsetsDirectional.all(OrcaSpace.lg),
+    this.padding = const EdgeInsetsDirectional.all(PelagicSpace.lg),
   });
 
   /// Title, exposed as a heading.
@@ -285,8 +285,8 @@ class OrcaCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final BorderSide side = BorderSide(color: t.isHighContrast ? c.controlBorder : c.border, width: t.borderWidth);
     return Container(
       clipBehavior: Clip.antiAlias,
@@ -303,7 +303,7 @@ class OrcaCard extends StatelessWidget {
             DecoratedBox(
               decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
               child: Padding(
-                padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
+                padding: const EdgeInsetsDirectional.all(PelagicSpace.lg),
                 child: Row(
                   children: <Widget>[
                     Expanded(
@@ -311,7 +311,7 @@ class OrcaCard extends StatelessWidget {
                         header: true,
                         child: Text(
                           title!,
-                          style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
+                          style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: PelagicFontSize.md),
                         ),
                       ),
                     ),
@@ -327,7 +327,7 @@ class OrcaCard extends StatelessWidget {
                 color: c.surfaceAlt,
                 border: Border(top: BorderSide(color: c.border)),
               ),
-              child: Padding(padding: const EdgeInsetsDirectional.all(OrcaSpace.md), child: footer),
+              child: Padding(padding: const EdgeInsetsDirectional.all(PelagicSpace.md), child: footer),
             ),
         ],
       ),
@@ -336,11 +336,11 @@ class OrcaCard extends StatelessWidget {
 }
 
 /// Inline status message. Announced by screen readers when it appears.
-class OrcaAlert extends StatelessWidget {
+class PelagicAlert extends StatelessWidget {
   /// Creates an alert.
-  const OrcaAlert({
+  const PelagicAlert({
     super.key,
-    this.tone = OrcaTone.info,
+    this.tone = PelagicTone.info,
     this.title,
     this.message,
     this.child,
@@ -349,7 +349,7 @@ class OrcaAlert extends StatelessWidget {
   });
 
   /// Tone (info, success, warning, danger).
-  final OrcaTone tone;
+  final PelagicTone tone;
 
   /// Bold title.
   final String? title;
@@ -368,9 +368,9 @@ class OrcaAlert extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
-    final ({Color fg, Color bg}) tc = orcaToneColors(c, tone);
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
+    final ({Color fg, Color bg}) tc = pelagicToneColors(c, tone);
     return Semantics(
       container: true,
       liveRegion: true,
@@ -381,17 +381,17 @@ class OrcaAlert extends StatelessWidget {
           border: Border.all(color: tc.fg, width: t.borderWidth),
         ),
         padding: EdgeInsetsDirectional.only(
-          start: OrcaSpace.md,
-          top: OrcaSpace.md,
-          bottom: OrcaSpace.md,
-          end: onDismiss == null ? OrcaSpace.md : 0,
+          start: PelagicSpace.md,
+          top: PelagicSpace.md,
+          bottom: PelagicSpace.md,
+          end: onDismiss == null ? PelagicSpace.md : 0,
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             ExcludeSemantics(
               child: Padding(
-                padding: const EdgeInsetsDirectional.only(end: OrcaSpace.md, top: 1),
+                padding: const EdgeInsetsDirectional.only(end: PelagicSpace.md, top: 1),
                 child: Icon(_toneIcon(tone), color: tc.fg, size: 20),
               ),
             ),
@@ -403,22 +403,22 @@ class OrcaAlert extends StatelessWidget {
                   if (title != null)
                     Text(
                       title!,
-                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
+                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: PelagicFontSize.md),
                     ),
                   if (message != null)
                     Padding(
                       padding: EdgeInsetsDirectional.only(top: title == null ? 0 : 2),
-                      child: Text(message!, style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm)),
+                      child: Text(message!, style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm)),
                     ),
                   if (child != null)
-                    Padding(padding: const EdgeInsetsDirectional.only(top: OrcaSpace.sm), child: child),
+                    Padding(padding: const EdgeInsetsDirectional.only(top: PelagicSpace.sm), child: child),
                 ],
               ),
             ),
             if (onDismiss != null)
               Transform.translate(
-                offset: const Offset(0, -OrcaSpace.md),
-                child: OrcaPressable(
+                offset: const Offset(0, -PelagicSpace.md),
+                child: PelagicPressable(
                   onPressed: onDismiss,
                   semanticLabel: dismissLabel,
                   excludeChildSemantics: true,
@@ -437,8 +437,8 @@ class OrcaAlert extends StatelessWidget {
   }
 }
 
-/// Size of a [OrcaEmptyState].
-enum OrcaEmptyStateSize {
+/// Size of a [PelagicEmptyState].
+enum PelagicEmptyStateSize {
   /// Inline / table use.
   compact,
 
@@ -452,10 +452,10 @@ enum OrcaEmptyStateSize {
 /// Placeholder for empty lists, search results, errors and onboarding.
 ///
 /// [illustration] is decorative (excluded from semantics) — e.g. an `SvgPicture` of a scene
-/// from `@orca-ui/illustrations` (`dist/svg/<name>.svg`). [tone] tints the [icon].
-class OrcaEmptyState extends StatelessWidget {
+/// from `@pelagic-ui/illustrations` (`dist/svg/<name>.svg`). [tone] tints the [icon].
+class PelagicEmptyState extends StatelessWidget {
   /// Creates an empty state.
-  const OrcaEmptyState({
+  const PelagicEmptyState({
     super.key,
     required this.title,
     this.description,
@@ -464,7 +464,7 @@ class OrcaEmptyState extends StatelessWidget {
     this.action,
     this.primaryAction,
     this.secondaryAction,
-    this.size = OrcaEmptyStateSize.standard,
+    this.size = PelagicEmptyStateSize.standard,
     this.alignStart = false,
     this.split = false,
     this.tone,
@@ -493,7 +493,7 @@ class OrcaEmptyState extends StatelessWidget {
   final Widget? secondaryAction;
 
   /// Compact, standard or page size.
-  final OrcaEmptyStateSize size;
+  final PelagicEmptyStateSize size;
 
   /// Align content to the start edge instead of centering.
   final bool alignStart;
@@ -501,19 +501,19 @@ class OrcaEmptyState extends StatelessWidget {
   /// Place the illustration beside the text when at least 576 logical pixels wide.
   final bool split;
 
-  /// Tints the icon (use [OrcaTone.danger] for error states).
-  final OrcaTone? tone;
+  /// Tints the icon (use [PelagicTone.danger] for error states).
+  final PelagicTone? tone;
 
   /// Expose the title as a semantic header (default true).
   final bool isHeader;
 
   double get _mediaWidth => switch (size) {
-        OrcaEmptyStateSize.compact => 88,
-        OrcaEmptyStateSize.standard => 200,
-        OrcaEmptyStateSize.page => 280,
+        PelagicEmptyStateSize.compact => 88,
+        PelagicEmptyStateSize.standard => 200,
+        PelagicEmptyStateSize.page => 280,
       };
 
-  Widget _content(OrcaColors c, {required bool row}) {
+  Widget _content(PelagicColors c, {required bool row}) {
     final bool start = alignStart || row;
     final TextAlign textAlign = start ? TextAlign.start : TextAlign.center;
     final CrossAxisAlignment cross = start ? CrossAxisAlignment.start : CrossAxisAlignment.center;
@@ -530,13 +530,13 @@ class OrcaEmptyState extends StatelessWidget {
           ExcludeSemantics(
             child: IconTheme.merge(
               data: IconThemeData(
-                color: tone == null ? c.textMuted : orcaToneColors(c, tone!).fg,
-                size: size == OrcaEmptyStateSize.compact ? 28 : 40,
+                color: tone == null ? c.textMuted : pelagicToneColors(c, tone!).fg,
+                size: size == PelagicEmptyStateSize.compact ? 28 : 40,
               ),
               child: icon!,
             ),
           ),
-        if (icon != null) const SizedBox(height: OrcaSpace.sm),
+        if (icon != null) const SizedBox(height: PelagicSpace.sm),
         Semantics(
           header: isHeader,
           child: Text(
@@ -546,26 +546,26 @@ class OrcaEmptyState extends StatelessWidget {
               color: c.text,
               fontWeight: FontWeight.w700,
               fontSize: switch (size) {
-                OrcaEmptyStateSize.compact => OrcaFontSize.md,
-                OrcaEmptyStateSize.standard => OrcaFontSize.lg,
-                OrcaEmptyStateSize.page => OrcaFontSize.xl + 4,
+                PelagicEmptyStateSize.compact => PelagicFontSize.md,
+                PelagicEmptyStateSize.standard => PelagicFontSize.lg,
+                PelagicEmptyStateSize.page => PelagicFontSize.xl + 4,
               },
             ),
           ),
         ),
         if (description != null) ...<Widget>[
-          const SizedBox(height: OrcaSpace.xs),
+          const SizedBox(height: PelagicSpace.xs),
           Text(
             description!,
             textAlign: textAlign,
-            style: TextStyle(color: c.textMuted, fontSize: size == OrcaEmptyStateSize.page ? OrcaFontSize.md : OrcaFontSize.sm),
+            style: TextStyle(color: c.textMuted, fontSize: size == PelagicEmptyStateSize.page ? PelagicFontSize.md : PelagicFontSize.sm),
           ),
         ],
         if (actions.isNotEmpty) ...<Widget>[
-          SizedBox(height: size == OrcaEmptyStateSize.compact ? OrcaSpace.sm : OrcaSpace.md),
+          SizedBox(height: size == PelagicEmptyStateSize.compact ? PelagicSpace.sm : PelagicSpace.md),
           Wrap(
-            spacing: OrcaSpace.sm,
-            runSpacing: OrcaSpace.sm,
+            spacing: PelagicSpace.sm,
+            runSpacing: PelagicSpace.sm,
             alignment: start ? WrapAlignment.start : WrapAlignment.center,
             children: actions,
           ),
@@ -578,14 +578,14 @@ class OrcaEmptyState extends StatelessWidget {
     if (row && media != null) {
       return Row(
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[media, const SizedBox(width: OrcaSpace.xl), Flexible(child: body)],
+        children: <Widget>[media, const SizedBox(width: PelagicSpace.xl), Flexible(child: body)],
       );
     }
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: cross,
       children: <Widget>[
-        if (media != null) ...<Widget>[media, const SizedBox(height: OrcaSpace.md)],
+        if (media != null) ...<Widget>[media, const SizedBox(height: PelagicSpace.md)],
         body,
       ],
     );
@@ -593,11 +593,11 @@ class OrcaEmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     final EdgeInsetsGeometry padding = switch (size) {
-      OrcaEmptyStateSize.compact => const EdgeInsetsDirectional.all(OrcaSpace.md),
-      OrcaEmptyStateSize.standard => const EdgeInsetsDirectional.all(OrcaSpace.xl),
-      OrcaEmptyStateSize.page => const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xl, vertical: OrcaSpace.xl * 2),
+      PelagicEmptyStateSize.compact => const EdgeInsetsDirectional.all(PelagicSpace.md),
+      PelagicEmptyStateSize.standard => const EdgeInsetsDirectional.all(PelagicSpace.xl),
+      PelagicEmptyStateSize.page => const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xl, vertical: PelagicSpace.xl * 2),
     };
     return Padding(
       padding: padding,
@@ -612,9 +612,9 @@ class OrcaEmptyState extends StatelessWidget {
 }
 
 /// Decorative separator line, optionally with a centered label ("or").
-class OrcaDivider extends StatelessWidget {
+class PelagicDivider extends StatelessWidget {
   /// Creates a divider.
-  const OrcaDivider({super.key, this.vertical = false, this.label});
+  const PelagicDivider({super.key, this.vertical = false, this.label});
 
   /// Vertical line (needs a bounded height).
   final bool vertical;
@@ -624,7 +624,7 @@ class OrcaDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     final Color color = t.isHighContrast ? t.colors.controlBorder : t.colors.border;
     if (vertical) {
       return ExcludeSemantics(child: SizedBox(width: 1, height: double.infinity, child: ColoredBox(color: color)));
@@ -635,8 +635,8 @@ class OrcaDivider extends StatelessWidget {
       children: <Widget>[
         Expanded(child: ExcludeSemantics(child: line)),
         Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md),
-          child: Text(label!, style: TextStyle(color: t.colors.textMuted, fontSize: OrcaFontSize.sm)),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.md),
+          child: Text(label!, style: TextStyle(color: t.colors.textMuted, fontSize: PelagicFontSize.sm)),
         ),
         Expanded(child: ExcludeSemantics(child: line)),
       ],
@@ -645,7 +645,7 @@ class OrcaDivider extends StatelessWidget {
 }
 
 /// Spinner size.
-enum OrcaSpinnerSize {
+enum PelagicSpinnerSize {
   /// 16
   sm,
 
@@ -657,12 +657,12 @@ enum OrcaSpinnerSize {
 }
 
 /// Indeterminate loading indicator. Static when animations are disabled.
-class OrcaSpinner extends StatelessWidget {
+class PelagicSpinner extends StatelessWidget {
   /// Creates a spinner.
-  const OrcaSpinner({super.key, this.size = OrcaSpinnerSize.md, this.color, this.label = 'Loading'});
+  const PelagicSpinner({super.key, this.size = PelagicSpinnerSize.md, this.color, this.label = 'Loading'});
 
   /// Size.
-  final OrcaSpinnerSize size;
+  final PelagicSpinnerSize size;
 
   /// Color. Defaults to the accent.
   final Color? color;
@@ -672,11 +672,11 @@ class OrcaSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     final double dim = switch (size) {
-      OrcaSpinnerSize.sm => 16.0,
-      OrcaSpinnerSize.md => 24.0,
-      OrcaSpinnerSize.lg => 36.0,
+      PelagicSpinnerSize.sm => 16.0,
+      PelagicSpinnerSize.md => 24.0,
+      PelagicSpinnerSize.lg => 36.0,
     };
     final Widget indicator = SizedBox.square(
       dimension: dim,
@@ -696,10 +696,10 @@ class OrcaSpinner extends StatelessWidget {
 ///
 /// The shimmer stops (and the block is static) when
 /// `MediaQuery.disableAnimationsOf(context)` is true. Hidden from screen readers;
-/// wrap groups in [OrcaSkeletonText] / [OrcaSkeletonCard] or label them yourself.
-class OrcaSkeleton extends StatefulWidget {
+/// wrap groups in [PelagicSkeletonText] / [PelagicSkeletonCard] or label them yourself.
+class PelagicSkeleton extends StatefulWidget {
   /// Creates a skeleton block.
-  const OrcaSkeleton({super.key, this.width = double.infinity, this.height = 14, this.circle = false, this.borderRadius});
+  const PelagicSkeleton({super.key, this.width = double.infinity, this.height = 14, this.circle = false, this.borderRadius});
 
   /// Width (defaults to the available width).
   final double width;
@@ -714,10 +714,10 @@ class OrcaSkeleton extends StatefulWidget {
   final BorderRadiusGeometry? borderRadius;
 
   @override
-  State<OrcaSkeleton> createState() => _OrcaSkeletonState();
+  State<PelagicSkeleton> createState() => _PelagicSkeletonState();
 }
 
-class _OrcaSkeletonState extends State<OrcaSkeleton> with SingleTickerProviderStateMixin {
+class _PelagicSkeletonState extends State<PelagicSkeleton> with SingleTickerProviderStateMixin {
   late final AnimationController _controller =
       AnimationController(vsync: this, duration: const Duration(milliseconds: 1400));
 
@@ -741,8 +741,8 @@ class _OrcaSkeletonState extends State<OrcaSkeleton> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final bool reduce = _reduceMotion(context);
     final BorderRadiusGeometry radius = widget.circle
         ? BorderRadius.circular(widget.height / 2)
@@ -782,11 +782,11 @@ Widget _skeletonLines(int lines) {
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
       for (int i = 0; i < lines; i++) ...<Widget>[
-        if (i > 0) const SizedBox(height: OrcaSpace.sm),
+        if (i > 0) const SizedBox(height: PelagicSpace.sm),
         FractionallySizedBox(
           alignment: AlignmentDirectional.centerStart,
           widthFactor: i == lines - 1 && lines > 1 ? 0.6 : 1,
-          child: const OrcaSkeleton(height: 12),
+          child: const PelagicSkeleton(height: 12),
         ),
       ],
     ],
@@ -794,9 +794,9 @@ Widget _skeletonLines(int lines) {
 }
 
 /// Paragraph placeholder, announced once as [label]. The last line is shorter.
-class OrcaSkeletonText extends StatelessWidget {
+class PelagicSkeletonText extends StatelessWidget {
   /// Creates a text skeleton.
-  const OrcaSkeletonText({super.key, this.lines = 3, this.label = 'Loading'});
+  const PelagicSkeletonText({super.key, this.lines = 3, this.label = 'Loading'});
 
   /// Number of lines.
   final int lines;
@@ -811,9 +811,9 @@ class OrcaSkeletonText extends StatelessWidget {
 }
 
 /// Card placeholder: avatar, title lines and a body paragraph.
-class OrcaSkeletonCard extends StatelessWidget {
+class PelagicSkeletonCard extends StatelessWidget {
   /// Creates a card skeleton.
-  const OrcaSkeletonCard({super.key, this.lines = 3, this.label = 'Loading'});
+  const PelagicSkeletonCard({super.key, this.lines = 3, this.label = 'Loading'});
 
   /// Number of body lines.
   final int lines;
@@ -823,12 +823,12 @@ class OrcaSkeletonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     return Semantics(
       container: true,
       label: label,
       child: Container(
-        padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
+        padding: const EdgeInsetsDirectional.all(PelagicSpace.lg),
         decoration: BoxDecoration(
           color: t.colors.surface,
           borderRadius: BorderRadius.circular(t.radii.lg),
@@ -840,8 +840,8 @@ class OrcaSkeletonCard extends StatelessWidget {
           children: <Widget>[
             const Row(
               children: <Widget>[
-                OrcaSkeleton(circle: true, height: 40),
-                SizedBox(width: OrcaSpace.md),
+                PelagicSkeleton(circle: true, height: 40),
+                SizedBox(width: PelagicSpace.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -849,20 +849,20 @@ class OrcaSkeletonCard extends StatelessWidget {
                       FractionallySizedBox(
                         alignment: AlignmentDirectional.centerStart,
                         widthFactor: 0.5,
-                        child: OrcaSkeleton(height: 12),
+                        child: PelagicSkeleton(height: 12),
                       ),
-                      SizedBox(height: OrcaSpace.sm),
+                      SizedBox(height: PelagicSpace.sm),
                       FractionallySizedBox(
                         alignment: AlignmentDirectional.centerStart,
                         widthFactor: 0.3,
-                        child: OrcaSkeleton(height: 10),
+                        child: PelagicSkeleton(height: 10),
                       ),
                     ],
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: OrcaSpace.lg),
+            const SizedBox(height: PelagicSpace.lg),
             _skeletonLines(lines),
           ],
         ),
@@ -872,9 +872,9 @@ class OrcaSkeletonCard extends StatelessWidget {
 }
 
 /// Linear progress. [value] is a percentage (0-100); null is indeterminate.
-class OrcaProgressBar extends StatelessWidget {
+class PelagicProgressBar extends StatelessWidget {
   /// Creates a progress bar.
-  const OrcaProgressBar({super.key, this.value, this.label = 'Progress', this.showValue = false});
+  const PelagicProgressBar({super.key, this.value, this.label = 'Progress', this.showValue = false});
 
   /// Percentage 0-100, or null for indeterminate.
   final double? value;
@@ -887,12 +887,12 @@ class OrcaProgressBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     final double? pct = value?.clamp(0, 100).toDouble();
     final bool reduce = _reduceMotion(context);
     final String? semanticValue = pct == null ? null : '${pct.round()}%';
     final Widget bar = ClipRRect(
-      borderRadius: BorderRadius.circular(OrcaRadii.pill),
+      borderRadius: BorderRadius.circular(PelagicRadii.pill),
       child: LinearProgressIndicator(
         value: pct == null ? (reduce ? 0.4 : null) : pct / 100,
         minHeight: 8,
@@ -914,13 +914,13 @@ class OrcaProgressBar extends StatelessWidget {
                   Row(
                     children: <Widget>[
                       Expanded(
-                        child: Text(label, style: TextStyle(color: t.colors.text, fontSize: OrcaFontSize.sm)),
+                        child: Text(label, style: TextStyle(color: t.colors.text, fontSize: PelagicFontSize.sm)),
                       ),
                       if (semanticValue != null)
-                        Text(semanticValue, style: TextStyle(color: t.colors.textMuted, fontSize: OrcaFontSize.sm)),
+                        Text(semanticValue, style: TextStyle(color: t.colors.textMuted, fontSize: PelagicFontSize.sm)),
                     ],
                   ),
-                  const SizedBox(height: OrcaSpace.xs),
+                  const SizedBox(height: PelagicSpace.xs),
                   bar,
                 ],
               )
@@ -930,11 +930,11 @@ class OrcaProgressBar extends StatelessWidget {
   }
 }
 
-/// One step of a [OrcaStepper].
+/// One step of a [PelagicStepper].
 @immutable
-class OrcaStep {
+class PelagicStep {
   /// Creates a step.
-  const OrcaStep({required this.label, this.description});
+  const PelagicStep({required this.label, this.description});
 
   /// Step name.
   final String label;
@@ -944,19 +944,19 @@ class OrcaStep {
 }
 
 /// Horizontal progress through a sequence of steps. [current] is 0-based.
-class OrcaStepper extends StatelessWidget {
+class PelagicStepper extends StatelessWidget {
   /// Creates a stepper.
-  const OrcaStepper({super.key, required this.steps, required this.current});
+  const PelagicStepper({super.key, required this.steps, required this.current});
 
   /// Steps.
-  final List<OrcaStep> steps;
+  final List<PelagicStep> steps;
 
   /// Index of the current step.
   final int current;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     return Semantics(
       container: true,
       explicitChildNodes: true,
@@ -965,14 +965,14 @@ class OrcaStepper extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           for (int i = 0; i < steps.length; i++) ...<Widget>[
-            if (i > 0) const SizedBox(width: OrcaSpace.sm),
+            if (i > 0) const SizedBox(width: PelagicSpace.sm),
             Expanded(
               child: MergeSemantics(
                 child: Semantics(
                   selected: i == current,
                   value: i < current ? 'Completed' : (i == current ? 'Current step' : 'Not started'),
                   child: Container(
-                    padding: const EdgeInsetsDirectional.only(top: OrcaSpace.sm),
+                    padding: const EdgeInsetsDirectional.only(top: PelagicSpace.sm),
                     decoration: BoxDecoration(
                       border: Border(top: BorderSide(color: i <= current ? c.primary : c.border, width: 3)),
                     ),
@@ -984,11 +984,11 @@ class OrcaStepper extends StatelessWidget {
                           style: TextStyle(
                             color: i == current ? c.primaryInk : (i < current ? c.text : c.textMuted),
                             fontWeight: i == current ? FontWeight.w700 : FontWeight.w500,
-                            fontSize: OrcaFontSize.sm,
+                            fontSize: PelagicFontSize.sm,
                           ),
                         ),
                         if (steps[i].description != null)
-                          Text(steps[i].description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.xs)),
+                          Text(steps[i].description!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.xs)),
                       ],
                     ),
                   ),
@@ -1002,11 +1002,11 @@ class OrcaStepper extends StatelessWidget {
   }
 }
 
-/// One entry of a [OrcaTimeline].
+/// One entry of a [PelagicTimeline].
 @immutable
-class OrcaTimelineItem {
+class PelagicTimelineItem {
   /// Creates an entry.
-  const OrcaTimelineItem({required this.title, this.description, this.time, this.tone = OrcaTone.primary});
+  const PelagicTimelineItem({required this.title, this.description, this.time, this.tone = PelagicTone.primary});
 
   /// Title.
   final String title;
@@ -1018,20 +1018,20 @@ class OrcaTimelineItem {
   final String? time;
 
   /// Dot color.
-  final OrcaTone tone;
+  final PelagicTone tone;
 }
 
 /// Vertical list of events.
-class OrcaTimeline extends StatelessWidget {
+class PelagicTimeline extends StatelessWidget {
   /// Creates a timeline.
-  const OrcaTimeline({super.key, required this.items});
+  const PelagicTimeline({super.key, required this.items});
 
   /// Entries, oldest or newest first as you prefer.
-  final List<OrcaTimelineItem> items;
+  final List<PelagicTimelineItem> items;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1051,7 +1051,7 @@ class OrcaTimeline extends StatelessWidget {
                             width: 10,
                             height: 10,
                             decoration: BoxDecoration(
-                              color: orcaToneColors(c, items[i].tone).fg,
+                              color: pelagicToneColors(c, items[i].tone).fg,
                               shape: BoxShape.circle,
                             ),
                           ),
@@ -1064,23 +1064,23 @@ class OrcaTimeline extends StatelessWidget {
                       ),
                     ),
                   ),
-                  const SizedBox(width: OrcaSpace.md),
+                  const SizedBox(width: PelagicSpace.md),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.lg),
+                      padding: const EdgeInsetsDirectional.only(bottom: PelagicSpace.lg),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           if (items[i].time != null)
-                            Text(items[i].time!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.xs)),
+                            Text(items[i].time!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.xs)),
                           Text(
                             items[i].title,
-                            style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: OrcaFontSize.md),
+                            style: TextStyle(color: c.text, fontWeight: FontWeight.w600, fontSize: PelagicFontSize.md),
                           ),
                           if (items[i].description != null)
                             Text(
                               items[i].description!,
-                              style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm),
+                              style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm),
                             ),
                         ],
                       ),
@@ -1096,9 +1096,9 @@ class OrcaTimeline extends StatelessWidget {
 }
 
 /// Tooltip on hover, long press and keyboard focus. Escape dismisses it.
-class OrcaTooltip extends StatelessWidget {
+class PelagicTooltip extends StatelessWidget {
   /// Creates a tooltip.
-  const OrcaTooltip({super.key, required this.message, required this.child, this.preferBelow = false});
+  const PelagicTooltip({super.key, required this.message, required this.child, this.preferBelow = false});
 
   /// Text.
   final String message;
@@ -1111,13 +1111,13 @@ class OrcaTooltip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     return Tooltip(
       message: message,
       preferBelow: preferBelow,
       decoration: BoxDecoration(color: t.colors.text, borderRadius: BorderRadius.circular(t.radii.sm)),
-      textStyle: TextStyle(color: t.colors.surface, fontSize: OrcaFontSize.sm),
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: OrcaSpace.xs),
+      textStyle: TextStyle(color: t.colors.surface, fontSize: PelagicFontSize.sm),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.sm, vertical: PelagicSpace.xs),
       waitDuration: const Duration(milliseconds: 400),
       child: child,
     );

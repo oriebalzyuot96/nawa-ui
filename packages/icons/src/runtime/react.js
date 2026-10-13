@@ -39,10 +39,10 @@ function render(data, props, ref, id) {
 
 /** Create a component for one icon's data (used for every named export). */
 export function createIcon(data, displayName) {
-  const Component = React.forwardRef(function OrcaIcon(props, ref) {
+  const Component = React.forwardRef(function PelagicIcon(props, ref) {
     return render(data, props, ref, useUid());
   });
-  Component.displayName = displayName || 'OrcaIcon';
+  Component.displayName = displayName || 'PelagicIcon';
   return Component;
 }
 
@@ -52,7 +52,7 @@ export const Icon = React.forwardRef(function Icon({ name, ...props }, ref) {
   const data = icons[name];
   if (!data) {
     if (typeof process !== 'undefined' && process.env && process.env.NODE_ENV !== 'production') {
-      console.warn(`[orca-icons] Unknown icon "${name}"`);
+      console.warn(`[pelagic-icons] Unknown icon "${name}"`);
     }
     return null;
   }

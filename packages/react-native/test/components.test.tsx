@@ -16,7 +16,7 @@ import {
   Drawer,
   EmptyState,
   Input,
-  OrcaProvider,
+  PelagicProvider,
   Pagination,
   ProgressBar,
   RadioGroup,
@@ -36,7 +36,7 @@ import {
   getPageItems,
   getTheme,
   themes,
-  useOrcaTheme,
+  usePelagicTheme,
 } from '../src';
 
 // The RN jest preset mocks useColorScheme as a jest.fn returning 'light'.
@@ -54,9 +54,9 @@ const settle = () => act(async () => {});
 const hosts = (pred: (props: Record<string, any>) => boolean) =>
   screen.UNSAFE_root.findAll((n) => typeof n.type === 'string' && pred(n.props));
 
-describe('OrcaProvider / useOrcaTheme', () => {
+describe('PelagicProvider / usePelagicTheme', () => {
   function Probe() {
-    const t = useOrcaTheme();
+    const t = usePelagicTheme();
     return <Text testID="probe">{JSON.stringify({ primary: t.primary, surface: t.surface })}</Text>;
   }
   const read = () => JSON.parse(String(screen.getByTestId('probe').props.children));
@@ -68,9 +68,9 @@ describe('OrcaProvider / useOrcaTheme', () => {
     ['light', 'emerald'],
   ] as const)('mode %s with accent %s resolves the token theme', async (mode, accent) => {
     render(
-      <OrcaProvider mode={mode} accent={accent}>
+      <PelagicProvider mode={mode} accent={accent}>
         <Probe />
-      </OrcaProvider>,
+      </PelagicProvider>,
     );
     await settle();
     const expected = getTheme(mode, accent);
@@ -80,9 +80,9 @@ describe('OrcaProvider / useOrcaTheme', () => {
   it('defaults to the system scheme with the teal accent', async () => {
     useColorScheme.mockReturnValue('dark');
     render(
-      <OrcaProvider>
+      <PelagicProvider>
         <Probe />
-      </OrcaProvider>,
+      </PelagicProvider>,
     );
     await settle();
     expect(read().surface).toBe(themes.dark.teal.surface);
@@ -94,9 +94,9 @@ describe('OrcaProvider / useOrcaTheme', () => {
     info.isHighTextContrastEnabled = jest.fn(() => Promise.resolve(true));
     try {
       render(
-        <OrcaProvider mode="system" accent="indigo">
+        <PelagicProvider mode="system" accent="indigo">
           <Probe />
-        </OrcaProvider>,
+        </PelagicProvider>,
       );
       await settle();
       expect(read().primary).toBe(themes.hc.indigo.primary);
@@ -152,9 +152,9 @@ describe('Input / Textarea', () => {
 
   it('error replaces the hint and colors the border with the danger token', () => {
     render(
-      <OrcaProvider mode="light" accent="violet">
+      <PelagicProvider mode="light" accent="violet">
         <Input label="Email" hint="Work address" error="Enter a valid email" />
-      </OrcaProvider>,
+      </PelagicProvider>,
     );
     expect(screen.getByText('Enter a valid email')).toHaveStyle({ color: themes.light.violet.danger });
     expect(screen.queryByText('Work address')).toBeNull();

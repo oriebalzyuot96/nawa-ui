@@ -1,7 +1,7 @@
-/** Every scene shipped by @orca-ui/illustrations. */
+/** Every scene shipped by @pelagic-ui/illustrations. */
 export type IllustrationName = /*@NAMES_UNION*/;
 
-/** Color roles a scene is drawn with. Each maps to an Orca theme token. */
+/** Color roles a scene is drawn with. Each maps to a Pelagic theme token. */
 export type IllustrationRole = 'accent' | 'soft' | 'paper' | 'alt' | 'muted' | 'line' | 'ink';
 
 export interface IllustrationOptions {
@@ -40,11 +40,11 @@ export declare const VIEWBOX: '0 0 240 180';
 export declare const ILLUSTRATION_NAMES: readonly IllustrationName[];
 export declare const ILLUSTRATIONS: readonly IllustrationMeta[];
 export declare const ROLES: Readonly<Record<IllustrationRole, { token: string; fallback: string; native: string }>>;
-/** CSS shared by every scene (also shipped in @orca-ui/core's orca-ui.css). */
+/** CSS shared by every scene (also shipped in @pelagic-ui/core's pelagic.css). */
 export declare const ILLUSTRATION_CSS: string;
 
 export declare function isIllustrationName(value: unknown): value is IllustrationName;
-/** CSS color for a role: `var(--oc-illus-<role>, var(--oc-<token>, <fallback>))`. */
+/** CSS color for a role: `var(--pl-illus-<role>, var(--pl-<token>, <fallback>))`. */
 export declare function roleColor(role: IllustrationRole | 'edge' | 'none'): string;
 /** Render a scene to an SVG string. */
 export declare function illustrationToSvg(name: IllustrationName, options?: IllustrationOptions): string;
@@ -54,5 +54,5 @@ export declare function illustrationTree(name: IllustrationName, options?: Illus
 export declare function getScene(name: IllustrationName): unknown[];
 
 export type IllustrationPalette = Record<IllustrationRole | 'edge', string>;
-/** Concrete colors for non-CSS renderers (React Native) from an Orca theme object. */
+/** Concrete colors for non-CSS renderers (React Native) from a Pelagic theme object. */
 export declare function resolvePalette(theme?: Partial<Record<string, string>>, overrides?: Partial<IllustrationPalette>): IllustrationPalette;

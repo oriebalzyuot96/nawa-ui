@@ -44,12 +44,12 @@ describe('isWebGLAvailable', () => {
 });
 
 describe('readThemeColors', () => {
-  it('reads --oc-* custom properties and falls back for missing or invalid values', () => {
+  it('reads --pl-* custom properties and falls back for missing or invalid values', () => {
     // No 2D canvas in jsdom: non-hex values cannot be normalised and must fall back.
     vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(null);
     const root = document.documentElement;
-    root.style.setProperty('--oc-primary', '#5b34d6');
-    root.style.setProperty('--oc-danger', 'not-a-color');
+    root.style.setProperty('--pl-primary', '#5b34d6');
+    root.style.setProperty('--pl-danger', 'not-a-color');
     const colors = readThemeColors(root);
     expect(`#${colors.primary.getHexString()}`).toBe('#5b34d6');
     expect(`#${colors.danger.getHexString()}`).toBe('#b91c1c'); // fallback

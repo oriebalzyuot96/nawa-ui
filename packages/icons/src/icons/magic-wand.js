@@ -1,7 +1,7 @@
 /** @type {import('../types').IconSource} */
 export default {
   name: 'magic-wand',
-  category: 'orca',
+  category: 'pelagic',
   tags: ['magic', 'auto', 'generate'],
   outline: [
     '<path d="M4 20l9.5-9.5"/>',

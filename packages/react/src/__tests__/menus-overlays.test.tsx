@@ -247,7 +247,7 @@ describe('ContextMenu', () => {
     const notPrevented = fireEvent.contextMenu(screen.getByTestId('area'), { clientX: 40, clientY: 50 });
     expect(notPrevented).toBe(false);
     const popup = screen.getByRole('menu', { name: 'Context' }).parentElement!;
-    expect(popup).toHaveClass('oc-floating');
+    expect(popup).toHaveClass('pl-floating');
     expect(popup.style.left).toBe('40px');
     expect(popup.style.top).toBe('50px');
   });
@@ -347,7 +347,7 @@ describe('ConfirmDialog via useConfirm', () => {
     expect(dialog).toHaveAccessibleDescription('This cannot be undone.');
     expect(within(dialog).getByRole('button', { name: 'Cancel' })).toHaveFocus();
     const accept = within(dialog).getByRole('button', { name: 'Delete' });
-    expect(accept).toHaveClass('oc-btn--danger');
+    expect(accept).toHaveClass('pl-btn--danger');
 
     await user.click(accept);
     expect(onAccept).toHaveBeenCalledTimes(1);
@@ -387,7 +387,7 @@ describe('ConfirmDialog via useConfirm', () => {
     );
     await user.click(screen.getByRole('button', { name: 'Remove' }));
     const popup = screen.getByRole('alertdialog');
-    expect(popup).toHaveClass('oc-confirm-popup');
+    expect(popup).toHaveClass('pl-confirm-popup');
     expect(within(popup).getByRole('button', { name: 'No' })).toHaveFocus();
     await user.keyboard('{Escape}');
     expect(screen.queryByRole('alertdialog')).toBeNull();

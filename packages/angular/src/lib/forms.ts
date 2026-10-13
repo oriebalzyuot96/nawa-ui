@@ -14,7 +14,7 @@ import {
   type Type,
 } from '@angular/core';
 import { NG_VALUE_ACCESSOR, type ControlValueAccessor } from '@angular/forms';
-import { ocId } from './utils';
+import { plId } from './utils';
 
 function valueAccessor(type: () => Type<unknown>): Provider {
   return { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(type), multi: true };
@@ -27,7 +27,7 @@ function valueAccessor(type: () => Type<unknown>): Provider {
  */
 // The id moves to the native control, so drop it from the host to avoid duplicate ids.
 @Directive({ host: { '[attr.id]': 'null' } })
-export abstract class OcFormControl<T> implements ControlValueAccessor {
+export abstract class PlFormControl<T> implements ControlValueAccessor {
   abstract readonly value: ModelSignal<T>;
 
   readonly label = input<string>();
@@ -37,7 +37,7 @@ export abstract class OcFormControl<T> implements ControlValueAccessor {
   readonly id = input<string>();
   readonly disabled = input(false, { transform: booleanAttribute });
 
-  private readonly autoId = ocId('oc-field');
+  private readonly autoId = plId('pl-field');
   private readonly formDisabled = signal(false);
   private onChange: (value: T) => void = () => {};
   private onTouched: () => void = () => {};
@@ -77,25 +77,25 @@ export abstract class OcFormControl<T> implements ControlValueAccessor {
 
 const MESSAGE = `
   @if (error()) {
-    <span [id]="controlId() + '-err'" class="oc-error-text">{{ error() }}</span>
+    <span [id]="controlId() + '-err'" class="pl-error-text">{{ error() }}</span>
   } @else if (hint()) {
-    <span [id]="controlId() + '-hint'" class="oc-hint">{{ hint() }}</span>
+    <span [id]="controlId() + '-hint'" class="pl-hint">{{ hint() }}</span>
   }`;
 
-const FIELD_HOST = { class: 'oc-field', '[class.oc-field--error]': 'invalid()' };
+const FIELD_HOST = { class: 'pl-field', '[class.pl-field--error]': 'invalid()' };
 
 /** Text input with label, hint and error. Works with ngModel and reactive forms. */
 @Component({
-  selector: 'oc-input',
+  selector: 'pl-input',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcInput)],
+  providers: [valueAccessor(() => PlInput)],
   host: FIELD_HOST,
   template: `
     @if (label()) {
-      <label class="oc-label" [for]="controlId()">{{ label() }}</label>
+      <label class="pl-label" [for]="controlId()">{{ label() }}</label>
     }
     <input
-      class="oc-input"
+      class="pl-input"
       [id]="controlId()"
       [type]="type()"
       [value]="value()"
@@ -114,7 +114,7 @@ const FIELD_HOST = { class: 'oc-field', '[class.oc-field--error]': 'invalid()' }
     ${MESSAGE}
   `,
 })
-export class OcInput extends OcFormControl<string> {
+export class PlInput extends PlFormControl<string> {
   readonly value = model<string>('');
   readonly type = input<string>('text');
   readonly name = input<string>();
@@ -134,16 +134,16 @@ export class OcInput extends OcFormControl<string> {
 
 /** Multi-line text input with label, hint and error. */
 @Component({
-  selector: 'oc-textarea',
+  selector: 'pl-textarea',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcTextarea)],
+  providers: [valueAccessor(() => PlTextarea)],
   host: FIELD_HOST,
   template: `
     @if (label()) {
-      <label class="oc-label" [for]="controlId()">{{ label() }}</label>
+      <label class="pl-label" [for]="controlId()">{{ label() }}</label>
     }
     <textarea
-      class="oc-textarea"
+      class="pl-textarea"
       [id]="controlId()"
       [value]="value()"
       [rows]="rows()"
@@ -160,7 +160,7 @@ export class OcInput extends OcFormControl<string> {
     ${MESSAGE}
   `,
 })
-export class OcTextarea extends OcFormControl<string> {
+export class PlTextarea extends PlFormControl<string> {
   readonly value = model<string>('');
   readonly rows = input(3, { transform: numberAttribute });
   readonly name = input<string>();
@@ -184,16 +184,16 @@ export interface SelectOption {
 
 /** Native select for full keyboard and screen-reader support. */
 @Component({
-  selector: 'oc-select',
+  selector: 'pl-select',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcSelect)],
+  providers: [valueAccessor(() => PlSelect)],
   host: FIELD_HOST,
   template: `
     @if (label()) {
-      <label class="oc-label" [for]="controlId()">{{ label() }}</label>
+      <label class="pl-label" [for]="controlId()">{{ label() }}</label>
     }
     <select
-      class="oc-select"
+      class="pl-select"
       [id]="controlId()"
       [disabled]="isDisabled()"
       [required]="required()"
@@ -213,7 +213,7 @@ export interface SelectOption {
     ${MESSAGE}
   `,
 })
-export class OcSelect extends OcFormControl<string> {
+export class PlSelect extends PlFormControl<string> {
   readonly value = model<string>('');
   readonly options = input<SelectOption[]>([]);
   readonly placeholder = input<string>();
@@ -230,12 +230,12 @@ export class OcSelect extends OcFormControl<string> {
 
 /** Checkbox with a visible label (text via `label` or projected content). Value is boolean. */
 @Component({
-  selector: 'oc-checkbox',
+  selector: 'pl-checkbox',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcCheckbox)],
-  host: { '[class.oc-field]': '!!messageId()', '[class.oc-field--error]': 'invalid()' },
+  providers: [valueAccessor(() => PlCheckbox)],
+  host: { '[class.pl-field]': '!!messageId()', '[class.pl-field--error]': 'invalid()' },
   template: `
-    <label class="oc-check" [class.oc-check--disabled]="isDisabled()">
+    <label class="pl-check" [class.pl-check--disabled]="isDisabled()">
       <input
         type="checkbox"
         [id]="controlId()"
@@ -254,7 +254,7 @@ export class OcSelect extends OcFormControl<string> {
     ${MESSAGE}
   `,
 })
-export class OcCheckbox extends OcFormControl<boolean> {
+export class PlCheckbox extends PlFormControl<boolean> {
   readonly value = model<boolean>(false);
   readonly indeterminate = input(false, { transform: booleanAttribute });
   readonly name = input<string>();
@@ -270,15 +270,15 @@ export class OcCheckbox extends OcFormControl<boolean> {
 
 /** On/off switch (role="switch"). `label` is the accessible name. Value is boolean. */
 @Component({
-  selector: 'oc-switch',
+  selector: 'pl-switch',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcSwitch)],
-  host: { '[class.oc-field]': '!!messageId()', '[class.oc-field--error]': 'invalid()' },
+  providers: [valueAccessor(() => PlSwitch)],
+  host: { '[class.pl-field]': '!!messageId()', '[class.pl-field--error]': 'invalid()' },
   template: `
     <button
       type="button"
       role="switch"
-      class="oc-switch"
+      class="pl-switch"
       [id]="controlId()"
       [attr.aria-checked]="value() ? 'true' : 'false'"
       [attr.aria-label]="label() ?? null"
@@ -291,7 +291,7 @@ export class OcCheckbox extends OcFormControl<boolean> {
     ${MESSAGE}
   `,
 })
-export class OcSwitch extends OcFormControl<boolean> {
+export class PlSwitch extends PlFormControl<boolean> {
   readonly value = model<boolean>(false);
 
   protected normalize(value: boolean | null | undefined): boolean {
@@ -311,21 +311,21 @@ export interface RadioOption {
 
 /** Group of native radio inputs (arrow keys handled by the browser). */
 @Component({
-  selector: 'oc-radio-group',
+  selector: 'pl-radio-group',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcRadioGroup)],
-  host: { '[class.oc-field]': '!!messageId()', '[class.oc-field--error]': 'invalid()' },
+  providers: [valueAccessor(() => PlRadioGroup)],
+  host: { '[class.pl-field]': '!!messageId()', '[class.pl-field--error]': 'invalid()' },
   template: `
     <div
       role="radiogroup"
-      class="oc-radio-group"
+      class="pl-radio-group"
       [id]="controlId()"
       [attr.aria-label]="label() ?? null"
       [attr.aria-invalid]="invalid() ? 'true' : null"
       [attr.aria-describedby]="messageId()"
     >
       @for (o of options(); track o.value) {
-        <label class="oc-check" [class.oc-check--disabled]="isDisabled() || !!o.disabled">
+        <label class="pl-check" [class.pl-check--disabled]="isDisabled() || !!o.disabled">
           <input
             type="radio"
             [name]="groupName()"
@@ -342,11 +342,11 @@ export interface RadioOption {
     ${MESSAGE}
   `,
 })
-export class OcRadioGroup extends OcFormControl<string | null> {
+export class PlRadioGroup extends PlFormControl<string | null> {
   readonly value = model<string | null>(null);
   readonly options = input<RadioOption[]>([]);
   readonly name = input<string>();
-  private readonly autoName = ocId('oc-radio');
+  private readonly autoName = plId('pl-radio');
   protected readonly groupName = computed(() => this.name() ?? this.autoName);
 
   protected normalize(value: string | null | undefined): string | null {
@@ -361,14 +361,14 @@ export interface SegmentedOption {
 
 /** Single-choice segmented control. Arrow keys / Home / End move and select (roving tabindex). */
 @Component({
-  selector: 'oc-segmented',
+  selector: 'pl-segmented',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcSegmented)],
-  host: { '[class.oc-field]': '!!messageId()', '[class.oc-field--error]': 'invalid()' },
+  providers: [valueAccessor(() => PlSegmented)],
+  host: { '[class.pl-field]': '!!messageId()', '[class.pl-field--error]': 'invalid()' },
   template: `
     <div
       role="radiogroup"
-      class="oc-segmented"
+      class="pl-segmented"
       [id]="controlId()"
       [attr.aria-label]="label() ?? null"
       [attr.aria-invalid]="invalid() ? 'true' : null"
@@ -378,7 +378,7 @@ export interface SegmentedOption {
         <button
           type="button"
           role="radio"
-          class="oc-segmented__item"
+          class="pl-segmented__item"
           [attr.aria-checked]="o.value === value() ? 'true' : 'false'"
           [tabIndex]="tabStop() === o.value ? 0 : -1"
           [disabled]="isDisabled()"
@@ -393,7 +393,7 @@ export interface SegmentedOption {
     ${MESSAGE}
   `,
 })
-export class OcSegmented extends OcFormControl<string | null> {
+export class PlSegmented extends PlFormControl<string | null> {
   readonly value = model<string | null>(null);
   readonly options = input<SegmentedOption[]>([]);
 
@@ -427,22 +427,22 @@ export class OcSegmented extends OcFormControl<string | null> {
 
 /** Range slider with a visible label and optional value readout. */
 @Component({
-  selector: 'oc-slider',
+  selector: 'pl-slider',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [valueAccessor(() => OcSlider)],
+  providers: [valueAccessor(() => PlSlider)],
   host: FIELD_HOST,
   template: `
     @if (label()) {
-      <label class="oc-label" [for]="controlId()">
+      <label class="pl-label" [for]="controlId()">
         {{ label() }}
         @if (showValue()) {
-          <span class="oc-hint"> {{ value() }}</span>
+          <span class="pl-hint"> {{ value() }}</span>
         }
       </label>
     }
     <input
       type="range"
-      class="oc-slider"
+      class="pl-slider"
       [id]="controlId()"
       [min]="min()"
       [max]="max()"
@@ -457,7 +457,7 @@ export class OcSegmented extends OcFormControl<string | null> {
     ${MESSAGE}
   `,
 })
-export class OcSlider extends OcFormControl<number> {
+export class PlSlider extends PlFormControl<number> {
   readonly value = model<number>(0);
   readonly min = input(0, { transform: numberAttribute });
   readonly max = input(100, { transform: numberAttribute });

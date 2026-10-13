@@ -4,11 +4,11 @@ import { mount } from '@vue/test-utils';
 import axe from 'axe-core';
 import { defineComponent, h, nextTick, ref } from 'vue';
 import { afterEach, describe, expect, it } from 'vitest';
-import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@orca-ui/core/a11y-prefs';
+import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@pelagic-ui/core/a11y-prefs';
 import { AccessibilityPanel } from '../index';
 
 const html = document.documentElement;
-const dialog = () => document.querySelector<HTMLElement>('.oc-a11y-panel')!;
+const dialog = () => document.querySelector<HTMLElement>('.pl-a11y-panel')!;
 const radio = (name: string) => [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
 const byLabel = (role: string, name: string) =>
   [...document.querySelectorAll<HTMLElement>(`[role="${role}"]`)].find((el) => document.getElementById(el.getAttribute('aria-labelledby') ?? '')?.textContent === name)!;
@@ -17,7 +17,7 @@ afterEach(() => {
   document.body.innerHTML = '';
   localStorage.clear();
   for (const a of [...html.attributes]) if (a.name.startsWith('data-a11y-')) html.removeAttribute(a.name);
-  html.style.removeProperty('--oc-user-font-scale');
+  html.style.removeProperty('--pl-user-font-scale');
 });
 
 describe('AccessibilityPanel (Vue)', () => {
@@ -44,10 +44,10 @@ describe('AccessibilityPanel (Vue)', () => {
     expect(JSON.parse(localStorage.getItem(A11Y_STORAGE_KEY)!).contrast).toBe('white-black');
     expect(document.querySelector('[role="status"]')!.textContent).toBe('Color scheme: White on black');
     byLabel('switch', 'Reading guide').click();
-    expect(document.querySelector('.oc-a11y-reading-guide')).not.toBeNull();
+    expect(document.querySelector('.pl-a11y-reading-guide')).not.toBeNull();
     document.querySelector<HTMLButtonElement>('[data-a11y-reset]')!.click();
     expect(html.hasAttribute('data-a11y-contrast')).toBe(false);
-    expect(document.querySelector('.oc-a11y-reading-guide')).toBeNull();
+    expect(document.querySelector('.pl-a11y-reading-guide')).toBeNull();
     w.unmount();
   });
 

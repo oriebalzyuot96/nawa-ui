@@ -1,9 +1,9 @@
-// Generates orca-ui.css and tokens.ts from src/themes.mjs. Run: node scripts/build.mjs
+// Generates pelagic.css and tokens.ts from src/themes.mjs. Run: node scripts/build.mjs
 import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // Brand accents: --brand "#ff6a00" [--brand-name acme] [--neutral …] [--secondary …] [--brand-default],
-// or --config orca.config.json (see scripts/brand.mjs).
+// or --config pelagic.config.json (see scripts/brand.mjs).
 import { accents, contrastSchemes, defaultAccent as coreDefaultAccent, defaultShape, modes, shapes, softMix, tint } from '../src/themes.mjs';
 import { mixHex } from '../src/theme.js';
 import { buildBrands, readBrandConfig } from './brand.mjs';
@@ -16,9 +16,9 @@ const defaultBrand = brands.find((b) => b.isDefault)?.theme;
 const defaultAccent = defaultBrand?.name ?? coreDefaultAccent;
 const kebab = (s) => s.replace(/[A-Z]/g, (c) => `-${c.toLowerCase()}`);
 const block = (selector, vars) =>
-  `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --oc-${kebab(k)}: ${v};`).join('\n')}\n}\n`;
+  `${selector} {\n${Object.entries(vars).map(([k, v]) => `  --pl-${kebab(k)}: ${v};`).join('\n')}\n}\n`;
 
-// Accent palettes: every accent carries its light, dark and hc values as --oc-a-<mode>-<key>.
+// Accent palettes: every accent carries its light, dark and hc values as --pl-a-<mode>-<key>.
 function accentVars(accent) {
   const vars = {};
   for (const mode of modeNames) {
@@ -72,7 +72,7 @@ function schemeVars(s) {
 }
 const importantBlock = (selectors, vars, colorScheme) =>
   `${selectors.join(',\n')} {\n  color-scheme: ${colorScheme} !important;\n${Object.entries(vars)
-    .map(([k, v]) => `  --oc-${kebab(k)}: ${v} !important;`)
+    .map(([k, v]) => `  --pl-${kebab(k)}: ${v} !important;`)
     .join('\n')}\n}\n`;
 const NESTED = ':is([data-theme], [data-accent])';
 function schemeCss() {
@@ -110,17 +110,17 @@ function schemeCss() {
 // Binding: pick the accent values for the current mode.
 function bindingVars(mode) {
   const vars = {};
-  for (const key of ['primary', 'primaryHover', 'primaryInk', 'onPrimary']) vars[key] = `var(--oc-a-${mode}-${kebab(key)})`;
-  vars.primarySoft = `color-mix(in srgb, var(--oc-primary) ${softMix.primary * 100}%, var(--oc-surface))`;
-  vars.focus = 'var(--oc-primary)';
-  // Accent-tinted roles of the Orca design language (see DESIGN.md). They live in the binding blocks
+  for (const key of ['primary', 'primaryHover', 'primaryInk', 'onPrimary']) vars[key] = `var(--pl-a-${mode}-${kebab(key)})`;
+  vars.primarySoft = `color-mix(in srgb, var(--pl-primary) ${softMix.primary * 100}%, var(--pl-surface))`;
+  vars.focus = 'var(--pl-primary)';
+  // Accent-tinted roles of the Pelagic design language (see DESIGN.md). They live in the binding blocks
   // so nested data-theme / data-accent scopes recompute them. Same math as scripts/resolve.mjs.
-  vars.tintHover = `color-mix(in srgb, var(--oc-primary) ${tint.hover * 100}%, var(--oc-surface))`;
-  vars.tintPress = `color-mix(in srgb, var(--oc-primary) ${tint.press * 100}%, var(--oc-surface))`;
-  vars.canvas = `color-mix(in srgb, var(--oc-primary) ${tint.canvas * 100}%, var(--oc-surface-alt))`;
-  vars.borderSubtle = `color-mix(in srgb, var(--oc-primary) ${tint.border * 100}%, var(--oc-border))`;
-  vars.borderStrong = 'color-mix(in srgb, var(--oc-control-border) 55%, var(--oc-border))';
-  vars.ring = 'color-mix(in srgb, var(--oc-focus) 24%, transparent)';
+  vars.tintHover = `color-mix(in srgb, var(--pl-primary) ${tint.hover * 100}%, var(--pl-surface))`;
+  vars.tintPress = `color-mix(in srgb, var(--pl-primary) ${tint.press * 100}%, var(--pl-surface))`;
+  vars.canvas = `color-mix(in srgb, var(--pl-primary) ${tint.canvas * 100}%, var(--pl-surface-alt))`;
+  vars.borderSubtle = `color-mix(in srgb, var(--pl-primary) ${tint.border * 100}%, var(--pl-border))`;
+  vars.borderStrong = 'color-mix(in srgb, var(--pl-control-border) 55%, var(--pl-border))';
+  vars.ring = 'color-mix(in srgb, var(--pl-focus) 24%, transparent)';
   return vars;
 }
 
@@ -156,13 +156,13 @@ function modeVars(mode) {
     danger: m.danger,
     info: m.info,
     onDanger: m.onDanger,
-    successSoft: `color-mix(in srgb, var(--oc-success) ${pct}%, var(--oc-surface))`,
-    warningSoft: `color-mix(in srgb, var(--oc-warning) ${pct}%, var(--oc-surface))`,
-    dangerSoft: `color-mix(in srgb, var(--oc-danger) ${pct}%, var(--oc-surface))`,
-    infoSoft: `color-mix(in srgb, var(--oc-info) ${pct}%, var(--oc-surface))`,
+    successSoft: `color-mix(in srgb, var(--pl-success) ${pct}%, var(--pl-surface))`,
+    warningSoft: `color-mix(in srgb, var(--pl-warning) ${pct}%, var(--pl-surface))`,
+    dangerSoft: `color-mix(in srgb, var(--pl-danger) ${pct}%, var(--pl-surface))`,
+    infoSoft: `color-mix(in srgb, var(--pl-info) ${pct}%, var(--pl-surface))`,
     overlay: m.overlay,
     /** Floating layers (menus, popovers, dialogs): lifted one step above the page in dark mode. */
-    surfaceRaised: mode === 'dark' ? 'var(--oc-surface-alt)' : 'var(--oc-surface)',
+    surfaceRaised: mode === 'dark' ? 'var(--pl-surface-alt)' : 'var(--pl-surface)',
     ...shadows(mode),
   };
 }
@@ -178,7 +178,7 @@ const shapeVars = (name) => {
   };
 };
 
-/** Custom brand accents baked in with --brand / orca.config.json (same CSS as createTheme()). */
+/** Custom brand accents baked in with --brand / pelagic.config.json (same CSS as createTheme()). */
 function brandCss() {
   if (!brands.length) return '';
   const parts = brands.map(({ theme, isDefault }) =>
@@ -187,7 +187,7 @@ function brandCss() {
   return `/* ---------- Brand accents ---------- */\n${parts.join('')}\n`;
 }
 
-let css = `/* Orca UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
+let css = `/* Pelagic UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
  * Theme with attributes on <html> (or any container):
  *   data-theme="light | dark | hc"   (default: follows prefers-color-scheme / prefers-contrast)
  *   data-accent="${accentNames.join(' | ')}"
@@ -233,7 +233,7 @@ if (existsSync(partsDir)) {
     css += `\n/* ===== ${file} ===== */\n` + readFileSync(join(partsDir, file), 'utf8');
   }
 }
-writeFileSync(join(root, 'orca-ui.css'), css);
+writeFileSync(join(root, 'pelagic.css'), css);
 
 // ---------- tokens.ts for React Native and other JS consumers ----------
 const themes = {};
@@ -250,7 +250,7 @@ for (const mode of modeNames) {
 }
 const keys = Object.keys(themes.light[coreDefaultAccent]);
 
-const header = '/* Orca UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
+const header = '/* Pelagic UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
 
 const js = `${header}
 export const themes = ${JSON.stringify(themes, null, 2)};
@@ -277,21 +277,21 @@ export type ThemeShape = ${Object.keys(shapes).map((s) => `'${s}'`).join(' | ')}
 /** @deprecated use ThemeMode */
 export type ThemeName = ThemeMode;
 
-export interface OrcaTheme {
+export interface PelagicTheme {
 ${keys.map((k) => `  ${k}: string;`).join('\n')}
 }
 
-export declare const themes: Record<ThemeMode, Record<ThemeAccent, OrcaTheme>>;
+export declare const themes: Record<ThemeMode, Record<ThemeAccent, PelagicTheme>>;
 export declare const shapes: Record<ThemeShape, { sm: number; md: number; lg: number }>;
-export declare const lightTheme: OrcaTheme;
-export declare const darkTheme: OrcaTheme;
-export declare const highContrastTheme: OrcaTheme;
+export declare const lightTheme: PelagicTheme;
+export declare const darkTheme: PelagicTheme;
+export declare const highContrastTheme: PelagicTheme;
 export declare const radius: { readonly sm: number; readonly md: number; readonly lg: number; readonly pill: 999 };
 export declare const spacing: { readonly xs: 4; readonly sm: 8; readonly md: 12; readonly lg: 16; readonly xl: 24 };
 export declare const fontSize: { readonly xs: 11; readonly sm: 13; readonly md: 15; readonly lg: 17; readonly xl: 20 };
-export declare function getTheme(mode?: ThemeMode, accent?: ThemeAccent): OrcaTheme;
+export declare function getTheme(mode?: ThemeMode, accent?: ThemeAccent): PelagicTheme;
 `;
 writeFileSync(join(root, 'tokens.js'), js);
 writeFileSync(join(root, 'tokens.d.ts'), dts);
 
-console.log(`Built orca-ui.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes.`);
+console.log(`Built pelagic.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes.`);

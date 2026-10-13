@@ -1,11 +1,11 @@
 // @vitest-environment jsdom
 // client/a11y-panel.ts on the markup AccessibilityPanel.astro renders (renderA11yPanelHTML from core).
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { A11Y_STORAGE_KEY, renderA11yPanelHTML } from '@orca-ui/core/a11y-prefs';
+import { A11Y_STORAGE_KEY, renderA11yPanelHTML } from '@pelagic-ui/core/a11y-prefs';
 import { initA11yPanels } from '../src/client/a11y-panel';
 
 const html = document.documentElement;
-const dialog = () => document.querySelector<HTMLElement>('.oc-a11y-panel')!;
+const dialog = () => document.querySelector<HTMLElement>('.pl-a11y-panel')!;
 const radio = (name: string) => [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
 const key = (el: Element, k: string, init: KeyboardEventInit = {}) => {
   const e = new KeyboardEvent('keydown', { key: k, bubbles: true, cancelable: true, ...init });
@@ -14,7 +14,7 @@ const key = (el: Element, k: string, init: KeyboardEventInit = {}) => {
 };
 
 function host(attrs = '', options: Parameters<typeof renderA11yPanelHTML>[0] = {}) {
-  document.body.innerHTML = `<main><button id="before">before</button></main><div class="oc-a11y-host" data-oc-a11y-host ${attrs}>${renderA11yPanelHTML({ id: 'p', ...options })}</div>`;
+  document.body.innerHTML = `<main><button id="before">before</button></main><div class="pl-a11y-host" data-pl-a11y-host ${attrs}>${renderA11yPanelHTML({ id: 'p', ...options })}</div>`;
   initA11yPanels();
 }
 
@@ -22,7 +22,7 @@ beforeEach(() => localStorage.clear());
 afterEach(() => {
   document.body.innerHTML = '';
   for (const a of [...html.attributes]) if (a.name.startsWith('data-a11y-')) html.removeAttribute(a.name);
-  html.style.removeProperty('--oc-user-font-scale');
+  html.style.removeProperty('--pl-user-font-scale');
 });
 
 describe('client/a11y-panel', () => {
@@ -82,7 +82,7 @@ describe('client/a11y-panel', () => {
     localStorage.setItem('my-key', JSON.stringify({ contrast: 'white-black' }));
     document.body.innerHTML = '<section id="scope"></section>';
     const div = document.createElement('div');
-    div.setAttribute('data-oc-a11y-host', '');
+    div.setAttribute('data-pl-a11y-host', '');
     div.setAttribute('data-persist', 'my-key');
     div.setAttribute('data-target', '#scope');
     div.innerHTML = renderA11yPanelHTML({ id: 'q' });

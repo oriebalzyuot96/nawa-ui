@@ -5,14 +5,14 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 /**
- * Native button (or link) styled as an Orca UI button.
+ * Native button (or link) styled as a Pelagic UI button.
  *
  * ```html
- * <button ocButton variant="outline" [loading]="saving()">Save</button>
+ * <button plButton variant="outline" [loading]="saving()">Save</button>
  * ```
  */
 @Component({
-  selector: 'button[ocButton], a[ocButton]',
+  selector: 'button[plButton], a[plButton]',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class]': 'classes()',
@@ -21,9 +21,9 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
     '[attr.aria-disabled]': 'isDisabled() && isAnchor ? "true" : null',
     '[attr.aria-busy]': 'loading() ? "true" : null',
   },
-  template: `@if (loading()) {<span class="oc-spinner" aria-hidden="true"></span>}<ng-content />`,
+  template: `@if (loading()) {<span class="pl-spinner" aria-hidden="true"></span>}<ng-content />`,
 })
-export class OcButton {
+export class PlButton {
   readonly variant = input<ButtonVariant>('primary');
   readonly size = input<ButtonSize>('md');
   /** Shows a spinner and disables the button. */
@@ -38,11 +38,11 @@ export class OcButton {
   protected readonly isDisabled = computed(() => this.disabled() || this.loading());
   protected readonly classes = computed(() =>
     cx(
-      'oc-btn',
-      `oc-btn--${this.variant()}`,
-      this.size() !== 'md' && `oc-btn--${this.size()}`,
-      this.block() && 'oc-btn--block',
-      this.iconOnly() && 'oc-btn--icon',
+      'pl-btn',
+      `pl-btn--${this.variant()}`,
+      this.size() !== 'md' && `pl-btn--${this.size()}`,
+      this.block() && 'pl-btn--block',
+      this.iconOnly() && 'pl-btn--icon',
     ),
   );
 }

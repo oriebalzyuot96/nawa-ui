@@ -13,13 +13,13 @@ interface Props {
 const { items } = Astro.props;
 ---
 
-<ol class="oc-timeline">
+<ol class="pl-timeline">
   {items.map((item) => (
-    <li class="oc-timeline__item">
-      <span class:list={['oc-timeline__dot', item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`]} aria-hidden="true"></span>
-      {item.time && <div class="oc-timeline__time">{item.time}</div>}
-      <div class="oc-timeline__title">{item.title}</div>
-      {item.description && <div class="oc-timeline__desc">{item.description}</div>}
+    <li class="pl-timeline__item">
+      <span class:list={['pl-timeline__dot', item.variant && item.variant !== 'primary' && `pl-timeline__dot--${item.variant}`]} aria-hidden="true"></span>
+      {item.time && <div class="pl-timeline__time">{item.time}</div>}
+      <div class="pl-timeline__title">{item.title}</div>
+      {item.description && <div class="pl-timeline__desc">{item.description}</div>}
     </li>
   ))}
 </ol>

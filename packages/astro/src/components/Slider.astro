@@ -11,25 +11,25 @@ interface Props {
 }
 
 const { name, label, value = 50, min = 0, max = 100, step = 1, showValue = false, disabled = false } = Astro.props;
-const id = `oc-slider-${Math.random().toString(36).slice(2, 8)}`;
+const id = `pl-slider-${Math.random().toString(36).slice(2, 8)}`;
 ---
 
-<div class="oc-field">
-  <label class="oc-label" for={id}>
+<div class="pl-field">
+  <label class="pl-label" for={id}>
     {label}
-    {showValue && <output class="oc-hint" id={`${id}-out`} for={id}>{value}</output>}
+    {showValue && <output class="pl-hint" id={`${id}-out`} for={id}>{value}</output>}
   </label>
   <input
     id={id}
     name={name}
     type="range"
-    class="oc-slider"
+    class="pl-slider"
     value={value}
     min={min}
     max={max}
     step={step}
     disabled={disabled}
-    data-oc-output={showValue ? `${id}-out` : undefined}
+    data-pl-output={showValue ? `${id}-out` : undefined}
   />
 </div>
 

@@ -1,4 +1,4 @@
-// Orca motion — a small, dependency-free animation engine shared by every framework package.
+// Pelagic motion — a small, dependency-free animation engine shared by every framework package.
 //
 //   animate(targets, keyframes, options)   WAAPI with a requestAnimationFrame fallback
 //   spring(config)                          analytic damped-spring easing (+ CSS linear() export)
@@ -92,18 +92,18 @@ const BEZIERS = {
   easeIn: [0.42, 0, 1, 1],
   easeOut: [0, 0, 0.58, 1],
   easeInOut: [0.42, 0, 0.58, 1],
-  /** = --oc-ease (expressive out) */
+  /** = --pl-ease (expressive out) */
   expoOut: [0.16, 1, 0.3, 1],
-  /** = --oc-ease-out */
+  /** = --pl-ease-out */
   out: [0.22, 1, 0.36, 1],
-  /** = --oc-ease-in-out */
+  /** = --pl-ease-in-out */
   inOut: [0.65, 0, 0.35, 1],
-  /** = --oc-ease-spring (overshoot) */
+  /** = --pl-ease-spring (overshoot) */
   backOut: [0.34, 1.56, 0.64, 1],
   anticipate: [0.36, 0, 0.66, -0.56],
 };
 
-/** Named easing functions (`t ∈ [0, 1] → progress`). Names match the `--oc-ease*` tokens. */
+/** Named easing functions (`t ∈ [0, 1] → progress`). Names match the `--pl-ease*` tokens. */
 export const easings = Object.fromEntries(Object.entries(BEZIERS).map(([k, v]) => [k, cubicBezier(...v)]));
 /** The same easings as CSS strings, usable in transitions and WAAPI. */
 export const cssEasings = Object.fromEntries(
@@ -170,7 +170,7 @@ function resolveEasing(easing) {
       const p = m[1].split(',').map(Number);
       if (p.length === 4 && p.every((n) => !Number.isNaN(n))) return { fn: cubicBezier(...p), css: easing };
     }
-    if (/^var\(--oc-ease/.test(easing)) {
+    if (/^var\(--pl-ease/.test(easing)) {
       const name = easing.includes('spring') ? 'backOut' : easing.includes('in-out') ? 'inOut' : easing.includes('-out') ? 'out' : 'expoOut';
       return { fn: easings[name], css: cssEasings[name] };
     }

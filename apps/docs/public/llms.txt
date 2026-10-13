@@ -1,14 +1,14 @@
-# Orca UI
+# Pelagic UI
 
 > Open-source (MIT), accessible (WCAG 2.2 AA) UI component library with the same components and API for React, Vue 3, Svelte 5, Astro, Angular, React Native and Flutter. 21 themes (light, dark, high contrast × 7 accents), skeleton loaders, accessible charts, 3D components, RTL and Arabic support. A PrimeNG-style alternative for every framework.
 
-- Docs and live demos: https://oriebalzyuot96.github.io/orca-ui/
-- Components: https://oriebalzyuot96.github.io/orca-ui/components/
-- Packages (install commands, imports, export paths and sizes for every package): https://oriebalzyuot96.github.io/orca-ui/packages/ (Arabic: https://oriebalzyuot96.github.io/orca-ui/ar/packages/)
-- Orca Space (drag-and-drop page builder; describe a page in English or Arabic and it is generated; exports React, Vue, Angular, HTML): https://oriebalzyuot96.github.io/orca-ui/space/
-- Source: https://github.com/oriebalzyuot96/orca-ui
-- Install everything: `npm i orca-ui` (umbrella package; framework packages are optional peers)
-- Install one framework: `npm i @orca-ui/react @orca-ui/core` (or yarn add / pnpm add; also @orca-ui/vue, @orca-ui/icons, @orca-ui/illustrations, @orca-ui/svelte, @orca-ui/astro, @orca-ui/angular, @orca-ui/react-native, @orca-ui/three; Flutter: `flutter pub add orca_ui`)
+- Docs and live demos: https://oriebalzyuot96.github.io/pelagic-ui/
+- Components: https://oriebalzyuot96.github.io/pelagic-ui/components/
+- Packages (install commands, imports, export paths and sizes for every package): https://oriebalzyuot96.github.io/pelagic-ui/packages/ (Arabic: https://oriebalzyuot96.github.io/pelagic-ui/ar/packages/)
+- Pelagic Space (drag-and-drop page builder; describe a page in English or Arabic and it is generated; exports React, Vue, Angular, HTML): https://oriebalzyuot96.github.io/pelagic-ui/space/
+- Source: https://github.com/oriebalzyuot96/pelagic-ui
+- Install everything: `npm i pelagic` (umbrella package; framework packages are optional peers)
+- Install one framework: `npm i @pelagic-ui/react @pelagic-ui/core` (or yarn add / pnpm add; also @pelagic-ui/vue, @pelagic-ui/icons, @pelagic-ui/illustrations, @pelagic-ui/svelte, @pelagic-ui/astro, @pelagic-ui/angular, @pelagic-ui/react-native, @pelagic-ui/three; Flutter: `flutter pub add pelagic_ui`)
 
 ## Component groups
 - Forms: Button, Input, Textarea, Select, Checkbox, Switch, RadioGroup, Slider, Segmented
@@ -20,7 +20,7 @@
 - Media: Carousel, Galleria, Image, ImageCompare, Avatar, Badge, Tag, Chip, MeterGroup, FileUpload, Terminal
 - Feedback: swal-style alert dialogs, Toaster with toast() and promise toasts, 15 loader types, PageLoader, TopProgressBar, Skeleton presets
 - Charts (dependency-free SVG, keyboard navigable, data-table fallback): Bar, Line, Area, Pie, Donut, Scatter, Bubble, Radar, Sparkline, Gauge, Heatmap, Combo, Waterfall, plus primitives for custom charts
-- 3D: TiltCard, FlipCard, CubeCarousel, ParallaxLayers, Text3D; @orca-ui/three: Scene3D, Globe3D, ParticlesField, FloatingShapes, ModelViewer, Chart3D
+- 3D: TiltCard, FlipCard, CubeCarousel, ParallaxLayers, Text3D; @pelagic-ui/three: Scene3D, Globe3D, ParticlesField, FloatingShapes, ModelViewer, Chart3D
 
 ## Theming
 Set attributes on <html> or any container: data-theme="light|dark|hc", data-accent="violet|teal|indigo|rose|amber|emerald|slate", data-shape="sharp|default|round". Defaults follow prefers-color-scheme and prefers-contrast. JS: applyTheme({ mode, accent, shape }).

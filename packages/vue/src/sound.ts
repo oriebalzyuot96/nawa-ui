@@ -9,7 +9,7 @@ import {
   type SoundState,
   type SoundTheme,
   type UiSoundName,
-} from '@orca-ui/core/sound';
+} from '@pelagic-ui/core/sound';
 
 export { SOUND_THEMES, UI_SOUNDS, createSoundEngine, emitUiSound };
 export type { SoundEngine, SoundEngineOptions, SoundState, SoundTheme, UiSoundName };

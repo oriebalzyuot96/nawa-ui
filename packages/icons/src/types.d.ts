@@ -8,7 +8,7 @@ export interface IconSource {
   name: string;
   category:
     | 'navigation' | 'actions' | 'status' | 'communication' | 'files' | 'media' | 'commerce' | 'data'
-    | 'devices' | 'people' | 'time' | 'editor' | 'layout' | 'places' | 'social' | 'orca';
+    | 'devices' | 'people' | 'time' | 'editor' | 'layout' | 'places' | 'social' | 'pelagic';
   /** At least two search keywords. */
   tags: string[];
   /** Directional icon that should mirror in right-to-left layouts. */

@@ -1,15 +1,15 @@
 ---
-// The home-page studio: real Orca UI components (the Astro package) in a stage you can re-theme on
+// The home-page studio: real Pelagic UI components (the Astro package) in a stage you can re-theme on
 // the spot — mode, accent and direction are scoped to the stage — plus the same card's code for every platform.
-import Icon from '@orca-ui/icons/astro';
-import Card from '@orca-ui/astro/components/Card';
-import Input from '@orca-ui/astro/components/Input';
-import Segmented from '@orca-ui/astro/components/Segmented';
-import Switch from '@orca-ui/astro/components/Switch';
-import ProgressBar from '@orca-ui/astro/components/ProgressBar';
-import Badge from '@orca-ui/astro/components/Badge';
-import Button from '@orca-ui/astro/components/Button';
-import Avatar from '@orca-ui/astro/components/Avatar';
+import Icon from '@pelagic-ui/icons/astro';
+import Card from '@pelagic-ui/astro/components/Card';
+import Input from '@pelagic-ui/astro/components/Input';
+import Segmented from '@pelagic-ui/astro/components/Segmented';
+import Switch from '@pelagic-ui/astro/components/Switch';
+import ProgressBar from '@pelagic-ui/astro/components/ProgressBar';
+import Badge from '@pelagic-ui/astro/components/Badge';
+import Button from '@pelagic-ui/astro/components/Button';
+import Avatar from '@pelagic-ui/astro/components/Avatar';
 import CodeTabSet from './CodeTabSet.astro';
 import { showcase } from '../data/showcase';
 import { accents } from '../data/site';
@@ -47,7 +47,7 @@ const L = ar
       cancel: 'إلغاء',
       deploy: 'انشر',
       toastTitle: 'تم النشر',
-      toastMsg: 'orca-app متاح الآن في 12 منطقة.',
+      toastMsg: 'pelagic-app متاح الآن في 12 منطقة.',
       code: 'نفس البطاقة في كل منصة',
       by: 'بواسطة',
     }
@@ -77,7 +77,7 @@ const L = ar
       cancel: 'Cancel',
       deploy: 'Deploy',
       toastTitle: 'Deployed',
-      toastMsg: 'orca-app is live in 12 regions.',
+      toastMsg: 'pelagic-app is live in 12 regions.',
       code: 'The same card on every platform',
       by: 'by',
     };
@@ -90,7 +90,7 @@ const L = ar
       <div class="studio-seg" role="radiogroup" aria-label={L.mode}>
         {L.modes.map(([value, label], i) => (
           <label class="studio-seg__item">
-            <input type="radio" class="oc-sr-only" name={`studio-mode-${locale}`} value={value} checked={i === 0} data-studio-mode />
+            <input type="radio" class="pl-sr-only" name={`studio-mode-${locale}`} value={value} checked={i === 0} data-studio-mode />
             <span>{label}</span>
           </label>
         ))}
@@ -98,15 +98,15 @@ const L = ar
       <div class="studio-swatches" role="radiogroup" aria-label={L.accent}>
         {accents.map((a, i) => (
           <label class="swatch" data-accent={a} title={a}>
-            <input type="radio" class="oc-sr-only" name={`studio-accent-${locale}`} value={a} checked={i === 0} data-studio-accent />
+            <input type="radio" class="pl-sr-only" name={`studio-accent-${locale}`} value={a} checked={i === 0} data-studio-accent />
             <span class="swatch__dot" aria-hidden="true"></span>
-            <span class="oc-sr-only">{a}</span>
+            <span class="pl-sr-only">{a}</span>
           </label>
         ))}
       </div>
       <button type="button" class="studio__dir" aria-pressed="false" data-studio-dir>
         <Icon name={ar ? 'text-direction-ltr' : 'text-direction-rtl'} size={16} />
-        <span class="oc-sr-only">{L.dir}</span>
+        <span class="pl-sr-only">{L.dir}</span>
         <span aria-hidden="true">{ar ? 'LTR' : 'RTL'}</span>
       </button>
     </div>
@@ -117,9 +117,9 @@ const L = ar
     <div class="studio__card">
       <Card title={L.title}>
         <div class="studio__form">
-          <Input label={L.project} value="orca-app" autocomplete="off" />
+          <Input label={L.project} value="pelagic-app" autocomplete="off" />
           <div class="studio__field">
-            <span class="oc-label" aria-hidden="true">{L.env}</span>
+            <span class="pl-label" aria-hidden="true">{L.env}</span>
             <Segmented name={`studio-env-${locale}`} label={L.env} options={L.envs} />
           </div>
           <Switch label={L.notify} checked />

@@ -10,7 +10,7 @@
 
 <span
   aria-hidden="true"
-  class={['oc-skeleton', circle && 'oc-skeleton--circle']}
+  class={['pl-skeleton', circle && 'pl-skeleton--circle']}
   style:width={circle ? css(height ?? width) : css(width)}
   style:height={css(height)}
 ></span>

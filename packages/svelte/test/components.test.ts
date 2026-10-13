@@ -48,7 +48,7 @@ describe('package exports', () => {
     for (const name of components) expect(typeof (lib as Record<string, unknown>)[name], name).toBe('function');
     expect(typeof lib.modal).toBe('function');
     expect(typeof lib.applyTheme).toBe('function');
-    expect(lib.THEME_STORAGE_KEY).toBe('orca-ui-theme');
+    expect(lib.THEME_STORAGE_KEY).toBe('pelagic-ui-theme');
   });
 
   it('getPageItems compacts long ranges', () => {
@@ -64,7 +64,7 @@ describe('Button', () => {
     render(Button, { props: { variant: 'danger', size: 'lg', block: true, children: text('Delete') } });
     const btn = screen.getByRole('button', { name: 'Delete' });
     expect(btn).toHaveAttribute('type', 'button');
-    expect(btn).toHaveClass('oc-btn', 'oc-btn--danger', 'oc-btn--lg', 'oc-btn--block');
+    expect(btn).toHaveClass('pl-btn', 'pl-btn--danger', 'pl-btn--lg', 'pl-btn--block');
     expect(btn).not.toHaveAttribute('aria-busy');
   });
 
@@ -74,7 +74,7 @@ describe('Button', () => {
     const btn = screen.getByRole('button', { name: 'Save' });
     expect(btn).toBeDisabled();
     expect(btn).toHaveAttribute('aria-busy', 'true');
-    expect(btn.querySelector('.oc-spinner')).toHaveAttribute('aria-hidden', 'true');
+    expect(btn.querySelector('.pl-spinner')).toHaveAttribute('aria-hidden', 'true');
     fireEvent.click(btn);
     expect(onclick).not.toHaveBeenCalled();
   });
@@ -83,7 +83,7 @@ describe('Button', () => {
     const onclick = vi.fn();
     render(Button, { props: { iconOnly: true, 'aria-label': 'Settings', type: 'submit', onclick, children: text('⚙') } });
     const btn = screen.getByRole('button', { name: 'Settings' });
-    expect(btn).toHaveClass('oc-btn--icon');
+    expect(btn).toHaveClass('pl-btn--icon');
     expect(btn).toHaveAttribute('type', 'submit');
     await fireEvent.click(btn);
     expect(onclick).toHaveBeenCalledOnce();
@@ -122,7 +122,7 @@ describe('Input / Textarea / Select', () => {
     expect(input).toHaveAttribute('aria-invalid', 'true');
     expect(input).toHaveAccessibleDescription('Required');
     expect(screen.queryByText('As on your ID')).toBeNull();
-    expect(input.closest('.oc-field')).toHaveClass('oc-field--error');
+    expect(input.closest('.pl-field')).toHaveClass('pl-field--error');
   });
 });
 
@@ -187,7 +187,7 @@ describe('Switch, Checkbox, RadioGroup, Segmented, Slider, Pagination', () => {
     expect(slider).toHaveValue('30');
     await fireEvent.input(slider, { target: { value: '55' } });
     expect(state().volume).toBe(55);
-    expect(slider.closest('.oc-field')).toHaveTextContent('55');
+    expect(slider.closest('.pl-field')).toHaveTextContent('55');
   });
 
   it('Pagination marks the current page and disables edges', async () => {
@@ -196,7 +196,7 @@ describe('Switch, Checkbox, RadioGroup, Segmented, Slider, Pagination', () => {
     const nav = screen.getByRole('navigation', { name: 'Pagination' });
     expect(within(nav).getByRole('button', { name: 'Previous page' })).toBeDisabled();
     expect(within(nav).getByRole('button', { name: 'Page 1' })).toHaveAttribute('aria-current', 'page');
-    expect(nav.querySelector('.oc-pagination__ellipsis')).toHaveAttribute('aria-hidden', 'true');
+    expect(nav.querySelector('.pl-pagination__ellipsis')).toHaveAttribute('aria-hidden', 'true');
     await fireEvent.click(within(nav).getByRole('button', { name: 'Page 10' }));
     expect(onpage).toHaveBeenLastCalledWith(10);
     expect(within(nav).getByRole('button', { name: 'Page 10' })).toHaveAttribute('aria-current', 'page');
@@ -264,7 +264,7 @@ describe('DataTable', () => {
     expect(nameHeader).not.toHaveAttribute('aria-sort');
     const ages = within(table).getAllByRole('row').slice(1).map((r) => within(r).getAllByRole('cell')[1].textContent?.trim());
     expect(ages).toEqual(['7', '35', '120', '—']); // numeric sort, nulls last
-    expect(ageHeader).toHaveClass('oc-table__align-end');
+    expect(ageHeader).toHaveClass('pl-table__align-end');
   });
 
   it('remote mode keeps the server order', async () => {
@@ -278,7 +278,7 @@ describe('DataTable', () => {
     render(TableHost, { props: { loading: true } });
     const table = screen.getByRole('table');
     expect(table).toHaveAttribute('aria-busy', 'true');
-    const skeletons = table.querySelectorAll('.oc-skeleton');
+    const skeletons = table.querySelectorAll('.pl-skeleton');
     expect(skeletons).toHaveLength(4 * 3);
     skeletons.forEach((s) => expect(s).toHaveAttribute('aria-hidden', 'true'));
   });
@@ -301,8 +301,8 @@ describe('Dialog / Drawer (modal action)', () => {
     expect(dialog).toHaveAccessibleName(kind === 'dialog' ? 'Edit profile' : 'Filters');
     expect(dialog).toHaveFocus();
     expect(document.body.style.overflow).toBe('hidden');
-    if (kind === 'dialog') expect(dialog).toHaveClass('oc-dialog--lg');
-    else expect(dialog).toHaveClass('oc-drawer--right');
+    if (kind === 'dialog') expect(dialog).toHaveClass('pl-dialog--lg');
+    else expect(dialog).toHaveClass('pl-drawer--right');
 
     const focusables = [...dialog.querySelectorAll<HTMLElement>('button, input')];
     const first = focusables[0];
@@ -334,7 +334,7 @@ describe('Dialog / Drawer (modal action)', () => {
     render(OverlayHost, { props: { kind: 'drawer', closeOnBackdrop: false, side: 'left' } });
     await fireEvent.click(screen.getByRole('button', { name: 'Open' }));
     const dialog = screen.getByRole('dialog');
-    expect(dialog).not.toHaveClass('oc-drawer--right');
+    expect(dialog).not.toHaveClass('pl-drawer--right');
     await fireEvent.mouseDown(dialog.parentElement!);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     await fireEvent.click(screen.getByRole('button', { name: 'Apply' }));
@@ -353,7 +353,7 @@ describe('Tooltip', () => {
     expect(trigger).toHaveAttribute('aria-describedby', tip.id);
     expect(trigger).toHaveAccessibleDescription('Copy link');
     const wrapper = trigger.parentElement!;
-    expect(wrapper).toHaveClass('oc-tooltip', 'oc-tooltip--bottom');
+    expect(wrapper).toHaveClass('pl-tooltip', 'pl-tooltip--bottom');
     trigger.focus();
     await userEvent.keyboard('{Escape}');
     expect(wrapper).toHaveAttribute('data-dismissed');
@@ -380,10 +380,10 @@ describe('Toast', () => {
     });
     const region = screen.getByRole('status');
     expect(region).toHaveAttribute('aria-live', 'polite');
-    const toasts = region.querySelectorAll('.oc-toast');
+    const toasts = region.querySelectorAll('.pl-toast');
     expect(toasts).toHaveLength(2);
-    expect(toasts[0]).toHaveClass('oc-toast--success');
-    expect(toasts[1].className).toBe('oc-toast');
+    expect(toasts[0]).toHaveClass('pl-toast--success');
+    expect(toasts[1].className).toBe('pl-toast');
     const dismiss = within(region).getAllByRole('button', { name: 'Dismiss' });
     await fireEvent.click(dismiss[1]);
     expect(ondismiss).toHaveBeenCalledWith('b');
@@ -393,7 +393,7 @@ describe('Toast', () => {
 describe('Skeletons', () => {
   it('Skeleton is hidden from assistive tech and sizes numbers in px', () => {
     const { container } = render(Skeleton, { props: { width: 120, height: '2rem' } });
-    const el = container.querySelector('.oc-skeleton') as HTMLElement;
+    const el = container.querySelector('.pl-skeleton') as HTMLElement;
     expect(el).toHaveAttribute('aria-hidden', 'true');
     expect(el.style.width).toBe('120px');
     expect(el.style.height).toBe('2rem');
@@ -401,8 +401,8 @@ describe('Skeletons', () => {
 
   it('circle skeleton is square from its height', () => {
     const { container } = render(Skeleton, { props: { circle: true, height: 40, width: 999 } });
-    const el = container.querySelector('.oc-skeleton') as HTMLElement;
-    expect(el).toHaveClass('oc-skeleton--circle');
+    const el = container.querySelector('.pl-skeleton') as HTMLElement;
+    expect(el).toHaveClass('pl-skeleton--circle');
     expect(el.style.width).toBe('40px');
   });
 
@@ -411,7 +411,7 @@ describe('Skeletons', () => {
     const status = screen.getByRole('status');
     expect(status).toHaveAttribute('aria-busy', 'true');
     expect(status).toHaveTextContent('Loading article');
-    expect(status.querySelectorAll('.oc-skeleton[aria-hidden="true"]')).toHaveLength(5);
+    expect(status.querySelectorAll('.pl-skeleton[aria-hidden="true"]')).toHaveLength(5);
   });
 
   it('SkeletonCard announces once and hides its placeholder shapes', () => {
@@ -419,7 +419,7 @@ describe('Skeletons', () => {
     const status = screen.getByRole('status');
     expect(status).toHaveAttribute('aria-busy', 'true');
     expect(status).toHaveTextContent('Loading…');
-    expect(status.querySelectorAll('.oc-skeleton')).toHaveLength(1 + 2 + 2);
+    expect(status.querySelectorAll('.pl-skeleton')).toHaveLength(1 + 2 + 2);
   });
 });
 
@@ -451,10 +451,10 @@ describe('display components: render + ARIA', () => {
     render(SlotsHost, { props: { onclose } });
     const alert = screen.getByRole('alert');
     expect(alert).toHaveTextContent('Failed');
-    expect(alert).toHaveClass('oc-alert--danger');
+    expect(alert).toHaveClass('pl-alert--danger');
     await fireEvent.click(within(alert).getByRole('button', { name: 'Dismiss' }));
     expect(onclose).toHaveBeenCalledOnce();
-    const info = screen.getByText('Heads up').closest('.oc-alert')!;
+    const info = screen.getByText('Heads up').closest('.pl-alert')!;
     expect(info).toHaveAttribute('role', 'status');
     expect(within(info as HTMLElement).queryByRole('button')).toBeNull();
   });
@@ -464,26 +464,26 @@ describe('display components: render + ARIA', () => {
     const onclick = vi.fn();
     render(SlotsHost, { props: { onremove, onclick } });
     const card = screen.getByRole('article');
-    expect(card.querySelector('.oc-card__header')).toHaveTextContent('Plan');
-    expect(card.querySelector('.oc-card__footer')).toHaveTextContent('Footer');
-    expect(screen.getByText('No results').closest('.oc-empty')!.querySelector('.oc-empty__icon')).toHaveAttribute('aria-hidden', 'true');
+    expect(card.querySelector('.pl-card__header')).toHaveTextContent('Plan');
+    expect(card.querySelector('.pl-card__footer')).toHaveTextContent('Footer');
+    expect(screen.getByText('No results').closest('.pl-empty')!.querySelector('.pl-empty__icon')).toHaveAttribute('aria-hidden', 'true');
     await fireEvent.click(screen.getByRole('button', { name: 'Reset filters' }));
     expect(onclick).toHaveBeenCalled();
-    expect(screen.getByText('Active')).toHaveClass('oc-badge', 'oc-badge--success');
+    expect(screen.getByText('Active')).toHaveClass('pl-badge', 'pl-badge--success');
     await fireEvent.click(screen.getByRole('button', { name: 'Remove' }));
     expect(onremove).toHaveBeenCalled();
   });
 
   it('Badge neutral has no modifier', () => {
     render(Badge, { props: { children: text('New') } });
-    expect(screen.getByText('New').parentElement!.className).toBe('oc-badge');
+    expect(screen.getByText('New').parentElement!.className).toBe('pl-badge');
   });
 
   it('Avatar is an image with the person name and initials', () => {
     render(Avatar, { props: { name: '  ada   lovelace byron ', size: 'lg' } });
     const img = screen.getByRole('img', { name: 'ada lovelace byron' });
     expect(img).toHaveTextContent('AL');
-    expect(img).toHaveClass('oc-avatar--lg');
+    expect(img).toHaveClass('pl-avatar--lg');
   });
 
   it('Avatar with src renders a decorative img', () => {
@@ -509,12 +509,12 @@ describe('display components: render + ARIA', () => {
     render(ProgressBar);
     const ind = screen.getByRole('progressbar', { name: 'Progress' });
     expect(ind).not.toHaveAttribute('aria-valuenow');
-    expect(ind).toHaveClass('oc-progress--indeterminate');
+    expect(ind).toHaveClass('pl-progress--indeterminate');
   });
 
   it('Spinner is a labelled status', () => {
     render(Spinner, { props: { size: 'lg', label: 'Saving' } });
-    expect(screen.getByRole('status', { name: 'Saving' })).toHaveClass('oc-spinner--lg');
+    expect(screen.getByRole('status', { name: 'Saving' })).toHaveClass('pl-spinner--lg');
   });
 
   it('Stepper marks the current step', () => {
@@ -529,14 +529,14 @@ describe('display components: render + ARIA', () => {
     render(Timeline, { props: { items: [{ title: 'Created', time: '09:00', variant: 'success' }, { title: 'Shipped', description: 'DHL' }] } });
     const items = screen.getAllByRole('listitem');
     expect(items).toHaveLength(2);
-    expect(items[0].querySelector('.oc-timeline__dot')).toHaveClass('oc-timeline__dot--success');
-    expect(items[0].querySelector('.oc-timeline__dot')).toHaveAttribute('aria-hidden', 'true');
+    expect(items[0].querySelector('.pl-timeline__dot')).toHaveClass('pl-timeline__dot--success');
+    expect(items[0].querySelector('.pl-timeline__dot')).toHaveAttribute('aria-hidden', 'true');
     expect(items[1]).toHaveTextContent('DHL');
   });
 
   it('Divider is a separator with an optional label', () => {
     render(Divider, { props: { label: 'Or' } });
-    expect(screen.getByRole('separator', { name: 'Or' })).toHaveClass('oc-divider');
+    expect(screen.getByRole('separator', { name: 'Or' })).toHaveClass('pl-divider');
   });
 
   it('modal action can be used directly and updates its close handler', () => {
@@ -573,16 +573,16 @@ describe('EmptyState (illustrated)', () => {
         children: snip('<button>Legacy</button>'),
       },
     });
-    expect(screen.getByRole('heading', { level: 3, name: 'No results' })).toHaveClass('oc-empty__title');
-    expect(screen.getByText('Try another search')).toHaveClass('oc-empty__desc');
-    expect([...container.querySelectorAll('.oc-empty__actions button')].map((b) => b.textContent)).toEqual(['Clear', 'Help', 'Legacy']);
+    expect(screen.getByRole('heading', { level: 3, name: 'No results' })).toHaveClass('pl-empty__title');
+    expect(screen.getByText('Try another search')).toHaveClass('pl-empty__desc');
+    expect([...container.querySelectorAll('.pl-empty__actions button')].map((b) => b.textContent)).toEqual(['Clear', 'Help', 'Legacy']);
   });
 
   it('maps size, align, layout, tone and headingLevel', () => {
     const { container } = render(lib.EmptyState, { props: { title: 'Down', size: 'page', align: 'start', layout: 'split', tone: 'danger', headingLevel: 1 } });
-    expect(container.querySelector('.oc-empty')!.className).toBe('oc-empty oc-empty--page oc-empty--start oc-empty--split oc-empty--tone-danger');
+    expect(container.querySelector('.pl-empty')!.className).toBe('pl-empty pl-empty--page pl-empty--start pl-empty--split pl-empty--tone-danger');
     expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('Down');
-    expect(container.querySelector('.oc-empty__actions')).toBeNull();
+    expect(container.querySelector('.pl-empty__actions')).toBeNull();
   });
 
   it('renders a paragraph title when headingLevel is false', () => {
@@ -593,14 +593,14 @@ describe('EmptyState (illustrated)', () => {
 
   it('accepts an illustration snippet or a scene name', () => {
     let r = render(lib.EmptyState, { props: { title: 'A', illustration: snip('<svg class="art" aria-hidden="true"></svg>') } });
-    expect(r.container.querySelector('.oc-empty__media svg.art')).not.toBeNull();
+    expect(r.container.querySelector('.pl-empty__media svg.art')).not.toBeNull();
     r.unmount();
     r = render(lib.EmptyState, { props: { title: 'A', illustration: 'no-results', size: 'compact' } });
-    const el = r.container.querySelector('.oc-empty__media oc-illustration')!;
+    const el = r.container.querySelector('.pl-empty__media pl-illustration')!;
     expect(el.getAttribute('name')).toBe('no-results');
     expect(el.hasAttribute('compact')).toBe(true);
     r.unmount();
     r = render(lib.EmptyState, { props: { title: 'A', illustration: false } });
-    expect(r.container.querySelector('.oc-empty__media')).toBeNull();
+    expect(r.container.querySelector('.pl-empty__media')).toBeNull();
   });
 });

@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/svelte",
+  "name": "@pelagic-ui/svelte",
   "version": "0.1.0",
-  "description": "Orca UI for Svelte 5 — accessible, themeable component library. WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Pelagic UI for Svelte 5 — accessible, themeable component library. WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "svelte": "src/lib/index.ts",
   "types": "src/lib/index.ts",
@@ -24,7 +24,7 @@
     "svelte": "^5.0.0"
   },
   "dependencies": {
-    "@orca-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.1.0"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "5.1.1",
@@ -42,7 +42,7 @@
     "svelte5",
     "svelte-components",
     "svelte-ui",
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -58,13 +58,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/svelte"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

@@ -64,7 +64,7 @@ describe('form controls (v-model)', () => {
     expect(w.emitted('update:modelValue')?.[0]).toEqual([true]);
     await w.setProps({ disabled: true });
     expect(w.find('input').attributes('disabled')).toBeDefined();
-    expect(w.classes()).toContain('oc-check--disabled');
+    expect(w.classes()).toContain('pl-check--disabled');
   });
 
   it('RadioGroup: labelled radiogroup, checked option, emits on change', async () => {
@@ -145,7 +145,7 @@ describe('display', () => {
     expect(card.element.tagName).toBe('ARTICLE');
     expect(card.find('footer').text()).toBe('Foot');
     const empty = mount(EmptyState, { props: { title: 'Nothing', description: 'Add one' }, slots: { icon: '★', default: () => h('button', 'Create') } });
-    expect(empty.find('.oc-empty__icon').attributes('aria-hidden')).toBe('true');
+    expect(empty.find('.pl-empty__icon').attributes('aria-hidden')).toBe('true');
     expect(empty.find('button').text()).toBe('Create');
     expect(mount(Divider).element.tagName).toBe('HR');
     const spinner = mount(Spinner, { props: { label: 'Saving', size: 'lg' } });
@@ -170,7 +170,7 @@ describe('display', () => {
     expect(t.attributes('role')).toBe('status');
     expect(t.attributes('aria-busy')).toBe('true');
     expect(t.text()).toContain('Loading post');
-    expect(t.findAll('.oc-skeleton')).toHaveLength(3);
+    expect(t.findAll('.pl-skeleton')).toHaveLength(3);
   });
 
   it('Stepper, Timeline, Breadcrumb', () => {
@@ -180,7 +180,7 @@ describe('display', () => {
     expect(steps[0].attributes('aria-current')).toBeUndefined();
     const tl = mount(Timeline, { props: { items: [{ title: 'Created', variant: 'danger' }, { title: 'Done' }] } });
     expect(tl.element.tagName).toBe('OL');
-    expect(tl.find('.oc-timeline__dot').attributes('aria-hidden')).toBe('true');
+    expect(tl.find('.pl-timeline__dot').attributes('aria-hidden')).toBe('true');
     const bc = mount(Breadcrumb, { props: { items: [{ label: 'Home', href: '/' }, { label: 'Now', href: '/n' }] } });
     expect(bc.attributes('aria-label')).toBe('Breadcrumb');
     expect(bc.findAll('a')).toHaveLength(1);
@@ -191,7 +191,7 @@ describe('display', () => {
     const w = mount(Toast, { props: { items: [{ id: 7, title: 'Saved', message: 'ok', variant: 'success' }, { id: 8, message: 'fyi' }] } });
     expect(w.attributes('role')).toBe('status');
     expect(w.attributes('aria-live')).toBe('polite');
-    expect(w.findAll('.oc-toast')[0].classes()).toContain('oc-toast--success');
+    expect(w.findAll('.pl-toast')[0].classes()).toContain('pl-toast--success');
     await w.findAll('button[aria-label="Dismiss"]')[1].trigger('click');
     expect(w.emitted('dismiss')?.[0]).toEqual([8]);
   });
@@ -212,7 +212,7 @@ describe('Drawer', () => {
     const dialog = document.querySelector('[role="dialog"]') as HTMLElement;
     expect(dialog.getAttribute('aria-modal')).toBe('true');
     expect(document.getElementById(dialog.getAttribute('aria-labelledby')!)!.textContent).toBe('Filters');
-    expect(dialog.classList.contains('oc-drawer--right')).toBe(false);
+    expect(dialog.classList.contains('pl-drawer--right')).toBe(false);
     expect(document.body.style.overflow).toBe('hidden');
     expect(dialog.contains(document.activeElement)).toBe(true);
 
@@ -245,28 +245,28 @@ describe('EmptyState (illustrated)', () => {
       props: { title: 'No results', description: 'Try another search' },
       slots: { primary: () => h('button', 'Clear'), secondary: () => h('button', 'Help'), actions: () => h('button', 'More'), default: () => h('button', 'Legacy') },
     });
-    expect(w.find('h3.oc-empty__title').text()).toBe('No results');
-    expect(w.find('.oc-empty__desc').text()).toBe('Try another search');
-    expect(w.findAll('.oc-empty__actions button').map((b) => b.text())).toEqual(['Clear', 'Help', 'More', 'Legacy']);
+    expect(w.find('h3.pl-empty__title').text()).toBe('No results');
+    expect(w.find('.pl-empty__desc').text()).toBe('Try another search');
+    expect(w.findAll('.pl-empty__actions button').map((b) => b.text())).toEqual(['Clear', 'Help', 'More', 'Legacy']);
   });
 
   it('maps size, align, layout, tone and headingLevel to markup', () => {
     const w = mount(EmptyState, { props: { title: 'Down', size: 'page', align: 'start', layout: 'split', tone: 'danger', headingLevel: 1 } });
-    expect(w.classes()).toEqual(['oc-empty', 'oc-empty--page', 'oc-empty--start', 'oc-empty--split', 'oc-empty--tone-danger']);
+    expect(w.classes()).toEqual(['pl-empty', 'pl-empty--page', 'pl-empty--start', 'pl-empty--split', 'pl-empty--tone-danger']);
     expect(w.find('h1').text()).toBe('Down');
     const p = mount(EmptyState, { props: { title: 'Inline', headingLevel: false, size: 'compact' } });
-    expect(p.find('p.oc-empty__title').exists()).toBe(true);
+    expect(p.find('p.pl-empty__title').exists()).toBe(true);
     expect(p.find('h1, h2, h3, h4, h5, h6').exists()).toBe(false);
-    expect(p.find('.oc-empty__actions').exists()).toBe(false);
+    expect(p.find('.pl-empty__actions').exists()).toBe(false);
   });
 
   it('accepts an illustration slot, component or scene name', () => {
     const Art = markRaw({ render: () => h('svg', { class: 'art', 'aria-hidden': 'true' }) });
-    expect(mount(EmptyState, { props: { title: 'A', illustration: Art } }).find('.oc-empty__media svg.art').exists()).toBe(true);
-    expect(mount(EmptyState, { props: { title: 'A' }, slots: { illustration: () => h('svg', { class: 'slot' }) } }).find('.oc-empty__media svg.slot').exists()).toBe(true);
-    const named = mount(EmptyState, { props: { title: 'A', illustration: 'no-results', size: 'compact' } }).find('oc-illustration');
+    expect(mount(EmptyState, { props: { title: 'A', illustration: Art } }).find('.pl-empty__media svg.art').exists()).toBe(true);
+    expect(mount(EmptyState, { props: { title: 'A' }, slots: { illustration: () => h('svg', { class: 'slot' }) } }).find('.pl-empty__media svg.slot').exists()).toBe(true);
+    const named = mount(EmptyState, { props: { title: 'A', illustration: 'no-results', size: 'compact' } }).find('pl-illustration');
     expect(named.attributes('name')).toBe('no-results');
     expect(named.attributes('compact')).toBe('');
-    expect(mount(EmptyState, { props: { title: 'A', illustration: false } }).find('.oc-empty__media').exists()).toBe(false);
+    expect(mount(EmptyState, { props: { title: 'A', illustration: false } }).find('.pl-empty__media').exists()).toBe(false);
   });
 });

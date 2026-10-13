@@ -1,4 +1,4 @@
-/** Orca motion: dependency-free animation engine. Every API jumps to its end state under reduced motion. */
+/** Pelagic motion: dependency-free animation engine. Every API jumps to its end state under reduced motion. */
 
 export type EasingFunction = (t: number) => number;
 export type EasingName = 'linear' | 'ease' | 'easeIn' | 'easeOut' | 'easeInOut' | 'expoOut' | 'out' | 'inOut' | 'backOut' | 'anticipate';

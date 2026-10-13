@@ -7,11 +7,11 @@
   },
   "newProjectRoot": ".",
   "projects": {
-    "orca-ui": {
+    "pelagic-ui": {
       "projectType": "library",
       "root": ".",
       "sourceRoot": "src",
-      "prefix": "oc",
+      "prefix": "pl",
       "architect": {
         "build": {
           "builder": "@angular/build:ng-packagr",

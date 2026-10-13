@@ -1,8 +1,8 @@
 /**
- * Orca UI theme source of truth.
+ * Pelagic UI theme source of truth.
  *
  * A theme = mode (light | dark | hc) × accent (violet | teal | indigo | rose | amber | emerald | slate) × shape.
- * `scripts/build.mjs` generates `orca-ui.css` and `tokens.ts` from this file, and
+ * `scripts/build.mjs` generates `pelagic.css` and `tokens.ts` from this file, and
  * `scripts/check-contrast.mjs` verifies every mode × accent pair against WCAG 2.2 AA.
  */
 
@@ -67,7 +67,7 @@ export const modes = {
  * - primaryInk: accent text and links on surfaces
  */
 export const accents = {
-  /** Default Orca accent: electric violet. */
+  /** Default Pelagic accent: electric violet. */
   violet: {
     light: { primary: '#5b34d6', primaryHover: '#4925b8', primaryInk: '#5230cc', onPrimary: '#ffffff' },
     dark: { primary: '#b9a5ff', primaryHover: '#d3c7ff', primaryInk: '#c4b5fd', onPrimary: '#1d0f4a' },
@@ -116,7 +116,7 @@ export const shapes = {
 export const softMix = { primary: 0.14, status: 0.12 };
 
 /**
- * Accent tints of the Orca design language (fractions of primary mixed into a neutral):
+ * Accent tints of the Pelagic design language (fractions of primary mixed into a neutral):
  * hover = interactive hover wash, press = pressed wash, canvas = sunken/page areas (into surfaceAlt),
  * border = hairlines that pick up the accent hue (into border).
  */

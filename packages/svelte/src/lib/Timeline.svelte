@@ -9,13 +9,13 @@
   let { items }: { items: Item[] } = $props();
 </script>
 
-<ol class="oc-timeline">
+<ol class="pl-timeline">
   {#each items as item, i (i)}
-    <li class="oc-timeline__item">
-      <span class={['oc-timeline__dot', item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`]} aria-hidden="true"></span>
-      {#if item.time}<div class="oc-timeline__time">{item.time}</div>{/if}
-      <div class="oc-timeline__title">{item.title}</div>
-      {#if item.description}<div class="oc-timeline__desc">{item.description}</div>{/if}
+    <li class="pl-timeline__item">
+      <span class={['pl-timeline__dot', item.variant && item.variant !== 'primary' && `pl-timeline__dot--${item.variant}`]} aria-hidden="true"></span>
+      {#if item.time}<div class="pl-timeline__time">{item.time}</div>{/if}
+      <div class="pl-timeline__title">{item.title}</div>
+      {#if item.description}<div class="pl-timeline__desc">{item.description}</div>{/if}
     </li>
   {/each}
 </ol>

@@ -29,10 +29,15 @@ const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" v
   <circle cx="1030" cy="150" r="250" fill="#ffffff" fill-opacity="0.05"/>
   <g transform="translate(80 90)">
     <rect width="88" height="88" rx="24" fill="#ffffff"/>
-    <path d="M26 59C30.7 42.3 40 26.4 56.6 18.7c-2.5 12.6-1.4 26.4 3.9 40.4z" fill="#5b34d6"/>
-    <path d="M15 66.5c5.8-4.4 11.5-4.4 17.3 0s11.5 4.4 17.3 0 11.5-4.4 17.3 0" fill="none" stroke="#5b34d6" stroke-width="5" stroke-linecap="round"/>
+    <g transform="scale(2.75)">
+      <path d="M16 5c-4.1 5.1-7.6 9.7-7.6 13.9a7.6 7.6 0 0 0 15.2 0C23.6 14.7 20.1 10.1 16 5z" fill="#5b34d6"/>
+      <g fill="none" stroke="#ffffff" stroke-width="1.7" stroke-linecap="round">
+        <path d="M10.5 17.6q1.375-1.3 2.75 0t2.75 0 2.75 0 2.75 0"/>
+        <path d="M12 21.6q1.333-1.15 2.667 0t2.667 0 2.666 0" stroke-opacity="0.6"/>
+      </g>
+    </g>
   </g>
-  <text x="196" y="152" font-size="56" font-weight="800" fill="#ffffff">Orca UI</text>
+  <text x="196" y="152" font-size="56" font-weight="800" fill="#ffffff">Pelagic UI</text>
   <text x="80" y="290" font-size="64" font-weight="800" fill="#ffffff">Accessible UI components</text>
   <text x="80" y="370" font-size="64" font-weight="800" fill="#c4b5fd">for every framework.</text>
   <text x="80" y="430" font-size="28" fill="#e4dcff">WCAG 2.2 AA · 21 themes · Dark &amp; high contrast · Skeletons · RTL</text>

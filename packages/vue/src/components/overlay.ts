@@ -1,5 +1,5 @@
 import { defineComponent, h, nextTick, onBeforeUnmount, ref, Teleport, watch, type PropType } from 'vue';
-import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
+import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
 import { nextId } from '../utils';
 import type { Variant } from './display';
 
@@ -49,7 +49,7 @@ const overlayProps = {
 };
 
 export const Dialog = defineComponent({
-  name: 'OcDialog',
+  name: 'PlDialog',
   props: {
     ...overlayProps,
     size: { type: String as PropType<'sm' | 'md' | 'lg'>, default: 'md' },
@@ -57,7 +57,7 @@ export const Dialog = defineComponent({
   emits: ['close'],
   setup(props, { emit, slots }) {
     const panel = ref<HTMLElement | null>(null);
-    const titleId = nextId('oc-dialog-title');
+    const titleId = nextId('pl-dialog-title');
     useOverlay(props, () => emit('close'), panel);
 
     return () => {
@@ -66,7 +66,7 @@ export const Dialog = defineComponent({
         h(
           'div',
           {
-            class: 'oc-overlay',
+            class: 'pl-overlay',
             onMousedown: (e: MouseEvent) => {
               if (props.closeOnBackdrop && e.target === e.currentTarget) emit('close');
             },
@@ -80,15 +80,15 @@ export const Dialog = defineComponent({
                 'aria-modal': 'true',
                 'aria-labelledby': titleId,
                 tabindex: -1,
-                class: ['oc-dialog', props.size !== 'md' && `oc-dialog--${props.size}`],
+                class: ['pl-dialog', props.size !== 'md' && `pl-dialog--${props.size}`],
               },
               [
-                h('div', { class: 'oc-dialog__header' }, [
-                  h('h2', { id: titleId, class: 'oc-dialog__title' }, props.title),
-                  h('button', { type: 'button', class: 'oc-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
+                h('div', { class: 'pl-dialog__header' }, [
+                  h('h2', { id: titleId, class: 'pl-dialog__title' }, props.title),
+                  h('button', { type: 'button', class: 'pl-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
                 ]),
-                h('div', { class: 'oc-dialog__body' }, slots.default?.()),
-                slots.footer ? h('div', { class: 'oc-dialog__footer' }, slots.footer()) : null,
+                h('div', { class: 'pl-dialog__body' }, slots.default?.()),
+                slots.footer ? h('div', { class: 'pl-dialog__footer' }, slots.footer()) : null,
               ],
             ),
           ],
@@ -99,7 +99,7 @@ export const Dialog = defineComponent({
 });
 
 export const Drawer = defineComponent({
-  name: 'OcDrawer',
+  name: 'PlDrawer',
   props: {
     ...overlayProps,
     side: { type: String as PropType<'left' | 'right'>, default: 'right' },
@@ -107,7 +107,7 @@ export const Drawer = defineComponent({
   emits: ['close'],
   setup(props, { emit, slots }) {
     const panel = ref<HTMLElement | null>(null);
-    const titleId = nextId('oc-drawer-title');
+    const titleId = nextId('pl-drawer-title');
     useOverlay(props, () => emit('close'), panel);
 
     return () => {
@@ -116,7 +116,7 @@ export const Drawer = defineComponent({
         h(
           'div',
           {
-            class: ['oc-overlay', 'oc-overlay--drawer', props.side === 'right' && 'oc-overlay--right'],
+            class: ['pl-overlay', 'pl-overlay--drawer', props.side === 'right' && 'pl-overlay--right'],
             onMousedown: (e: MouseEvent) => {
               if (props.closeOnBackdrop && e.target === e.currentTarget) emit('close');
             },
@@ -130,15 +130,15 @@ export const Drawer = defineComponent({
                 'aria-modal': 'true',
                 'aria-labelledby': titleId,
                 tabindex: -1,
-                class: ['oc-drawer', props.side === 'right' && 'oc-drawer--right'],
+                class: ['pl-drawer', props.side === 'right' && 'pl-drawer--right'],
               },
               [
-                h('div', { class: 'oc-dialog__header' }, [
-                  h('h2', { id: titleId, class: 'oc-dialog__title' }, props.title),
-                  h('button', { type: 'button', class: 'oc-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
+                h('div', { class: 'pl-dialog__header' }, [
+                  h('h2', { id: titleId, class: 'pl-dialog__title' }, props.title),
+                  h('button', { type: 'button', class: 'pl-close', 'aria-label': 'Close', onClick: () => emit('close') }, '×'),
                 ]),
-                h('div', { class: 'oc-dialog__body' }, slots.default?.()),
-                slots.footer ? h('div', { class: 'oc-dialog__footer' }, slots.footer()) : null,
+                h('div', { class: 'pl-dialog__body' }, slots.default?.()),
+                slots.footer ? h('div', { class: 'pl-dialog__footer' }, slots.footer()) : null,
               ],
             ),
           ],
@@ -157,7 +157,7 @@ export interface ToastItem {
 
 /** Presentational toast stack. Keep the items list in your state and remove on `dismiss`. */
 export const Toast = defineComponent({
-  name: 'OcToast',
+  name: 'PlToast',
   props: {
     items: { type: Array as PropType<ToastItem[]>, required: true },
   },
@@ -166,16 +166,16 @@ export const Toast = defineComponent({
     return () =>
       h(
         'div',
-        { role: 'status', 'aria-live': 'polite', class: 'oc-toast-stack' },
+        { role: 'status', 'aria-live': 'polite', class: 'pl-toast-stack' },
         props.items.map((t) =>
-          h('div', { key: t.id, class: ['oc-toast', t.variant && t.variant !== 'info' && `oc-toast--${t.variant}`] }, [
-            h('div', { class: 'oc-toast__body' }, [
-              t.title ? h('div', { class: 'oc-toast__title' }, t.title) : null,
-              h('div', { class: 'oc-toast__message' }, t.message),
+          h('div', { key: t.id, class: ['pl-toast', t.variant && t.variant !== 'info' && `pl-toast--${t.variant}`] }, [
+            h('div', { class: 'pl-toast__body' }, [
+              t.title ? h('div', { class: 'pl-toast__title' }, t.title) : null,
+              h('div', { class: 'pl-toast__message' }, t.message),
             ]),
             h(
               'button',
-              { type: 'button', class: 'oc-close', 'aria-label': 'Dismiss', onClick: () => emit('dismiss', t.id) },
+              { type: 'button', class: 'pl-close', 'aria-label': 'Dismiss', onClick: () => emit('dismiss', t.id) },
               '×',
             ),
           ]),

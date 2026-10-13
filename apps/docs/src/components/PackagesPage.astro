@@ -1,6 +1,6 @@
 ---
 // /packages/ and /ar/packages/: every package in detail — install, import, exports, size and links.
-import Icon from '@orca-ui/icons/astro';
+import Icon from '@pelagic-ui/icons/astro';
 import Mark from './Mark.astro';
 import InstallCommand from './InstallCommand.astro';
 import CodeBlock from './CodeBlock.astro';
@@ -16,8 +16,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const T = ar
   ? {
       eyebrow: 'الحزم',
-      h1: 'كل حزم أوركا UI',
-      lead: 'اثنتا عشرة حزمة تقرأ نفس الرموز ونفس الثيمات. ثبّت orca-ui لتحصل على كل شيء، أو اختر حزمة منصّتك فقط — مدير الحزم الذي تختاره يُحفَظ لكل أوامر التثبيت.',
+      h1: 'كل حزم بيلاجيك UI',
+      lead: 'اثنتا عشرة حزمة تقرأ نفس الرموز ونفس الثيمات. ثبّت pelagic لتحصل على كل شيء، أو اختر حزمة منصّتك فقط — مدير الحزم الذي تختاره يُحفَظ لكل أوامر التثبيت.',
       index: 'فهرس الحزم',
       version: 'الإصدار',
       packed: 'حجم التنزيل',
@@ -43,8 +43,8 @@ const T = ar
     }
   : {
       eyebrow: 'Packages',
-      h1: 'Every Orca UI package',
-      lead: 'Twelve packages that read the same tokens and the same themes. Install orca-ui to get everything, or just your platform — the package manager you pick is remembered for every install command.',
+      h1: 'Every Pelagic UI package',
+      lead: 'Twelve packages that read the same tokens and the same themes. Install pelagic to get everything, or just your platform — the package manager you pick is remembered for every install command.',
       index: 'Package index',
       version: 'Version',
       packed: 'Download size',
@@ -169,14 +169,14 @@ const T = ar
                 <li>
                   <a href={p.registryUrl} rel="noopener">
                     <Icon name="package" size={17} />
-                    {p.registry} <span class="oc-sr-only">{T.registry(p.name)}</span>
+                    {p.registry} <span class="pl-sr-only">{T.registry(p.name)}</span>
                     <Icon name="external-link" size={13} flipRtl />
                   </a>
                 </li>
                 <li>
                   <a href={p.sourceUrl} rel="noopener">
                     <Icon name="code" size={17} />
-                    {T.source} <span class="oc-sr-only">{p.name}</span>
+                    {T.source} <span class="pl-sr-only">{p.name}</span>
                     <Icon name="external-link" size={13} flipRtl />
                   </a>
                 </li>
@@ -184,7 +184,7 @@ const T = ar
                   <li>
                     <a href={`${base}${p.docs}`}>
                       <Icon name="book" size={17} />
-                      {T.docs} <span class="oc-sr-only">{p.name}</span>
+                      {T.docs} <span class="pl-sr-only">{p.name}</span>
                     </a>
                   </li>
                 )}

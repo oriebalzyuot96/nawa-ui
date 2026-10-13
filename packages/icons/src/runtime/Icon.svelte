@@ -1,5 +1,5 @@
 <!--
-  @orca-ui/icons — Svelte 5 component.
+  @pelagic-ui/icons — Svelte 5 component.
   <Icon name="search" />  <Icon name="bell" variant="duotone" size={20} title="Notifications" />
 -->
 <script>

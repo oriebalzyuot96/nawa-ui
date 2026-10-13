@@ -9,7 +9,7 @@ export interface NativeIllustrationProps {
   label?: string;
   /** Simplified 96px scene for inline empty states. */
   compact?: boolean;
-  /** An Orca theme object, e.g. `useOrcaTheme()` from @orca-ui/react-native. */
+  /** A Pelagic theme object, e.g. `usePelagicTheme()` from @pelagic-ui/react-native. */
   theme?: Partial<Record<string, string>>;
   /** Explicit role colors (override the theme). */
   colors?: Partial<IllustrationPalette>;

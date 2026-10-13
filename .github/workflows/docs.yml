@@ -24,8 +24,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build -w @orca-ui/core && npm run build -w @orca-ui/illustrations && npm run build -w @orca-ui/icons && npm run build -w @orca-ui/react && npm run build -w @orca-ui/three
-      - run: npm run build -w @orca-ui/docs
+      - run: npm run build -w @pelagic-ui/core && npm run build -w @pelagic-ui/illustrations && npm run build -w @pelagic-ui/icons && npm run build -w @pelagic-ui/react && npm run build -w @pelagic-ui/three
+      - run: npm run build -w @pelagic-ui/docs
       - uses: actions/upload-pages-artifact@v3
         with:
           path: apps/docs/dist

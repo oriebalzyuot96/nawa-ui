@@ -1,6 +1,6 @@
 ---
 import Base from './Base.astro';
-import Icon from '@orca-ui/icons/astro';
+import Icon from '@pelagic-ui/icons/astro';
 import { categories, documentedCount } from '../data/catalog';
 import { categoryIcon } from '../data/site';
 
@@ -45,9 +45,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
                   </span>
                   {c.nav}
                   <span class="docs-sidebar__count">
-                    <span class="oc-sr-only">(</span>
+                    <span class="pl-sr-only">(</span>
                     {c.entries.length}
-                    <span class="oc-sr-only"> components)</span>
+                    <span class="pl-sr-only"> components)</span>
                   </span>
                 </a>
               </li>

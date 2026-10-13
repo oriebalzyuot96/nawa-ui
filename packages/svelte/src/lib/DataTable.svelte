@@ -66,12 +66,12 @@
   }
 
   const alignClass = (align?: Column['align']) =>
-    align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
+    align === 'end' ? 'pl-table__align-end' : align === 'center' ? 'pl-table__align-center' : undefined;
 </script>
 
-<div class="oc-table-wrap" data-responsive="stack">
-  <table class="oc-table" aria-busy={loading || undefined}>
-    {#if caption}<caption class={captionVisible ? undefined : 'oc-sr-only'}>{caption}</caption>{/if}
+<div class="pl-table-wrap" data-responsive="stack">
+  <table class="pl-table" aria-busy={loading || undefined}>
+    {#if caption}<caption class={captionVisible ? undefined : 'pl-sr-only'}>{caption}</caption>{/if}
     <thead>
       <tr>
         {#each columns as col (col.key)}
@@ -80,7 +80,7 @@
             aria-sort={col.sortable && sort?.key === col.key ? (sort.direction === 'asc' ? 'ascending' : 'descending') : undefined}
           >
             {#if col.sortable}
-              <button type="button" class="oc-table__sort" onclick={() => toggle(col.key)}>
+              <button type="button" class="pl-table__sort" onclick={() => toggle(col.key)}>
                 {col.label}
                 <span aria-hidden="true">{sort?.key === col.key ? (sort.direction === 'asc' ? '▲' : '▼') : '↕'}</span>
               </button>
@@ -96,12 +96,12 @@
         {#each Array.from({ length: loadingRows }) as _, r (r)}
           <tr>
             {#each columns as col (col.key)}
-              <td><span class="oc-skeleton" aria-hidden="true" style="height: 14px"></span></td>
+              <td><span class="pl-skeleton" aria-hidden="true" style="height: 14px"></span></td>
             {/each}
           </tr>
         {/each}
       {:else if sorted.length === 0}
-        <tr><td class="oc-table__empty" colspan={columns.length}>{emptyMessage}</td></tr>
+        <tr><td class="pl-table__empty" colspan={columns.length}>{emptyMessage}</td></tr>
       {:else}
         {#each sorted as row, i (String(row[rowKey] ?? i))}
           <tr>

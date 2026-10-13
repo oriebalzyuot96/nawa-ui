@@ -1,169 +1,169 @@
 /* ==========================================================================
- * Orca design language — non-color tokens (see packages/core/DESIGN.md).
+ * Pelagic design language — non-color tokens (see packages/core/DESIGN.md).
  * Color, radius and elevation tokens are generated above from src/themes.mjs.
  * ======================================================================== */
 :root {
   /* ---- Typography ----
    * IBM Plex Sans + IBM Plex Sans Arabic are one bilingual family; when they are not loaded the
    * stack falls back to the platform UI face (Segoe UI / SF / Roboto all carry Arabic). */
-  --oc-font: 'IBM Plex Sans', 'IBM Plex Sans Arabic', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Cairo', sans-serif;
-  --oc-font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace;
+  --pl-font: 'IBM Plex Sans', 'IBM Plex Sans Arabic', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, Roboto, 'Noto Sans', 'Noto Sans Arabic', 'Cairo', sans-serif;
+  --pl-font-mono: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', 'SFMono-Regular', Menlo, Consolas, monospace;
 
   /* Readable font for data-a11y-font="readable" (Atkinson Hyperlegible, self-hosted in fonts/, SIL OFL). */
-  --oc-font-readable: 'Atkinson Hyperlegible', 'IBM Plex Sans Arabic', Verdana, Tahoma, 'Segoe UI', system-ui, sans-serif;
+  --pl-font-readable: 'Atkinson Hyperlegible', 'IBM Plex Sans Arabic', Verdana, Tahoma, 'Segoe UI', system-ui, sans-serif;
 }
 
-/* Type scale. --oc-user-font-scale (0.9–2, set by applyA11yPrefs or by hand) multiplies every step, on
+/* Type scale. --pl-user-font-scale (0.9–2, set by applyA11yPrefs or by hand) multiplies every step, on
  * the root and on any container that carries its own scale, so text can grow to 200% without page zoom
  * (WCAG 1.4.4). */
 :root,
 [data-a11y-font-scale] {
-  --oc-text-2xs: calc(0.6875rem * var(--oc-user-font-scale, 1)); /* 11 */
-  --oc-text-xs: calc(0.75rem * var(--oc-user-font-scale, 1)); /* 12 */
-  --oc-text-sm: calc(0.8125rem * var(--oc-user-font-scale, 1)); /* 13 */
-  --oc-text-md: calc(0.875rem * var(--oc-user-font-scale, 1)); /* 14 — control & body text in components */
-  --oc-text-lg: calc(1rem * var(--oc-user-font-scale, 1)); /* 16 */
-  --oc-text-xl: calc(1.125rem * var(--oc-user-font-scale, 1)); /* 18 — panel / dialog titles */
-  --oc-text-2xl: calc(clamp(1.25rem, 1.1rem + 0.55vw, 1.5rem) * var(--oc-user-font-scale, 1));
-  --oc-text-3xl: calc(clamp(1.5rem, 1.2rem + 1.2vw, 2rem) * var(--oc-user-font-scale, 1));
+  --pl-text-2xs: calc(0.6875rem * var(--pl-user-font-scale, 1)); /* 11 */
+  --pl-text-xs: calc(0.75rem * var(--pl-user-font-scale, 1)); /* 12 */
+  --pl-text-sm: calc(0.8125rem * var(--pl-user-font-scale, 1)); /* 13 */
+  --pl-text-md: calc(0.875rem * var(--pl-user-font-scale, 1)); /* 14 — control & body text in components */
+  --pl-text-lg: calc(1rem * var(--pl-user-font-scale, 1)); /* 16 */
+  --pl-text-xl: calc(1.125rem * var(--pl-user-font-scale, 1)); /* 18 — panel / dialog titles */
+  --pl-text-2xl: calc(clamp(1.25rem, 1.1rem + 0.55vw, 1.5rem) * var(--pl-user-font-scale, 1));
+  --pl-text-3xl: calc(clamp(1.5rem, 1.2rem + 1.2vw, 2rem) * var(--pl-user-font-scale, 1));
 }
 
 :root {
 
-  --oc-leading-none: 1;
-  --oc-leading-tight: 1.25;
-  --oc-leading-snug: 1.4;
-  --oc-leading: 1.55;
+  --pl-leading-none: 1;
+  --pl-leading-tight: 1.25;
+  --pl-leading-snug: 1.4;
+  --pl-leading: 1.55;
 
-  --oc-weight-regular: 400;
-  --oc-weight-medium: 500;
-  --oc-weight-semibold: 600;
-  --oc-weight-bold: 700;
+  --pl-weight-regular: 400;
+  --pl-weight-medium: 500;
+  --pl-weight-semibold: 600;
+  --pl-weight-bold: 700;
 
-  --oc-tracking-tight: -0.012em; /* titles */
-  --oc-tracking-label: 0.005em; /* controls, labels */
-  --oc-tracking-caps: 0.07em; /* overline / group headers */
+  --pl-tracking-tight: -0.012em; /* titles */
+  --pl-tracking-label: 0.005em; /* controls, labels */
+  --pl-tracking-caps: 0.07em; /* overline / group headers */
 
   /* ---- Spacing: 4px base ---- */
-  --oc-space-0: 0;
-  --oc-space-px: 1px;
-  --oc-space-0-5: 0.125rem; /* 2 */
-  --oc-space-1: 0.25rem; /* 4 */
-  --oc-space-1-5: 0.375rem; /* 6 */
-  --oc-space-2: 0.5rem; /* 8 */
-  --oc-space-2-5: 0.625rem; /* 10 */
-  --oc-space-3: 0.75rem; /* 12 */
-  --oc-space-4: 1rem; /* 16 */
-  --oc-space-5: 1.25rem; /* 20 */
-  --oc-space-6: 1.5rem; /* 24 */
-  --oc-space-8: 2rem; /* 32 */
-  --oc-space-10: 2.5rem; /* 40 */
-  --oc-space-12: 3rem; /* 48 */
+  --pl-space-0: 0;
+  --pl-space-px: 1px;
+  --pl-space-0-5: 0.125rem; /* 2 */
+  --pl-space-1: 0.25rem; /* 4 */
+  --pl-space-1-5: 0.375rem; /* 6 */
+  --pl-space-2: 0.5rem; /* 8 */
+  --pl-space-2-5: 0.625rem; /* 10 */
+  --pl-space-3: 0.75rem; /* 12 */
+  --pl-space-4: 1rem; /* 16 */
+  --pl-space-5: 1.25rem; /* 20 */
+  --pl-space-6: 1.5rem; /* 24 */
+  --pl-space-8: 2rem; /* 32 */
+  --pl-space-10: 2.5rem; /* 40 */
+  --pl-space-12: 3rem; /* 48 */
 
   /* ---- Density (comfortable). data-density="compact" swaps these below. ---- */
-  --oc-control-h-sm: 2rem; /* 32 */
-  --oc-control-h: 2.5rem; /* 40 */
-  --oc-control-h-lg: 3rem; /* 48 */
-  --oc-control-px-sm: 0.625rem;
-  --oc-control-px: 0.875rem;
-  --oc-control-px-lg: 1.125rem;
-  --oc-item-h: 2.25rem; /* menu items, options, tree rows */
-  --oc-item-px: 0.625rem;
-  --oc-cell-py: 0.75rem; /* table cells */
-  --oc-cell-px: 1rem;
-  --oc-pad: 1.25rem; /* card / panel / dialog padding */
-  --oc-pad-sm: 0.875rem; /* headers & footers */
-  --oc-gap: 0.75rem;
+  --pl-control-h-sm: 2rem; /* 32 */
+  --pl-control-h: 2.5rem; /* 40 */
+  --pl-control-h-lg: 3rem; /* 48 */
+  --pl-control-px-sm: 0.625rem;
+  --pl-control-px: 0.875rem;
+  --pl-control-px-lg: 1.125rem;
+  --pl-item-h: 2.25rem; /* menu items, options, tree rows */
+  --pl-item-px: 0.625rem;
+  --pl-cell-py: 0.75rem; /* table cells */
+  --pl-cell-px: 1rem;
+  --pl-pad: 1.25rem; /* card / panel / dialog padding */
+  --pl-pad-sm: 0.875rem; /* headers & footers */
+  --pl-gap: 0.75rem;
   /** Minimum interactive target. 24px (WCAG 2.5.8); raised to 44px on coarse pointers. */
-  --oc-hit: 1.5rem;
+  --pl-hit: 1.5rem;
 
   /* ---- Shape extras ---- */
-  --oc-radius-pill: 999px;
-  --oc-hairline: 1px;
+  --pl-radius-pill: 999px;
+  --pl-hairline: 1px;
 
   /* ---- Elevation recipes (shadow tokens are per mode) ---- */
-  --oc-sheen: inset 0 1px 0 var(--oc-highlight);
-  --oc-elev-1: var(--oc-sheen), var(--oc-shadow-xs);
-  --oc-elev-2: var(--oc-sheen), var(--oc-shadow-md);
-  --oc-elev-3: var(--oc-sheen), var(--oc-shadow-lg);
-  --oc-elev-4: var(--oc-sheen), var(--oc-shadow-xl);
-  --oc-backdrop-blur: 6px;
+  --pl-sheen: inset 0 1px 0 var(--pl-highlight);
+  --pl-elev-1: var(--pl-sheen), var(--pl-shadow-xs);
+  --pl-elev-2: var(--pl-sheen), var(--pl-shadow-md);
+  --pl-elev-3: var(--pl-sheen), var(--pl-shadow-lg);
+  --pl-elev-4: var(--pl-sheen), var(--pl-shadow-xl);
+  --pl-backdrop-blur: 6px;
 
   /* ---- Focus ---- */
-  --oc-focus-width: 2px;
-  --oc-halo: 0 0 0 4px var(--oc-ring);
+  --pl-focus-width: 2px;
+  --pl-halo: 0 0 0 4px var(--pl-ring);
 
   /* ---- Motion ---- */
-  --oc-ease: cubic-bezier(0.16, 1, 0.3, 1); /* expressive out */
-  --oc-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --oc-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --oc-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --oc-dur-1: 120ms; /* hover, color */
-  --oc-dur-2: 180ms; /* press, small moves */
-  --oc-dur-3: 260ms; /* overlays in */
-  --oc-dur-4: 420ms; /* large surfaces */
+  --pl-ease: cubic-bezier(0.16, 1, 0.3, 1); /* expressive out */
+  --pl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --pl-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --pl-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --pl-dur-1: 120ms; /* hover, color */
+  --pl-dur-2: 180ms; /* press, small moves */
+  --pl-dur-3: 260ms; /* overlays in */
+  --pl-dur-4: 420ms; /* large surfaces */
 
   /* ---- Layers ---- */
-  --oc-z-sticky: 10;
-  --oc-z-overlay: 1100;
-  --oc-z-toast: 1200;
-  --oc-z-tooltip: 1300;
+  --pl-z-sticky: 10;
+  --pl-z-overlay: 1100;
+  --pl-z-toast: 1200;
+  --pl-z-tooltip: 1300;
 }
 
 /* Arabic: prefer the Arabic face and never letter-space cursive script. */
 :root:lang(ar),
 [lang|='ar'] {
-  --oc-font: 'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Noto Sans Arabic', 'Cairo', Roboto, sans-serif;
-  --oc-tracking-tight: 0;
-  --oc-tracking-label: 0;
-  --oc-tracking-caps: 0;
+  --pl-font: 'IBM Plex Sans Arabic', 'IBM Plex Sans', 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system, 'Noto Sans Arabic', 'Cairo', Roboto, sans-serif;
+  --pl-tracking-tight: 0;
+  --pl-tracking-label: 0;
+  --pl-tracking-caps: 0;
 }
 
 /* Compact density: denser data screens and toolbars. */
 [data-density='compact'] {
-  --oc-control-h-sm: 1.75rem;
-  --oc-control-h: 2.125rem;
-  --oc-control-h-lg: 2.5rem;
-  --oc-control-px-sm: 0.5rem;
-  --oc-control-px: 0.625rem;
-  --oc-control-px-lg: 0.875rem;
-  --oc-item-h: 1.875rem;
-  --oc-item-px: 0.5rem;
-  --oc-cell-py: 0.4rem;
-  --oc-cell-px: 0.75rem;
-  --oc-pad: 1rem;
-  --oc-pad-sm: 0.625rem;
-  --oc-gap: 0.5rem;
+  --pl-control-h-sm: 1.75rem;
+  --pl-control-h: 2.125rem;
+  --pl-control-h-lg: 2.5rem;
+  --pl-control-px-sm: 0.5rem;
+  --pl-control-px: 0.625rem;
+  --pl-control-px-lg: 0.875rem;
+  --pl-item-h: 1.875rem;
+  --pl-item-px: 0.5rem;
+  --pl-cell-py: 0.4rem;
+  --pl-cell-px: 0.75rem;
+  --pl-pad: 1rem;
+  --pl-pad-sm: 0.625rem;
+  --pl-gap: 0.5rem;
 }
 [data-density='comfortable'] {
-  --oc-control-h-sm: 2rem;
-  --oc-control-h: 2.5rem;
-  --oc-control-h-lg: 3rem;
-  --oc-item-h: 2.25rem;
-  --oc-cell-py: 0.75rem;
-  --oc-cell-px: 1rem;
-  --oc-pad: 1.25rem;
+  --pl-control-h-sm: 2rem;
+  --pl-control-h: 2.5rem;
+  --pl-control-h-lg: 3rem;
+  --pl-item-h: 2.25rem;
+  --pl-cell-py: 0.75rem;
+  --pl-cell-px: 1rem;
+  --pl-pad: 1.25rem;
 }
 
 /* Touch: every target at least 44px (WCAG 2.5.5), whatever the density. */
 @media (pointer: coarse) {
   :root,
   [data-density] {
-    --oc-control-h-sm: 2.5rem;
-    --oc-control-h: 2.75rem;
-    --oc-control-h-lg: 3rem;
-    --oc-item-h: 2.75rem;
-    --oc-hit: 2.75rem;
+    --pl-control-h-sm: 2.5rem;
+    --pl-control-h: 2.75rem;
+    --pl-control-h-lg: 3rem;
+    --pl-item-h: 2.75rem;
+    --pl-hit: 2.75rem;
   }
 }
 
 /* ---------- Component baseline ----------
- * Components inherit nothing surprising from the host page: border-box sizing, the Orca face and
+ * Components inherit nothing surprising from the host page: border-box sizing, the Pelagic face and
  * tabular numbers where values change. Kept at zero specificity so any app style wins. */
-:where([class^='oc-'], [class*=' oc-']),
-:where([class^='oc-'], [class*=' oc-'])::before,
-:where([class^='oc-'], [class*=' oc-'])::after { box-sizing: border-box; }
-:where(.oc-btn, .oc-input, .oc-textarea, .oc-select, .oc-select-trigger, .oc-tag, .oc-badge, .oc-chip) {
+:where([class^='pl-'], [class*=' pl-']),
+:where([class^='pl-'], [class*=' pl-'])::before,
+:where([class^='pl-'], [class*=' pl-'])::after { box-sizing: border-box; }
+:where(.pl-btn, .pl-input, .pl-textarea, .pl-select, .pl-select-trigger, .pl-tag, .pl-badge, .pl-chip) {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -171,7 +171,7 @@
 /* ---------- Accessibility utilities ---------- */
 
 /* Visually hidden, still announced by screen readers. */
-.oc-sr-only {
+.pl-sr-only {
   position: absolute !important;
   width: 1px;
   height: 1px;
@@ -184,88 +184,88 @@
 }
 
 /* "Skip to content" link: hidden until focused.
- * It must appear on the very first frame of focus. The reduced-motion block below gives every oc-
+ * It must appear on the very first frame of focus. The reduced-motion block below gives every pl-
  * element `transition-duration: 0.01ms`, which (with the default `transition-property: all`) turned the
  * top: -100px → 1rem jump into a transition; a transition only advances when the page renders frames,
  * so in a background or throttled tab (headless browsers, a just-opened window) the link stayed at
  * -100px after Tab. The link therefore opts out of transitions and animations entirely. */
-.oc-skip-link {
+.pl-skip-link {
   position: absolute;
   transition: none !important;
   animation: none !important;
   inset-inline-start: 1rem;
   top: -100px;
-  z-index: var(--oc-z-tooltip);
+  z-index: var(--pl-z-tooltip);
   padding: 0.6rem 1rem;
-  border-radius: var(--oc-radius);
-  background: var(--oc-primary);
-  color: var(--oc-on-primary);
-  box-shadow: var(--oc-shadow-lg);
-  font-family: var(--oc-font);
-  font-size: var(--oc-text-md);
-  font-weight: var(--oc-weight-semibold);
+  border-radius: var(--pl-radius);
+  background: var(--pl-primary);
+  color: var(--pl-on-primary);
+  box-shadow: var(--pl-shadow-lg);
+  font-family: var(--pl-font);
+  font-size: var(--pl-text-md);
+  font-weight: var(--pl-weight-semibold);
   text-decoration: none;
 }
-.oc-skip-link:focus,
-.oc-skip-link:focus-visible { top: 1rem; outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+.pl-skip-link:focus,
+.pl-skip-link:focus-visible { top: 1rem; outline: var(--pl-focus-width) solid var(--pl-focus); outline-offset: 2px; }
 
 /* Tabular figures helper. */
-.oc-tabular { font-variant-numeric: tabular-nums; }
+.pl-tabular { font-variant-numeric: tabular-nums; }
 
 /* ---------- Skeleton presets ---------- */
-.oc-skeleton-text { display: flex; flex-direction: column; gap: 0.6rem; }
-.oc-skeleton-text > .oc-skeleton:last-child:not(:only-child) { width: 62%; }
-.oc-skeleton-card {
+.pl-skeleton-text { display: flex; flex-direction: column; gap: 0.6rem; }
+.pl-skeleton-text > .pl-skeleton:last-child:not(:only-child) { width: 62%; }
+.pl-skeleton-card {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  padding: var(--oc-pad);
-  border: 1px solid var(--oc-border-subtle);
-  border-radius: var(--oc-radius-lg);
-  background: var(--oc-surface);
-  box-shadow: var(--oc-elev-1);
+  padding: var(--pl-pad);
+  border: 1px solid var(--pl-border-subtle);
+  border-radius: var(--pl-radius-lg);
+  background: var(--pl-surface);
+  box-shadow: var(--pl-elev-1);
 }
-.oc-skeleton-card__head { display: flex; align-items: center; gap: 0.75rem; }
-.oc-skeleton-card__head > .oc-skeleton-text { flex: 1; }
+.pl-skeleton-card__head { display: flex; align-items: center; gap: 0.75rem; }
+.pl-skeleton-card__head > .pl-skeleton-text { flex: 1; }
 
 /* ---------- Reduced motion (WCAG 2.3.3) ---------- */
 @media (prefers-reduced-motion: reduce) {
-  [class*='oc-'],
-  [class*='oc-']::before,
-  [class*='oc-']::after {
+  [class*='pl-'],
+  [class*='pl-']::before,
+  [class*='pl-']::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
   /* Keep loading indicators understandable without motion. */
-  .oc-spinner { animation: oc-spin 1.6s linear infinite !important; }
-  .oc-skeleton { animation: none !important; background: var(--oc-surface-muted); }
-  .oc-progress--indeterminate .oc-progress__bar { animation: none !important; width: 100% !important; opacity: 0.5; }
+  .pl-spinner { animation: pl-spin 1.6s linear infinite !important; }
+  .pl-skeleton { animation: none !important; background: var(--pl-surface-muted); }
+  .pl-progress--indeterminate .pl-progress__bar { animation: none !important; width: 100% !important; opacity: 0.5; }
   /* Must come after the catch-all above (same specificity): the skip link never transitions. */
-  .oc-skip-link { transition: none !important; }
+  .pl-skip-link { transition: none !important; }
 }
 
 /* ---------- Windows High Contrast / forced colors ---------- */
 @media (forced-colors: active) {
-  .oc-btn,
-  .oc-tag,
-  .oc-badge,
-  .oc-segmented__item,
-  .oc-pagination__btn,
-  .oc-alert,
-  .oc-toast,
-  .oc-card,
-  .oc-dialog,
-  .oc-drawer { border: 1px solid CanvasText; }
-  .oc-switch { border: 1px solid ButtonText; }
-  .oc-switch::after { background: ButtonText; }
-  .oc-switch[aria-checked='true'] { background: Highlight; }
-  .oc-segmented__item[aria-checked='true'],
-  .oc-pagination__btn[aria-current='page'] { background: Highlight; color: HighlightText; }
-  .oc-tabs__tab[aria-selected='true'] { border-bottom-color: Highlight; }
-  .oc-tabs__tab[aria-selected='true']::after { background: Highlight; }
-  .oc-progress { border: 1px solid CanvasText; }
-  .oc-progress__bar { background: Highlight; }
-  .oc-skeleton { background: GrayText; }
-  .oc-timeline__dot { background: CanvasText; }
+  .pl-btn,
+  .pl-tag,
+  .pl-badge,
+  .pl-segmented__item,
+  .pl-pagination__btn,
+  .pl-alert,
+  .pl-toast,
+  .pl-card,
+  .pl-dialog,
+  .pl-drawer { border: 1px solid CanvasText; }
+  .pl-switch { border: 1px solid ButtonText; }
+  .pl-switch::after { background: ButtonText; }
+  .pl-switch[aria-checked='true'] { background: Highlight; }
+  .pl-segmented__item[aria-checked='true'],
+  .pl-pagination__btn[aria-current='page'] { background: Highlight; color: HighlightText; }
+  .pl-tabs__tab[aria-selected='true'] { border-bottom-color: Highlight; }
+  .pl-tabs__tab[aria-selected='true']::after { background: Highlight; }
+  .pl-progress { border: 1px solid CanvasText; }
+  .pl-progress__bar { background: Highlight; }
+  .pl-skeleton { background: GrayText; }
+  .pl-timeline__dot { background: CanvasText; }
 }

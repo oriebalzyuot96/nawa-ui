@@ -62,7 +62,7 @@ describe('Wizard', () => {
     expect(link).toHaveAttribute('href', '#email');
     expect(screen.getByLabelText('Email')).toHaveAttribute('aria-invalid', 'true');
     expect(screen.getByRole('heading', { name: /Account/ })).toBeInTheDocument();
-    expect(document.querySelector('.oc-wizard__step[data-state="error"]')).not.toBeNull();
+    expect(document.querySelector('.pl-wizard__step[data-state="error"]')).not.toBeNull();
     await user.click(link);
     expect(screen.getByLabelText('Email')).toHaveFocus();
   });
@@ -80,7 +80,7 @@ describe('Wizard', () => {
     await user.click(screen.getByRole('button', { name: 'Skip this step' }));
     expect(screen.getByRole('heading', { name: /Review/ })).toHaveFocus();
     expect(screen.getByRole('button', { name: /Notes\s*,\s*skipped/ })).toBeInTheDocument();
-    const review = document.querySelector('.oc-wizard__review')!;
+    const review = document.querySelector('.pl-wizard__review')!;
     expect(review).toHaveTextContent('ada@example.com');
     await user.click(within(review as HTMLElement).getByRole('button', { name: 'Edit Account' }));
     expect(screen.getByRole('heading', { name: /Account/ })).toHaveFocus();
@@ -142,7 +142,7 @@ describe('Wizard', () => {
         <Wizard<Data> label="تسجيل" steps={steps()} defaultStep={1} labels={{ next: 'التالي', back: 'السابق' }} />
       </div>,
     );
-    const footer = document.querySelector('.oc-wizard__footer')!;
+    const footer = document.querySelector('.pl-wizard__footer')!;
     const buttons = within(footer as HTMLElement).getAllByRole('button');
     expect(buttons[0]).toHaveAccessibleName('السابق');
     expect(buttons[buttons.length - 1]).toHaveAccessibleName('التالي');

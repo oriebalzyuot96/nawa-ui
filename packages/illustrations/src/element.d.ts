@@ -1,7 +1,7 @@
 export * from './illustrations.js';
 
-/** `<oc-illustration name="…" [label] [compact] [static]>` — light-DOM custom element. */
-export declare class OcIllustrationElement extends HTMLElement {
+/** `<pl-illustration name="…" [label] [compact] [static]>` — light-DOM custom element. */
+export declare class PlIllustrationElement extends HTMLElement {
   static observedAttributes: string[];
   render(): void;
 }
@@ -10,6 +10,6 @@ export declare function defineIllustrationElement(tag?: string): void;
 
 declare global {
   interface HTMLElementTagNameMap {
-    'oc-illustration': OcIllustrationElement;
+    'pl-illustration': PlIllustrationElement;
   }
 }

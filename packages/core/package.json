@@ -1,10 +1,10 @@
 {
-  "name": "@orca-ui/core",
+  "name": "@pelagic-ui/core",
   "version": "0.1.0",
-  "description": "Orca UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
+  "description": "Pelagic UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
   "type": "module",
   "files": [
-    "orca-ui.css",
+    "pelagic.css",
     "tokens.js",
     "tokens.d.ts",
     "src/themes.mjs",
@@ -21,12 +21,12 @@
     "fonts",
     "README.md"
   ],
-  "style": "orca-ui.css",
+  "style": "pelagic.css",
   "main": "tokens.js",
   "types": "tokens.d.ts",
   "exports": {
-    "./style.css": "./orca-ui.css",
-    "./orca-ui.css": "./orca-ui.css",
+    "./style.css": "./pelagic.css",
+    "./pelagic.css": "./pelagic.css",
     "./tokens": {
       "types": "./tokens.d.ts",
       "default": "./tokens.js"
@@ -65,7 +65,7 @@
     "test:contrast": "node scripts/check-contrast.mjs"
   },
   "keywords": [
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "design-system",
     "design-tokens",
@@ -78,13 +78,13 @@
     "rtl",
     "arabic"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/core"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

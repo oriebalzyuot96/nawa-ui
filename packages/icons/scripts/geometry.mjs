@@ -1,4 +1,4 @@
-// Drawing helpers for authoring Orca icons. They only produce plain strings
+// Drawing helpers for authoring Pelagic icons. They only produce plain strings
 // (path data / element markup); icon source files store the literal output, so
 // these helpers are an authoring aid and never a runtime dependency.
 import { mapPath } from './svg-path.mjs';

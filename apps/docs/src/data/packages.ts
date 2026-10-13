@@ -1,4 +1,4 @@
-// Every package Orca UI ships, in the order the site presents them.
+// Every package Pelagic UI ships, in the order the site presents them.
 // Sizes were measured from the 0.1.0 build with `npm pack --dry-run` (packed = download size,
 // unpacked = size on disk); the Flutter size is the Dart source in lib/.
 
@@ -6,7 +6,7 @@ export type Lang = 'en' | 'ar';
 export type Text = Record<Lang, string>;
 
 export type MarkId =
-  | 'orca'
+  | 'pelagic'
   | 'react'
   | 'vue'
   | 'angular'
@@ -50,7 +50,7 @@ export interface PackageInfo {
   docs?: string;
 }
 
-const repo = 'https://github.com/oriebalzyuot96/orca-ui/tree/main/packages';
+const repo = 'https://github.com/oriebalzyuot96/pelagic-ui/tree/main/packages';
 const npm = (name: string): InstallOption[] => [
   { pm: 'npm', cmd: `npm i ${name}` },
   { pm: 'yarn', cmd: `yarn add ${name}` },
@@ -59,10 +59,10 @@ const npm = (name: string): InstallOption[] => [
 
 export const packages: PackageInfo[] = [
   {
-    id: 'orca-ui',
-    name: 'orca-ui',
+    id: 'pelagic',
+    name: 'pelagic',
     registry: 'npm',
-    mark: 'orca',
+    mark: 'pelagic',
     platform: { en: 'Everything', ar: 'كل شيء' },
     tagline: { en: 'The whole system in one install', ar: 'النظام كاملاً في تثبيت واحد' },
     description: {
@@ -74,39 +74,39 @@ export const packages: PackageInfo[] = [
       ar: ['مدخل لكل إطار عمل', 'CSS الأساسي والرموز ومحرّك الثيمات', 'الأيقونات والرسوم التوضيحية', 'مكونات ثلاثية الأبعاد WebGL'],
     },
     stat: { value: '7', label: { en: 'platforms in one package', ar: 'منصّات في حزمة واحدة' } },
-    install: npm('orca-ui'),
+    install: npm('pelagic'),
     usage: {
       file: 'main.tsx',
       lang: 'tsx',
-      code: `import 'orca-ui/style.css';
-import { Button, DataTable, swal } from 'orca-ui/react';
-import { SearchIcon } from 'orca-ui/icons/react';
-import { createTheme, applyCustomTheme } from 'orca-ui/core/theme';
+      code: `import 'pelagic/style.css';
+import { Button, DataTable, swal } from 'pelagic/react';
+import { SearchIcon } from 'pelagic/icons/react';
+import { createTheme, applyCustomTheme } from 'pelagic/core/theme';
 
 applyCustomTheme(createTheme({ primary: '#ff6a00' }));`,
     },
     exports: [
-      { path: 'orca-ui/style.css', text: { en: 'All component styles and themes', ar: 'أنماط كل المكونات والثيمات' } },
-      { path: 'orca-ui/react', text: { en: 'React components', ar: 'مكونات React' } },
-      { path: 'orca-ui/vue', text: { en: 'Vue 3 components', ar: 'مكونات Vue 3' } },
-      { path: 'orca-ui/angular', text: { en: 'Angular standalone components', ar: 'مكونات Angular المستقلة' } },
-      { path: 'orca-ui/svelte', text: { en: 'Svelte 5 components', ar: 'مكونات Svelte 5' } },
-      { path: 'orca-ui/astro/components/*', text: { en: 'Astro components', ar: 'مكونات Astro' } },
-      { path: 'orca-ui/react-native', text: { en: 'React Native components', ar: 'مكونات React Native' } },
-      { path: 'orca-ui/three', text: { en: 'WebGL 3D', ar: 'ثلاثي الأبعاد WebGL' } },
-      { path: 'orca-ui/icons/*', text: { en: 'Icons for every framework', ar: 'أيقونات لكل إطار' } },
-      { path: 'orca-ui/illustrations/*', text: { en: 'Illustrations for every framework', ar: 'رسوم توضيحية لكل إطار' } },
-      { path: 'orca-ui/core/*', text: { en: 'theme, a11y-prefs, motion, sound, tokens', ar: 'الثيمات وتفضيلات الوصول والحركة والصوت والرموز' } },
+      { path: 'pelagic/style.css', text: { en: 'All component styles and themes', ar: 'أنماط كل المكونات والثيمات' } },
+      { path: 'pelagic/react', text: { en: 'React components', ar: 'مكونات React' } },
+      { path: 'pelagic/vue', text: { en: 'Vue 3 components', ar: 'مكونات Vue 3' } },
+      { path: 'pelagic/angular', text: { en: 'Angular standalone components', ar: 'مكونات Angular المستقلة' } },
+      { path: 'pelagic/svelte', text: { en: 'Svelte 5 components', ar: 'مكونات Svelte 5' } },
+      { path: 'pelagic/astro/components/*', text: { en: 'Astro components', ar: 'مكونات Astro' } },
+      { path: 'pelagic/react-native', text: { en: 'React Native components', ar: 'مكونات React Native' } },
+      { path: 'pelagic/three', text: { en: 'WebGL 3D', ar: 'ثلاثي الأبعاد WebGL' } },
+      { path: 'pelagic/icons/*', text: { en: 'Icons for every framework', ar: 'أيقونات لكل إطار' } },
+      { path: 'pelagic/illustrations/*', text: { en: 'Illustrations for every framework', ar: 'رسوم توضيحية لكل إطار' } },
+      { path: 'pelagic/core/*', text: { en: 'theme, a11y-prefs, motion, sound, tokens', ar: 'الثيمات وتفضيلات الوصول والحركة والصوت والرموز' } },
     ],
     peers: ['react', 'vue', '@angular/core', 'svelte', 'astro', 'react-native', 'three', '(all optional)'],
     size: { packed: '624 kB', unpacked: '2.8 MB' },
-    registryUrl: 'https://www.npmjs.com/package/orca-ui',
-    sourceUrl: `${repo}/orca-ui`,
+    registryUrl: 'https://www.npmjs.com/package/pelagic',
+    sourceUrl: `${repo}/pelagic`,
     docs: '/getting-started/',
   },
   {
     id: 'react',
-    name: '@orca-ui/react',
+    name: '@pelagic-ui/react',
     registry: 'npm',
     mark: 'react',
     platform: { en: 'React 18 / 19', ar: 'React 18 / 19' },
@@ -120,17 +120,17 @@ applyCustomTheme(createTheme({ primary: '#ff6a00' }));`,
       ar: ['جدول البيانات والشجرة والتمرير الافتراضي', '13 نوعاً من الرسوم البيانية سهلة الوصول', 'محرّك الحركة والمعالج', 'swal() و toast() و15 مؤشر تحميل'],
     },
     stat: { value: '171', label: { en: 'components', ar: 'مكوّناً' } },
-    install: npm('@orca-ui/react @orca-ui/core'),
+    install: npm('@pelagic-ui/react @pelagic-ui/core'),
     usage: {
       file: 'App.tsx',
       lang: 'tsx',
-      code: `import '@orca-ui/core/style.css';
-import { Button, Input, toast, Toaster } from '@orca-ui/react';
+      code: `import '@pelagic-ui/core/style.css';
+import { Button, Input, toast, Toaster } from '@pelagic-ui/react';
 
 export function App() {
   return (
     <>
-      <Input label="Project name" defaultValue="orca-app" />
+      <Input label="Project name" defaultValue="pelagic-app" />
       <Button onClick={() => toast.success('Deployed')}>Deploy</Button>
       <Toaster />
     </>
@@ -138,17 +138,17 @@ export function App() {
 }`,
     },
     exports: [
-      { path: '@orca-ui/react', text: { en: 'Components, hooks (useConfirm, useDialog), swal, toast', ar: 'المكونات والخطافات (useConfirm و useDialog) و swal و toast' } },
+      { path: '@pelagic-ui/react', text: { en: 'Components, hooks (useConfirm, useDialog), swal, toast', ar: 'المكونات والخطافات (useConfirm و useDialog) و swal و toast' } },
     ],
     peers: ['react ^18 || ^19', 'react-dom'],
     size: { packed: '182 kB', unpacked: '749 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/react',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/react',
     sourceUrl: `${repo}/react`,
     docs: '/components/',
   },
   {
     id: 'vue',
-    name: '@orca-ui/vue',
+    name: '@pelagic-ui/vue',
     registry: 'npm',
     mark: 'vue',
     platform: { en: 'Vue 3', ar: 'Vue 3' },
@@ -162,15 +162,15 @@ export function App() {
       ar: ['نماذج مع v-model', 'جدول بيانات بفتحات للخلايا', 'نافذة ودرج وتلميح', 'لوحة إمكانية الوصول'],
     },
     stat: { value: '33', label: { en: 'components', ar: 'مكوّناً' } },
-    install: npm('@orca-ui/vue @orca-ui/core'),
+    install: npm('@pelagic-ui/vue @pelagic-ui/core'),
     usage: {
       file: 'App.vue',
       lang: 'vue',
       code: `<script setup lang="ts">
-import '@orca-ui/core/style.css';
+import '@pelagic-ui/core/style.css';
 import { ref } from 'vue';
-import { Button, Input, Switch } from '@orca-ui/vue';
-const name = ref('orca-app');
+import { Button, Input, Switch } from '@pelagic-ui/vue';
+const name = ref('pelagic-app');
 const previews = ref(true);
 </script>
 
@@ -180,15 +180,15 @@ const previews = ref(true);
   <Button>Deploy</Button>
 </template>`,
     },
-    exports: [{ path: '@orca-ui/vue', text: { en: 'Components and the sound composable', ar: 'المكونات ووحدة الصوت' } }],
+    exports: [{ path: '@pelagic-ui/vue', text: { en: 'Components and the sound composable', ar: 'المكونات ووحدة الصوت' } }],
     peers: ['vue ^3.4'],
     size: { packed: '17 kB', unpacked: '93 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/vue',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/vue',
     sourceUrl: `${repo}/vue`,
   },
   {
     id: 'angular',
-    name: '@orca-ui/angular',
+    name: '@pelagic-ui/angular',
     registry: 'npm',
     mark: 'angular',
     platform: { en: 'Angular 20–22', ar: 'Angular 20–22' },
@@ -198,38 +198,38 @@ const previews = ref(true);
       ar: 'مكونات وموجّهات مستقلة مبنية على الإشارات (signals). الحقول تطبّق ControlValueAccessor فتعمل مع النماذج التفاعلية والقوالب.',
     },
     includes: {
-      en: ['ocButton directive', 'Reactive-forms inputs', 'DataTable with cell templates', 'ORCA_UI import bundle'],
-      ar: ['موجّه ocButton', 'حقول للنماذج التفاعلية', 'جدول بيانات بقوالب للخلايا', 'حزمة الاستيراد ORCA_UI'],
+      en: ['plButton directive', 'Reactive-forms inputs', 'DataTable with cell templates', 'PELAGIC_UI import bundle'],
+      ar: ['موجّه plButton', 'حقول للنماذج التفاعلية', 'جدول بيانات بقوالب للخلايا', 'حزمة الاستيراد PELAGIC_UI'],
     },
     stat: { value: '39', label: { en: 'components & directives', ar: 'مكوّناً وموجّهاً' } },
-    install: npm('@orca-ui/angular @orca-ui/core'),
+    install: npm('@pelagic-ui/angular @pelagic-ui/core'),
     usage: {
       file: 'deploy.component.ts',
       lang: 'ts',
       code: `import { Component } from '@angular/core';
-import { ORCA_UI } from '@orca-ui/angular';
+import { PELAGIC_UI } from '@pelagic-ui/angular';
 
 @Component({
   selector: 'app-deploy',
-  imports: [ORCA_UI],
+  imports: [PELAGIC_UI],
   template: \`
-    <oc-input label="Project name" [(value)]="name" />
-    <button ocButton (click)="deploy()">Deploy</button>\`,
+    <pl-input label="Project name" [(value)]="name" />
+    <button plButton (click)="deploy()">Deploy</button>\`,
 })
 export class DeployComponent {
-  name = 'orca-app';
+  name = 'pelagic-app';
   deploy() {}
 }`,
     },
-    exports: [{ path: '@orca-ui/angular', text: { en: 'Oc* components, ORCA_UI, theme helpers', ar: 'مكونات Oc* و ORCA_UI وأدوات الثيم' } }],
+    exports: [{ path: '@pelagic-ui/angular', text: { en: 'Pl* components, PELAGIC_UI, theme helpers', ar: 'مكونات Pl* و PELAGIC_UI وأدوات الثيم' } }],
     peers: ['@angular/core 20–22', '@angular/common', '@angular/forms'],
     size: { packed: '61 kB', unpacked: '359 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/angular',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/angular',
     sourceUrl: `${repo}/angular`,
   },
   {
     id: 'svelte',
-    name: '@orca-ui/svelte',
+    name: '@pelagic-ui/svelte',
     registry: 'npm',
     mark: 'svelte',
     platform: { en: 'Svelte 5', ar: 'Svelte 5' },
@@ -243,13 +243,13 @@ export class DeployComponent {
       ar: ['نماذج مع bind:value', 'جدول بيانات وترقيم صفحات', 'نافذة ودرج', 'هياكل تحميل جاهزة'],
     },
     stat: { value: '33', label: { en: 'components', ar: 'مكوّناً' } },
-    install: npm('@orca-ui/svelte @orca-ui/core'),
+    install: npm('@pelagic-ui/svelte @pelagic-ui/core'),
     usage: {
       file: '+page.svelte',
       lang: 'svelte',
       code: `<script lang="ts">
-  import { Button, Input, Switch } from '@orca-ui/svelte';
-  let name = $state('orca-app');
+  import { Button, Input, Switch } from '@pelagic-ui/svelte';
+  let name = $state('pelagic-app');
   let previews = $state(true);
 </script>
 
@@ -257,15 +257,15 @@ export class DeployComponent {
 <Switch bind:checked={previews} label="Preview deployments" />
 <Button>Deploy</Button>`,
     },
-    exports: [{ path: '@orca-ui/svelte', text: { en: 'Components, actions and sound', ar: 'المكونات والإجراءات والصوت' } }],
+    exports: [{ path: '@pelagic-ui/svelte', text: { en: 'Components, actions and sound', ar: 'المكونات والإجراءات والصوت' } }],
     peers: ['svelte ^5'],
     size: { packed: '13 kB', unpacked: '42 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/svelte',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/svelte',
     sourceUrl: `${repo}/svelte`,
   },
   {
     id: 'astro',
-    name: '@orca-ui/astro',
+    name: '@pelagic-ui/astro',
     registry: 'npm',
     mark: 'astro',
     platform: { en: 'Astro 5', ar: 'Astro 5' },
@@ -279,29 +279,29 @@ export class DeployComponent {
       ar: ['ThemeScript (بلا وميض للثيم الخاطئ)', 'جدول بيانات مرتّب على الخادم', 'تبويبات ونافذة وإشعارات', 'لوحة إمكانية الوصول'],
     },
     stat: { value: '34', label: { en: 'components', ar: 'مكوّناً' } },
-    install: npm('@orca-ui/astro @orca-ui/core'),
+    install: npm('@pelagic-ui/astro @pelagic-ui/core'),
     usage: {
       file: 'Layout.astro',
       lang: 'astro',
       code: `---
-import '@orca-ui/core/style.css';
-import ThemeScript from '@orca-ui/astro/components/ThemeScript';
-import Button from '@orca-ui/astro/components/Button';
+import '@pelagic-ui/core/style.css';
+import ThemeScript from '@pelagic-ui/astro/components/ThemeScript';
+import Button from '@pelagic-ui/astro/components/Button';
 ---
 <html lang="en">
   <head><ThemeScript /></head>
   <body><Button>Deploy</Button></body>
 </html>`,
     },
-    exports: [{ path: '@orca-ui/astro/components/*', text: { en: 'One .astro file per component', ar: 'ملف .astro لكل مكوّن' } }],
+    exports: [{ path: '@pelagic-ui/astro/components/*', text: { en: 'One .astro file per component', ar: 'ملف .astro لكل مكوّن' } }],
     peers: ['astro ^5'],
     size: { packed: '14 kB', unpacked: '41 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/astro',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/astro',
     sourceUrl: `${repo}/astro`,
   },
   {
     id: 'react-native',
-    name: '@orca-ui/react-native',
+    name: '@pelagic-ui/react-native',
     registry: 'npm',
     mark: 'native',
     platform: { en: 'React Native / Expo', ar: 'React Native / Expo' },
@@ -311,34 +311,34 @@ import Button from '@orca-ui/astro/components/Button';
       ar: 'مكونات أصلية بنفس أسماء وخصائص حزم الويب، وبنفس الرموز. أدوار قارئ الشاشة وأهداف لمس 48dp ودعم النص الكبير مدمجة.',
     },
     includes: {
-      en: ['OrcaProvider with every theme', 'Forms and DataTable', 'Dialog, Drawer, Toast', 'RTL via I18nManager'],
-      ar: ['OrcaProvider مع كل الثيمات', 'نماذج وجدول بيانات', 'نافذة ودرج وإشعار', 'دعم RTL عبر I18nManager'],
+      en: ['PelagicProvider with every theme', 'Forms and DataTable', 'Dialog, Drawer, Toast', 'RTL via I18nManager'],
+      ar: ['PelagicProvider مع كل الثيمات', 'نماذج وجدول بيانات', 'نافذة ودرج وإشعار', 'دعم RTL عبر I18nManager'],
     },
     stat: { value: '31', label: { en: 'components', ar: 'مكوّناً' } },
-    install: npm('@orca-ui/react-native @orca-ui/core'),
+    install: npm('@pelagic-ui/react-native @pelagic-ui/core'),
     usage: {
       file: 'App.tsx',
       lang: 'tsx',
-      code: `import { OrcaProvider, Button, Input } from '@orca-ui/react-native';
+      code: `import { PelagicProvider, Button, Input } from '@pelagic-ui/react-native';
 
 export default function App() {
   return (
-    <OrcaProvider mode="system" accent="violet">
-      <Input label="Project name" defaultValue="orca-app" />
+    <PelagicProvider mode="system" accent="violet">
+      <Input label="Project name" defaultValue="pelagic-app" />
       <Button title="Deploy" onPress={deploy} />
-    </OrcaProvider>
+    </PelagicProvider>
   );
 }`,
     },
-    exports: [{ path: '@orca-ui/react-native', text: { en: 'Components, OrcaProvider, useOrcaTheme', ar: 'المكونات و OrcaProvider و useOrcaTheme' } }],
+    exports: [{ path: '@pelagic-ui/react-native', text: { en: 'Components, PelagicProvider, usePelagicTheme', ar: 'المكونات و PelagicProvider و usePelagicTheme' } }],
     peers: ['react', 'react-native'],
     size: { packed: '13 kB', unpacked: '51 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/react-native',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/react-native',
     sourceUrl: `${repo}/react-native`,
   },
   {
     id: 'flutter',
-    name: 'orca_ui',
+    name: 'pelagic_ui',
     registry: 'pub.dev',
     mark: 'flutter',
     platform: { en: 'Flutter 3.24+', ar: 'Flutter 3.24+' },
@@ -348,41 +348,41 @@ export default function App() {
       ar: 'عناصر مولّدة من نفس مصدر الرموز للويب، فيبدو تطبيق Flutter وتطبيق الويب متطابقين. الدلالات وأهداف 48×48 وتقليل الحركة و RTL مدمجة.',
     },
     includes: {
-      en: ['OrcaApp with every theme', 'Forms, tabs, accordion', 'Sortable OrcaDataTable', 'Bar and line charts'],
-      ar: ['OrcaApp مع كل الثيمات', 'نماذج وتبويبات وأكورديون', 'جدول بيانات قابل للترتيب', 'رسوم أعمدة وخطوط'],
+      en: ['PelagicApp with every theme', 'Forms, tabs, accordion', 'Sortable PelagicDataTable', 'Bar and line charts'],
+      ar: ['PelagicApp مع كل الثيمات', 'نماذج وتبويبات وأكورديون', 'جدول بيانات قابل للترتيب', 'رسوم أعمدة وخطوط'],
     },
     stat: { value: '30+', label: { en: 'widgets', ar: 'عنصراً' } },
     install: [
-      { pm: 'flutter', cmd: 'flutter pub add orca_ui' },
-      { pm: 'dart', cmd: 'dart pub add orca_ui' },
-      { pm: 'pubspec', cmd: 'dependencies:\n  orca_ui: ^0.1.0' },
+      { pm: 'flutter', cmd: 'flutter pub add pelagic_ui' },
+      { pm: 'dart', cmd: 'dart pub add pelagic_ui' },
+      { pm: 'pubspec', cmd: 'dependencies:\n  pelagic_ui: ^0.1.0' },
     ],
     usage: {
       file: 'main.dart',
       lang: 'dart',
       code: `import 'package:flutter/material.dart';
-import 'package:orca_ui/orca_ui.dart';
+import 'package:pelagic_ui/pelagic_ui.dart';
 
-void main() => runApp(const OrcaApp(title: 'Orca', home: Deploy()));
+void main() => runApp(const PelagicApp(title: 'Pelagic', home: Deploy()));
 
 class Deploy extends StatelessWidget {
   const Deploy({super.key});
   @override
   Widget build(BuildContext context) => Column(children: [
-        const OrcaInput(label: 'Project name'),
-        OrcaButton(label: 'Deploy', onPressed: () {}),
+        const PelagicInput(label: 'Project name'),
+        PelagicButton(label: 'Deploy', onPressed: () {}),
       ]);
 }`,
     },
-    exports: [{ path: 'package:orca_ui/orca_ui.dart', text: { en: 'Widgets, OrcaApp, OrcaTheme, tokens', ar: 'العناصر و OrcaApp و OrcaTheme والرموز' } }],
+    exports: [{ path: 'package:pelagic_ui/pelagic_ui.dart', text: { en: 'Widgets, PelagicApp, PelagicTheme, tokens', ar: 'العناصر و PelagicApp و PelagicTheme والرموز' } }],
     peers: ['Flutter SDK ≥ 3.24', 'Dart ≥ 3.5'],
     size: { packed: '—', unpacked: '194 kB' },
-    registryUrl: 'https://pub.dev/packages/orca_ui',
+    registryUrl: 'https://pub.dev/packages/pelagic_ui',
     sourceUrl: `${repo}/flutter`,
   },
   {
     id: 'three',
-    name: '@orca-ui/three',
+    name: '@pelagic-ui/three',
     registry: 'npm',
     mark: 'three',
     platform: { en: 'WebGL · React', ar: 'WebGL · React' },
@@ -396,27 +396,27 @@ class Deploy extends StatelessWidget {
       ar: ['Globe3D و Chart3D', 'عارض النماذج (glTF)', 'جسيمات وأشكال عائمة', 'تحميل three.js عند الحاجة'],
     },
     stat: { value: '6', label: { en: 'WebGL components', ar: 'مكونات WebGL' } },
-    install: npm('@orca-ui/three three'),
+    install: npm('@pelagic-ui/three three'),
     usage: {
       file: 'Hero.tsx',
       lang: 'tsx',
-      code: `import { Globe3D } from '@orca-ui/three';
+      code: `import { Globe3D } from '@pelagic-ui/three';
 
 <Globe3D
   label="Our offices"
   markers={[{ lat: 24.7, lng: 46.7, label: 'Riyadh' }]}
 />`,
     },
-    exports: [{ path: '@orca-ui/three', text: { en: 'Scene3D, Globe3D, Chart3D, ModelViewer …', ar: 'Scene3D و Globe3D و Chart3D و ModelViewer …' } }],
+    exports: [{ path: '@pelagic-ui/three', text: { en: 'Scene3D, Globe3D, Chart3D, ModelViewer …', ar: 'Scene3D و Globe3D و Chart3D و ModelViewer …' } }],
     peers: ['react', 'react-dom', 'three ≥ 0.160'],
     size: { packed: '13 kB', unpacked: '46 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/three',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/three',
     sourceUrl: `${repo}/three`,
     docs: '/components/3d/',
   },
   {
     id: 'icons',
-    name: '@orca-ui/icons',
+    name: '@pelagic-ui/icons',
     registry: 'npm',
     mark: 'icons',
     platform: { en: 'Every framework', ar: 'كل الأطر' },
@@ -430,31 +430,31 @@ class Deploy extends StatelessWidget {
       ar: ['خطي وثنائي ومصمت', 'React و Vue و Svelte و Angular و Astro و RN', 'مكوّن ويب و sprite.svg', 'عناوين سهلة الوصول'],
     },
     stat: { value: '239', label: { en: 'icons', ar: 'أيقونة' } },
-    install: npm('@orca-ui/icons'),
+    install: npm('@pelagic-ui/icons'),
     usage: {
       file: 'Toolbar.tsx',
       lang: 'tsx',
-      code: `import { SearchIcon, BellIcon } from '@orca-ui/icons/react';
+      code: `import { SearchIcon, BellIcon } from '@pelagic-ui/icons/react';
 
 <SearchIcon />
 <BellIcon variant="duotone" size={20} title="Notifications" />`,
     },
     exports: [
-      { path: '@orca-ui/icons/react', text: { en: 'React components', ar: 'مكونات React' } },
-      { path: '@orca-ui/icons/vue · /svelte · /angular · /astro', text: { en: 'Framework adapters', ar: 'محوّلات الأطر' } },
-      { path: '@orca-ui/icons/react-native', text: { en: 'react-native-svg components', ar: 'مكونات react-native-svg' } },
-      { path: '@orca-ui/icons/element', text: { en: '<orca-icon> web component', ar: 'مكوّن الويب <orca-icon>' } },
-      { path: '@orca-ui/icons/sprite.svg', text: { en: 'SVG sprite', ar: 'ملف SVG مجمّع' } },
-      { path: '@orca-ui/icons/css', text: { en: 'Optional base styles', ar: 'أنماط أساسية اختيارية' } },
+      { path: '@pelagic-ui/icons/react', text: { en: 'React components', ar: 'مكونات React' } },
+      { path: '@pelagic-ui/icons/vue · /svelte · /angular · /astro', text: { en: 'Framework adapters', ar: 'محوّلات الأطر' } },
+      { path: '@pelagic-ui/icons/react-native', text: { en: 'react-native-svg components', ar: 'مكونات react-native-svg' } },
+      { path: '@pelagic-ui/icons/element', text: { en: '<pelagic-icon> web component', ar: 'مكوّن الويب <pelagic-icon>' } },
+      { path: '@pelagic-ui/icons/sprite.svg', text: { en: 'SVG sprite', ar: 'ملف SVG مجمّع' } },
+      { path: '@pelagic-ui/icons/css', text: { en: 'Optional base styles', ar: 'أنماط أساسية اختيارية' } },
     ],
     peers: ['react · vue · svelte · @angular/core · astro · react-native-svg (optional)'],
     size: { packed: '85 kB', unpacked: '594 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/icons',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/icons',
     sourceUrl: `${repo}/icons`,
   },
   {
     id: 'illustrations',
-    name: '@orca-ui/illustrations',
+    name: '@pelagic-ui/illustrations',
     registry: 'npm',
     mark: 'illustrations',
     platform: { en: 'Every framework', ar: 'كل الأطر' },
@@ -468,12 +468,12 @@ class Deploy extends StatelessWidget {
       ar: ['24 مشهداً قابلاً للتلوين', 'يتكامل مع EmptyState', 'مكوّن ويب و SVG خام', 'بلا اعتماديات'],
     },
     stat: { value: '24', label: { en: 'illustrations', ar: 'رسماً توضيحياً' } },
-    install: npm('@orca-ui/illustrations'),
+    install: npm('@pelagic-ui/illustrations'),
     usage: {
       file: 'Empty.tsx',
       lang: 'tsx',
-      code: `import { EmptyState } from '@orca-ui/react';
-import { NoResultsIllustration } from '@orca-ui/illustrations/react';
+      code: `import { EmptyState } from '@pelagic-ui/react';
+import { NoResultsIllustration } from '@pelagic-ui/illustrations/react';
 
 <EmptyState
   illustration={<NoResultsIllustration />}
@@ -482,20 +482,20 @@ import { NoResultsIllustration } from '@orca-ui/illustrations/react';
 />`,
     },
     exports: [
-      { path: '@orca-ui/illustrations', text: { en: 'illustrationToSvg() and data', ar: 'illustrationToSvg() والبيانات' } },
-      { path: '@orca-ui/illustrations/react · /vue · /svelte · /angular · /astro', text: { en: 'Framework adapters', ar: 'محوّلات الأطر' } },
-      { path: '@orca-ui/illustrations/native', text: { en: 'React Native', ar: 'React Native' } },
-      { path: '@orca-ui/illustrations/svg/*', text: { en: 'Raw SVG files', ar: 'ملفات SVG خام' } },
+      { path: '@pelagic-ui/illustrations', text: { en: 'illustrationToSvg() and data', ar: 'illustrationToSvg() والبيانات' } },
+      { path: '@pelagic-ui/illustrations/react · /vue · /svelte · /angular · /astro', text: { en: 'Framework adapters', ar: 'محوّلات الأطر' } },
+      { path: '@pelagic-ui/illustrations/native', text: { en: 'React Native', ar: 'React Native' } },
+      { path: '@pelagic-ui/illustrations/svg/*', text: { en: 'Raw SVG files', ar: 'ملفات SVG خام' } },
     ],
     peers: ['react · vue · svelte · @angular/core · react-native-svg (optional)'],
     size: { packed: '27 kB', unpacked: '197 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/illustrations',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/illustrations',
     sourceUrl: `${repo}/illustrations`,
     docs: '/components/feedback/',
   },
   {
     id: 'core',
-    name: '@orca-ui/core',
+    name: '@pelagic-ui/core',
     registry: 'npm',
     mark: 'core',
     platform: { en: 'Framework-agnostic', ar: 'مستقلة عن الأطر' },
@@ -509,30 +509,30 @@ import { NoResultsIllustration } from '@orca-ui/illustrations/react';
       ar: ['style.css ‏(65 kB مضغوطاً)', 'createTheme() مع فحوص WCAG', 'أوضاع العرض data-a11y-*', 'محرّكا الحركة والصوت'],
     },
     stat: { value: '21', label: { en: 'built-in themes', ar: 'ثيماً مدمجاً' } },
-    install: npm('@orca-ui/core'),
+    install: npm('@pelagic-ui/core'),
     usage: {
       file: 'theme.ts',
       lang: 'ts',
-      code: `import '@orca-ui/core/style.css';
-import { applyTheme, createTheme, applyCustomTheme } from '@orca-ui/core/theme';
-import { applyA11yPrefs } from '@orca-ui/core/a11y-prefs';
+      code: `import '@pelagic-ui/core/style.css';
+import { applyTheme, createTheme, applyCustomTheme } from '@pelagic-ui/core/theme';
+import { applyA11yPrefs } from '@pelagic-ui/core/a11y-prefs';
 
 applyTheme({ mode: 'dark', accent: 'teal', shape: 'round' });
 applyCustomTheme(createTheme({ primary: '#ff6a00' }));
 applyA11yPrefs({ fontScale: 1.25, motion: 'reduce' });`,
     },
     exports: [
-      { path: '@orca-ui/core/style.css', text: { en: 'Every component style and theme', ar: 'أنماط كل المكونات والثيمات' } },
-      { path: '@orca-ui/core/theme', text: { en: 'applyTheme, createTheme, contrast math', ar: 'applyTheme و createTheme وحساب التباين' } },
-      { path: '@orca-ui/core/a11y-prefs', text: { en: 'Display modes and the panel renderer', ar: 'أوضاع العرض ومولّد اللوحة' } },
-      { path: '@orca-ui/core/motion', text: { en: 'animate, springs, timelines, FLIP', ar: 'animate والنوابض والخطوط الزمنية و FLIP' } },
-      { path: '@orca-ui/core/sound', text: { en: '18 synthesized UI sounds', ar: '18 صوتاً مركّباً للواجهة' } },
-      { path: '@orca-ui/core/tokens', text: { en: 'Tokens as JS / TS', ar: 'الرموز بصيغة JS / TS' } },
-      { path: '@orca-ui/core/a11y', text: { en: 'Focus trap, ids, announcer', ar: 'حبس التركيز والمعرّفات والمُعلِن' } },
+      { path: '@pelagic-ui/core/style.css', text: { en: 'Every component style and theme', ar: 'أنماط كل المكونات والثيمات' } },
+      { path: '@pelagic-ui/core/theme', text: { en: 'applyTheme, createTheme, contrast math', ar: 'applyTheme و createTheme وحساب التباين' } },
+      { path: '@pelagic-ui/core/a11y-prefs', text: { en: 'Display modes and the panel renderer', ar: 'أوضاع العرض ومولّد اللوحة' } },
+      { path: '@pelagic-ui/core/motion', text: { en: 'animate, springs, timelines, FLIP', ar: 'animate والنوابض والخطوط الزمنية و FLIP' } },
+      { path: '@pelagic-ui/core/sound', text: { en: '18 synthesized UI sounds', ar: '18 صوتاً مركّباً للواجهة' } },
+      { path: '@pelagic-ui/core/tokens', text: { en: 'Tokens as JS / TS', ar: 'الرموز بصيغة JS / TS' } },
+      { path: '@pelagic-ui/core/a11y', text: { en: 'Focus trap, ids, announcer', ar: 'حبس التركيز والمعرّفات والمُعلِن' } },
     ],
     peers: ['none'],
     size: { packed: '202 kB', unpacked: '666 kB' },
-    registryUrl: 'https://www.npmjs.com/package/@orca-ui/core',
+    registryUrl: 'https://www.npmjs.com/package/@pelagic-ui/core',
     sourceUrl: `${repo}/core`,
     docs: '/themes/',
   },

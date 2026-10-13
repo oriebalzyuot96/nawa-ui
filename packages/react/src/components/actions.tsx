@@ -23,18 +23,18 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       ref={ref}
       type={type}
       className={cx(
-        'oc-btn',
-        `oc-btn--${variant}`,
-        size !== 'md' && `oc-btn--${size}`,
-        block && 'oc-btn--block',
-        iconOnly && 'oc-btn--icon',
+        'pl-btn',
+        `pl-btn--${variant}`,
+        size !== 'md' && `pl-btn--${size}`,
+        block && 'pl-btn--block',
+        iconOnly && 'pl-btn--icon',
         className,
       )}
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       {...rest}
     >
-      {loading && <span className="oc-spinner" aria-hidden="true" />}
+      {loading && <span className="pl-spinner" aria-hidden="true" />}
       {children}
     </button>
   );

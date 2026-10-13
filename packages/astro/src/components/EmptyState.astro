@@ -1,9 +1,9 @@
 ---
 /**
  * Illustrated empty state.
- * Illustration: `illustration="no-results"` (renders <oc-illustration>; register it with
- * `import '@orca-ui/illustrations/element'`) or the `illustration` slot, e.g.
- * `<Illustration slot="illustration" name="no-results" />` from @orca-ui/illustrations/astro.
+ * Illustration: `illustration="no-results"` (renders <pl-illustration>; register it with
+ * `import '@pelagic-ui/illustrations/element'`) or the `illustration` slot, e.g.
+ * `<Illustration slot="illustration" name="no-results" />` from @pelagic-ui/illustrations/astro.
  * Slots: illustration, icon (legacy), primary, secondary, action (legacy), actions.
  */
 interface Props {
@@ -35,28 +35,28 @@ const Heading = (headingLevel ? `h${headingLevel}` : 'p') as 'h3';
 const hasSlotIllustration = Astro.slots.has('illustration');
 const hasActions = ['primary', 'secondary', 'action', 'actions'].some((s) => Astro.slots.has(s));
 const classes = [
-  'oc-empty',
-  size !== 'default' && `oc-empty--${size}`,
-  align === 'start' && 'oc-empty--start',
-  layout === 'split' && 'oc-empty--split',
-  tone && `oc-empty--tone-${tone}`,
+  'pl-empty',
+  size !== 'default' && `pl-empty--${size}`,
+  align === 'start' && 'pl-empty--start',
+  layout === 'split' && 'pl-empty--split',
+  tone && `pl-empty--tone-${tone}`,
   className,
 ].filter(Boolean);
 ---
 
 <div class:list={classes}>
-  <div class="oc-empty__inner">
+  <div class="pl-empty__inner">
     {hasSlotIllustration ? (
-      <div class="oc-empty__media"><slot name="illustration" /></div>
+      <div class="pl-empty__media"><slot name="illustration" /></div>
     ) : typeof illustration === 'string' && illustration ? (
-      <div class="oc-empty__media"><oc-illustration name={illustration} compact={size === 'compact' ? '' : undefined}></oc-illustration></div>
+      <div class="pl-empty__media"><pl-illustration name={illustration} compact={size === 'compact' ? '' : undefined}></pl-illustration></div>
     ) : null}
-    {Astro.slots.has('icon') && <div class="oc-empty__icon" aria-hidden="true"><slot name="icon" /></div>}
-    <div class="oc-empty__body">
-      <Heading class="oc-empty__title">{title}</Heading>
-      {description && <p class="oc-empty__desc">{description}</p>}
+    {Astro.slots.has('icon') && <div class="pl-empty__icon" aria-hidden="true"><slot name="icon" /></div>}
+    <div class="pl-empty__body">
+      <Heading class="pl-empty__title">{title}</Heading>
+      {description && <p class="pl-empty__desc">{description}</p>}
       {hasActions && (
-        <div class="oc-empty__actions oc-empty__action"><slot name="primary" /><slot name="secondary" /><slot name="actions" /><slot name="action" /></div>
+        <div class="pl-empty__actions pl-empty__action"><slot name="primary" /><slot name="secondary" /><slot name="actions" /><slot name="action" /></div>
       )}
     </div>
   </div>

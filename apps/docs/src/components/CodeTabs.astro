@@ -18,7 +18,7 @@ const only = available.length === 1 ? available[0] : undefined;
   only ? (
     <div class="code-tabs code-tabs--single">
       <p class="code-tabs__label">
-        <span class="oc-badge oc-badge--primary">{only.label}</span>
+        <span class="pl-badge pl-badge--primary">{only.label}</span>
         {only.key === 'react' && <span class="muted">Coming to Vue, Svelte and Angular.</span>}
       </p>
       <CodeBlock code={code[only.key]!} lang={only.lang} file={`${label} · ${only.label}`} lang_label={only.lang.toUpperCase()} />

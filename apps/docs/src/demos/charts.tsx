@@ -28,7 +28,7 @@ import {
   calendarHeatmapData,
   linearScale,
   type ChartPoint,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Row, SwitchField } from './shared';
 
 /* ---------- Realistic datasets (a fictional SaaS company) ---------- */
@@ -103,12 +103,12 @@ const markets = [
 ];
 
 const scores = [
-  { metric: 'Accessibility', orca: 9.6, avg: 6.8 },
-  { metric: 'Theming', orca: 9.2, avg: 7.1 },
-  { metric: 'Bundle size', orca: 8.4, avg: 6.2 },
-  { metric: 'Docs', orca: 8.8, avg: 7.4 },
-  { metric: 'RTL', orca: 9.4, avg: 4.9 },
-  { metric: 'Frameworks', orca: 9.0, avg: 5.6 },
+  { metric: 'Accessibility', pelagic: 9.6, avg: 6.8 },
+  { metric: 'Theming', pelagic: 9.2, avg: 7.1 },
+  { metric: 'Bundle size', pelagic: 8.4, avg: 6.2 },
+  { metric: 'Docs', pelagic: 8.8, avg: 7.4 },
+  { metric: 'RTL', pelagic: 9.4, avg: 4.9 },
+  { metric: 'Frameworks', pelagic: 9.0, avg: 5.6 },
 ];
 
 const hours = ['00', '03', '06', '09', '12', '15', '18', '21'];
@@ -291,7 +291,7 @@ function RadarDemo() {
       x="metric"
       max={10}
       series={[
-        { key: 'orca', label: 'Orca UI' },
+        { key: 'pelagic', label: 'Pelagic UI' },
         { key: 'avg', label: 'Category average' },
       ]}
       height={340}
@@ -339,10 +339,10 @@ function GaugeDemo() {
         />
       </Row>
       <Row style={{ justifyContent: 'center' }}>
-        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setLoad((v) => Math.max(0, v - 10))}>
+        <button type="button" className="pl-btn pl-btn--secondary pl-btn--sm" onClick={() => setLoad((v) => Math.max(0, v - 10))}>
           −10
         </button>
-        <button type="button" className="oc-btn oc-btn--secondary oc-btn--sm" onClick={() => setLoad((v) => Math.min(100, v + 10))}>
+        <button type="button" className="pl-btn pl-btn--secondary pl-btn--sm" onClick={() => setLoad((v) => Math.min(100, v + 10))}>
           +10
         </button>
       </Row>
@@ -387,7 +387,7 @@ function SparkDemo() {
   return (
     <div className="demo-col">
       <table className="props-table" style={{ maxWidth: '32rem' }}>
-        <caption className="oc-sr-only">Key metrics with trends</caption>
+        <caption className="pl-sr-only">Key metrics with trends</caption>
         <thead>
           <tr>
             <th scope="col">Metric</th>

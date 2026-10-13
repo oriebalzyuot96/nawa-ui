@@ -8,7 +8,7 @@ import {
   type SoundState,
   type SoundTheme,
   type UiSoundName,
-} from '@orca-ui/core/sound';
+} from '@pelagic-ui/core/sound';
 
 export { emitUiSound, SOUND_THEMES, UI_SOUNDS };
 export type { SoundState, SoundTheme, UiSoundName };
@@ -18,7 +18,7 @@ export type { SoundState, SoundTheme, UiSoundName };
  * Components request sounds with `emitUiSound(name)`; inject this service once (e.g. in a settings panel) to enable it.
  */
 @Injectable({ providedIn: 'root' })
-export class OcSoundService implements OnDestroy {
+export class PlSoundService implements OnDestroy {
   readonly engine: SoundEngine = createSoundEngine();
   private readonly _state = signal<SoundState>(this.engine.getState());
   /** Reactive state (enabled, theme, volume, reduced, unlocked, supported). */

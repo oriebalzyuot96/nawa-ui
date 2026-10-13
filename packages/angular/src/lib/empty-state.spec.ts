@@ -1,12 +1,12 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { OcEmptyAction, OcEmptyState, type EmptyStateSize, type EmptyStateTone } from './display';
+import { PlEmptyAction, PlEmptyState, type EmptyStateSize, type EmptyStateTone } from './display';
 
-describe('OcEmptyState', () => {
+describe('PlEmptyState', () => {
   @Component({
-    imports: [OcEmptyState, OcEmptyAction],
+    imports: [PlEmptyState, PlEmptyAction],
     template: `
-      <oc-empty-state
+      <pl-empty-state
         title="No results"
         description="Try another search"
         [size]="size()"
@@ -16,11 +16,11 @@ describe('OcEmptyState', () => {
         [headingLevel]="level()"
         [illustration]="illustration()"
       >
-        <span ocEmptyIllustration class="art" aria-hidden="true"></span>
-        <button ocEmptyAction>Legacy</button>
-        <button ocEmptySecondary>Help</button>
-        <button ocEmptyPrimary>Clear</button>
-      </oc-empty-state>
+        <span plEmptyIllustration class="art" aria-hidden="true"></span>
+        <button plEmptyAction>Legacy</button>
+        <button plEmptySecondary>Help</button>
+        <button plEmptyPrimary>Clear</button>
+      </pl-empty-state>
     `,
   })
   class Host {
@@ -35,17 +35,17 @@ describe('OcEmptyState', () => {
   function setup() {
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
-    const el: HTMLElement = fixture.nativeElement.querySelector('oc-empty-state');
+    const el: HTMLElement = fixture.nativeElement.querySelector('pl-empty-state');
     return { fixture, host: fixture.componentInstance, el };
   }
 
   it('renders an h3 title, description and actions in primary → secondary → action order', () => {
     const { el } = setup();
-    expect(el.className).toBe('oc-empty');
-    expect(el.querySelector('h3.oc-empty__title')?.textContent).toBe('No results');
-    expect(el.querySelector('.oc-empty__desc')?.textContent).toBe('Try another search');
-    expect([...el.querySelectorAll('.oc-empty__actions button')].map((b) => b.textContent)).toEqual(['Clear', 'Help', 'Legacy']);
-    expect(el.querySelector('.oc-empty__media .art')).not.toBeNull();
+    expect(el.className).toBe('pl-empty');
+    expect(el.querySelector('h3.pl-empty__title')?.textContent).toBe('No results');
+    expect(el.querySelector('.pl-empty__desc')?.textContent).toBe('Try another search');
+    expect([...el.querySelectorAll('.pl-empty__actions button')].map((b) => b.textContent)).toEqual(['Clear', 'Help', 'Legacy']);
+    expect(el.querySelector('.pl-empty__media .art')).not.toBeNull();
   });
 
   it('maps size, align, layout, tone and heading level', () => {
@@ -56,20 +56,20 @@ describe('OcEmptyState', () => {
     host.tone.set('danger');
     host.level.set(1);
     fixture.detectChanges();
-    expect([...el.classList].sort()).toEqual(['oc-empty', 'oc-empty--page', 'oc-empty--split', 'oc-empty--start', 'oc-empty--tone-danger']);
-    expect(el.querySelector('h1.oc-empty__title')?.textContent).toBe('No results');
+    expect([...el.classList].sort()).toEqual(['pl-empty', 'pl-empty--page', 'pl-empty--split', 'pl-empty--start', 'pl-empty--tone-danger']);
+    expect(el.querySelector('h1.pl-empty__title')?.textContent).toBe('No results');
     host.level.set(false);
     fixture.detectChanges();
-    expect(el.querySelector('p.oc-empty__title')).not.toBeNull();
+    expect(el.querySelector('p.pl-empty__title')).not.toBeNull();
     expect(el.querySelector('h1, h2, h3, h4, h5, h6')).toBeNull();
   });
 
-  it('renders a scene name as <oc-illustration>', () => {
+  it('renders a scene name as <pl-illustration>', () => {
     const { fixture, host, el } = setup();
     host.illustration.set('no-results');
     host.size.set('compact');
     fixture.detectChanges();
-    const art = el.querySelector('.oc-empty__media oc-illustration');
+    const art = el.querySelector('.pl-empty__media pl-illustration');
     expect(art?.getAttribute('name')).toBe('no-results');
     expect(art?.hasAttribute('compact')).toBe(true);
   });

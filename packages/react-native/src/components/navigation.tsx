@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { fontSize, radius, space, useOrcaTheme } from '../theme';
+import { fontSize, radius, space, usePelagicTheme } from '../theme';
 import { getPageItems } from '../utils';
 
 export interface TabItem {
@@ -11,7 +11,7 @@ export interface TabItem {
 }
 
 export function Tabs({ tabs, value, defaultValue, onChange }: { tabs: TabItem[]; value?: string; defaultValue?: string; onChange?: (key: string) => void }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const [inner, setInner] = useState(defaultValue ?? tabs[0]?.key);
   const active = value ?? inner;
   const select = (key: string) => {
@@ -44,7 +44,7 @@ export function Tabs({ tabs, value, defaultValue, onChange }: { tabs: TabItem[];
 }
 
 export function Breadcrumb({ items }: { items: { label: string; onPress?: () => void }[] }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View accessibilityRole="menubar" style={styles.breadcrumb}>
       {items.map((item, i) => {
@@ -63,7 +63,7 @@ export function Breadcrumb({ items }: { items: { label: string; onPress?: () => 
 }
 
 export function Pagination({ value, pageCount, onChange }: { value: number; pageCount: number; onChange: (page: number) => void }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const btn = (label: string, page: number, disabled: boolean, selected = false, a11y?: string) => (
     <Pressable
       key={`${label}-${page}`}
@@ -99,7 +99,7 @@ export interface AccordionItem {
 }
 
 export function Accordion({ items, multiple = false, defaultOpen = [] }: { items: AccordionItem[]; multiple?: boolean; defaultOpen?: string[] }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const [open, setOpen] = useState<string[]>(defaultOpen);
   const toggle = (key: string) =>
     setOpen((prev) => (prev.includes(key) ? prev.filter((k) => k !== key) : multiple ? [...prev, key] : [key]));

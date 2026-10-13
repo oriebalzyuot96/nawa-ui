@@ -2,37 +2,37 @@
 // web build produces (packages/core/tokens.js) and against the color-mix math.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:orca_ui/orca_ui.dart';
+import 'package:pelagic_ui/pelagic_ui.dart';
 
-OrcaColors _colors(OrcaMode mode, OrcaAccent accent) => orcaColorThemes[mode]![accent]!;
+PelagicColors _colors(PelagicMode mode, PelagicAccent accent) => pelagicColorThemes[mode]![accent]!;
 
 void main() {
   group('generated tokens', () {
     test('contain every mode x accent and 3 shapes', () {
-      expect(orcaColorThemes.length, 3);
-      for (final OrcaMode mode in OrcaMode.values) {
-        expect(orcaColorThemes[mode]!.length, OrcaAccent.values.length);
+      expect(pelagicColorThemes.length, 3);
+      for (final PelagicMode mode in PelagicMode.values) {
+        expect(pelagicColorThemes[mode]!.length, PelagicAccent.values.length);
       }
       // The core source had 6 accents at first; more may be added, never fewer.
-      expect(OrcaAccent.values.length, greaterThanOrEqualTo(6));
-      expect(OrcaAccent.values, containsAll(<OrcaAccent>[
-        OrcaAccent.teal,
-        OrcaAccent.indigo,
-        OrcaAccent.rose,
-        OrcaAccent.amber,
-        OrcaAccent.emerald,
-        OrcaAccent.slate,
+      expect(PelagicAccent.values.length, greaterThanOrEqualTo(6));
+      expect(PelagicAccent.values, containsAll(<PelagicAccent>[
+        PelagicAccent.teal,
+        PelagicAccent.indigo,
+        PelagicAccent.rose,
+        PelagicAccent.amber,
+        PelagicAccent.emerald,
+        PelagicAccent.slate,
       ]));
-      expect(orcaShapes.length, 3);
-      expect(orcaShapes[OrcaShape.sharp], const OrcaRadii(sm: 2, md: 4, lg: 6));
-      expect(orcaShapes[OrcaShape.standard], const OrcaRadii(sm: 8, md: 12, lg: 16));
-      expect(orcaShapes[OrcaShape.round], const OrcaRadii(sm: 12, md: 18, lg: 24));
-      expect(orcaSoftMixPrimary, 0.14);
-      expect(orcaSoftMixStatus, 0.12);
+      expect(pelagicShapes.length, 3);
+      expect(pelagicShapes[PelagicShape.sharp], const PelagicRadii(sm: 2, md: 4, lg: 6));
+      expect(pelagicShapes[PelagicShape.standard], const PelagicRadii(sm: 8, md: 12, lg: 16));
+      expect(pelagicShapes[PelagicShape.round], const PelagicRadii(sm: 12, md: 18, lg: 24));
+      expect(pelagicSoftMixPrimary, 0.14);
+      expect(pelagicSoftMixStatus, 0.12);
     });
 
     test('light x teal matches the web tokens', () {
-      final OrcaColors c = _colors(OrcaMode.light, OrcaAccent.teal);
+      final PelagicColors c = _colors(PelagicMode.light, PelagicAccent.teal);
       expect(c.brightness, Brightness.light);
       expect(c.primary, const Color(0xFF0D7377));
       expect(c.primaryInk, const Color(0xFF0B6B6B));
@@ -47,7 +47,7 @@ void main() {
     });
 
     test('dark x indigo matches the web tokens', () {
-      final OrcaColors c = _colors(OrcaMode.dark, OrcaAccent.indigo);
+      final PelagicColors c = _colors(PelagicMode.dark, PelagicAccent.indigo);
       expect(c.brightness, Brightness.dark);
       expect(c.primary, const Color(0xFFA5B4FC));
       expect(c.onPrimary, const Color(0xFF1E1B4B));
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('hc x rose matches the web tokens', () {
-      final OrcaColors c = _colors(OrcaMode.hc, OrcaAccent.rose);
+      final PelagicColors c = _colors(PelagicMode.hc, PelagicAccent.rose);
       expect(c.brightness, Brightness.light);
       expect(c.primary, const Color(0xFF87001F));
       expect(c.primarySoft, const Color(0xFFEEDBE0));
@@ -71,70 +71,70 @@ void main() {
     });
 
     test('light x amber matches the web tokens', () {
-      final OrcaColors c = _colors(OrcaMode.light, OrcaAccent.amber);
+      final PelagicColors c = _colors(PelagicMode.light, PelagicAccent.amber);
       expect(c.primary, const Color(0xFFA34A06));
       expect(c.primarySoft, const Color(0xFFF2E6DC));
     });
 
     test('soft tints equal color-mix(in srgb) of the source colors', () {
       // (mode, accent, raw primary, raw surface) from packages/core/src/themes.mjs.
-      final List<(OrcaMode, OrcaAccent, int, int)> cases = <(OrcaMode, OrcaAccent, int, int)>[
-        (OrcaMode.light, OrcaAccent.teal, 0x0D7377, 0xFFFFFF),
-        (OrcaMode.dark, OrcaAccent.indigo, 0xA5B4FC, 0x10161B),
-        (OrcaMode.hc, OrcaAccent.rose, 0x87001F, 0xFFFFFF),
-        (OrcaMode.dark, OrcaAccent.emerald, 0x34D399, 0x10161B),
+      final List<(PelagicMode, PelagicAccent, int, int)> cases = <(PelagicMode, PelagicAccent, int, int)>[
+        (PelagicMode.light, PelagicAccent.teal, 0x0D7377, 0xFFFFFF),
+        (PelagicMode.dark, PelagicAccent.indigo, 0xA5B4FC, 0x10161B),
+        (PelagicMode.hc, PelagicAccent.rose, 0x87001F, 0xFFFFFF),
+        (PelagicMode.dark, PelagicAccent.emerald, 0x34D399, 0x10161B),
       ];
-      for (final (OrcaMode mode, OrcaAccent accent, int primary, int surface) in cases) {
+      for (final (PelagicMode mode, PelagicAccent accent, int primary, int surface) in cases) {
         expect(
           _colors(mode, accent).primarySoft,
-          Color(OrcaColorMath.mixRgb(primary, surface, orcaSoftMixPrimary)),
+          Color(PelagicColorMath.mixRgb(primary, surface, pelagicSoftMixPrimary)),
           reason: '$mode / $accent primarySoft',
         );
       }
       // Status tint: dark success #4cd987 into #10161b at 12%.
       expect(
-        _colors(OrcaMode.dark, OrcaAccent.teal).successSoft,
-        Color(OrcaColorMath.mixRgb(0x4CD987, 0x10161B, orcaSoftMixStatus)),
+        _colors(PelagicMode.dark, PelagicAccent.teal).successSoft,
+        Color(PelagicColorMath.mixRgb(0x4CD987, 0x10161B, pelagicSoftMixStatus)),
       );
     });
 
     test('focus color is the primary color in every theme', () {
-      for (final OrcaMode mode in OrcaMode.values) {
-        for (final OrcaAccent accent in OrcaAccent.values) {
+      for (final PelagicMode mode in PelagicMode.values) {
+        for (final PelagicAccent accent in PelagicAccent.values) {
           expect(_colors(mode, accent).focus, _colors(mode, accent).primary);
         }
       }
     });
   });
 
-  group('OrcaThemeData', () {
+  group('PelagicThemeData', () {
     test('build wires the tokens into a Material 3 ThemeData', () {
-      final ThemeData theme = OrcaThemeData.build(
-        mode: OrcaMode.dark,
-        accent: OrcaAccent.indigo,
-        shape: OrcaShape.round,
+      final ThemeData theme = PelagicThemeData.build(
+        mode: PelagicMode.dark,
+        accent: PelagicAccent.indigo,
+        shape: PelagicShape.round,
       );
       expect(theme.useMaterial3, isTrue);
       expect(theme.brightness, Brightness.dark);
       expect(theme.colorScheme.primary, const Color(0xFFA5B4FC));
       expect(theme.colorScheme.surface, const Color(0xFF10161B));
       expect(theme.colorScheme.error, const Color(0xFFFF8A8A));
-      final OrcaTheme? orca = theme.extension<OrcaTheme>();
-      expect(orca, isNotNull);
-      expect(orca!.mode, OrcaMode.dark);
-      expect(orca.accent, OrcaAccent.indigo);
-      expect(orca.radii.md, 18);
+      final PelagicTheme? pelagic = theme.extension<PelagicTheme>();
+      expect(pelagic, isNotNull);
+      expect(pelagic!.mode, PelagicMode.dark);
+      expect(pelagic.accent, PelagicAccent.indigo);
+      expect(pelagic.radii.md, 18);
     });
 
     testWidgets('system mode follows high contrast and platform brightness', (WidgetTester tester) async {
-      late OrcaMode resolved;
+      late PelagicMode resolved;
       Future<void> pumpWith(MediaQueryData data) async {
         await tester.pumpWidget(
           MediaQuery(
             data: data,
             child: Builder(
               builder: (BuildContext context) {
-                resolved = OrcaThemeData.resolveMode(context, OrcaThemeMode.system);
+                resolved = PelagicThemeData.resolveMode(context, PelagicThemeMode.system);
                 return const SizedBox.shrink();
               },
             ),
@@ -143,29 +143,29 @@ void main() {
       }
 
       await pumpWith(const MediaQueryData());
-      expect(resolved, OrcaMode.light);
+      expect(resolved, PelagicMode.light);
       await pumpWith(const MediaQueryData(platformBrightness: Brightness.dark));
-      expect(resolved, OrcaMode.dark);
+      expect(resolved, PelagicMode.dark);
       await pumpWith(const MediaQueryData(platformBrightness: Brightness.dark, highContrast: true));
-      expect(resolved, OrcaMode.hc);
+      expect(resolved, PelagicMode.hc);
     });
 
-    testWidgets('OrcaTheme.of reads the extension', (WidgetTester tester) async {
-      late OrcaTheme orca;
+    testWidgets('PelagicTheme.of reads the extension', (WidgetTester tester) async {
+      late PelagicTheme pelagic;
       await tester.pumpWidget(
         MaterialApp(
-          theme: OrcaThemeData.build(mode: OrcaMode.hc, accent: OrcaAccent.slate),
+          theme: PelagicThemeData.build(mode: PelagicMode.hc, accent: PelagicAccent.slate),
           home: Builder(
             builder: (BuildContext context) {
-              orca = OrcaTheme.of(context);
+              pelagic = PelagicTheme.of(context);
               return const SizedBox.shrink();
             },
           ),
         ),
       );
-      expect(orca.mode, OrcaMode.hc);
-      expect(orca.isHighContrast, isTrue);
-      expect(orca.colors.primary, const Color(0xFF000000));
+      expect(pelagic.mode, PelagicMode.hc);
+      expect(pelagic.isHighContrast, isTrue);
+      expect(pelagic.colors.primary, const Color(0xFF000000));
     });
   });
 }

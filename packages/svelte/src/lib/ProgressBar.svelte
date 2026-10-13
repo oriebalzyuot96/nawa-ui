@@ -12,7 +12,7 @@
   aria-valuemin={0}
   aria-valuemax={100}
   aria-valuenow={clamped}
-  class={['oc-progress', indeterminate && 'oc-progress--indeterminate']}
+  class={['pl-progress', indeterminate && 'pl-progress--indeterminate']}
 >
-  <div class="oc-progress__bar" style:width={indeterminate ? undefined : `${clamped}%`}></div>
+  <div class="pl-progress__bar" style:width={indeterminate ? undefined : `${clamped}%`}></div>
 </div>

@@ -2,10 +2,10 @@
 import Base from '../layouts/Base.astro';
 import CodeTabs from '../components/CodeTabs.astro';
 import { snippets } from '../data/snippets';
-import Badge from '@orca-ui/astro/components/Badge';
-import Button from '@orca-ui/astro/components/Button';
-import ProgressBar from '@orca-ui/astro/components/ProgressBar';
-import Checkbox from '@orca-ui/astro/components/Checkbox';
+import Badge from '@pelagic-ui/astro/components/Badge';
+import Button from '@pelagic-ui/astro/components/Button';
+import ProgressBar from '@pelagic-ui/astro/components/ProgressBar';
+import Checkbox from '@pelagic-ui/astro/components/Checkbox';
 
 const modes = [
   { key: 'light', label: 'Light' },
@@ -17,7 +17,7 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
 
 <Base
   title="Themes"
-  description="Orca UI ships 21 color themes — light, dark and high contrast in seven accents — plus three corner shapes. Every combination passes WCAG 2.2 AA contrast checks."
+  description="Pelagic UI ships 21 color themes — light, dark and high contrast in seven accents — plus three corner shapes. Every combination passes WCAG 2.2 AA contrast checks."
 >
   <section class="section">
     <div class="container">
@@ -36,31 +36,31 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
       <p class="eyebrow">Custom brand colors</p>
       <h2 id="custom-brand">Your color, every mode, still accessible</h2>
       <p class="lead">
-        Pass any color to <code>createTheme()</code>. Orca keeps its hue and tunes lightness and chroma in OKLCH until every text,
+        Pass any color to <code>createTheme()</code>. Pelagic keeps its hue and tunes lightness and chroma in OKLCH until every text,
         control and focus pair passes WCAG 2.2 AA in light, dark and high contrast. Try a color that is hard to use, like a bright yellow.
       </p>
 
       <div class="brand-lab" data-brand-lab>
         <div class="brand-lab__controls">
-          <div class="oc-field">
-            <label class="oc-label" for="brand-color">Brand color</label>
+          <div class="pl-field">
+            <label class="pl-label" for="brand-color">Brand color</label>
             <div class="brand-lab__pick">
               <input id="brand-color-swatch" type="color" value="#ff6a00" aria-label="Pick a brand color" data-brand-swatch />
-              <input id="brand-color" class="oc-input" value="#ff6a00" spellcheck="false" autocomplete="off" aria-describedby="brand-color-hint brand-color-error" data-brand-input />
+              <input id="brand-color" class="pl-input" value="#ff6a00" spellcheck="false" autocomplete="off" aria-describedby="brand-color-hint brand-color-error" data-brand-input />
             </div>
-            <p id="brand-color-hint" class="oc-hint">Hex, rgb(), hsl(), oklch() or a color name.</p>
-            <p id="brand-color-error" class="oc-error-text" hidden data-brand-error>That is not a color Orca can read.</p>
+            <p id="brand-color-hint" class="pl-hint">Hex, rgb(), hsl(), oklch() or a color name.</p>
+            <p id="brand-color-error" class="pl-error-text" hidden data-brand-error>That is not a color Pelagic can read.</p>
           </div>
-          <div class="oc-field">
-            <label class="oc-label" for="brand-neutral">Tint the neutrals (optional)</label>
+          <div class="pl-field">
+            <label class="pl-label" for="brand-neutral">Tint the neutrals (optional)</label>
             <div class="brand-lab__pick">
-              <input id="brand-neutral" class="oc-input" placeholder="e.g. #334155" spellcheck="false" autocomplete="off" data-brand-neutral />
+              <input id="brand-neutral" class="pl-input" placeholder="e.g. #334155" spellcheck="false" autocomplete="off" data-brand-neutral />
             </div>
           </div>
           <div class="brand-lab__presets" role="group" aria-label="Example brand colors">
             {['#ff6a00', '#ffd400', '#e11d48', '#0ea5e9', '#16a34a', '#7c3aed', '#111827'].map((c) => (
               <button type="button" class="brand-lab__preset" data-brand-preset={c} style={`--preset: ${c}`}>
-                <span class="oc-sr-only">Use {c}</span>
+                <span class="pl-sr-only">Use {c}</span>
               </button>
             ))}
           </div>
@@ -71,10 +71,10 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
             <div><dt>WCAG pairs</dt><dd data-brand-out="pairs">All pass</dd></div>
           </dl>
           <div class="brand-lab__actions">
-            <button type="button" class="oc-btn oc-btn--primary oc-btn--sm" data-brand-copy="css">Copy CSS</button>
-            <button type="button" class="oc-btn oc-btn--secondary oc-btn--sm" data-brand-copy="code">Copy createTheme call</button>
+            <button type="button" class="pl-btn pl-btn--primary pl-btn--sm" data-brand-copy="css">Copy CSS</button>
+            <button type="button" class="pl-btn pl-btn--secondary pl-btn--sm" data-brand-copy="code">Copy createTheme call</button>
           </div>
-          <p class="oc-sr-only" role="status" aria-live="polite" data-brand-status></p>
+          <p class="pl-sr-only" role="status" aria-live="polite" data-brand-status></p>
         </div>
 
         <div class="brand-lab__previews">
@@ -109,7 +109,7 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
       </details>
       <p class="muted">
         Bake a brand into the build instead (CSS plus React Native and Flutter tokens):
-        <code>node packages/core/scripts/build.mjs --brand "#ff6a00" --brand-name acme</code>, or an <code>orca.config.json</code> with
+        <code>node packages/core/scripts/build.mjs --brand "#ff6a00" --brand-name acme</code>, or an <code>pelagic.config.json</code> with
         <code>{'{ "brands": [{ "name": "acme", "primary": "#ff6a00", "default": true }] }'}</code>.
       </p>
     </div>
@@ -164,7 +164,7 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
 </Base>
 
 <script>
-  import { applyCustomTheme, createTheme, themeToCode, type CustomTheme } from '@orca-ui/core/theme';
+  import { applyCustomTheme, createTheme, themeToCode, type CustomTheme } from '@pelagic-ui/core/theme';
 
   const lab = document.querySelector<HTMLElement>('[data-brand-lab]');
   if (lab) {
@@ -225,27 +225,27 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
 
 <style>
   .brand-lab { display: grid; grid-template-columns: minmax(0, 20rem) minmax(0, 1fr); gap: 1.5rem; margin-block: 1.5rem 1rem; align-items: start; }
-  .brand-lab__controls { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--oc-border-subtle); border-radius: var(--oc-radius-lg); background: var(--oc-surface); box-shadow: var(--oc-elev-1); }
+  .brand-lab__controls { display: grid; gap: 1rem; padding: 1.25rem; border: 1px solid var(--pl-border-subtle); border-radius: var(--pl-radius-lg); background: var(--pl-surface); box-shadow: var(--pl-elev-1); }
   .brand-lab__pick { display: flex; gap: 0.5rem; align-items: center; }
-  .brand-lab__pick .oc-input { flex: 1; min-width: 0; font-family: var(--oc-font-mono); }
-  .brand-lab__pick input[type='color'] { flex: none; width: 2.75rem; height: 2.5rem; padding: 0.125rem; border: 1px solid var(--oc-control-border); border-radius: var(--oc-radius); background: var(--oc-surface); cursor: pointer; }
-  .brand-lab__pick input[type='color']:focus-visible { outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+  .brand-lab__pick .pl-input { flex: 1; min-width: 0; font-family: var(--pl-font-mono); }
+  .brand-lab__pick input[type='color'] { flex: none; width: 2.75rem; height: 2.5rem; padding: 0.125rem; border: 1px solid var(--pl-control-border); border-radius: var(--pl-radius); background: var(--pl-surface); cursor: pointer; }
+  .brand-lab__pick input[type='color']:focus-visible { outline: var(--pl-focus-width) solid var(--pl-focus); outline-offset: 2px; }
   .brand-lab__presets { display: flex; flex-wrap: wrap; gap: 0.5rem; }
-  .brand-lab__preset { width: 2rem; height: 2rem; padding: 0; border: 2px solid var(--oc-surface); border-radius: 999px; background: var(--preset); box-shadow: 0 0 0 1px var(--oc-control-border); cursor: pointer; }
-  .brand-lab__preset:focus-visible { outline: var(--oc-focus-width) solid var(--oc-focus); outline-offset: 2px; }
+  .brand-lab__preset { width: 2rem; height: 2rem; padding: 0; border: 2px solid var(--pl-surface); border-radius: 999px; background: var(--preset); box-shadow: 0 0 0 1px var(--pl-control-border); cursor: pointer; }
+  .brand-lab__preset:focus-visible { outline: var(--pl-focus-width) solid var(--pl-focus); outline-offset: 2px; }
   .brand-lab__report { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; margin: 0; }
   .brand-lab__report div { display: grid; gap: 0.125rem; }
-  .brand-lab__report dt { color: var(--oc-text-muted); font-size: var(--oc-text-xs); }
-  .brand-lab__report dd { margin: 0; font-family: var(--oc-font-mono); font-size: var(--oc-text-sm); font-weight: 600; }
+  .brand-lab__report dt { color: var(--pl-text-muted); font-size: var(--pl-text-xs); }
+  .brand-lab__report dd { margin: 0; font-family: var(--pl-font-mono); font-size: var(--pl-text-sm); font-weight: 600; }
   .brand-lab__actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .brand-lab__previews { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(14rem, 100%), 1fr)); gap: 1rem; }
-  .brand-lab__text { margin: 0; font-size: var(--oc-text-md); line-height: var(--oc-leading); }
-  .brand-lab__text a { color: var(--oc-primary-ink); }
-  .brand-lab__muted { color: var(--oc-text-muted); }
+  .brand-lab__text { margin: 0; font-size: var(--pl-text-md); line-height: var(--pl-leading); }
+  .brand-lab__text a { color: var(--pl-primary-ink); }
+  .brand-lab__muted { color: var(--pl-text-muted); }
   .brand-lab [hidden] { display: none; }
   .brand-lab__css { margin-block: 0.5rem 1rem; }
   .brand-lab__css summary { cursor: pointer; font-weight: 600; }
-  .brand-lab__css pre { max-height: 18rem; overflow: auto; padding: 1rem; border-radius: var(--oc-radius); background: #0d1117; color: #e6edf3; font-size: 0.8125rem; }
+  .brand-lab__css pre { max-height: 18rem; overflow: auto; padding: 1rem; border-radius: var(--pl-radius); background: #0d1117; color: #e6edf3; font-size: 0.8125rem; }
   @media (max-width: 52rem) {
     .brand-lab { grid-template-columns: minmax(0, 1fr); }
   }

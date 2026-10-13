@@ -3,8 +3,8 @@ import { REGISTRY } from './registry';
 import { newId } from './tree';
 import { ACCENTS, DEFAULT_THEME, MODES, SHAPES, type SpaceDoc, type SpaceNode } from './types';
 
-const SAVE_KEY = 'orca-space:saved';
-const DRAFT_KEY = 'orca-space:draft';
+const SAVE_KEY = 'pelagic-space:saved';
+const DRAFT_KEY = 'pelagic-space:draft';
 
 export function saveDoc(doc: SpaceDoc, draft = false): boolean {
   try {

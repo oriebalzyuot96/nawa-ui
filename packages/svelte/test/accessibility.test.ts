@@ -4,12 +4,12 @@ import { render } from '@testing-library/svelte';
 import axe from 'axe-core';
 import { flushSync } from 'svelte';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { A11Y_STORAGE_KEY, a11yOptions } from '@orca-ui/core/a11y-prefs';
+import { A11Y_STORAGE_KEY, a11yOptions } from '@pelagic-ui/core/a11y-prefs';
 import { AccessibilityPanel } from '../src/lib/index';
 import A11yBind from './fixtures/A11yBind.svelte';
 
 const html = document.documentElement;
-const dialog = () => document.querySelector<HTMLElement>('.oc-a11y-panel')!;
+const dialog = () => document.querySelector<HTMLElement>('.pl-a11y-panel')!;
 const radio = (name: string) => [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
 const byLabel = (role: string, name: string) =>
   [...document.querySelectorAll<HTMLElement>(`[role="${role}"]`)].find((el) => document.getElementById(el.getAttribute('aria-labelledby') ?? '')?.textContent === name)!;
@@ -18,7 +18,7 @@ afterEach(() => {
   document.body.innerHTML = '';
   localStorage.clear();
   for (const a of [...html.attributes]) if (a.name.startsWith('data-a11y-')) html.removeAttribute(a.name);
-  html.style.removeProperty('--oc-user-font-scale');
+  html.style.removeProperty('--pl-user-font-scale');
 });
 
 describe('AccessibilityPanel (Svelte)', () => {

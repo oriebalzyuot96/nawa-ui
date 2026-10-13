@@ -333,7 +333,7 @@ export const advancedForms: CategoryDoc = {
       a11y: 'A real <label> linked with htmlFor — not a placeholder — so the name never disappears.',
       code: {
         react: `<FloatLabel label="Username">
-  <input className="oc-input" value={user} onChange={(e) => setUser(e.target.value)} />
+  <input className="pl-input" value={user} onChange={(e) => setUser(e.target.value)} />
 </FloatLabel>`,
       },
     },
@@ -347,7 +347,7 @@ export const advancedForms: CategoryDoc = {
       ],
       code: {
         react: `<IftaLabel label="Email">
-  <input className="oc-input" type="email" />
+  <input className="pl-input" type="email" />
 </IftaLabel>`,
       },
     },
@@ -363,7 +363,7 @@ export const advancedForms: CategoryDoc = {
       code: {
         react: `<InputGroup>
   <InputGroupAddon>https://</InputGroupAddon>
-  <input className="oc-input" aria-label="Website" />
+  <input className="pl-input" aria-label="Website" />
   <Button>Go</Button>
 </InputGroup>`,
       },
@@ -379,7 +379,7 @@ export const advancedForms: CategoryDoc = {
       code: {
         react: `<IconField iconPosition="start">
   <InputIcon>🔍</InputIcon>
-  <input className="oc-input" type="search" aria-label="Search" />
+  <input className="pl-input" type="search" aria-label="Search" />
 </IconField>`,
       },
     },

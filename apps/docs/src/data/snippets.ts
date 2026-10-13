@@ -15,35 +15,35 @@ export const frameworks: { key: Framework; label: string; lang: string }[] = [
 ];
 
 export const install: CodeSet = {
-  react: `npm i @orca-ui/react @orca-ui/core
+  react: `npm i @pelagic-ui/react @pelagic-ui/core
 
 // main.tsx
-import '@orca-ui/core/style.css';`,
-  vue: `npm i @orca-ui/vue @orca-ui/core
+import '@pelagic-ui/core/style.css';`,
+  vue: `npm i @pelagic-ui/vue @pelagic-ui/core
 
 // main.ts
-import '@orca-ui/core/style.css';`,
-  svelte: `npm i @orca-ui/svelte @orca-ui/core
+import '@pelagic-ui/core/style.css';`,
+  svelte: `npm i @pelagic-ui/svelte @pelagic-ui/core
 
 // +layout.svelte
-import '@orca-ui/core/style.css';`,
-  astro: `npm i @orca-ui/astro @orca-ui/core
+import '@pelagic-ui/core/style.css';`,
+  astro: `npm i @pelagic-ui/astro @pelagic-ui/core
 
 ---
 // src/layouts/Layout.astro
-import '@orca-ui/core/style.css';
-import ThemeScript from '@orca-ui/astro/components/ThemeScript';
+import '@pelagic-ui/core/style.css';
+import ThemeScript from '@pelagic-ui/astro/components/ThemeScript';
 ---
 <head><ThemeScript /></head>`,
-  rn: `npm i @orca-ui/react-native @orca-ui/core
+  rn: `npm i @pelagic-ui/react-native @pelagic-ui/core
 
 // App.tsx
-import { OrcaProvider } from '@orca-ui/react-native';
-export default () => <OrcaProvider mode="system" accent="teal">{/* app */}</OrcaProvider>;`,
-  angular: `npm i @orca-ui/angular @orca-ui/core
+import { PelagicProvider } from '@pelagic-ui/react-native';
+export default () => <PelagicProvider mode="system" accent="teal">{/* app */}</PelagicProvider>;`,
+  angular: `npm i @pelagic-ui/angular @pelagic-ui/core
 
 /* src/styles.css */
-@import '@orca-ui/core/style.css';`,
+@import '@pelagic-ui/core/style.css';`,
 };
 
 export const snippets: Record<string, CodeSet> = {
@@ -58,21 +58,21 @@ export const snippets: Record<string, CodeSet> = {
 <Button variant="outline">Preview</Button>
 <Button variant="danger" loading>Deleting</Button>`,
     astro: `---
-import Button from '@orca-ui/astro/components/Button';
+import Button from '@pelagic-ui/astro/components/Button';
 ---
 <Button>Save</Button>
 <Button variant="outline">Preview</Button>`,
     rn: `<Button title="Save" />
 <Button title="Preview" variant="outline" />
 <Button title="Deleting" variant="danger" loading />`,
-    angular: `import { OcButton } from '@orca-ui/angular';
+    angular: `import { PlButton } from '@pelagic-ui/angular';
 
 @Component({
-  imports: [OcButton],
+  imports: [PlButton],
   template: \`
-    <button ocButton>Save</button>
-    <button ocButton variant="outline">Preview</button>
-    <button ocButton variant="danger" [loading]="true">Deleting</button>\`,
+    <button plButton>Save</button>
+    <button plButton variant="outline">Preview</button>
+    <button plButton variant="danger" [loading]="true">Deleting</button>\`,
 })
 export class Actions {}`,
   },
@@ -130,10 +130,10 @@ export class Actions {}`,
   This cannot be undone.
   {#snippet footer()}<Button variant="danger">Delete</Button>{/snippet}
 </Dialog>`,
-    astro: `<Button data-oc-open="confirm">Open</Button>
+    astro: `<Button data-pl-open="confirm">Open</Button>
 <Dialog id="confirm" title="Delete project?">
   This cannot be undone.
-  <Button slot="footer" variant="danger" data-oc-close>Delete</Button>
+  <Button slot="footer" variant="danger" data-pl-close>Delete</Button>
 </Dialog>`,
     rn: `<Dialog visible={open} title="Delete project?" onClose={() => setOpen(false)}
   footer={<Button title="Delete" variant="danger" />}>
@@ -181,21 +181,21 @@ export class Actions {}`,
     svelte: `<Toast items={toasts} ondismiss={(id) => (toasts = toasts.filter((t) => t.id !== id))} />`,
     astro: `<Toaster />
 <script>
-  window.orcaToast({ title: 'Saved', message: 'Changes are live', variant: 'success' });
+  window.pelagicToast({ title: 'Saved', message: 'Changes are live', variant: 'success' });
 </script>`,
     rn: `<Toast items={toasts} onDismiss={(id) => setToasts((t) => t.filter((x) => x.id !== id))} />`,
   },
   theme: {
-    react: `import { applyTheme, saveTheme } from '@orca-ui/react';
+    react: `import { applyTheme, saveTheme } from '@pelagic-ui/react';
 applyTheme({ mode: 'dark', accent: 'indigo', shape: 'round' });`,
-    vue: `import { applyTheme } from '@orca-ui/vue';
+    vue: `import { applyTheme } from '@pelagic-ui/vue';
 applyTheme({ mode: 'hc' }); // high contrast`,
-    svelte: `import { applyTheme } from '@orca-ui/svelte';
+    svelte: `import { applyTheme } from '@pelagic-ui/svelte';
 applyTheme({ mode: 'system', accent: 'rose' });`,
     astro: `<html data-theme="dark" data-accent="emerald" data-shape="sharp">
 <!-- or scope a section: <section data-theme="dark"> -->`,
-    rn: `<OrcaProvider mode="system" accent="indigo">
+    rn: `<PelagicProvider mode="system" accent="indigo">
   <App />
-</OrcaProvider>`,
+</PelagicProvider>`,
   },
 };

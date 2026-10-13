@@ -181,7 +181,7 @@ export const charts: CategoryDoc = {
       a11y: chartA11y,
       code: {
         react: `<RadarChart title="Framework scores" data={scores} x="metric" max={10}
-  series={[{ key: 'orca', label: 'Orca UI' }, { key: 'other', label: 'Average' }]} />`,
+  series={[{ key: 'pelagic', label: 'Pelagic UI' }, { key: 'other', label: 'Average' }]} />`,
       },
     },
     {

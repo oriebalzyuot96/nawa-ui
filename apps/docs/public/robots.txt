@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://oriebalzyuot96.github.io/orca-ui/sitemap-index.xml
+Sitemap: https://oriebalzyuot96.github.io/pelagic-ui/sitemap-index.xml

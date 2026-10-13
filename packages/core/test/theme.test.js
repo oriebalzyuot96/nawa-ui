@@ -45,7 +45,7 @@ describe('applyTheme', () => {
 
 describe('saveTheme / loadTheme', () => {
   it('round-trips a theme through localStorage under the documented key', () => {
-    expect(THEME_STORAGE_KEY).toBe('orca-ui-theme');
+    expect(THEME_STORAGE_KEY).toBe('pelagic-ui-theme');
     const choice = { mode: 'dark', accent: 'emerald', shape: 'default' };
     saveTheme(choice);
     expect(JSON.parse(localStorage.getItem(THEME_STORAGE_KEY))).toEqual(choice);

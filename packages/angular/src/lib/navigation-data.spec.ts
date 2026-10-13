@@ -1,17 +1,17 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { OcPagination, OcTabPanel, OcTabs } from './navigation';
-import { OcCell, OcDataTable, type DataColumn, type SortState } from './data-table';
+import { PlPagination, PlTabPanel, PlTabs } from './navigation';
+import { PlCell, PlDataTable, type DataColumn, type SortState } from './data-table';
 
-describe('OcTabs', () => {
+describe('PlTabs', () => {
   @Component({
-    imports: [OcTabs, OcTabPanel],
+    imports: [PlTabs, PlTabPanel],
     template: `
-      <oc-tabs label="Settings" [tabs]="tabs" [(value)]="active">
-        <ng-template ocTabPanel="profile"><p class="content">Profile panel</p></ng-template>
-        <ng-template ocTabPanel="billing"><p class="content">Billing panel</p></ng-template>
-        <ng-template ocTabPanel="team"><p class="content">Team panel</p></ng-template>
-      </oc-tabs>
+      <pl-tabs label="Settings" [tabs]="tabs" [(value)]="active">
+        <ng-template plTabPanel="profile"><p class="content">Profile panel</p></ng-template>
+        <ng-template plTabPanel="billing"><p class="content">Billing panel</p></ng-template>
+        <ng-template plTabPanel="team"><p class="content">Team panel</p></ng-template>
+      </pl-tabs>
     `,
   })
   class Host {
@@ -74,10 +74,10 @@ describe('OcTabs', () => {
   });
 });
 
-describe('OcPagination', () => {
+describe('PlPagination', () => {
   @Component({
-    imports: [OcPagination],
-    template: `<oc-pagination [(page)]="page" [pageCount]="10" (pageChange)="changes.push($event)" />`,
+    imports: [PlPagination],
+    template: `<pl-pagination [(page)]="page" [pageCount]="10" (pageChange)="changes.push($event)" />`,
   })
   class Host {
     page = signal(5);
@@ -90,7 +90,7 @@ describe('OcPagination', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('nav')?.getAttribute('aria-label')).toBe('Pagination');
     expect(el.querySelector('[aria-current="page"]')?.textContent?.trim()).toBe('5');
-    expect(el.querySelectorAll('.oc-pagination__ellipsis').length).toBe(2);
+    expect(el.querySelectorAll('.pl-pagination__ellipsis').length).toBe(2);
 
     (el.querySelector('[aria-label="Next page"]') as HTMLButtonElement).click();
     await fixture.whenStable();
@@ -112,19 +112,19 @@ interface Person extends Record<string, unknown> {
   age: number;
 }
 
-describe('OcDataTable', () => {
+describe('PlDataTable', () => {
   @Component({
-    imports: [OcDataTable, OcCell],
+    imports: [PlDataTable, PlCell],
     template: `
-      <oc-data-table
+      <pl-data-table
         caption="People"
         [columns]="columns"
         [rows]="rows"
         [loading]="loading()"
         (sortChange)="sorts.push($event)"
       >
-        <ng-template ocCell="name" let-row><strong class="custom">{{ row.name }}!</strong></ng-template>
-      </oc-data-table>
+        <ng-template plCell="name" let-row><strong class="custom">{{ row.name }}!</strong></ng-template>
+      </pl-data-table>
     `,
   })
   class Host {
@@ -148,11 +148,11 @@ describe('OcDataTable', () => {
     const fixture = TestBed.createComponent(Host);
     await fixture.whenStable();
     const el: HTMLElement = fixture.nativeElement;
-    expect(el.querySelector('caption')?.className).toBe('oc-sr-only');
+    expect(el.querySelector('caption')?.className).toBe('pl-sr-only');
     expect(names(el)).toEqual(['Zed!', 'amy!', 'Bob!']);
     expect(el.querySelector('.custom')).not.toBeNull();
 
-    const [nameSort, ageSort] = Array.from(el.querySelectorAll('.oc-table__sort')) as HTMLButtonElement[];
+    const [nameSort, ageSort] = Array.from(el.querySelectorAll('.pl-table__sort')) as HTMLButtonElement[];
     nameSort.click();
     await fixture.whenStable();
     expect(names(el)).toEqual(['amy!', 'Bob!', 'Zed!']);
@@ -167,7 +167,7 @@ describe('OcDataTable', () => {
     await fixture.whenStable();
     expect(names(el)).toEqual(['amy!', 'Zed!', 'Bob!']);
     expect(el.querySelectorAll('th')[0].hasAttribute('aria-sort')).toBe(false);
-    expect(el.querySelectorAll('td')[1].className).toBe('oc-table__align-end');
+    expect(el.querySelectorAll('td')[1].className).toBe('pl-table__align-end');
     expect(fixture.componentInstance.sorts).toEqual([
       { key: 'name', direction: 'asc' },
       { key: 'name', direction: 'desc' },
@@ -182,6 +182,6 @@ describe('OcDataTable', () => {
     const el: HTMLElement = fixture.nativeElement;
     expect(el.querySelector('table')?.getAttribute('aria-busy')).toBe('true');
     expect(el.querySelectorAll('tbody tr').length).toBe(3);
-    expect(el.querySelectorAll('tbody .oc-skeleton').length).toBe(6);
+    expect(el.querySelectorAll('tbody .pl-skeleton').length).toBe(6);
   });
 });

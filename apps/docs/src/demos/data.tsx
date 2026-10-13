@@ -18,7 +18,7 @@ import {
   type TreeNode,
   type TreeTableNode,
   type TimelineItem,
-} from '@orca-ui/react';
+} from '@pelagic-ui/react';
 import { createDemoIsland, Output, SwitchField } from './shared';
 
 interface Member extends Record<string, unknown> {
@@ -181,7 +181,7 @@ function DataViewDemo() {
       rows={4}
       getKey={(p) => p.id}
       itemTemplate={(p, layout) => (
-        <div style={{ display: 'flex', flexDirection: layout === 'grid' ? 'column' : 'row', gap: '0.5rem', justifyContent: 'space-between', alignItems: layout === 'grid' ? 'flex-start' : 'center', padding: '0.75rem', border: '1px solid var(--oc-border)', borderRadius: 'var(--oc-radius)', background: 'var(--oc-surface)' }}>
+        <div style={{ display: 'flex', flexDirection: layout === 'grid' ? 'column' : 'row', gap: '0.5rem', justifyContent: 'space-between', alignItems: layout === 'grid' ? 'flex-start' : 'center', padding: '0.75rem', border: '1px solid var(--pl-border)', borderRadius: 'var(--pl-radius)', background: 'var(--pl-surface)' }}>
           <strong>{p.name}</strong>
           <span className="muted">{p.category}</span>
           <span>${p.price}</span>

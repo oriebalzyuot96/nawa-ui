@@ -13,7 +13,7 @@ import {
   output,
 } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
-import { OcSkeleton } from './display';
+import { PlSkeleton } from './display';
 
 export type SortDirection = 'asc' | 'desc';
 export interface SortState {
@@ -30,7 +30,7 @@ export interface DataColumn<T = Record<string, unknown>> {
   sortValue?: (row: T) => string | number | null | undefined;
 }
 
-export interface OcCellContext<T> {
+export interface PlCellContext<T> {
   $implicit: T;
   row: T;
   index: number;
@@ -38,14 +38,14 @@ export interface OcCellContext<T> {
 
 /**
  * Custom cell content for a column:
- * `<ng-template ocCell="status" let-row>{{ row.status }}</ng-template>`.
+ * `<ng-template plCell="status" let-row>{{ row.status }}</ng-template>`.
  */
-@Directive({ selector: 'ng-template[ocCell]' })
-export class OcCell<T = any> {
-  readonly key = input.required<string>({ alias: 'ocCell' });
-  readonly template = inject<TemplateRef<OcCellContext<T>>>(TemplateRef);
+@Directive({ selector: 'ng-template[plCell]' })
+export class PlCell<T = any> {
+  readonly key = input.required<string>({ alias: 'plCell' });
+  readonly template = inject<TemplateRef<PlCellContext<T>>>(TemplateRef);
 
-  static ngTemplateContextGuard<T>(_dir: OcCell<T>, ctx: unknown): ctx is OcCellContext<T> {
+  static ngTemplateContextGuard<T>(_dir: PlCell<T>, ctx: unknown): ctx is PlCellContext<T> {
     return true;
   }
 }
@@ -59,21 +59,21 @@ function compareValues(a: unknown, b: unknown): number {
 }
 
 @Component({
-  selector: 'oc-data-table',
+  selector: 'pl-data-table',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [NgTemplateOutlet, OcSkeleton],
-  host: { class: 'oc-table-wrap', 'data-responsive': 'stack' },
+  imports: [NgTemplateOutlet, PlSkeleton],
+  host: { class: 'pl-table-wrap', 'data-responsive': 'stack' },
   template: `
-    <table class="oc-table" [attr.aria-busy]="loading() ? 'true' : null">
+    <table class="pl-table" [attr.aria-busy]="loading() ? 'true' : null">
       @if (caption()) {
-        <caption [class.oc-sr-only]="!captionVisible()">{{ caption() }}</caption>
+        <caption [class.pl-sr-only]="!captionVisible()">{{ caption() }}</caption>
       }
       <thead>
         <tr>
           @for (col of columns(); track col.key) {
             <th [class]="alignClass(col.align)" [attr.aria-sort]="ariaSort(col)">
               @if (col.sortable) {
-                <button type="button" class="oc-table__sort" (click)="toggleSort(col.key)">
+                <button type="button" class="pl-table__sort" (click)="toggleSort(col.key)">
                   {{ col.label }}
                   <span aria-hidden="true">{{ sortIcon(col.key) }}</span>
                 </button>
@@ -89,7 +89,7 @@ function compareValues(a: unknown, b: unknown): number {
           @for (r of skeletonRows(); track r) {
             <tr>
               @for (col of columns(); track col.key) {
-                <td><oc-skeleton [height]="14" /></td>
+                <td><pl-skeleton [height]="14" /></td>
               }
             </tr>
           }
@@ -108,7 +108,7 @@ function compareValues(a: unknown, b: unknown): number {
             </tr>
           } @empty {
             <tr>
-              <td class="oc-table__empty" [attr.colspan]="columns().length">{{ emptyMessage() }}</td>
+              <td class="pl-table__empty" [attr.colspan]="columns().length">{{ emptyMessage() }}</td>
             </tr>
           }
         }
@@ -116,7 +116,7 @@ function compareValues(a: unknown, b: unknown): number {
     </table>
   `,
 })
-export class OcDataTable<T extends Record<string, any> = Record<string, any>> {
+export class PlDataTable<T extends Record<string, any> = Record<string, any>> {
   readonly columns = input<DataColumn<T>[]>([]);
   readonly rows = input<T[]>([]);
   /** Field name or function that returns a unique row key. Defaults to `id`. */
@@ -132,13 +132,13 @@ export class OcDataTable<T extends Record<string, any> = Record<string, any>> {
   readonly captionVisible = input(false, { transform: booleanAttribute });
   readonly sortChange = output<SortState>();
 
-  protected readonly cells = contentChildren(OcCell);
+  protected readonly cells = contentChildren(PlCell);
   /** Current sort (starts at `defaultSort`). */
   readonly sort = linkedSignal<SortState | undefined>(() => this.defaultSort());
 
   protected readonly cellTemplates = computed(() => {
-    const map = new Map<string, TemplateRef<OcCellContext<T>>>();
-    for (const c of this.cells()) map.set(c.key(), c.template as TemplateRef<OcCellContext<T>>);
+    const map = new Map<string, TemplateRef<PlCellContext<T>>>();
+    for (const c of this.cells()) map.set(c.key(), c.template as TemplateRef<PlCellContext<T>>);
     return map;
   });
 
@@ -183,6 +183,6 @@ export class OcDataTable<T extends Record<string, any> = Record<string, any>> {
   }
 
   protected alignClass(align: DataColumn['align']): string {
-    return align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : '';
+    return align === 'end' ? 'pl-table__align-end' : align === 'center' ? 'pl-table__align-center' : '';
   }
 }

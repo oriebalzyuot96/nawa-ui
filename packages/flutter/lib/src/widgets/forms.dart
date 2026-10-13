@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import '../foundation/group_focus.dart';
 import '../foundation/pressable.dart';
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 
 bool _reduceMotion(BuildContext context) => MediaQuery.maybeDisableAnimationsOf(context) ?? false;
 
-/// An option of [OrcaSelect], [OrcaRadioGroup] and [OrcaSegmented].
+/// An option of [PelagicSelect], [PelagicRadioGroup] and [PelagicSegmented].
 @immutable
-class OrcaOption<T> {
+class PelagicOption<T> {
   /// Creates an option.
-  const OrcaOption({required this.value, required this.label, this.disabled = false});
+  const PelagicOption({required this.value, required this.label, this.disabled = false});
 
   /// Value.
   final T value;
@@ -36,14 +36,14 @@ class _FieldFrame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (label != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(bottom: PelagicSpace.xs),
             child: ExcludeSemantics(
               child: Text.rich(
                 TextSpan(
@@ -52,14 +52,14 @@ class _FieldFrame extends StatelessWidget {
                     if (isRequired) TextSpan(text: ' *', style: TextStyle(color: c.danger)),
                   ],
                 ),
-                style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600),
+                style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm, fontWeight: FontWeight.w600),
               ),
             ),
           ),
         child,
         if (error != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(top: OrcaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(top: PelagicSpace.xs),
             child: Semantics(
               liveRegion: true,
               child: Row(
@@ -67,20 +67,20 @@ class _FieldFrame extends StatelessWidget {
                 children: <Widget>[
                   ExcludeSemantics(
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.only(end: OrcaSpace.xs, top: 1),
+                      padding: const EdgeInsetsDirectional.only(end: PelagicSpace.xs, top: 1),
                       child: Icon(Icons.error_outline, size: 16, color: c.danger),
                     ),
                   ),
-                  Expanded(child: Text(error!, style: TextStyle(color: c.danger, fontSize: OrcaFontSize.sm))),
+                  Expanded(child: Text(error!, style: TextStyle(color: c.danger, fontSize: PelagicFontSize.sm))),
                 ],
               ),
             ),
           )
         else if (hint != null)
           Padding(
-            padding: const EdgeInsetsDirectional.only(top: OrcaSpace.xs),
+            padding: const EdgeInsetsDirectional.only(top: PelagicSpace.xs),
             child: ExcludeSemantics(
-              child: Text(hint!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
+              child: Text(hint!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm)),
             ),
           ),
       ],
@@ -97,9 +97,9 @@ String? _fieldHint(String? hint, String? error) => error != null ? 'Error: $erro
 ///
 /// Screen readers get the label as the field name and the error (or hint) as
 /// its description; a new error is also announced (live region).
-class OrcaInput extends StatelessWidget {
+class PelagicInput extends StatelessWidget {
   /// Creates a text input.
-  const OrcaInput({
+  const PelagicInput({
     super.key,
     this.label,
     this.hint,
@@ -189,8 +189,8 @@ class OrcaInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final bool hasError = error != null;
     OutlineInputBorder border(Color color, double width) => OutlineInputBorder(
           borderRadius: BorderRadius.circular(t.radii.md),
@@ -223,7 +223,7 @@ class OrcaInput extends StatelessWidget {
             maxLines: obscureText ? 1 : maxLines,
             minLines: minLines,
             maxLength: maxLength,
-            style: TextStyle(color: c.text, fontSize: OrcaFontSize.md),
+            style: TextStyle(color: c.text, fontSize: PelagicFontSize.md),
             cursorColor: c.primary,
             decoration: InputDecoration(
               hintText: placeholder,
@@ -231,8 +231,8 @@ class OrcaInput extends StatelessWidget {
               filled: true,
               fillColor: enabled ? c.surface : c.surfaceAlt,
               isDense: false,
-              constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
-              contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md, vertical: OrcaSpace.md),
+              constraints: const BoxConstraints(minHeight: pelagicMinTapTarget),
+              contentPadding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.md, vertical: PelagicSpace.md),
               prefixIcon: prefixIcon == null ? null : ExcludeSemantics(child: prefixIcon),
               suffixIcon: suffixIcon,
               border: border(c.controlBorder, t.borderWidth),
@@ -247,10 +247,10 @@ class OrcaInput extends StatelessWidget {
   }
 }
 
-/// Multi-line [OrcaInput].
-class OrcaTextarea extends StatelessWidget {
+/// Multi-line [PelagicInput].
+class PelagicTextarea extends StatelessWidget {
   /// Creates a textarea.
-  const OrcaTextarea({
+  const PelagicTextarea({
     super.key,
     this.label,
     this.hint,
@@ -266,16 +266,16 @@ class OrcaTextarea extends StatelessWidget {
     this.maxLength,
   });
 
-  /// See [OrcaInput.label].
+  /// See [PelagicInput.label].
   final String? label;
 
-  /// See [OrcaInput.hint].
+  /// See [PelagicInput.hint].
   final String? hint;
 
-  /// See [OrcaInput.error].
+  /// See [PelagicInput.error].
   final String? error;
 
-  /// See [OrcaInput.placeholder].
+  /// See [PelagicInput.placeholder].
   final String? placeholder;
 
   /// Controller.
@@ -304,7 +304,7 @@ class OrcaTextarea extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return OrcaInput(
+    return PelagicInput(
       label: label,
       hint: hint,
       error: error,
@@ -324,9 +324,9 @@ class OrcaTextarea extends StatelessWidget {
 }
 
 /// Picker that opens a bottom sheet of options (the mobile pattern for a dropdown).
-class OrcaSelect<T> extends StatelessWidget {
+class PelagicSelect<T> extends StatelessWidget {
   /// Creates a select.
-  const OrcaSelect({
+  const PelagicSelect({
     super.key,
     required this.options,
     required this.onChanged,
@@ -340,7 +340,7 @@ class OrcaSelect<T> extends StatelessWidget {
   });
 
   /// Options.
-  final List<OrcaOption<T>> options;
+  final List<PelagicOption<T>> options;
 
   /// Selection callback.
   final ValueChanged<T> onChanged;
@@ -366,15 +366,15 @@ class OrcaSelect<T> extends StatelessWidget {
   /// Enabled.
   final bool enabled;
 
-  OrcaOption<T>? get _selected {
-    for (final OrcaOption<T> o in options) {
+  PelagicOption<T>? get _selected {
+    for (final PelagicOption<T> o in options) {
       if (o.value == value) return o;
     }
     return null;
   }
 
   Future<void> _open(BuildContext context) async {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     final T? result = await showModalBottomSheet<T>(
       context: context,
       backgroundColor: c.surface,
@@ -393,16 +393,16 @@ class OrcaSelect<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
-    final OrcaOption<T>? selected = _selected;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
+    final PelagicOption<T>? selected = _selected;
     final bool hasError = error != null;
     return _FieldFrame(
       label: label,
       hint: hint,
       error: error,
       isRequired: isRequired,
-      child: OrcaPressable(
+      child: PelagicPressable(
         onPressed: enabled ? () => _open(context) : null,
         borderRadius: BorderRadius.circular(t.radii.md),
         semanticLabel: _fieldLabel(label ?? placeholder, isRequired),
@@ -410,8 +410,8 @@ class OrcaSelect<T> extends StatelessWidget {
         semanticHint: _fieldHint(hint, error),
         excludeChildSemantics: true,
         child: Container(
-          constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
-          padding: const EdgeInsetsDirectional.only(start: OrcaSpace.md, end: OrcaSpace.sm),
+          constraints: const BoxConstraints(minHeight: pelagicMinTapTarget),
+          padding: const EdgeInsetsDirectional.only(start: PelagicSpace.md, end: PelagicSpace.sm),
           decoration: BoxDecoration(
             color: enabled ? c.surface : c.surfaceAlt,
             borderRadius: BorderRadius.circular(t.radii.md),
@@ -425,7 +425,7 @@ class OrcaSelect<T> extends StatelessWidget {
               Expanded(
                 child: Text(
                   selected?.label ?? placeholder,
-                  style: TextStyle(color: selected == null ? c.textMuted : c.text, fontSize: OrcaFontSize.md),
+                  style: TextStyle(color: selected == null ? c.textMuted : c.text, fontSize: PelagicFontSize.md),
                 ),
               ),
               Icon(Icons.expand_more, color: c.textMuted),
@@ -441,13 +441,13 @@ class _SelectSheet<T> extends StatelessWidget {
   const _SelectSheet({required this.title, required this.options, required this.value});
 
   final String title;
-  final List<OrcaOption<T>> options;
+  final List<PelagicOption<T>> options;
   final T? value;
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
-    final int selectedIndex = options.indexWhere((OrcaOption<T> o) => o.value == value);
+    final PelagicColors c = PelagicTheme.of(context).colors;
+    final int selectedIndex = options.indexWhere((PelagicOption<T> o) => o.value == value);
     return Semantics(
       scopesRoute: true,
       namesRoute: true,
@@ -460,21 +460,21 @@ class _SelectSheet<T> extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(OrcaSpace.lg, 0, OrcaSpace.lg, OrcaSpace.sm),
+              padding: const EdgeInsetsDirectional.fromSTEB(PelagicSpace.lg, 0, PelagicSpace.lg, PelagicSpace.sm),
               child: Semantics(
                 header: true,
-                child: Text(title, style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.lg)),
+                child: Text(title, style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: PelagicFontSize.lg)),
               ),
             ),
             Flexible(
               child: ListView.builder(
                 shrinkWrap: true,
-                padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.lg),
+                padding: const EdgeInsetsDirectional.only(bottom: PelagicSpace.lg),
                 itemCount: options.length,
                 itemBuilder: (BuildContext context, int i) {
-                  final OrcaOption<T> o = options[i];
+                  final PelagicOption<T> o = options[i];
                   final bool selected = i == selectedIndex;
-                  return OrcaPressable(
+                  return PelagicPressable(
                     autofocus: selected || (selectedIndex < 0 && i == 0),
                     onPressed: o.disabled ? null : () => Navigator.of(context).pop<T>(o.value),
                     selected: selected,
@@ -482,7 +482,7 @@ class _SelectSheet<T> extends StatelessWidget {
                     semanticHint: 'Item ${i + 1} of ${options.length}',
                     child: Container(
                       color: selected ? c.primarySoft : null,
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.lg, vertical: OrcaSpace.md),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.lg, vertical: PelagicSpace.md),
                       child: Row(
                         children: <Widget>[
                           Expanded(
@@ -491,7 +491,7 @@ class _SelectSheet<T> extends StatelessWidget {
                               style: TextStyle(
                                 color: o.disabled ? c.textMuted : (selected ? c.primaryInk : c.text),
                                 fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
-                                fontSize: OrcaFontSize.md,
+                                fontSize: PelagicFontSize.md,
                               ),
                             ),
                           ),
@@ -511,9 +511,9 @@ class _SelectSheet<T> extends StatelessWidget {
 }
 
 /// Checkbox with a label. The whole row is the hit target.
-class OrcaCheckbox extends StatelessWidget {
+class PelagicCheckbox extends StatelessWidget {
   /// Creates a checkbox.
-  const OrcaCheckbox({super.key, required this.value, required this.onChanged, this.label, this.description, this.semanticLabel});
+  const PelagicCheckbox({super.key, required this.value, required this.onChanged, this.label, this.description, this.semanticLabel});
 
   /// Checked state. Null shows the indeterminate (mixed) state.
   final bool? value;
@@ -532,12 +532,12 @@ class OrcaCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final bool on = value ?? false;
     final bool filled = value != false;
     final bool enabled = onChanged != null;
-    return OrcaPressable(
+    return PelagicPressable(
       button: false,
       checked: value ?? false,
       onPressed: enabled ? () => onChanged!(!on) : null,
@@ -547,7 +547,7 @@ class OrcaCheckbox extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1 : 0.55,
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xs, vertical: PelagicSpace.sm),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -567,15 +567,15 @@ class OrcaCheckbox extends StatelessWidget {
                       : null,
                 ),
               ),
-              if (label != null || description != null) const SizedBox(width: OrcaSpace.sm),
+              if (label != null || description != null) const SizedBox(width: PelagicSpace.sm),
               if (label != null || description != null)
                 Flexible(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (label != null) Text(label!, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md)),
+                      if (label != null) Text(label!, style: TextStyle(color: c.text, fontSize: PelagicFontSize.md)),
                       if (description != null)
-                        Text(description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
+                        Text(description!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm)),
                     ],
                   ),
                 ),
@@ -588,9 +588,9 @@ class OrcaCheckbox extends StatelessWidget {
 }
 
 /// On/off switch with a label. The whole row toggles.
-class OrcaSwitch extends StatelessWidget {
+class PelagicSwitch extends StatelessWidget {
   /// Creates a switch.
-  const OrcaSwitch({super.key, required this.value, required this.onChanged, required this.label, this.description});
+  const PelagicSwitch({super.key, required this.value, required this.onChanged, required this.label, this.description});
 
   /// On.
   final bool value;
@@ -606,11 +606,11 @@ class OrcaSwitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final bool enabled = onChanged != null;
     final Duration duration = _reduceMotion(context) ? Duration.zero : const Duration(milliseconds: 160);
-    return OrcaPressable(
+    return PelagicPressable(
       button: false,
       toggled: value,
       onPressed: enabled ? () => onChanged!(!value) : null,
@@ -618,20 +618,20 @@ class OrcaSwitch extends StatelessWidget {
       child: Opacity(
         opacity: enabled ? 1 : 0.55,
         child: Padding(
-          padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xs, vertical: PelagicSpace.sm),
           child: Row(
             children: <Widget>[
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    Text(label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md)),
+                    Text(label, style: TextStyle(color: c.text, fontSize: PelagicFontSize.md)),
                     if (description != null)
-                      Text(description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
+                      Text(description!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm)),
                   ],
                 ),
               ),
-              const SizedBox(width: OrcaSpace.md),
+              const SizedBox(width: PelagicSpace.md),
               ExcludeSemantics(
                 child: AnimatedContainer(
                   duration: duration,
@@ -666,12 +666,12 @@ class OrcaSwitch extends StatelessWidget {
 }
 
 /// Group of radio buttons. Arrow keys move the selection (like the web).
-class OrcaRadioGroup<T> extends StatefulWidget {
+class PelagicRadioGroup<T> extends StatefulWidget {
   /// Creates a radio group.
-  const OrcaRadioGroup({super.key, required this.options, required this.value, required this.onChanged, this.label});
+  const PelagicRadioGroup({super.key, required this.options, required this.value, required this.onChanged, this.label});
 
   /// Options.
-  final List<OrcaOption<T>> options;
+  final List<PelagicOption<T>> options;
 
   /// Selected value.
   final T? value;
@@ -683,11 +683,11 @@ class OrcaRadioGroup<T> extends StatefulWidget {
   final String? label;
 
   @override
-  State<OrcaRadioGroup<T>> createState() => _OrcaRadioGroupState<T>();
+  State<PelagicRadioGroup<T>> createState() => _PelagicRadioGroupState<T>();
 }
 
-class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
-  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaRadio');
+class _PelagicRadioGroupState<T> extends State<PelagicRadioGroup<T>> {
+  final PelagicGroupFocus _focus = PelagicGroupFocus('PelagicRadio');
 
   @override
   void dispose() {
@@ -705,42 +705,42 @@ class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
-    final int selectedIndex = widget.options.indexWhere((OrcaOption<T> o) => o.value == widget.value);
-    final int tabStop = selectedIndex >= 0 ? selectedIndex : orcaEdgeEnabled(false, widget.options.length, _enabled);
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
+    final int selectedIndex = widget.options.indexWhere((PelagicOption<T> o) => o.value == widget.value);
+    final int tabStop = selectedIndex >= 0 ? selectedIndex : pelagicEdgeEnabled(false, widget.options.length, _enabled);
     final int length = widget.options.length;
     return Semantics(
       container: true,
       explicitChildNodes: true,
       label: widget.label,
-      child: OrcaArrowKeys(
+      child: PelagicArrowKeys(
         vertical: true,
         onMove: (int delta) {
           final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-          _select(orcaNextEnabled(from, delta, length, _enabled));
+          _select(pelagicNextEnabled(from, delta, length, _enabled));
         },
-        onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
+        onEdge: (bool last) => _select(pelagicEdgeEnabled(last, length, _enabled)),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             if (widget.label != null)
               Padding(
-                padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.xs),
+                padding: const EdgeInsetsDirectional.only(bottom: PelagicSpace.xs),
                 child: ExcludeSemantics(
                   child: Text(
                     widget.label!,
-                    style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600),
+                    style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm, fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
             for (int i = 0; i < length; i++)
               Builder(builder: (BuildContext context) {
-                final OrcaOption<T> o = widget.options[i];
+                final PelagicOption<T> o = widget.options[i];
                 final bool selected = i == selectedIndex;
                 final FocusNode node = _focus[i]..skipTraversal = i != tabStop;
-                return OrcaPressable(
+                return PelagicPressable(
                   button: false,
                   focusNode: node,
                   checked: selected,
@@ -751,7 +751,7 @@ class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
                   child: Opacity(
                     opacity: _enabled(i) ? 1 : 0.55,
                     child: Padding(
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.xs, vertical: OrcaSpace.sm),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.xs, vertical: PelagicSpace.sm),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: <Widget>[
@@ -776,8 +776,8 @@ class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
                                   : null,
                             ),
                           ),
-                          const SizedBox(width: OrcaSpace.sm),
-                          Flexible(child: Text(o.label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.md))),
+                          const SizedBox(width: PelagicSpace.sm),
+                          Flexible(child: Text(o.label, style: TextStyle(color: c.text, fontSize: PelagicFontSize.md))),
                         ],
                       ),
                     ),
@@ -792,12 +792,12 @@ class _OrcaRadioGroupState<T> extends State<OrcaRadioGroup<T>> {
 }
 
 /// Segmented control: a compact single choice. Arrow keys move the selection.
-class OrcaSegmented<T> extends StatefulWidget {
+class PelagicSegmented<T> extends StatefulWidget {
   /// Creates a segmented control.
-  const OrcaSegmented({super.key, required this.options, required this.value, required this.onChanged, this.label});
+  const PelagicSegmented({super.key, required this.options, required this.value, required this.onChanged, this.label});
 
   /// Options.
-  final List<OrcaOption<T>> options;
+  final List<PelagicOption<T>> options;
 
   /// Selected value.
   final T value;
@@ -809,11 +809,11 @@ class OrcaSegmented<T> extends StatefulWidget {
   final String? label;
 
   @override
-  State<OrcaSegmented<T>> createState() => _OrcaSegmentedState<T>();
+  State<PelagicSegmented<T>> createState() => _PelagicSegmentedState<T>();
 }
 
-class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
-  final OrcaGroupFocus _focus = OrcaGroupFocus('OrcaSegment');
+class _PelagicSegmentedState<T> extends State<PelagicSegmented<T>> {
+  final PelagicGroupFocus _focus = PelagicGroupFocus('PelagicSegment');
 
   @override
   void dispose() {
@@ -831,21 +831,21 @@ class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final int length = widget.options.length;
-    final int selectedIndex = widget.options.indexWhere((OrcaOption<T> o) => o.value == widget.value);
-    final int tabStop = selectedIndex >= 0 ? selectedIndex : orcaEdgeEnabled(false, length, _enabled);
+    final int selectedIndex = widget.options.indexWhere((PelagicOption<T> o) => o.value == widget.value);
+    final int tabStop = selectedIndex >= 0 ? selectedIndex : pelagicEdgeEnabled(false, length, _enabled);
     return Semantics(
       container: true,
       explicitChildNodes: true,
       label: widget.label,
-      child: OrcaArrowKeys(
+      child: PelagicArrowKeys(
         onMove: (int delta) {
           final int from = _focus.focusedIndex >= 0 ? _focus.focusedIndex : tabStop;
-          _select(orcaNextEnabled(from, delta, length, _enabled));
+          _select(pelagicNextEnabled(from, delta, length, _enabled));
         },
-        onEdge: (bool last) => _select(orcaEdgeEnabled(last, length, _enabled)),
+        onEdge: (bool last) => _select(pelagicEdgeEnabled(last, length, _enabled)),
         child: Container(
           decoration: BoxDecoration(
             color: c.surfaceMuted,
@@ -856,7 +856,7 @@ class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
             children: <Widget>[
               for (int i = 0; i < length; i++)
                 Expanded(
-                  child: OrcaPressable(
+                  child: PelagicPressable(
                     focusNode: _focus[i]..skipTraversal = i != tabStop,
                     requestFocusOnTap: true,
                     selected: i == selectedIndex,
@@ -867,7 +867,7 @@ class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
                     child: Container(
                       alignment: Alignment.center,
                       margin: const EdgeInsets.all(3),
-                      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.sm, vertical: OrcaSpace.xs),
+                      padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.sm, vertical: PelagicSpace.xs),
                       decoration: BoxDecoration(
                         color: i == selectedIndex ? c.surface : null,
                         borderRadius: BorderRadius.circular(t.radii.sm),
@@ -879,7 +879,7 @@ class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
                         style: TextStyle(
                           color: i == selectedIndex ? c.text : (_enabled(i) ? c.textMuted : c.border),
                           fontWeight: FontWeight.w600,
-                          fontSize: OrcaFontSize.sm,
+                          fontSize: PelagicFontSize.sm,
                         ),
                       ),
                     ),
@@ -894,9 +894,9 @@ class _OrcaSegmentedState<T> extends State<OrcaSegmented<T>> {
 }
 
 /// Slider with a visible label and value.
-class OrcaSlider extends StatelessWidget {
+class PelagicSlider extends StatelessWidget {
   /// Creates a slider.
-  const OrcaSlider({
+  const PelagicSlider({
     super.key,
     required this.value,
     required this.onChanged,
@@ -937,8 +937,8 @@ class OrcaSlider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -947,9 +947,9 @@ class OrcaSlider extends StatelessWidget {
           child: Row(
             children: <Widget>[
               Expanded(
-                child: Text(label, style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm, fontWeight: FontWeight.w600)),
+                child: Text(label, style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm, fontWeight: FontWeight.w600)),
               ),
-              if (showValue) Text(_format(value), style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
+              if (showValue) Text(_format(value), style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm)),
             ],
           ),
         ),

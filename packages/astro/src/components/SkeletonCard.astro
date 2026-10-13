@@ -8,16 +8,16 @@ interface Props {
 const { lines = 3, label = 'Loading…' } = Astro.props;
 ---
 
-<div role="status" aria-busy="true" class="oc-skeleton-card">
-  <span class="oc-sr-only">{label}</span>
-  <div class="oc-skeleton-card__head">
-    <span class="oc-skeleton oc-skeleton--circle" aria-hidden="true" style="width:40px;height:40px"></span>
-    <div class="oc-skeleton-text" aria-hidden="true">
-      <span class="oc-skeleton" style="height:12px;width:50%"></span>
-      <span class="oc-skeleton" style="height:10px;width:30%"></span>
+<div role="status" aria-busy="true" class="pl-skeleton-card">
+  <span class="pl-sr-only">{label}</span>
+  <div class="pl-skeleton-card__head">
+    <span class="pl-skeleton pl-skeleton--circle" aria-hidden="true" style="width:40px;height:40px"></span>
+    <div class="pl-skeleton-text" aria-hidden="true">
+      <span class="pl-skeleton" style="height:12px;width:50%"></span>
+      <span class="pl-skeleton" style="height:10px;width:30%"></span>
     </div>
   </div>
-  <div class="oc-skeleton-text" aria-hidden="true">
-    {Array.from({ length: lines }, () => <span class="oc-skeleton" style="height:12px"></span>)}
+  <div class="pl-skeleton-text" aria-hidden="true">
+    {Array.from({ length: lines }, () => <span class="pl-skeleton" style="height:12px"></span>)}
   </div>
 </div>

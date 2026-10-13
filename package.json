@@ -1,8 +1,8 @@
 {
-  "name": "orca-ui",
+  "name": "pelagic-ui",
   "version": "0.1.0",
   "private": true,
-  "description": "Orca UI — accessible, themeable UI components for React, Vue, Svelte, Astro and React Native",
+  "description": "Pelagic UI — accessible, themeable UI components for React, Vue, Svelte, Astro and React Native",
   "workspaces": [
     "packages/core",
     "packages/react",
@@ -20,12 +20,12 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "test": "npm test --workspaces --if-present",
-    "test:e2e": "npm run test:e2e -w @orca-ui/e2e",
+    "test:e2e": "npm run test:e2e -w @pelagic-ui/e2e",
     "typecheck": "npm run typecheck --workspaces --if-present",
-    "docs:dev": "npm run dev -w @orca-ui/docs",
-    "docs:build": "npm run build -w @orca-ui/core && npm run build -w @orca-ui/illustrations && npm run build -w @orca-ui/icons && npm run build -w @orca-ui/react && npm run build -w @orca-ui/three && npm run build -w @orca-ui/docs",
-    "release:check": "npm run build -w @orca-ui/core && npm run build -w @orca-ui/illustrations && npm run build -w @orca-ui/icons && npm test && npm run typecheck && npm run build -w @orca-ui/react -w @orca-ui/vue -w @orca-ui/three -w @orca-ui/angular && node scripts/build-umbrella.mjs",
-    "release:dry": "npm publish --dry-run -w @orca-ui/core -w @orca-ui/react -w @orca-ui/vue -w @orca-ui/svelte -w @orca-ui/astro -w @orca-ui/react-native -w @orca-ui/three",
+    "docs:dev": "npm run dev -w @pelagic-ui/docs",
+    "docs:build": "npm run build -w @pelagic-ui/core && npm run build -w @pelagic-ui/illustrations && npm run build -w @pelagic-ui/icons && npm run build -w @pelagic-ui/react && npm run build -w @pelagic-ui/three && npm run build -w @pelagic-ui/docs",
+    "release:check": "npm run build -w @pelagic-ui/core && npm run build -w @pelagic-ui/illustrations && npm run build -w @pelagic-ui/icons && npm test && npm run typecheck && npm run build -w @pelagic-ui/react -w @pelagic-ui/vue -w @pelagic-ui/three -w @pelagic-ui/angular && node scripts/build-umbrella.mjs",
+    "release:dry": "npm publish --dry-run -w @pelagic-ui/core -w @pelagic-ui/react -w @pelagic-ui/vue -w @pelagic-ui/svelte -w @pelagic-ui/astro -w @pelagic-ui/react-native -w @pelagic-ui/three",
     "build:umbrella": "node scripts/build-umbrella.mjs"
   }
 }

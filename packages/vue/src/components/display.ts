@@ -4,28 +4,28 @@ import { nextId } from '../utils';
 export type Variant = 'info' | 'success' | 'warning' | 'danger';
 
 export const Badge = defineComponent({
-  name: 'OcBadge',
+  name: 'PlBadge',
   props: {
     variant: { type: String as PropType<'neutral' | 'primary' | Variant>, default: 'neutral' },
   },
   setup(props, { slots }) {
     return () =>
-      h('span', { class: ['oc-badge', props.variant !== 'neutral' && `oc-badge--${props.variant}`] }, slots.default?.());
+      h('span', { class: ['pl-badge', props.variant !== 'neutral' && `pl-badge--${props.variant}`] }, slots.default?.());
   },
 });
 
 export const Tag = defineComponent({
-  name: 'OcTag',
+  name: 'PlTag',
   props: {
     removable: Boolean,
   },
   emits: ['remove'],
   setup(props, { emit, slots }) {
     return () =>
-      h('span', { class: 'oc-tag' }, [
+      h('span', { class: 'pl-tag' }, [
         slots.default?.(),
         props.removable
-          ? h('button', { type: 'button', class: 'oc-tag__remove', 'aria-label': 'Remove', onClick: () => emit('remove') }, '×')
+          ? h('button', { type: 'button', class: 'pl-tag__remove', 'aria-label': 'Remove', onClick: () => emit('remove') }, '×')
           : null,
       ]);
   },
@@ -41,7 +41,7 @@ export function initialsOf(name: string): string {
 }
 
 export const Avatar = defineComponent({
-  name: 'OcAvatar',
+  name: 'PlAvatar',
   props: {
     src: String,
     /** Used for alt text and initials when no image is given. */
@@ -53,7 +53,7 @@ export const Avatar = defineComponent({
       h(
         'span',
         {
-          class: ['oc-avatar', props.size !== 'md' && `oc-avatar--${props.size}`],
+          class: ['pl-avatar', props.size !== 'md' && `pl-avatar--${props.size}`],
           role: 'img',
           'aria-label': props.name,
         },
@@ -63,22 +63,22 @@ export const Avatar = defineComponent({
 });
 
 export const Card = defineComponent({
-  name: 'OcCard',
+  name: 'PlCard',
   props: {
     title: String,
   },
   setup(props, { slots }) {
     return () =>
-      h('article', { class: 'oc-card' }, [
-        props.title || slots.title ? h('header', { class: 'oc-card__header' }, slots.title?.() ?? props.title) : null,
-        slots.default ? h('div', { class: 'oc-card__body' }, slots.default()) : null,
-        slots.footer ? h('footer', { class: 'oc-card__footer' }, slots.footer()) : null,
+      h('article', { class: 'pl-card' }, [
+        props.title || slots.title ? h('header', { class: 'pl-card__header' }, slots.title?.() ?? props.title) : null,
+        slots.default ? h('div', { class: 'pl-card__body' }, slots.default()) : null,
+        slots.footer ? h('footer', { class: 'pl-card__footer' }, slots.footer()) : null,
       ]);
   },
 });
 
 export const Spinner = defineComponent({
-  name: 'OcSpinner',
+  name: 'PlSpinner',
   props: {
     size: { type: String as PropType<'md' | 'lg'>, default: 'md' },
     label: { type: String, default: 'Loading' },
@@ -88,13 +88,13 @@ export const Spinner = defineComponent({
       h('span', {
         role: 'status',
         'aria-label': props.label,
-        class: ['oc-spinner', props.size === 'lg' && 'oc-spinner--lg'],
+        class: ['pl-spinner', props.size === 'lg' && 'pl-spinner--lg'],
       });
   },
 });
 
 export const Skeleton = defineComponent({
-  name: 'OcSkeleton',
+  name: 'PlSkeleton',
   props: {
     width: [Number, String],
     height: [Number, String],
@@ -104,7 +104,7 @@ export const Skeleton = defineComponent({
     return () =>
       h('span', {
         'aria-hidden': 'true',
-        class: ['oc-skeleton', props.circle && 'oc-skeleton--circle'],
+        class: ['pl-skeleton', props.circle && 'pl-skeleton--circle'],
         style: {
           width: props.circle ? toCss(props.height ?? props.width) : toCss(props.width),
           height: toCss(props.height),
@@ -126,12 +126,12 @@ const skeletonProps = {
 
 /** Paragraph placeholder. The last line is shorter. Announced once as a loading status. */
 export const SkeletonText = defineComponent({
-  name: 'OcSkeletonText',
+  name: 'PlSkeletonText',
   props: skeletonProps,
   setup(props) {
     return () =>
-      h('div', { role: 'status', 'aria-busy': 'true', class: 'oc-skeleton-text' }, [
-        h('span', { class: 'oc-sr-only' }, props.label),
+      h('div', { role: 'status', 'aria-busy': 'true', class: 'pl-skeleton-text' }, [
+        h('span', { class: 'pl-sr-only' }, props.label),
         ...Array.from({ length: props.lines }, () => h(Skeleton, { height: 12 })),
       ]);
   },
@@ -139,22 +139,22 @@ export const SkeletonText = defineComponent({
 
 /** Card placeholder: avatar, title lines and a body paragraph. */
 export const SkeletonCard = defineComponent({
-  name: 'OcSkeletonCard',
+  name: 'PlSkeletonCard',
   props: skeletonProps,
   setup(props) {
     return () =>
-      h('div', { role: 'status', 'aria-busy': 'true', class: 'oc-skeleton-card' }, [
-        h('span', { class: 'oc-sr-only' }, props.label),
-        h('div', { class: 'oc-skeleton-card__head' }, [
+      h('div', { role: 'status', 'aria-busy': 'true', class: 'pl-skeleton-card' }, [
+        h('span', { class: 'pl-sr-only' }, props.label),
+        h('div', { class: 'pl-skeleton-card__head' }, [
           h(Skeleton, { circle: true, height: 40 }),
-          h('div', { class: 'oc-skeleton-text', 'aria-hidden': 'true' }, [
+          h('div', { class: 'pl-skeleton-text', 'aria-hidden': 'true' }, [
             h(Skeleton, { height: 12, width: '50%' }),
             h(Skeleton, { height: 10, width: '30%' }),
           ]),
         ]),
         h(
           'div',
-          { class: 'oc-skeleton-text', 'aria-hidden': 'true' },
+          { class: 'pl-skeleton-text', 'aria-hidden': 'true' },
           Array.from({ length: props.lines }, () => h(Skeleton, { height: 12 })),
         ),
       ]);
@@ -162,7 +162,7 @@ export const SkeletonCard = defineComponent({
 });
 
 export const ProgressBar = defineComponent({
-  name: 'OcProgressBar',
+  name: 'PlProgressBar',
   props: {
     /** 0–100. Leave undefined for an indeterminate bar. */
     value: Number,
@@ -180,9 +180,9 @@ export const ProgressBar = defineComponent({
           'aria-valuemin': 0,
           'aria-valuemax': 100,
           'aria-valuenow': clamped,
-          class: ['oc-progress', indeterminate && 'oc-progress--indeterminate'],
+          class: ['pl-progress', indeterminate && 'pl-progress--indeterminate'],
         },
-        [h('div', { class: 'oc-progress__bar', style: indeterminate ? undefined : { width: `${clamped}%` } })],
+        [h('div', { class: 'pl-progress__bar', style: indeterminate ? undefined : { width: `${clamped}%` } })],
       );
     };
   },
@@ -194,7 +194,7 @@ export interface StepperStep {
 }
 
 export const Stepper = defineComponent({
-  name: 'OcStepper',
+  name: 'PlStepper',
   props: {
     steps: { type: Array as PropType<StepperStep[]>, required: true },
     /** Zero-based index of the active step. */
@@ -204,17 +204,17 @@ export const Stepper = defineComponent({
     return () =>
       h(
         'ol',
-        { class: 'oc-stepper' },
+        { class: 'pl-stepper' },
         props.steps.map((s, i) => {
           const state = i < props.current ? 'complete' : i === props.current ? 'current' : 'upcoming';
           return h(
             'li',
             {
-              class: 'oc-stepper__step',
+              class: 'pl-stepper__step',
               'data-state': state,
               'aria-current': state === 'current' ? 'step' : undefined,
             },
-            [h('span', s.label), s.description ? h('span', { class: 'oc-stepper__desc' }, s.description) : null],
+            [h('span', s.label), s.description ? h('span', { class: 'pl-stepper__desc' }, s.description) : null],
           );
         }),
       );
@@ -229,7 +229,7 @@ export interface TimelineItem {
 }
 
 export const Timeline = defineComponent({
-  name: 'OcTimeline',
+  name: 'PlTimeline',
   props: {
     items: { type: Array as PropType<TimelineItem[]>, required: true },
   },
@@ -237,19 +237,19 @@ export const Timeline = defineComponent({
     return () =>
       h(
         'ol',
-        { class: 'oc-timeline' },
+        { class: 'pl-timeline' },
         props.items.map((item) =>
-          h('li', { class: 'oc-timeline__item' }, [
+          h('li', { class: 'pl-timeline__item' }, [
             h('span', {
               class: [
-                'oc-timeline__dot',
-                item.variant && item.variant !== 'primary' && `oc-timeline__dot--${item.variant}`,
+                'pl-timeline__dot',
+                item.variant && item.variant !== 'primary' && `pl-timeline__dot--${item.variant}`,
               ],
               'aria-hidden': 'true',
             }),
-            item.time ? h('div', { class: 'oc-timeline__time' }, item.time) : null,
-            h('div', { class: 'oc-timeline__title' }, item.title),
-            item.description ? h('div', { class: 'oc-timeline__desc' }, item.description) : null,
+            item.time ? h('div', { class: 'pl-timeline__time' }, item.time) : null,
+            h('div', { class: 'pl-timeline__title' }, item.title),
+            item.description ? h('div', { class: 'pl-timeline__desc' }, item.description) : null,
           ]),
         ),
       );
@@ -257,7 +257,7 @@ export const Timeline = defineComponent({
 });
 
 export const Alert = defineComponent({
-  name: 'OcAlert',
+  name: 'PlAlert',
   props: {
     variant: { type: String as PropType<Variant>, default: 'info' },
     title: String,
@@ -271,15 +271,15 @@ export const Alert = defineComponent({
         'div',
         {
           role: urgent ? 'alert' : 'status',
-          class: ['oc-alert', props.variant !== 'info' && `oc-alert--${props.variant}`],
+          class: ['pl-alert', props.variant !== 'info' && `pl-alert--${props.variant}`],
         },
         [
-          h('div', { class: 'oc-alert__body' }, [
-            props.title ? h('div', { class: 'oc-alert__title' }, props.title) : null,
+          h('div', { class: 'pl-alert__body' }, [
+            props.title ? h('div', { class: 'pl-alert__title' }, props.title) : null,
             slots.default?.(),
           ]),
           props.closable
-            ? h('button', { type: 'button', class: 'oc-close', 'aria-label': 'Dismiss', onClick: () => emit('close') }, '×')
+            ? h('button', { type: 'button', class: 'pl-close', 'aria-label': 'Dismiss', onClick: () => emit('close') }, '×')
             : null,
         ],
       );
@@ -292,12 +292,12 @@ export type EmptyStateTone = 'neutral' | 'info' | 'success' | 'warning' | 'dange
 
 /**
  * Illustrated empty state. Illustration: the `illustration` slot, a component
- * (e.g. `NoResultsIllustration` from `@orca-ui/illustrations/vue`) or a scene name
- * (renders `<oc-illustration>`; register it with `import '@orca-ui/illustrations/element'`).
+ * (e.g. `NoResultsIllustration` from `@pelagic-ui/illustrations/vue`) or a scene name
+ * (renders `<pl-illustration>`; register it with `import '@pelagic-ui/illustrations/element'`).
  * Slots: illustration, icon (legacy), description, primary, secondary, actions, default (actions).
  */
 export const EmptyState = defineComponent({
-  name: 'OcEmptyState',
+  name: 'PlEmptyState',
   props: {
     title: { type: String, required: true },
     description: String,
@@ -315,7 +315,7 @@ export const EmptyState = defineComponent({
       const media = slots.illustration
         ? slots.illustration()
         : typeof ill === 'string' && ill
-          ? h('oc-illustration', { name: ill, compact: props.size === 'compact' ? '' : undefined })
+          ? h('pl-illustration', { name: ill, compact: props.size === 'compact' ? '' : undefined })
           : ill
             ? h(ill as Component)
             : null;
@@ -325,21 +325,21 @@ export const EmptyState = defineComponent({
         'div',
         {
           class: [
-            'oc-empty',
-            props.size !== 'default' && `oc-empty--${props.size}`,
-            props.align === 'start' && 'oc-empty--start',
-            props.layout === 'split' && 'oc-empty--split',
-            props.tone && `oc-empty--tone-${props.tone}`,
+            'pl-empty',
+            props.size !== 'default' && `pl-empty--${props.size}`,
+            props.align === 'start' && 'pl-empty--start',
+            props.layout === 'split' && 'pl-empty--split',
+            props.tone && `pl-empty--tone-${props.tone}`,
           ],
         },
         [
-          h('div', { class: 'oc-empty__inner' }, [
-            media ? h('div', { class: 'oc-empty__media' }, media) : null,
-            slots.icon ? h('div', { class: 'oc-empty__icon', 'aria-hidden': 'true' }, slots.icon()) : null,
-            h('div', { class: 'oc-empty__body' }, [
-              h(props.headingLevel ? `h${props.headingLevel}` : 'p', { class: 'oc-empty__title' }, props.title),
-              desc ? h('p', { class: 'oc-empty__desc' }, desc) : null,
-              actions.length ? h('div', { class: 'oc-empty__actions oc-empty__action' }, actions) : null,
+          h('div', { class: 'pl-empty__inner' }, [
+            media ? h('div', { class: 'pl-empty__media' }, media) : null,
+            slots.icon ? h('div', { class: 'pl-empty__icon', 'aria-hidden': 'true' }, slots.icon()) : null,
+            h('div', { class: 'pl-empty__body' }, [
+              h(props.headingLevel ? `h${props.headingLevel}` : 'p', { class: 'pl-empty__title' }, props.title),
+              desc ? h('p', { class: 'pl-empty__desc' }, desc) : null,
+              actions.length ? h('div', { class: 'pl-empty__actions pl-empty__action' }, actions) : null,
             ]),
           ]),
         ],
@@ -349,7 +349,7 @@ export const EmptyState = defineComponent({
 });
 
 export const Tooltip = defineComponent({
-  name: 'OcTooltip',
+  name: 'PlTooltip',
   props: {
     text: { type: String, required: true },
     placement: { type: String as PropType<'top' | 'bottom'>, default: 'top' },
@@ -359,7 +359,7 @@ export const Tooltip = defineComponent({
    * Escape hides the bubble until the pointer leaves or focus moves (WCAG 1.4.13).
    */
   setup(props, { slots }) {
-    const id = nextId('oc-tip');
+    const id = nextId('pl-tip');
     const dismissed = ref(false);
     return () => {
       const [first, ...rest] = slots.default?.() ?? [];
@@ -367,7 +367,7 @@ export const Tooltip = defineComponent({
       return h(
         'span',
         {
-          class: ['oc-tooltip', props.placement === 'bottom' && 'oc-tooltip--bottom'],
+          class: ['pl-tooltip', props.placement === 'bottom' && 'pl-tooltip--bottom'],
           'data-dismissed': dismissed.value ? '' : undefined,
           onKeydown: (e: KeyboardEvent) => {
             if (e.key === 'Escape') dismissed.value = true;
@@ -375,15 +375,15 @@ export const Tooltip = defineComponent({
           onMouseleave: () => (dismissed.value = false),
           onFocusout: () => (dismissed.value = false),
         },
-        [trigger, ...rest, h('span', { role: 'tooltip', id, class: 'oc-tooltip__bubble' }, props.text)],
+        [trigger, ...rest, h('span', { role: 'tooltip', id, class: 'pl-tooltip__bubble' }, props.text)],
       );
     };
   },
 });
 
 export const Divider = defineComponent({
-  name: 'OcDivider',
+  name: 'PlDivider',
   setup() {
-    return () => h('hr', { class: 'oc-divider' });
+    return () => h('hr', { class: 'pl-divider' });
   },
 });

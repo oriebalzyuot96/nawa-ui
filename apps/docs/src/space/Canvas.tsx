@@ -1,6 +1,6 @@
-/** The live canvas: real Orca UI components, wrapped in selectable, keyboard-operable node frames while editing. */
+/** The live canvas: real Pelagic UI components, wrapped in selectable, keyboard-operable node frames while editing. */
 import { useEffect, useRef, type KeyboardEvent, type PointerEvent, type ReactNode } from 'react';
-import { applyTheme, Button, EmptyState } from '@orca-ui/react';
+import { applyTheme, Button, EmptyState } from '@pelagic-ui/react';
 import { REGISTRY, nodeLabel, type RenderCtx } from './registry';
 import { Icon } from './icons';
 import type { SpaceDoc, SpaceNode } from './types';

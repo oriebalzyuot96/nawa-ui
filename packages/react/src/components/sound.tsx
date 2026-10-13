@@ -9,7 +9,7 @@ import {
   type SoundState,
   type SoundTheme,
   type UiSoundName,
-} from '@orca-ui/core/sound';
+} from '@pelagic-ui/core/sound';
 
 export { SOUND_THEMES, UI_SOUNDS, createSoundEngine, emitUiSound };
 export type { SoundEngine, SoundEngineOptions, SoundState, SoundTheme, UiSoundName };
@@ -28,7 +28,7 @@ export interface SoundProviderProps {
   volume?: number;
   /** Keep only status sounds, quieter. */
   reduced?: boolean;
-  /** Persist user changes (default true) and the storage key (default "oc-sound"). */
+  /** Persist user changes (default true) and the storage key (default "pl-sound"). */
   persist?: boolean;
   storageKey?: string;
   /** Bring your own engine (e.g. shared with non-React code). The provider will not destroy it. */

@@ -1,4 +1,4 @@
-// @orca-ui/three — accessible, theme-aware WebGL components. Requires `three` (peer) and @orca-ui/core styles.
+// @pelagic-ui/three — accessible, theme-aware WebGL components. Requires `three` (peer) and @pelagic-ui/core styles.
 export { Scene3D, Globe3D, ParticlesField, FloatingShapes, ModelViewer, Chart3D } from './components';
 export type {
   Scene3DProps,

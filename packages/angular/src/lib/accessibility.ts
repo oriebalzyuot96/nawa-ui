@@ -23,10 +23,10 @@ import {
   type A11yPanelController,
   type A11yPanelLabelOverrides,
   type A11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
-import { ocId } from './utils';
+} from '@pelagic-ui/core/a11y-prefs';
+import { plId } from './utils';
 
-export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
+export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
 export {
   applyA11yPrefs,
   loadA11yPrefs,
@@ -36,27 +36,27 @@ export {
   getSystemPrefs,
   defaultA11yPrefs,
   normalizeA11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@orca-ui/core/theme';
-export type { CustomTheme, CreateThemeOptions } from '@orca-ui/core/theme';
+} from '@pelagic-ui/core/a11y-prefs';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
+export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';
 
-export type OcA11yGroup = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
+export type PlA11yGroup = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
 
 /**
  * Accessibility settings drawer: color schemes, color-vision filters, text size and spacing, reading
  * aids, motion and interaction aids. Changes apply live to <html> (or `target`), persist in localStorage
- * and are announced politely. Markup and behavior are shared with every Orca package.
+ * and are announced politely. Markup and behavior are shared with every Pelagic package.
  *
- *   <oc-accessibility-panel [(prefs)]="prefs" [(open)]="open" locale="ar" trigger="inline"
+ *   <pl-accessibility-panel [(prefs)]="prefs" [(open)]="open" locale="ar" trigger="inline"
  *                           (changed)="onChange($event)" />
  */
 @Component({
-  selector: 'oc-accessibility-panel',
+  selector: 'pl-accessibility-panel',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents' },
   template: '',
 })
-export class OcAccessibilityPanel implements OnDestroy {
+export class PlAccessibilityPanel implements OnDestroy {
   /** Two-way bindable preferences: `[(prefs)]`. Optional; the panel keeps its own state when unbound. */
   readonly prefs = model<Partial<A11yPrefs> | undefined>(undefined);
   /** Two-way bindable open state: `[(open)]`. */
@@ -66,7 +66,7 @@ export class OcAccessibilityPanel implements OnDestroy {
   readonly locale = input<string | undefined>(undefined);
   readonly labels = input<A11yPanelLabelOverrides | undefined>(undefined);
   readonly preview = input(true, { transform: booleanAttribute });
-  readonly groups = input<OcA11yGroup[] | undefined>(undefined);
+  readonly groups = input<PlA11yGroup[] | undefined>(undefined);
   /** localStorage key, true (default key) or false. */
   readonly persist = input<boolean | string>(true);
   /** Element that receives the data-a11y-* attributes. Default <html>. */
@@ -77,7 +77,7 @@ export class OcAccessibilityPanel implements OnDestroy {
   private readonly host = inject(ElementRef<HTMLElement>);
   private readonly document = inject(DOCUMENT);
   private readonly isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
-  private readonly id = ocId('oc-a11y');
+  private readonly id = plId('pl-a11y');
   private ctl: A11yPanelController | null = null;
   private rendered = false;
 

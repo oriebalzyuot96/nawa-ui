@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../foundation/pressable.dart';
 import '../foundation/utils.dart';
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 import 'display.dart';
 
 /// Sort direction.
-enum OrcaSortDirection {
+enum PelagicSortDirection {
   /// A to Z, small to large.
   ascending,
 
@@ -15,31 +15,31 @@ enum OrcaSortDirection {
   descending,
 }
 
-/// Current sort of a [OrcaDataTable].
+/// Current sort of a [PelagicDataTable].
 @immutable
-class OrcaSort {
+class PelagicSort {
   /// Creates a sort.
-  const OrcaSort(this.columnKey, this.direction);
+  const PelagicSort(this.columnKey, this.direction);
 
   /// Column key.
   final String columnKey;
 
   /// Direction.
-  final OrcaSortDirection direction;
+  final PelagicSortDirection direction;
 
   @override
   bool operator ==(Object other) =>
-      other is OrcaSort && other.columnKey == columnKey && other.direction == direction;
+      other is PelagicSort && other.columnKey == columnKey && other.direction == direction;
 
   @override
   int get hashCode => Object.hash(columnKey, direction);
 
   @override
-  String toString() => 'OrcaSort($columnKey, ${direction.name})';
+  String toString() => 'PelagicSort($columnKey, ${direction.name})';
 }
 
 /// Horizontal alignment of a column.
-enum OrcaColumnAlign {
+enum PelagicColumnAlign {
   /// Start (left in LTR, right in RTL).
   start,
 
@@ -50,16 +50,16 @@ enum OrcaColumnAlign {
   end,
 }
 
-/// A column of [OrcaDataTable].
+/// A column of [PelagicDataTable].
 @immutable
-class OrcaDataColumn<T> {
+class PelagicDataColumn<T> {
   /// Creates a column.
-  const OrcaDataColumn({
+  const PelagicDataColumn({
     required this.key,
     required this.label,
     required this.value,
     this.sortable = false,
-    this.align = OrcaColumnAlign.start,
+    this.align = PelagicColumnAlign.start,
     this.width,
     this.cellBuilder,
   });
@@ -77,7 +77,7 @@ class OrcaDataColumn<T> {
   final bool sortable;
 
   /// Alignment.
-  final OrcaColumnAlign align;
+  final PelagicColumnAlign align;
 
   /// Fixed width. Columns without one share the free space.
   final double? width;
@@ -90,9 +90,9 @@ class OrcaDataColumn<T> {
 ///
 /// Sort changes are announced to screen readers. Wide tables scroll
 /// horizontally.
-class OrcaDataTable<T> extends StatefulWidget {
+class PelagicDataTable<T> extends StatefulWidget {
   /// Creates a data table.
-  const OrcaDataTable({
+  const PelagicDataTable({
     super.key,
     required this.columns,
     required this.rows,
@@ -109,7 +109,7 @@ class OrcaDataTable<T> extends StatefulWidget {
   });
 
   /// Columns.
-  final List<OrcaDataColumn<T>> columns;
+  final List<PelagicDataColumn<T>> columns;
 
   /// Rows.
   final List<T> rows;
@@ -133,10 +133,10 @@ class OrcaDataTable<T> extends StatefulWidget {
   final bool remote;
 
   /// Initial sort.
-  final OrcaSort? initialSort;
+  final PelagicSort? initialSort;
 
   /// Sort change callback.
-  final ValueChanged<OrcaSort>? onSortChanged;
+  final ValueChanged<PelagicSort>? onSortChanged;
 
   /// Accessible caption of the table.
   final String? caption;
@@ -145,22 +145,22 @@ class OrcaDataTable<T> extends StatefulWidget {
   final ValueChanged<T>? onRowTap;
 
   @override
-  State<OrcaDataTable<T>> createState() => _OrcaDataTableState<T>();
+  State<PelagicDataTable<T>> createState() => _PelagicDataTableState<T>();
 }
 
-class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
-  late OrcaSort? _sort = widget.initialSort;
+class _PelagicDataTableState<T> extends State<PelagicDataTable<T>> {
+  late PelagicSort? _sort = widget.initialSort;
 
   List<T> get _sortedRows {
-    final OrcaSort? sort = _sort;
+    final PelagicSort? sort = _sort;
     if (widget.remote || sort == null) return widget.rows;
-    OrcaDataColumn<T>? column;
-    for (final OrcaDataColumn<T> c in widget.columns) {
+    PelagicDataColumn<T>? column;
+    for (final PelagicDataColumn<T> c in widget.columns) {
       if (c.key == sort.columnKey) column = c;
     }
     if (column == null) return widget.rows;
-    final OrcaDataColumn<T> col = column;
-    final int dir = sort.direction == OrcaSortDirection.ascending ? 1 : -1;
+    final PelagicDataColumn<T> col = column;
+    final int dir = sort.direction == PelagicSortDirection.ascending ? 1 : -1;
     final List<T> sorted = List<T>.of(widget.rows);
     // Stable sort: List.sort is not guaranteed stable, so break ties by index.
     final Map<T, int> index = <T, int>{};
@@ -168,65 +168,65 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
       index.putIfAbsent(widget.rows[i], () => i);
     }
     sorted.sort((T a, T b) {
-      final int r = orcaCompareValues(col.value(a), col.value(b));
+      final int r = pelagicCompareValues(col.value(a), col.value(b));
       return r != 0 ? dir * r : (index[a] ?? 0).compareTo(index[b] ?? 0);
     });
     return sorted;
   }
 
-  void _toggleSort(OrcaDataColumn<T> column) {
-    final OrcaSortDirection direction =
-        _sort?.columnKey == column.key && _sort?.direction == OrcaSortDirection.ascending
-            ? OrcaSortDirection.descending
-            : OrcaSortDirection.ascending;
-    final OrcaSort next = OrcaSort(column.key, direction);
+  void _toggleSort(PelagicDataColumn<T> column) {
+    final PelagicSortDirection direction =
+        _sort?.columnKey == column.key && _sort?.direction == PelagicSortDirection.ascending
+            ? PelagicSortDirection.descending
+            : PelagicSortDirection.ascending;
+    final PelagicSort next = PelagicSort(column.key, direction);
     setState(() => _sort = next);
     widget.onSortChanged?.call(next);
-    orcaAnnounce(
+    pelagicAnnounce(
       context,
-      'Sorted by ${column.label}, ${direction == OrcaSortDirection.ascending ? 'ascending' : 'descending'}',
+      'Sorted by ${column.label}, ${direction == PelagicSortDirection.ascending ? 'ascending' : 'descending'}',
     );
   }
 
-  AlignmentGeometry _alignment(OrcaColumnAlign align) => switch (align) {
-        OrcaColumnAlign.start => AlignmentDirectional.centerStart,
-        OrcaColumnAlign.center => Alignment.center,
-        OrcaColumnAlign.end => AlignmentDirectional.centerEnd,
+  AlignmentGeometry _alignment(PelagicColumnAlign align) => switch (align) {
+        PelagicColumnAlign.start => AlignmentDirectional.centerStart,
+        PelagicColumnAlign.center => Alignment.center,
+        PelagicColumnAlign.end => AlignmentDirectional.centerEnd,
       };
 
-  Widget _cell(Widget child, OrcaColumnAlign align) {
+  Widget _cell(Widget child, PelagicColumnAlign align) {
     return Container(
-      constraints: const BoxConstraints(minHeight: orcaMinTapTarget),
+      constraints: const BoxConstraints(minHeight: pelagicMinTapTarget),
       alignment: _alignment(align),
-      padding: const EdgeInsetsDirectional.symmetric(horizontal: OrcaSpace.md, vertical: OrcaSpace.sm),
+      padding: const EdgeInsetsDirectional.symmetric(horizontal: PelagicSpace.md, vertical: PelagicSpace.sm),
       child: child,
     );
   }
 
-  Widget _header(OrcaDataColumn<T> column, OrcaTheme t) {
-    final OrcaColors c = t.colors;
-    final TextStyle style = TextStyle(color: c.textMuted, fontWeight: FontWeight.w600, fontSize: OrcaFontSize.sm);
+  Widget _header(PelagicDataColumn<T> column, PelagicTheme t) {
+    final PelagicColors c = t.colors;
+    final TextStyle style = TextStyle(color: c.textMuted, fontWeight: FontWeight.w600, fontSize: PelagicFontSize.sm);
     if (!column.sortable) {
       return Semantics(header: true, child: _cell(Text(column.label, style: style), column.align));
     }
     final bool active = _sort?.columnKey == column.key;
-    final bool ascending = _sort?.direction == OrcaSortDirection.ascending;
+    final bool ascending = _sort?.direction == PelagicSortDirection.ascending;
     final IconData icon = !active ? Icons.unfold_more : (ascending ? Icons.arrow_upward : Icons.arrow_downward);
     return Semantics(
       header: true,
-      child: OrcaPressable(
+      child: PelagicPressable(
         onPressed: () => _toggleSort(column),
         semanticLabel: column.label,
         semanticValue: active ? (ascending ? 'Sorted ascending' : 'Sorted descending') : 'Not sorted',
         semanticHint: active && ascending ? 'Activate to sort descending' : 'Activate to sort ascending',
         excludeChildSemantics: true,
-        minSize: const Size(0, orcaMinTapTarget),
+        minSize: const Size(0, pelagicMinTapTarget),
         child: _cell(
           Row(
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               Flexible(child: Text(column.label, style: style.copyWith(color: active ? c.text : c.textMuted))),
-              const SizedBox(width: OrcaSpace.xs),
+              const SizedBox(width: PelagicSpace.xs),
               Icon(icon, size: 16, color: active ? c.primaryInk : c.textMuted),
             ],
           ),
@@ -238,9 +238,9 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
-    final List<OrcaDataColumn<T>> columns = widget.columns;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
+    final List<PelagicDataColumn<T>> columns = widget.columns;
     final List<T> rows = _sortedRows;
 
     final Map<int, TableColumnWidth> widths = <int, TableColumnWidth>{
@@ -256,15 +256,15 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
           color: c.surfaceAlt,
           border: Border(bottom: BorderSide(color: t.isHighContrast ? c.controlBorder : c.border)),
         ),
-        children: <Widget>[for (final OrcaDataColumn<T> col in columns) _header(col, t)],
+        children: <Widget>[for (final PelagicDataColumn<T> col in columns) _header(col, t)],
       ),
       if (widget.loading)
         for (int r = 0; r < widget.loadingRows; r++)
           TableRow(
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
             children: <Widget>[
-              for (final OrcaDataColumn<T> col in columns)
-                _cell(const SizedBox(width: 72, child: OrcaSkeleton(height: 12)), col.align),
+              for (final PelagicDataColumn<T> col in columns)
+                _cell(const SizedBox(width: 72, child: PelagicSkeleton(height: 12)), col.align),
             ],
           )
       else
@@ -272,14 +272,14 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
           TableRow(
             decoration: BoxDecoration(border: Border(bottom: BorderSide(color: c.border))),
             children: <Widget>[
-              for (final OrcaDataColumn<T> col in columns)
+              for (final PelagicDataColumn<T> col in columns)
                 _wrapRowTap(
                   row,
                   _cell(
                     col.cellBuilder?.call(context, row) ??
                         Text(
                           '${col.value(row) ?? ''}',
-                          style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm),
+                          style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm),
                         ),
                     col.align,
                   ),
@@ -324,7 +324,7 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
             else
               table,
             if (!widget.loading && rows.isEmpty)
-              OrcaEmptyState(title: widget.emptyTitle, description: widget.emptyDescription),
+              PelagicEmptyState(title: widget.emptyTitle, description: widget.emptyDescription),
           ],
         ),
       ),
@@ -334,10 +334,10 @@ class _OrcaDataTableState<T> extends State<OrcaDataTable<T>> {
   Widget _wrapRowTap(T row, Widget cell) {
     final ValueChanged<T>? onTap = widget.onRowTap;
     if (onTap == null) return cell;
-    return OrcaPressable(
+    return PelagicPressable(
       button: false,
       onPressed: () => onTap(row),
-      minSize: const Size(0, orcaMinTapTarget),
+      minSize: const Size(0, pelagicMinTapTarget),
       child: cell,
     );
   }

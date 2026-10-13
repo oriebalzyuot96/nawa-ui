@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/vue",
+  "name": "@pelagic-ui/vue",
   "version": "0.1.0",
-  "description": "Orca UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Pelagic UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -29,7 +29,7 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
-    "@orca-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.1.0"
   },
   "devDependencies": {
     "@vue/test-utils": "2.4.6",
@@ -44,7 +44,7 @@
     "vue3",
     "vue-components",
     "vue-ui",
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -60,13 +60,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/vue"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

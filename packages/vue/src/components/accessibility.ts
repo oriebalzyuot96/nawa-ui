@@ -1,4 +1,4 @@
-// AccessibilityPanel for Vue: the shared Orca panel (markup and behavior from @orca-ui/core/a11y-prefs)
+// AccessibilityPanel for Vue: the shared Pelagic panel (markup and behavior from @pelagic-ui/core/a11y-prefs)
 // with Vue props, v-model and events.
 import { defineComponent, h, onBeforeUnmount, onMounted, ref, watch, type PropType } from 'vue';
 import {
@@ -9,10 +9,10 @@ import {
   type A11yPanelController,
   type A11yPanelLabelOverrides,
   type A11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
+} from '@pelagic-ui/core/a11y-prefs';
 import { nextId } from '../utils';
 
-export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
+export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
 export {
   applyA11yPrefs,
   loadA11yPrefs,
@@ -22,9 +22,9 @@ export {
   getSystemPrefs,
   defaultA11yPrefs,
   normalizeA11yPrefs,
-} from '@orca-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@orca-ui/core/theme';
-export type { CustomTheme, CreateThemeOptions } from '@orca-ui/core/theme';
+} from '@pelagic-ui/core/a11y-prefs';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
+export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';
 
 type GroupId = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
 
@@ -36,7 +36,7 @@ type GroupId = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
  *   <AccessibilityPanel v-model="prefs" locale="ar" trigger="inline" @change="(prefs, change) => …" />
  */
 export const AccessibilityPanel = defineComponent({
-  name: 'OcAccessibilityPanel',
+  name: 'PlAccessibilityPanel',
   props: {
     /** v-model: the preferences (optional; the panel keeps its own state when omitted). */
     modelValue: { type: Object as PropType<Partial<A11yPrefs>>, default: undefined },
@@ -60,7 +60,7 @@ export const AccessibilityPanel = defineComponent({
   },
   setup(props, { emit, expose }) {
     const host = ref<HTMLElement | null>(null);
-    const id = nextId('oc-a11y');
+    const id = nextId('pl-a11y');
     let ctl: A11yPanelController | null = null;
 
     const mount = () => {
@@ -118,6 +118,6 @@ export const AccessibilityPanel = defineComponent({
       reset: () => ctl?.reset(),
       get: () => ctl?.get(),
     });
-    return () => h('div', { ref: host, class: 'oc-a11y-host', style: 'display: contents' });
+    return () => h('div', { ref: host, class: 'pl-a11y-host', style: 'display: contents' });
   },
 });

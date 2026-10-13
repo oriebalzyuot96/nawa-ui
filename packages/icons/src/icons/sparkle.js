@@ -1,7 +1,7 @@
 /** @type {import('../types').IconSource} */
 export default {
   name: 'sparkle',
-  category: 'orca',
+  category: 'pelagic',
   tags: ['ai', 'magic', 'shine'],
   outline: [
     '<path d="M12 3C13.08 7.05 16.95 10.92 21 12C16.95 13.08 13.08 16.95 12 21C10.92 16.95 7.05 13.08 3 12C7.05 10.92 10.92 7.05 12 3Z"/>',

@@ -1,4 +1,4 @@
-// Styles: import '@orca-ui/core/style.css' once in your app entry.
+// Styles: import '@pelagic-ui/core/style.css' once in your app entry.
 export { default as Button } from './Button.svelte';
 export { default as Input } from './Input.svelte';
 export { default as Textarea } from './Textarea.svelte';
@@ -33,12 +33,12 @@ export { default as DataTable } from './DataTable.svelte';
 export { default as Toast } from './Toast.svelte';
 export { modal } from './actions';
 export { getPageItems } from './utils';
-export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@orca-ui/core/theme';
-export type { ThemeChoice } from '@orca-ui/core/theme';
-export type { ThemeMode, ThemeAccent, ThemeShape } from '@orca-ui/core/tokens';
+export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@pelagic-ui/core/theme';
+export type { ThemeChoice } from '@pelagic-ui/core/theme';
+export type { ThemeMode, ThemeAccent, ThemeShape } from '@pelagic-ui/core/tokens';
 export * from './sound';
 export { default as AccessibilityPanel } from './AccessibilityPanel.svelte';
-export { applyA11yPrefs, loadA11yPrefs, saveA11yPrefs, resetA11yPrefs, watchSystemPrefs, getSystemPrefs, defaultA11yPrefs, normalizeA11yPrefs } from '@orca-ui/core/a11y-prefs';
-export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@orca-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@orca-ui/core/theme';
-export type { CustomTheme, CreateThemeOptions } from '@orca-ui/core/theme';
+export { applyA11yPrefs, loadA11yPrefs, saveA11yPrefs, resetA11yPrefs, watchSystemPrefs, getSystemPrefs, defaultA11yPrefs, normalizeA11yPrefs } from '@pelagic-ui/core/a11y-prefs';
+export type { A11yPrefs, A11yPanelChange, A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
+export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';

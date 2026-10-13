@@ -9,7 +9,7 @@ import {
   type TextInputProps,
   View,
 } from 'react-native';
-import { fontSize, radius, space, useOrcaTheme } from '../theme';
+import { fontSize, radius, space, usePelagicTheme } from '../theme';
 
 export interface FieldMetaProps {
   label?: string;
@@ -18,7 +18,7 @@ export interface FieldMetaProps {
 }
 
 function FieldFrame({ label, hint, error, children }: FieldMetaProps & { children: ReactNode }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View style={styles.field}>
       {label ? <Text style={[styles.label, { color: t.text }]}>{label}</Text> : null}
@@ -31,7 +31,7 @@ function FieldFrame({ label, hint, error, children }: FieldMetaProps & { childre
 export interface InputProps extends TextInputProps, FieldMetaProps {}
 
 export function Input({ label, hint, error, style, multiline, ...rest }: InputProps) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <FieldFrame label={label} hint={hint} error={error}>
       <TextInput
@@ -71,7 +71,7 @@ export function Select({
   onChange,
   placeholder = 'Select…',
 }: FieldMetaProps & { options: SelectOption[]; value?: string; onChange: (value: string) => void; placeholder?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   const [open, setOpen] = useState(false);
   const selected = options.find((o) => o.value === value);
   return (
@@ -111,7 +111,7 @@ export function Select({
 }
 
 export function Checkbox({ label, checked, onChange, disabled }: { label?: string; checked: boolean; onChange: (checked: boolean) => void; disabled?: boolean }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <Pressable
       accessibilityRole="checkbox"
@@ -130,7 +130,7 @@ export function Checkbox({ label, checked, onChange, disabled }: { label?: strin
 }
 
 export function Switch({ checked, onChange, label, disabled }: { checked: boolean; onChange: (checked: boolean) => void; label: string; disabled?: boolean }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View style={styles.rowBetween}>
       <Text style={{ color: t.text, fontSize: fontSize.md, flex: 1 }}>{label}</Text>
@@ -153,7 +153,7 @@ export interface RadioOption {
 }
 
 export function RadioGroup({ options, value, onChange, label }: { options: RadioOption[]; value?: string; onChange: (value: string) => void; label?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View accessibilityRole="radiogroup" accessibilityLabel={label} style={{ gap: space.sm }}>
       {options.map((o) => {
@@ -179,7 +179,7 @@ export function RadioGroup({ options, value, onChange, label }: { options: Radio
 }
 
 export function Segmented({ options, value, onChange, label }: { options: { label: string; value: string }[]; value: string; onChange: (value: string) => void; label?: string }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <View accessibilityRole="radiogroup" accessibilityLabel={label} style={[styles.segmented, { backgroundColor: t.surfaceMuted }]}>
       {options.map((o) => {

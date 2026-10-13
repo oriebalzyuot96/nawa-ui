@@ -1,6 +1,6 @@
 /*
- * Public API of @orca-ui/angular.
- * Styles: add '@orca-ui/core/style.css' to your global styles once.
+ * Public API of @pelagic-ui/angular.
+ * Styles: add '@pelagic-ui/core/style.css' to your global styles once.
  */
 export * from './lib/button';
 export * from './lib/forms';
@@ -12,76 +12,76 @@ export * from './lib/overlay';
 export * from './lib/toast';
 export * from './lib/theme';
 export { cx, getPageItems, initialsOf, type PageItem, type Variant } from './lib/utils';
-export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@orca-ui/core/theme';
+export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@pelagic-ui/core/theme';
 
-import { OcButton } from './lib/button';
-import { OcCheckbox, OcInput, OcRadioGroup, OcSegmented, OcSelect, OcSlider, OcSwitch, OcTextarea } from './lib/forms';
+import { PlButton } from './lib/button';
+import { PlCheckbox, PlInput, PlRadioGroup, PlSegmented, PlSelect, PlSlider, PlSwitch, PlTextarea } from './lib/forms';
 import {
-  OcAlert,
-  OcAvatar,
-  OcBadge,
-  OcCard,
-  OcCardFooter,
-  OcCardHeader,
-  OcDivider,
-  OcEmptyAction,
-  OcEmptyState,
-  OcProgressBar,
-  OcSkeleton,
-  OcSkeletonCard,
-  OcSkeletonText,
-  OcSpinner,
-  OcStepper,
-  OcTag,
-  OcTimeline,
+  PlAlert,
+  PlAvatar,
+  PlBadge,
+  PlCard,
+  PlCardFooter,
+  PlCardHeader,
+  PlDivider,
+  PlEmptyAction,
+  PlEmptyState,
+  PlProgressBar,
+  PlSkeleton,
+  PlSkeletonCard,
+  PlSkeletonText,
+  PlSpinner,
+  PlStepper,
+  PlTag,
+  PlTimeline,
 } from './lib/display';
-import { OcTooltip } from './lib/tooltip';
-import { OcAccordion, OcAccordionPanel, OcBreadcrumb, OcPagination, OcTabPanel, OcTabs } from './lib/navigation';
-import { OcCell, OcDataTable } from './lib/data-table';
-import { OcDialog, OcDialogFooter, OcDrawer } from './lib/overlay';
-import { OcToaster } from './lib/toast';
+import { PlTooltip } from './lib/tooltip';
+import { PlAccordion, PlAccordionPanel, PlBreadcrumb, PlPagination, PlTabPanel, PlTabs } from './lib/navigation';
+import { PlCell, PlDataTable } from './lib/data-table';
+import { PlDialog, PlDialogFooter, PlDrawer } from './lib/overlay';
+import { PlToaster } from './lib/toast';
 
-/** Every Orca UI component and directive, for `imports: [ORCA_UI]`. */
-export const ORCA_UI = [
-  OcButton,
-  OcInput,
-  OcTextarea,
-  OcSelect,
-  OcCheckbox,
-  OcSwitch,
-  OcRadioGroup,
-  OcSegmented,
-  OcSlider,
-  OcBadge,
-  OcTag,
-  OcAvatar,
-  OcCard,
-  OcCardHeader,
-  OcCardFooter,
-  OcAlert,
-  OcEmptyState,
-  OcEmptyAction,
-  OcDivider,
-  OcSpinner,
-  OcSkeleton,
-  OcSkeletonText,
-  OcSkeletonCard,
-  OcProgressBar,
-  OcStepper,
-  OcTimeline,
-  OcTooltip,
-  OcTabs,
-  OcTabPanel,
-  OcAccordion,
-  OcAccordionPanel,
-  OcBreadcrumb,
-  OcPagination,
-  OcDataTable,
-  OcCell,
-  OcDialog,
-  OcDrawer,
-  OcDialogFooter,
-  OcToaster,
+/** Every Pelagic UI component and directive, for `imports: [PELAGIC_UI]`. */
+export const PELAGIC_UI = [
+  PlButton,
+  PlInput,
+  PlTextarea,
+  PlSelect,
+  PlCheckbox,
+  PlSwitch,
+  PlRadioGroup,
+  PlSegmented,
+  PlSlider,
+  PlBadge,
+  PlTag,
+  PlAvatar,
+  PlCard,
+  PlCardHeader,
+  PlCardFooter,
+  PlAlert,
+  PlEmptyState,
+  PlEmptyAction,
+  PlDivider,
+  PlSpinner,
+  PlSkeleton,
+  PlSkeletonText,
+  PlSkeletonCard,
+  PlProgressBar,
+  PlStepper,
+  PlTimeline,
+  PlTooltip,
+  PlTabs,
+  PlTabPanel,
+  PlAccordion,
+  PlAccordionPanel,
+  PlBreadcrumb,
+  PlPagination,
+  PlDataTable,
+  PlCell,
+  PlDialog,
+  PlDrawer,
+  PlDialogFooter,
+  PlToaster,
 ] as const;
 export * from './lib/sound';
 export * from './lib/accessibility';

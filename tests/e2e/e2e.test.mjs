@@ -1,7 +1,7 @@
-// End-to-end + accessibility + visual smoke tests for the Orca UI docs site.
+// End-to-end + accessibility + visual smoke tests for the Pelagic UI docs site.
 //
 // Target:
-//   E2E_URL=https://oriebalzyuot96.github.io/orca-ui/   test a deployed site
+//   E2E_URL=https://oriebalzyuot96.github.io/pelagic-ui/   test a deployed site
 //   (unset)                                              start `astro preview` for apps/docs/dist
 //                                                        (build it first: npm run docs:build)
 // Browser:
@@ -25,7 +25,7 @@ const artifacts = join(here, 'artifacts');
 mkdirSync(artifacts, { recursive: true });
 
 const PORT = Number(process.env.E2E_PORT ?? 4329);
-const BASE = (process.env.E2E_URL ?? `http://127.0.0.1:${PORT}/orca-ui/`).replace(/\/?$/, '/');
+const BASE = (process.env.E2E_URL ?? `http://127.0.0.1:${PORT}/pelagic-ui/`).replace(/\/?$/, '/');
 const MODES = ['light', 'dark', 'hc'];
 const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'];
 const VIEWPORT = { width: 1280, height: 900 };
@@ -73,7 +73,7 @@ async function newPage({ mode, accent } = {}) {
     // Same path as a real user: ThemeScript restores the saved choice before first paint.
     await page.evaluateOnNewDocument((choice) => {
       try {
-        localStorage.setItem('orca-ui-theme', JSON.stringify(choice));
+        localStorage.setItem('pelagic-ui-theme', JSON.stringify(choice));
       } catch {
         /* ignore */
       }
@@ -132,7 +132,7 @@ const describeViolations = (vs) =>
 
 before(async () => {
   if (!process.env.E2E_URL) {
-    // Serve the built docs exactly as GitHub Pages would (base /orca-ui/).
+    // Serve the built docs exactly as GitHub Pages would (base /pelagic-ui/).
     const astroBin = join(repoRoot, 'node_modules', 'astro', 'astro.js');
     server = spawn(process.execPath, [astroBin, 'preview', '--host', '127.0.0.1', '--port', String(PORT)], {
       cwd: join(repoRoot, 'apps', 'docs'),
@@ -231,7 +231,7 @@ describe('keyboard smoke', () => {
       href: document.activeElement?.getAttribute('href'),
       text: document.activeElement?.textContent?.trim(),
     }));
-    assert.match(String(first.cls), /oc-skip-link/);
+    assert.match(String(first.cls), /pl-skip-link/);
     assert.equal(first.href, '#main');
     // The skip link becomes visible when focused.
     const visible = await page.evaluate(() => {

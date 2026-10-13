@@ -1,24 +1,24 @@
 import { Component, signal } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
 import axe from 'axe-core';
-import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@orca-ui/core/a11y-prefs';
-import { OcAccessibilityPanel } from './accessibility';
+import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@pelagic-ui/core/a11y-prefs';
+import { PlAccessibilityPanel } from './accessibility';
 
 const html = document.documentElement;
-const dialog = () => document.querySelector<HTMLElement>('.oc-a11y-panel')!;
+const dialog = () => document.querySelector<HTMLElement>('.pl-a11y-panel')!;
 const radio = (name: string) => [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
 
 function cleanup() {
   localStorage.clear();
   for (const a of [...html.attributes]) if (a.name.startsWith('data-a11y-')) html.removeAttribute(a.name);
-  html.style.removeProperty('--oc-user-font-scale');
-  document.querySelectorAll('.oc-a11y-panel, .oc-a11y-backdrop, .oc-a11y-reading-guide, .oc-a11y-reading-mask').forEach((n) => n.remove());
+  html.style.removeProperty('--pl-user-font-scale');
+  document.querySelectorAll('.pl-a11y-panel, .pl-a11y-backdrop, .pl-a11y-reading-guide, .pl-a11y-reading-mask').forEach((n) => n.remove());
 }
 
-describe('OcAccessibilityPanel', () => {
+describe('PlAccessibilityPanel', () => {
   @Component({
-    imports: [OcAccessibilityPanel],
-    template: `<oc-accessibility-panel [(prefs)]="prefs" [(open)]="open" [locale]="locale()" (changed)="changes.push($event.change)" />`,
+    imports: [PlAccessibilityPanel],
+    template: `<pl-accessibility-panel [(prefs)]="prefs" [(open)]="open" [locale]="locale()" (changed)="changes.push($event.change)" />`,
   })
   class Host {
     prefs = signal<Partial<A11yPrefs> | undefined>(undefined);

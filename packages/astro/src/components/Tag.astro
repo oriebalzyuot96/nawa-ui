@@ -7,7 +7,7 @@ interface Props {
 const { removeHref } = Astro.props;
 ---
 
-<span class="oc-tag">
+<span class="pl-tag">
   <slot />
-  {removeHref && <a class="oc-tag__remove" href={removeHref} aria-label="Remove">×</a>}
+  {removeHref && <a class="pl-tag__remove" href={removeHref} aria-label="Remove">×</a>}
 </span>

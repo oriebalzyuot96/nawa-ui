@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:orca_ui/orca_ui.dart';
+import 'package:pelagic_ui/pelagic_ui.dart';
 
 void main() => runApp(const GalleryApp());
 
-/// Root: holds the theme settings and passes them to [OrcaApp].
+/// Root: holds the theme settings and passes them to [PelagicApp].
 class GalleryApp extends StatefulWidget {
   const GalleryApp({super.key});
 
@@ -12,15 +12,15 @@ class GalleryApp extends StatefulWidget {
 }
 
 class _GalleryAppState extends State<GalleryApp> {
-  OrcaThemeMode _mode = OrcaThemeMode.system;
-  OrcaAccent _accent = orcaDefaultAccent;
-  OrcaShape _shape = orcaDefaultShape;
+  PelagicThemeMode _mode = PelagicThemeMode.system;
+  PelagicAccent _accent = pelagicDefaultAccent;
+  PelagicShape _shape = pelagicDefaultShape;
   bool _rtl = false;
 
   @override
   Widget build(BuildContext context) {
-    return OrcaApp(
-      title: 'Orca UI gallery',
+    return PelagicApp(
+      title: 'Pelagic UI gallery',
       mode: _mode,
       accent: _accent,
       shape: _shape,
@@ -33,9 +33,9 @@ class _GalleryAppState extends State<GalleryApp> {
         accent: _accent,
         shape: _shape,
         rtl: _rtl,
-        onMode: (OrcaThemeMode v) => setState(() => _mode = v),
-        onAccent: (OrcaAccent v) => setState(() => _accent = v),
-        onShape: (OrcaShape v) => setState(() => _shape = v),
+        onMode: (PelagicThemeMode v) => setState(() => _mode = v),
+        onAccent: (PelagicAccent v) => setState(() => _accent = v),
+        onShape: (PelagicShape v) => setState(() => _shape = v),
         onRtl: (bool v) => setState(() => _rtl = v),
       ),
     );
@@ -55,13 +55,13 @@ class GalleryPage extends StatefulWidget {
     required this.onRtl,
   });
 
-  final OrcaThemeMode mode;
-  final OrcaAccent accent;
-  final OrcaShape shape;
+  final PelagicThemeMode mode;
+  final PelagicAccent accent;
+  final PelagicShape shape;
   final bool rtl;
-  final ValueChanged<OrcaThemeMode> onMode;
-  final ValueChanged<OrcaAccent> onAccent;
-  final ValueChanged<OrcaShape> onShape;
+  final ValueChanged<PelagicThemeMode> onMode;
+  final ValueChanged<PelagicAccent> onAccent;
+  final ValueChanged<PelagicShape> onShape;
   final ValueChanged<bool> onRtl;
 
   @override
@@ -91,13 +91,13 @@ class _GalleryPageState extends State<GalleryPage> {
     (name: 'Yousef Karim', role: 'Engineering', commits: 211),
   ];
 
-  static const List<OrcaChartPoint> _revenue = <OrcaChartPoint>[
-    OrcaChartPoint('Jan', 12),
-    OrcaChartPoint('Feb', 18),
-    OrcaChartPoint('Mar', 15),
-    OrcaChartPoint('Apr', 26),
-    OrcaChartPoint('May', 31),
-    OrcaChartPoint('Jun', 42),
+  static const List<PelagicChartPoint> _revenue = <PelagicChartPoint>[
+    PelagicChartPoint('Jan', 12),
+    PelagicChartPoint('Feb', 18),
+    PelagicChartPoint('Mar', 15),
+    PelagicChartPoint('Apr', 26),
+    PelagicChartPoint('May', 31),
+    PelagicChartPoint('Jun', 42),
   ];
 
   @override
@@ -111,58 +111,58 @@ class _GalleryPageState extends State<GalleryPage> {
     await Future<void>.delayed(const Duration(seconds: 2));
     if (!mounted) return;
     setState(() => _saving = false);
-    showOrcaToast(context, title: 'Saved', message: 'Your changes were saved.', tone: OrcaTone.success);
+    showPelagicToast(context, title: 'Saved', message: 'Your changes were saved.', tone: PelagicTone.success);
   }
 
   Future<void> _confirmDelete() async {
-    final bool? confirmed = await showOrcaDialog<bool>(
+    final bool? confirmed = await showPelagicDialog<bool>(
       context: context,
       title: 'Delete project?',
       builder: (BuildContext context) => const Text('This removes the project and its history. It cannot be undone.'),
       actionsBuilder: (BuildContext dialogContext) => <Widget>[
-        OrcaButton(
+        PelagicButton(
           label: 'Cancel',
-          variant: OrcaButtonVariant.secondary,
+          variant: PelagicButtonVariant.secondary,
           onPressed: () => Navigator.of(dialogContext).pop(false),
         ),
-        OrcaButton(
+        PelagicButton(
           label: 'Delete',
-          variant: OrcaButtonVariant.danger,
+          variant: PelagicButtonVariant.danger,
           onPressed: () => Navigator.of(dialogContext).pop(true),
         ),
       ],
     );
     if (!mounted || confirmed != true) return;
-    showOrcaToast(context, message: 'Project deleted.', tone: OrcaTone.danger, actionLabel: 'Undo', onAction: () {});
+    showPelagicToast(context, message: 'Project deleted.', tone: PelagicTone.danger, actionLabel: 'Undo', onAction: () {});
   }
 
   void _openDrawer() {
-    showOrcaDrawer<void>(
+    showPelagicDrawer<void>(
       context: context,
       title: 'Filters',
       builder: (BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          OrcaCheckbox(value: true, onChanged: (bool v) {}, label: 'Open issues'),
-          OrcaCheckbox(value: false, onChanged: (bool v) {}, label: 'Closed issues'),
+          PelagicCheckbox(value: true, onChanged: (bool v) {}, label: 'Open issues'),
+          PelagicCheckbox(value: false, onChanged: (bool v) {}, label: 'Closed issues'),
         ],
       ),
       actionsBuilder: (BuildContext dialogContext) => <Widget>[
-        OrcaButton(label: 'Apply', onPressed: () => Navigator.of(dialogContext).pop()),
+        PelagicButton(label: 'Apply', onPressed: () => Navigator.of(dialogContext).pop()),
       ],
     );
   }
 
   Widget _section(String title, List<Widget> children) {
     return Padding(
-      padding: const EdgeInsetsDirectional.only(bottom: OrcaSpace.xl),
-      child: OrcaCard(
+      padding: const EdgeInsetsDirectional.only(bottom: PelagicSpace.xl),
+      child: PelagicCard(
         title: title,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             for (int i = 0; i < children.length; i++) ...<Widget>[
-              if (i > 0) const SizedBox(height: OrcaSpace.lg),
+              if (i > 0) const SizedBox(height: PelagicSpace.lg),
               children[i],
             ],
           ],
@@ -173,15 +173,15 @@ class _GalleryPageState extends State<GalleryPage> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Orca UI'),
+        title: const Text('Pelagic UI'),
         backgroundColor: c.surface,
         foregroundColor: c.text,
         surfaceTintColor: const Color(0x00000000),
         actions: <Widget>[
-          OrcaTooltip(
+          PelagicTooltip(
             message: 'Filters',
             child: IconButton(
               icon: const Icon(Icons.tune),
@@ -195,63 +195,63 @@ class _GalleryPageState extends State<GalleryPage> {
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 820),
             child: ListView(
-              padding: const EdgeInsetsDirectional.all(OrcaSpace.lg),
+              padding: const EdgeInsetsDirectional.all(PelagicSpace.lg),
               children: <Widget>[
                 _section('Theme', <Widget>[
-                  OrcaSegmented<OrcaThemeMode>(
+                  PelagicSegmented<PelagicThemeMode>(
                     label: 'Mode',
                     value: widget.mode,
                     onChanged: widget.onMode,
-                    options: const <OrcaOption<OrcaThemeMode>>[
-                      OrcaOption<OrcaThemeMode>(value: OrcaThemeMode.system, label: 'System'),
-                      OrcaOption<OrcaThemeMode>(value: OrcaThemeMode.light, label: 'Light'),
-                      OrcaOption<OrcaThemeMode>(value: OrcaThemeMode.dark, label: 'Dark'),
-                      OrcaOption<OrcaThemeMode>(value: OrcaThemeMode.hc, label: 'High contrast'),
+                    options: const <PelagicOption<PelagicThemeMode>>[
+                      PelagicOption<PelagicThemeMode>(value: PelagicThemeMode.system, label: 'System'),
+                      PelagicOption<PelagicThemeMode>(value: PelagicThemeMode.light, label: 'Light'),
+                      PelagicOption<PelagicThemeMode>(value: PelagicThemeMode.dark, label: 'Dark'),
+                      PelagicOption<PelagicThemeMode>(value: PelagicThemeMode.hc, label: 'High contrast'),
                     ],
                   ),
-                  OrcaSelect<OrcaAccent>(
+                  PelagicSelect<PelagicAccent>(
                     label: 'Accent',
                     value: widget.accent,
                     onChanged: widget.onAccent,
-                    options: <OrcaOption<OrcaAccent>>[
-                      for (final OrcaAccent a in OrcaAccent.values) OrcaOption<OrcaAccent>(value: a, label: a.name),
+                    options: <PelagicOption<PelagicAccent>>[
+                      for (final PelagicAccent a in PelagicAccent.values) PelagicOption<PelagicAccent>(value: a, label: a.name),
                     ],
                   ),
-                  OrcaSegmented<OrcaShape>(
+                  PelagicSegmented<PelagicShape>(
                     label: 'Shape',
                     value: widget.shape,
                     onChanged: widget.onShape,
-                    options: <OrcaOption<OrcaShape>>[
-                      for (final OrcaShape s in OrcaShape.values) OrcaOption<OrcaShape>(value: s, label: s.name),
+                    options: <PelagicOption<PelagicShape>>[
+                      for (final PelagicShape s in PelagicShape.values) PelagicOption<PelagicShape>(value: s, label: s.name),
                     ],
                   ),
-                  OrcaSwitch(label: 'Right-to-left layout', value: widget.rtl, onChanged: widget.onRtl),
+                  PelagicSwitch(label: 'Right-to-left layout', value: widget.rtl, onChanged: widget.onRtl),
                 ]),
                 _section('Buttons', <Widget>[
                   Wrap(
-                    spacing: OrcaSpace.sm,
-                    runSpacing: OrcaSpace.sm,
+                    spacing: PelagicSpace.sm,
+                    runSpacing: PelagicSpace.sm,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: <Widget>[
-                      OrcaButton(label: 'Save', loading: _saving, onPressed: _save),
-                      OrcaButton(label: 'Secondary', variant: OrcaButtonVariant.secondary, onPressed: () {}),
-                      OrcaButton(label: 'Outline', variant: OrcaButtonVariant.outline, onPressed: () {}),
-                      OrcaButton(label: 'Ghost', variant: OrcaButtonVariant.ghost, onPressed: () {}),
-                      OrcaButton(label: 'Delete', variant: OrcaButtonVariant.danger, onPressed: _confirmDelete),
-                      const OrcaButton(label: 'Disabled'),
-                      OrcaButton(
+                      PelagicButton(label: 'Save', loading: _saving, onPressed: _save),
+                      PelagicButton(label: 'Secondary', variant: PelagicButtonVariant.secondary, onPressed: () {}),
+                      PelagicButton(label: 'Outline', variant: PelagicButtonVariant.outline, onPressed: () {}),
+                      PelagicButton(label: 'Ghost', variant: PelagicButtonVariant.ghost, onPressed: () {}),
+                      PelagicButton(label: 'Delete', variant: PelagicButtonVariant.danger, onPressed: _confirmDelete),
+                      const PelagicButton(label: 'Disabled'),
+                      PelagicButton(
                         label: 'Small',
-                        size: OrcaButtonSize.sm,
+                        size: PelagicButtonSize.sm,
                         icon: const Icon(Icons.add),
                         onPressed: () {},
                       ),
-                      OrcaButton(label: 'Large', size: OrcaButtonSize.lg, onPressed: () {}),
+                      PelagicButton(label: 'Large', size: PelagicButtonSize.lg, onPressed: () {}),
                     ],
                   ),
-                  OrcaButton(label: 'Open drawer', block: true, variant: OrcaButtonVariant.outline, onPressed: _openDrawer),
+                  PelagicButton(label: 'Open drawer', block: true, variant: PelagicButtonVariant.outline, onPressed: _openDrawer),
                 ]),
                 _section('Forms', <Widget>[
-                  OrcaInput(
+                  PelagicInput(
                     label: 'Email',
                     placeholder: 'you@example.com',
                     hint: 'We never share your email.',
@@ -264,51 +264,51 @@ class _GalleryPageState extends State<GalleryPage> {
                       _emailError = v.isEmpty || v.contains('@') ? null : 'Enter a valid email address.';
                     }),
                   ),
-                  const OrcaTextarea(label: 'Message', placeholder: 'Write something…'),
-                  OrcaSelect<String>(
+                  const PelagicTextarea(label: 'Message', placeholder: 'Write something…'),
+                  PelagicSelect<String>(
                     label: 'Country',
                     value: _country,
                     onChanged: (String v) => setState(() => _country = v),
-                    options: const <OrcaOption<String>>[
-                      OrcaOption<String>(value: 'jo', label: 'Jordan'),
-                      OrcaOption<String>(value: 'ae', label: 'United Arab Emirates'),
-                      OrcaOption<String>(value: 'eg', label: 'Egypt'),
-                      OrcaOption<String>(value: 'ma', label: 'Morocco'),
+                    options: const <PelagicOption<String>>[
+                      PelagicOption<String>(value: 'jo', label: 'Jordan'),
+                      PelagicOption<String>(value: 'ae', label: 'United Arab Emirates'),
+                      PelagicOption<String>(value: 'eg', label: 'Egypt'),
+                      PelagicOption<String>(value: 'ma', label: 'Morocco'),
                     ],
                   ),
-                  OrcaCheckbox(
+                  PelagicCheckbox(
                     value: _agree,
                     onChanged: (bool v) => setState(() => _agree = v),
                     label: 'I agree to the terms',
                     description: 'You can change this later in settings.',
                   ),
-                  OrcaSwitch(
+                  PelagicSwitch(
                     label: 'Notifications',
                     description: 'Email me about new comments',
                     value: _notifications,
                     onChanged: (bool v) => setState(() => _notifications = v),
                   ),
-                  OrcaRadioGroup<String>(
+                  PelagicRadioGroup<String>(
                     label: 'Plan',
                     value: _plan,
                     onChanged: (String v) => setState(() => _plan = v),
-                    options: const <OrcaOption<String>>[
-                      OrcaOption<String>(value: 'free', label: 'Free'),
-                      OrcaOption<String>(value: 'pro', label: 'Pro'),
-                      OrcaOption<String>(value: 'team', label: 'Team (coming soon)', disabled: true),
+                    options: const <PelagicOption<String>>[
+                      PelagicOption<String>(value: 'free', label: 'Free'),
+                      PelagicOption<String>(value: 'pro', label: 'Pro'),
+                      PelagicOption<String>(value: 'team', label: 'Team (coming soon)', disabled: true),
                     ],
                   ),
-                  OrcaSegmented<String>(
+                  PelagicSegmented<String>(
                     label: 'View',
                     value: _view,
                     onChanged: (String v) => setState(() => _view = v),
-                    options: const <OrcaOption<String>>[
-                      OrcaOption<String>(value: 'grid', label: 'Grid'),
-                      OrcaOption<String>(value: 'list', label: 'List'),
-                      OrcaOption<String>(value: 'board', label: 'Board'),
+                    options: const <PelagicOption<String>>[
+                      PelagicOption<String>(value: 'grid', label: 'Grid'),
+                      PelagicOption<String>(value: 'list', label: 'List'),
+                      PelagicOption<String>(value: 'board', label: 'Board'),
                     ],
                   ),
-                  OrcaSlider(
+                  PelagicSlider(
                     label: 'Volume',
                     value: _volume,
                     divisions: 20,
@@ -318,137 +318,137 @@ class _GalleryPageState extends State<GalleryPage> {
                 ]),
                 _section('Display', <Widget>[
                   const Wrap(
-                    spacing: OrcaSpace.sm,
-                    runSpacing: OrcaSpace.sm,
+                    spacing: PelagicSpace.sm,
+                    runSpacing: PelagicSpace.sm,
                     children: <Widget>[
-                      OrcaBadge(label: 'Neutral'),
-                      OrcaBadge(label: 'New', tone: OrcaTone.primary),
-                      OrcaBadge(label: 'Info', tone: OrcaTone.info),
-                      OrcaBadge(label: 'Paid', tone: OrcaTone.success),
-                      OrcaBadge(label: 'Pending', tone: OrcaTone.warning),
-                      OrcaBadge(label: 'Overdue', tone: OrcaTone.danger),
+                      PelagicBadge(label: 'Neutral'),
+                      PelagicBadge(label: 'New', tone: PelagicTone.primary),
+                      PelagicBadge(label: 'Info', tone: PelagicTone.info),
+                      PelagicBadge(label: 'Paid', tone: PelagicTone.success),
+                      PelagicBadge(label: 'Pending', tone: PelagicTone.warning),
+                      PelagicBadge(label: 'Overdue', tone: PelagicTone.danger),
                     ],
                   ),
                   Wrap(
-                    spacing: OrcaSpace.sm,
-                    runSpacing: OrcaSpace.sm,
+                    spacing: PelagicSpace.sm,
+                    runSpacing: PelagicSpace.sm,
                     children: <Widget>[
                       for (final String tag in _tags)
-                        OrcaTag(label: tag, onRemove: () => setState(() => _tags.remove(tag))),
-                      const OrcaTag(label: 'Read only'),
+                        PelagicTag(label: tag, onRemove: () => setState(() => _tags.remove(tag))),
+                      const PelagicTag(label: 'Read only'),
                     ],
                   ),
                   const Row(
                     children: <Widget>[
-                      OrcaAvatar(name: 'Lina Haddad', size: OrcaAvatarSize.sm),
-                      SizedBox(width: OrcaSpace.sm),
-                      OrcaAvatar(name: 'Omar Saleh'),
-                      SizedBox(width: OrcaSpace.sm),
-                      OrcaAvatar(name: 'Sara Nasser', size: OrcaAvatarSize.lg),
-                      SizedBox(width: OrcaSpace.lg),
-                      OrcaSpinner(),
-                      SizedBox(width: OrcaSpace.sm),
-                      OrcaTooltip(message: 'Shown on hover, focus and long press', child: Icon(Icons.info_outline)),
+                      PelagicAvatar(name: 'Lina Haddad', size: PelagicAvatarSize.sm),
+                      SizedBox(width: PelagicSpace.sm),
+                      PelagicAvatar(name: 'Omar Saleh'),
+                      SizedBox(width: PelagicSpace.sm),
+                      PelagicAvatar(name: 'Sara Nasser', size: PelagicAvatarSize.lg),
+                      SizedBox(width: PelagicSpace.lg),
+                      PelagicSpinner(),
+                      SizedBox(width: PelagicSpace.sm),
+                      PelagicTooltip(message: 'Shown on hover, focus and long press', child: Icon(Icons.info_outline)),
                     ],
                   ),
-                  const OrcaAlert(
-                    tone: OrcaTone.success,
+                  const PelagicAlert(
+                    tone: PelagicTone.success,
                     title: 'Payment received',
                     message: 'We emailed you a receipt.',
                   ),
-                  OrcaAlert(
-                    tone: OrcaTone.warning,
+                  PelagicAlert(
+                    tone: PelagicTone.warning,
                     title: 'Storage almost full',
                     message: 'You have used 92% of your storage.',
                     onDismiss: () {},
                   ),
-                  const OrcaDivider(label: 'or'),
-                  const OrcaProgressBar(value: 64, label: 'Upload', showValue: true),
-                  const OrcaProgressBar(label: 'Syncing'),
-                  const OrcaStepper(
+                  const PelagicDivider(label: 'or'),
+                  const PelagicProgressBar(value: 64, label: 'Upload', showValue: true),
+                  const PelagicProgressBar(label: 'Syncing'),
+                  const PelagicStepper(
                     current: 1,
-                    steps: <OrcaStep>[
-                      OrcaStep(label: 'Account', description: 'Email and password'),
-                      OrcaStep(label: 'Profile'),
-                      OrcaStep(label: 'Review'),
+                    steps: <PelagicStep>[
+                      PelagicStep(label: 'Account', description: 'Email and password'),
+                      PelagicStep(label: 'Profile'),
+                      PelagicStep(label: 'Review'),
                     ],
                   ),
-                  const OrcaTimeline(
-                    items: <OrcaTimelineItem>[
-                      OrcaTimelineItem(title: 'Order placed', time: '09:12', tone: OrcaTone.info),
-                      OrcaTimelineItem(title: 'Payment confirmed', time: '09:14', tone: OrcaTone.success),
-                      OrcaTimelineItem(title: 'Shipped', time: '14:30', description: 'Tracking number sent by email'),
+                  const PelagicTimeline(
+                    items: <PelagicTimelineItem>[
+                      PelagicTimelineItem(title: 'Order placed', time: '09:12', tone: PelagicTone.info),
+                      PelagicTimelineItem(title: 'Payment confirmed', time: '09:14', tone: PelagicTone.success),
+                      PelagicTimelineItem(title: 'Shipped', time: '14:30', description: 'Tracking number sent by email'),
                     ],
                   ),
-                  const OrcaSkeletonCard(),
-                  const OrcaSkeletonText(lines: 2),
-                  const OrcaEmptyState(
+                  const PelagicSkeletonCard(),
+                  const PelagicSkeletonText(lines: 2),
+                  const PelagicEmptyState(
                     icon: Icon(Icons.inbox_outlined),
                     title: 'No messages',
                     description: 'New messages will appear here.',
                   ),
                 ]),
                 _section('Navigation', <Widget>[
-                  OrcaBreadcrumb(
-                    items: <OrcaBreadcrumbItem>[
-                      OrcaBreadcrumbItem(label: 'Home', onPressed: () {}),
-                      OrcaBreadcrumbItem(label: 'Projects', onPressed: () {}),
-                      const OrcaBreadcrumbItem(label: 'Orca UI'),
+                  PelagicBreadcrumb(
+                    items: <PelagicBreadcrumbItem>[
+                      PelagicBreadcrumbItem(label: 'Home', onPressed: () {}),
+                      PelagicBreadcrumbItem(label: 'Projects', onPressed: () {}),
+                      const PelagicBreadcrumbItem(label: 'Pelagic UI'),
                     ],
                   ),
-                  const OrcaTabs(
+                  const PelagicTabs(
                     label: 'Project sections',
-                    tabs: <OrcaTabItem>[
-                      OrcaTabItem(id: 'overview', label: 'Overview', content: Text('Overview panel')),
-                      OrcaTabItem(id: 'activity', label: 'Activity', content: Text('Activity panel')),
-                      OrcaTabItem(id: 'archived', label: 'Archived', disabled: true),
-                      OrcaTabItem(id: 'settings', label: 'Settings', content: Text('Settings panel')),
+                    tabs: <PelagicTabItem>[
+                      PelagicTabItem(id: 'overview', label: 'Overview', content: Text('Overview panel')),
+                      PelagicTabItem(id: 'activity', label: 'Activity', content: Text('Activity panel')),
+                      PelagicTabItem(id: 'archived', label: 'Archived', disabled: true),
+                      PelagicTabItem(id: 'settings', label: 'Settings', content: Text('Settings panel')),
                     ],
                   ),
-                  const OrcaAccordion(
+                  const PelagicAccordion(
                     initiallyOpen: <String>{'shipping'},
-                    items: <OrcaAccordionItem>[
-                      OrcaAccordionItem(id: 'shipping', title: 'Shipping', content: Text('Free shipping over 50 JOD.')),
-                      OrcaAccordionItem(id: 'returns', title: 'Returns', content: Text('Return within 30 days.')),
+                    items: <PelagicAccordionItem>[
+                      PelagicAccordionItem(id: 'shipping', title: 'Shipping', content: Text('Free shipping over 50 JOD.')),
+                      PelagicAccordionItem(id: 'returns', title: 'Returns', content: Text('Return within 30 days.')),
                     ],
                   ),
-                  OrcaPagination(page: _page, pageCount: 12, onChanged: (int p) => setState(() => _page = p)),
+                  PelagicPagination(page: _page, pageCount: 12, onChanged: (int p) => setState(() => _page = p)),
                 ]),
                 _section('Data', <Widget>[
-                  OrcaSwitch(
+                  PelagicSwitch(
                     label: 'Show loading state',
                     value: _tableLoading,
                     onChanged: (bool v) => setState(() => _tableLoading = v),
                   ),
-                  OrcaDataTable<_Member>(
+                  PelagicDataTable<_Member>(
                     caption: 'Team members',
                     loading: _tableLoading,
                     rows: _members,
-                    initialSort: const OrcaSort('commits', OrcaSortDirection.descending),
-                    columns: <OrcaDataColumn<_Member>>[
-                      OrcaDataColumn<_Member>(key: 'name', label: 'Name', sortable: true, value: (_Member m) => m.name),
-                      OrcaDataColumn<_Member>(key: 'role', label: 'Role', value: (_Member m) => m.role),
-                      OrcaDataColumn<_Member>(
+                    initialSort: const PelagicSort('commits', PelagicSortDirection.descending),
+                    columns: <PelagicDataColumn<_Member>>[
+                      PelagicDataColumn<_Member>(key: 'name', label: 'Name', sortable: true, value: (_Member m) => m.name),
+                      PelagicDataColumn<_Member>(key: 'role', label: 'Role', value: (_Member m) => m.role),
+                      PelagicDataColumn<_Member>(
                         key: 'commits',
                         label: 'Commits',
                         sortable: true,
-                        align: OrcaColumnAlign.end,
+                        align: PelagicColumnAlign.end,
                         value: (_Member m) => m.commits,
                       ),
                     ],
                   ),
-                  OrcaDataTable<_Member>(
+                  PelagicDataTable<_Member>(
                     rows: const <_Member>[],
                     emptyTitle: 'No members yet',
                     emptyDescription: 'Invite people to see them here.',
-                    columns: <OrcaDataColumn<_Member>>[
-                      OrcaDataColumn<_Member>(key: 'name', label: 'Name', value: (_Member m) => m.name),
+                    columns: <PelagicDataColumn<_Member>>[
+                      PelagicDataColumn<_Member>(key: 'name', label: 'Name', value: (_Member m) => m.name),
                     ],
                   ),
                 ]),
                 _section('Charts', const <Widget>[
-                  OrcaBarChart(title: 'Revenue', description: 'Thousands of JOD, 2026', data: _revenue),
-                  OrcaLineChart(title: 'Active users', data: _revenue, valueLabel: 'Users (k)'),
+                  PelagicBarChart(title: 'Revenue', description: 'Thousands of JOD, 2026', data: _revenue),
+                  PelagicLineChart(title: 'Active users', data: _revenue, valueLabel: 'Users (k)'),
                 ]),
               ],
             ),

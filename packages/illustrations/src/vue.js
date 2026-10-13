@@ -18,7 +18,7 @@ const props = {
 
 /** Themeable scene as inline SVG. Decorative unless `label` is set. */
 export const Illustration = defineComponent({
-  name: 'OcIllustration',
+  name: 'PlIllustration',
   props,
   setup(p) {
     return () => toVue(illustrationTree(p.name, { label: p.label, compact: p.compact, animated: p.animated, styles: p.styles }));

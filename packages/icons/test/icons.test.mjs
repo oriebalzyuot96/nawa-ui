@@ -64,7 +64,7 @@ test('every icon renders well-formed SVG in every variant', () => {
       assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg" width="20" height="20" viewBox="0 0 24 24"/);
       assert.ok(!/transform=/.test(svg), `${name}: no transforms`);
       const expected = variant === 'solid' && !lib.icons[name].solid ? 'duotone' : variant;
-      assert.ok(svg.includes(`oc-icon--${expected}`), `${name}: ${variant} resolves to ${expected}`);
+      assert.ok(svg.includes(`pl-icon--${expected}`), `${name}: ${variant} resolves to ${expected}`);
     }
   }
 });
@@ -75,9 +75,9 @@ test('outline layer never fills; duotone layer is a separate soft group', () => 
     for (const [, attrs] of ic.outline) assert.ok(!('fill' in attrs) && !('fill-rule' in attrs), `${name} outline fill`);
     const duo = lib.iconToSvg(name, { variant: 'duotone' });
     if (ic.duotone.length) {
-      assert.ok(duo.includes('<g class="oc-icon__duo" fill="currentColor" fill-opacity="0.22" stroke="none">'), name);
+      assert.ok(duo.includes('<g class="pl-icon__duo" fill="currentColor" fill-opacity="0.22" stroke="none">'), name);
       // Duotone sits behind the outline and never replaces it.
-      assert.ok(duo.indexOf('oc-icon__duo') < duo.lastIndexOf('</g>'));
+      assert.ok(duo.indexOf('pl-icon__duo') < duo.lastIndexOf('</g>'));
     }
     // The outline markup is present unchanged after the duotone group.
     const outlineInner = lib.iconToSvg(name).replace(/^<svg[^>]*>/, '').replace('</svg>', '');
@@ -117,7 +117,7 @@ test('RTL flip flags', () => {
   const flipped = ['arrow-right', 'arrow-left', 'chevron-left', 'chevron-right', 'undo', 'redo', 'send', 'reply', 'log-out', 'external-link'];
   for (const n of flipped) {
     assert.equal(lib.icons[n].rtlFlip, true, n);
-    assert.match(lib.iconToSvg(n), /oc-icon--flip-rtl/);
+    assert.match(lib.iconToSvg(n), /pl-icon--flip-rtl/);
   }
   for (const n of ['arrow-up', 'arrow-down', 'search', 'clock', 'text-direction-rtl', 'list-ordered']) {
     assert.ok(!lib.icons[n].rtlFlip, n);
@@ -125,8 +125,8 @@ test('RTL flip flags', () => {
   }
   assert.doesNotMatch(lib.iconToSvg('arrow-right', { flipRtl: false }), /flip-rtl/);
   assert.deepEqual([...lib.rtlFlipIconNames], lib.iconNames.filter((n) => lib.icons[n].rtlFlip));
-  const css = fs.readFileSync(dist('orca-icons.css'), 'utf8');
-  assert.ok(css.includes("[dir='rtl'] .oc-icon--flip-rtl { transform: scaleX(-1); }"));
+  const css = fs.readFileSync(dist('pelagic-icons.css'), 'utf8');
+  assert.ok(css.includes("[dir='rtl'] .pl-icon--flip-rtl { transform: scaleX(-1); }"));
 });
 
 test('sprite contains every symbol', () => {
@@ -134,9 +134,9 @@ test('sprite contains every symbol', () => {
   assertWellFormed(sprite.replace(/<!--[\s\S]*?-->/g, ''), 'sprite');
   const ids = new Set([...sprite.matchAll(/<symbol id="([^"]+)"/g)].map((m) => m[1]));
   for (const n of lib.iconNames) {
-    assert.ok(ids.has(`oc-${n}`), `oc-${n}`);
-    assert.ok(ids.has(`oc-${n}-duotone`), `oc-${n}-duotone`);
-    assert.equal(ids.has(`oc-${n}-solid`), !!lib.icons[n].solid, `oc-${n}-solid`);
+    assert.ok(ids.has(`pl-${n}`), `pl-${n}`);
+    assert.ok(ids.has(`pl-${n}-duotone`), `pl-${n}-duotone`);
+    assert.equal(ids.has(`pl-${n}-solid`), !!lib.icons[n].solid, `pl-${n}-solid`);
   }
   assert.equal(ids.size, lib.iconNames.length * 2 + lib.solidIconNames.length);
 });
@@ -155,7 +155,7 @@ test('icons.json metadata mirrors the data', () => {
 
 test('web component module is import-safe without a DOM', async () => {
   const el = await import('../dist/element.js');
-  assert.equal(typeof el.OcIconElement, 'function');
+  assert.equal(typeof el.PlIconElement, 'function');
 });
 
 const React = tryRequire('react');
@@ -165,7 +165,7 @@ test('React components render (SSR smoke)', { skip: !(React && ReactDOMServer) &
   const h = React.createElement;
   const a = ReactDOMServer.renderToStaticMarkup(h(r.SearchIcon, { size: 20, className: 'x', 'data-test': 'y' }));
   assert.match(a, /^<svg[^>]* width="20"/);
-  assert.match(a, /class="oc-icon oc-icon-search oc-icon--outline x"/);
+  assert.match(a, /class="pl-icon pl-icon-search pl-icon--outline x"/);
   assert.match(a, /aria-hidden="true"/);
   assert.match(a, /data-test="y"/);
   const b = ReactDOMServer.renderToStaticMarkup(h(r.Icon, { name: 'bell', variant: 'duotone', title: 'Alerts' }));
@@ -193,10 +193,10 @@ test('Vue components render (SSR smoke)', { skip: !vueSsr && 'vue not installed'
     ]),
   });
   const html = await vueSsr.renderToString(app);
-  assert.match(html, /class="oc-icon oc-icon-search oc-icon--outline extra"/);
+  assert.match(html, /class="pl-icon pl-icon-search pl-icon--outline extra"/);
   assert.match(html, /width="16"/);
   assert.match(html, /<title id="[^"]+">Alerts<\/title>/);
   assert.match(html, /<title id="[^"]+">Next<\/title>/);
   assert.doesNotMatch(html, /aria-label=/);
-  assert.match(html, /oc-icon--flip-rtl/);
+  assert.match(html, /pl-icon--flip-rtl/);
 });

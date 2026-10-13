@@ -14,20 +14,20 @@ const { ILLUSTRATIONS, illustrationToSvg } = await import(pathToFileURL(join(roo
 const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'];
 const grid = (theme) => `
 <section class="sheet" data-theme="${theme}" id="sheet-${theme}">
-  <header><h2>${theme === 'hc' ? 'High contrast' : theme[0].toUpperCase() + theme.slice(1)}</h2><p>${ILLUSTRATIONS.length} scenes · @orca-ui/illustrations</p></header>
-  <div class="grid">${ILLUSTRATIONS.map((m) => `<figure class="oc-card cell">${illustrationToSvg(m.name, { animated: false })}<figcaption><b>${m.title}</b><code>${m.name}</code></figcaption></figure>`).join('')}</div>
+  <header><h2>${theme === 'hc' ? 'High contrast' : theme[0].toUpperCase() + theme.slice(1)}</h2><p>${ILLUSTRATIONS.length} scenes · @pelagic-ui/illustrations</p></header>
+  <div class="grid">${ILLUSTRATIONS.map((m) => `<figure class="pl-card cell">${illustrationToSvg(m.name, { animated: false })}<figcaption><b>${m.title}</b><code>${m.name}</code></figcaption></figure>`).join('')}</div>
 </section>`;
 
 const tones = ['neutral', 'info', 'success', 'warning', 'danger'];
 const demo = `
 <section class="sheet" data-theme="light" id="sheet-components">
   <header><h2>EmptyState</h2><p>sizes · tones · split layout · accents</p></header>
-  <div class="row">${accents.map((a) => `<div class="mini oc-card" data-accent="${a}">${illustrationToSvg('no-results', { animated: false })}<code>${a}</code></div>`).join('')}</div>
-  <div class="row">${accents.map((a) => `<div class="mini oc-card" data-theme="dark" data-accent="${a}">${illustrationToSvg('welcome', { animated: false })}<code>${a}</code></div>`).join('')}</div>
+  <div class="row">${accents.map((a) => `<div class="mini pl-card" data-accent="${a}">${illustrationToSvg('no-results', { animated: false })}<code>${a}</code></div>`).join('')}</div>
+  <div class="row">${accents.map((a) => `<div class="mini pl-card" data-theme="dark" data-accent="${a}">${illustrationToSvg('welcome', { animated: false })}<code>${a}</code></div>`).join('')}</div>
   <div class="demos">
-    <div class="oc-card"><div class="oc-empty oc-empty--split"><div class="oc-empty__inner"><div class="oc-empty__media">${illustrationToSvg('no-results', { animated: false })}</div><div class="oc-empty__body"><h3 class="oc-empty__title">No results for “quarterly”</h3><p class="oc-empty__desc">Check the spelling or try a broader term. Filters for status and owner are still applied.</p><div class="oc-empty__actions"><button class="oc-btn oc-btn--primary">Clear filters</button><button class="oc-btn oc-btn--ghost">Search help</button></div></div></div></div></div>
-    <div class="tones">${tones.map((t, i) => `<div class="oc-card"><div class="oc-empty oc-empty--compact oc-empty--tone-${t}"><div class="oc-empty__inner"><div class="oc-empty__media">${illustrationToSvg(['no-data', 'offline', 'all-done', 'maintenance', 'error'][i], { compact: true, animated: false })}</div><div class="oc-empty__body"><h3 class="oc-empty__title">tone="${t}"</h3><p class="oc-empty__desc">Compact size</p></div></div></div></div>`).join('')}</div>
-    <div class="oc-card" dir="rtl"><div class="oc-empty oc-empty--start"><div class="oc-empty__inner"><div class="oc-empty__media">${illustrationToSvg('empty-inbox', { animated: false })}</div><div class="oc-empty__body"><h3 class="oc-empty__title">صندوق الوارد فارغ</h3><p class="oc-empty__desc">لا توجد رسائل جديدة. align="start" مع اتجاه RTL.</p><div class="oc-empty__actions"><button class="oc-btn oc-btn--primary">رسالة جديدة</button></div></div></div></div></div>
+    <div class="pl-card"><div class="pl-empty pl-empty--split"><div class="pl-empty__inner"><div class="pl-empty__media">${illustrationToSvg('no-results', { animated: false })}</div><div class="pl-empty__body"><h3 class="pl-empty__title">No results for “quarterly”</h3><p class="pl-empty__desc">Check the spelling or try a broader term. Filters for status and owner are still applied.</p><div class="pl-empty__actions"><button class="pl-btn pl-btn--primary">Clear filters</button><button class="pl-btn pl-btn--ghost">Search help</button></div></div></div></div></div>
+    <div class="tones">${tones.map((t, i) => `<div class="pl-card"><div class="pl-empty pl-empty--compact pl-empty--tone-${t}"><div class="pl-empty__inner"><div class="pl-empty__media">${illustrationToSvg(['no-data', 'offline', 'all-done', 'maintenance', 'error'][i], { compact: true, animated: false })}</div><div class="pl-empty__body"><h3 class="pl-empty__title">tone="${t}"</h3><p class="pl-empty__desc">Compact size</p></div></div></div></div>`).join('')}</div>
+    <div class="pl-card" dir="rtl"><div class="pl-empty pl-empty--start"><div class="pl-empty__inner"><div class="pl-empty__media">${illustrationToSvg('empty-inbox', { animated: false })}</div><div class="pl-empty__body"><h3 class="pl-empty__title">صندوق الوارد فارغ</h3><p class="pl-empty__desc">لا توجد رسائل جديدة. align="start" مع اتجاه RTL.</p><div class="pl-empty__actions"><button class="pl-btn pl-btn--primary">رسالة جديدة</button></div></div></div></div></div>
   </div>
 </section>`;
 
@@ -36,21 +36,21 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Orca illustrations — contact sheet</title>
-<link rel="stylesheet" href="../../core/orca-ui.css" />
+<title>Pelagic illustrations — contact sheet</title>
+<link rel="stylesheet" href="../../core/pelagic.css" />
 <style>
-  body { margin: 0; background: #e9edf0; font-family: var(--oc-font); }
-  .sheet { padding: 28px 32px 36px; background: var(--oc-surface-alt); color: var(--oc-text); }
+  body { margin: 0; background: #e9edf0; font-family: var(--pl-font); }
+  .sheet { padding: 28px 32px 36px; background: var(--pl-surface-alt); color: var(--pl-text); }
   .sheet header { display: flex; align-items: baseline; gap: 16px; margin-bottom: 18px; }
   .sheet h2 { margin: 0; font-size: 20px; }
-  .sheet header p { margin: 0; color: var(--oc-text-muted); font-size: 13px; }
+  .sheet header p { margin: 0; color: var(--pl-text-muted); font-size: 13px; }
   .grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 14px; }
-  .cell { margin: 0; padding: 14px 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--oc-surface); }
+  .cell { margin: 0; padding: 14px 14px 10px; display: flex; flex-direction: column; align-items: center; gap: 8px; background: var(--pl-surface); }
   .cell svg { max-inline-size: 200px; }
   figcaption { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 12px; }
-  figcaption code, .mini code { color: var(--oc-text-muted); font-size: 11px; }
+  figcaption code, .mini code { color: var(--pl-text-muted); font-size: 11px; }
   .row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 12px; margin-bottom: 12px; }
-  .mini { padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--oc-surface); color: var(--oc-text); }
+  .mini { padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: var(--pl-surface); color: var(--pl-text); }
   .demos { display: grid; grid-template-columns: 1.4fr 1fr; gap: 14px; margin-top: 18px; }
   .demos > :first-child { grid-column: 1 / -1; }
   .tones { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; grid-column: 1 / -1; }

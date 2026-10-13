@@ -1,8 +1,8 @@
 import * as i0 from '@angular/core';
 import type { IconName, IconVariant } from '../icons.js';
 
-/** Standalone `<oc-icon name="search" variant="duotone" size="20" label="Search">` */
-export declare class OcIconComponent implements i0.OnChanges {
+/** Standalone `<pl-icon name="search" variant="duotone" size="20" label="Search">` */
+export declare class PlIconComponent implements i0.OnChanges {
   name: IconName | undefined;
   variant: IconVariant;
   size: number | string;
@@ -14,10 +14,10 @@ export declare class OcIconComponent implements i0.OnChanges {
   constructor(el: i0.ElementRef<HTMLElement>, renderer: i0.Renderer2);
   ngOnChanges(): void;
   render(): void;
-  static ɵfac: i0.ɵɵFactoryDeclaration<OcIconComponent, never>;
+  static ɵfac: i0.ɵɵFactoryDeclaration<PlIconComponent, never>;
   static ɵcmp: i0.ɵɵComponentDeclaration<
-    OcIconComponent,
-    'oc-icon',
+    PlIconComponent,
+    'pl-icon',
     never,
     {
       name: { alias: 'name'; required: false };

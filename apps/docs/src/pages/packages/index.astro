@@ -8,7 +8,7 @@ const site = Astro.site!;
 const itemList = {
   '@context': 'https://schema.org',
   '@type': 'ItemList',
-  name: 'Orca UI packages',
+  name: 'Pelagic UI packages',
   itemListElement: packages.map((p, i) => ({
     '@type': 'ListItem',
     position: i + 1,
@@ -25,8 +25,8 @@ const itemList = {
 ---
 
 <Base
-  title="Packages — install Orca UI for React, Vue, Angular, Svelte, Astro, React Native and Flutter"
-  description="Every Orca UI package in one place: orca-ui, @orca-ui/react, vue, angular, svelte, astro, react-native, three, icons, illustrations, core and orca_ui for Flutter — install commands, imports, export paths and sizes."
+  title="Packages — install Pelagic UI for React, Vue, Angular, Svelte, Astro, React Native and Flutter"
+  description="Every Pelagic UI package in one place: pelagic, @pelagic-ui/react, vue, angular, svelte, astro, react-native, three, icons, illustrations, core and pelagic_ui for Flutter — install commands, imports, export paths and sizes."
   alternate={{ en: '/packages/', ar: '/ar/packages/' }}
   structuredData={[itemList]}
 >

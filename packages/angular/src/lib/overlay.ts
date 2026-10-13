@@ -15,12 +15,12 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { lockScroll, trapFocus } from '@orca-ui/core/a11y';
-import { cx, ocId } from './utils';
+import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
+import { cx, plId } from './utils';
 
-/** Footer content for a dialog or drawer: `<div ocDialogFooter>…</div>`. */
-@Directive({ selector: '[ocDialogFooter]' })
-export class OcDialogFooter {}
+/** Footer content for a dialog or drawer: `<div plDialogFooter>…</div>`. */
+@Directive({ selector: '[plDialogFooter]' })
+export class PlDialogFooter {}
 
 /**
  * Shared modal behavior: Escape closes, focus moves into the panel and is trapped there,
@@ -28,7 +28,7 @@ export class OcDialogFooter {}
  * The overlay is moved to <body> while open (no CDK needed) unless `appendToBody` is false.
  */
 @Directive()
-export abstract class OcModalBase {
+export abstract class PlModalBase {
   /** Two-way bindable: `[(open)]`. */
   readonly open = model(false);
   readonly title = input.required<string>();
@@ -44,8 +44,8 @@ export abstract class OcModalBase {
   /** Emitted whenever the modal requests to close (Escape, backdrop, × button). */
   readonly closed = output<void>();
 
-  protected readonly titleId = ocId('oc-dialog-title');
-  protected readonly footer = contentChild(OcDialogFooter);
+  protected readonly titleId = plId('pl-dialog-title');
+  protected readonly footer = contentChild(PlDialogFooter);
   protected readonly overlayRef = viewChild<ElementRef<HTMLElement>>('overlay');
   protected readonly panelRef = viewChild<ElementRef<HTMLElement>>('panel');
   private readonly document = inject(DOCUMENT);
@@ -89,34 +89,34 @@ export abstract class OcModalBase {
 }
 
 const PANEL_CONTENT = `
-  <div class="oc-dialog__header">
-    <h2 class="oc-dialog__title" [id]="titleId">{{ title() }}</h2>
+  <div class="pl-dialog__header">
+    <h2 class="pl-dialog__title" [id]="titleId">{{ title() }}</h2>
     @if (closable()) {
-      <button type="button" class="oc-close" [attr.aria-label]="closeLabel()" (click)="close()">×</button>
+      <button type="button" class="pl-close" [attr.aria-label]="closeLabel()" (click)="close()">×</button>
     }
   </div>
-  <div class="oc-dialog__body"><ng-content /></div>
+  <div class="pl-dialog__body"><ng-content /></div>
   @if (footer()) {
-    <div class="oc-dialog__footer"><ng-content select="[ocDialogFooter]" /></div>
+    <div class="pl-dialog__footer"><ng-content select="[plDialogFooter]" /></div>
   }`;
 
 /**
  * Modal dialog.
  *
  * ```html
- * <oc-dialog [(open)]="editing" title="Edit profile">
+ * <pl-dialog [(open)]="editing" title="Edit profile">
  *   …
- *   <div ocDialogFooter><button ocButton (click)="editing.set(false)">Done</button></div>
- * </oc-dialog>
+ *   <div plDialogFooter><button plButton (click)="editing.set(false)">Done</button></div>
+ * </pl-dialog>
  * ```
  */
 @Component({
-  selector: 'oc-dialog',
+  selector: 'pl-dialog',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents', '[attr.title]': 'null' },
   template: `
     @if (open()) {
-      <div #overlay class="oc-overlay" (mousedown)="onBackdrop($event)">
+      <div #overlay class="pl-overlay" (mousedown)="onBackdrop($event)">
         <div
           #panel
           role="dialog"
@@ -131,14 +131,14 @@ const PANEL_CONTENT = `
     }
   `,
 })
-export class OcDialog extends OcModalBase {
+export class PlDialog extends PlModalBase {
   readonly size = input<'sm' | 'md' | 'lg'>('md');
-  protected readonly panelClass = computed(() => cx('oc-dialog', this.size() !== 'md' && `oc-dialog--${this.size()}`));
+  protected readonly panelClass = computed(() => cx('pl-dialog', this.size() !== 'md' && `pl-dialog--${this.size()}`));
 }
 
-/** Side sheet with the same modal behavior as `oc-dialog`. */
+/** Side sheet with the same modal behavior as `pl-dialog`. */
 @Component({
-  selector: 'oc-drawer',
+  selector: 'pl-drawer',
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: { style: 'display: contents', '[attr.title]': 'null' },
   template: `
@@ -158,10 +158,10 @@ export class OcDialog extends OcModalBase {
     }
   `,
 })
-export class OcDrawer extends OcModalBase {
+export class PlDrawer extends PlModalBase {
   readonly side = input<'left' | 'right'>('right');
   protected readonly overlayClass = computed(() =>
-    cx('oc-overlay', 'oc-overlay--drawer', this.side() === 'right' && 'oc-overlay--right'),
+    cx('pl-overlay', 'pl-overlay--drawer', this.side() === 'right' && 'pl-overlay--right'),
   );
-  protected readonly panelClass = computed(() => cx('oc-drawer', this.side() === 'right' && 'oc-drawer--right'));
+  protected readonly panelClass = computed(() => cx('pl-drawer', this.side() === 'right' && 'pl-drawer--right'));
 }

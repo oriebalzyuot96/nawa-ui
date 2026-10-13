@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { useState } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@orca-ui/core/a11y-prefs';
+import { A11Y_STORAGE_KEY, a11yOptions, type A11yPrefs } from '@pelagic-ui/core/a11y-prefs';
 import { AccessibilityPanel, createTheme, useA11yPrefs } from '../index';
 
 const html = document.documentElement;
@@ -14,8 +14,8 @@ const html = document.documentElement;
 afterEach(() => {
   localStorage.clear();
   for (const a of [...html.attributes]) if (a.name.startsWith('data-a11y-')) html.removeAttribute(a.name);
-  html.style.removeProperty('--oc-user-font-scale');
-  document.querySelectorAll('.oc-a11y-reading-guide, .oc-a11y-reading-mask, #oc-a11y-filters').forEach((n) => n.remove());
+  html.style.removeProperty('--pl-user-font-scale');
+  document.querySelectorAll('.pl-a11y-reading-guide, .pl-a11y-reading-mask, #pl-a11y-filters').forEach((n) => n.remove());
 });
 
 async function audit(container: Element) {
@@ -63,11 +63,11 @@ describe('AccessibilityPanel', () => {
 
     await user.selectOptions(within(dialog).getByLabelText('Color vision'), 'tritanopia');
     expect(html.getAttribute('data-a11y-color-filter')).toBe('tritanopia');
-    expect(document.getElementById('oc-a11y-tritanopia')).not.toBeNull();
+    expect(document.getElementById('pl-a11y-tritanopia')).not.toBeNull();
 
     await user.click(within(dialog).getByRole('button', { name: 'Larger text' }));
     expect(html.getAttribute('data-a11y-font-scale')).toBe('1.1');
-    expect(html.style.getPropertyValue('--oc-user-font-scale')).toBe('1.1');
+    expect(html.style.getPropertyValue('--pl-user-font-scale')).toBe('1.1');
     fireEvent.change(within(dialog).getByRole('slider', { name: 'Text size' }), { target: { value: '2' } });
     expect(html.getAttribute('data-a11y-font-scale')).toBe('2');
     expect(within(dialog).getByRole('button', { name: 'Larger text' })).toBeDisabled();

@@ -19,15 +19,15 @@
 
   let { label, hint, error, options = [], placeholder, value = $bindable(''), id, class: className, children, ...rest }: Props = $props();
 
-  const selectId = id ?? nextId('oc-select');
+  const selectId = id ?? nextId('pl-select');
   const describedBy = $derived(error ? `${selectId}-err` : hint ? `${selectId}-hint` : undefined);
 </script>
 
-<div class={['oc-field', error && 'oc-field--error']}>
-  {#if label}<label class="oc-label" for={selectId}>{label}</label>{/if}
+<div class={['pl-field', error && 'pl-field--error']}>
+  {#if label}<label class="pl-label" for={selectId}>{label}</label>{/if}
   <select
     id={selectId}
-    class={['oc-select', className]}
+    class={['pl-select', className]}
     bind:value
     aria-invalid={error ? true : undefined}
     aria-describedby={describedBy}
@@ -40,8 +40,8 @@
     {@render children?.()}
   </select>
   {#if error}
-    <span id="{selectId}-err" class="oc-error-text">{error}</span>
+    <span id="{selectId}-err" class="pl-error-text">{error}</span>
   {:else if hint}
-    <span id="{selectId}-hint" class="oc-hint">{hint}</span>
+    <span id="{selectId}-hint" class="pl-hint">{hint}</span>
   {/if}
 </div>

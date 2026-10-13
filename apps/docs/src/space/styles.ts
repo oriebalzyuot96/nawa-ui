@@ -17,11 +17,11 @@ const num = (v: unknown, fallback: number) => (typeof v === 'number' && Number.i
 export function sectionOuter(p: NodeProps): Css {
   const tone = str(p.tone, 'plain');
   const css: Css = { padding: `${PAD[str(p.padding, 'md')] ?? PAD.md} 1.5rem` };
-  if (tone === 'canvas') css.background = 'var(--oc-canvas)';
-  if (tone === 'accent') css.background = 'linear-gradient(160deg, var(--oc-primary-soft), var(--oc-surface) 70%)';
+  if (tone === 'canvas') css.background = 'var(--pl-canvas)';
+  if (tone === 'accent') css.background = 'linear-gradient(160deg, var(--pl-primary-soft), var(--pl-surface) 70%)';
   if (tone === 'inverse') {
-    css.background = 'var(--oc-surface)';
-    css.color = 'var(--oc-text)';
+    css.background = 'var(--pl-surface)';
+    css.color = 'var(--pl-text)';
   }
   return css;
 }
@@ -96,12 +96,12 @@ export function headingStyle(p: NodeProps): Css {
 }
 
 export function textStyle(p: NodeProps): Css {
-  const size: Record<string, string> = { sm: 'var(--oc-text-sm)', md: '1rem', lg: 'clamp(1.0625rem, 1rem + 0.35vw, 1.25rem)' };
+  const size: Record<string, string> = { sm: 'var(--pl-text-sm)', md: '1rem', lg: 'clamp(1.0625rem, 1rem + 0.35vw, 1.25rem)' };
   return {
     margin: 0,
     fontSize: size[str(p.size, 'md')] ?? '1rem',
     lineHeight: 1.6,
-    ...(p.tone === 'muted' ? { color: 'var(--oc-text-muted)' } : {}),
+    ...(p.tone === 'muted' ? { color: 'var(--pl-text-muted)' } : {}),
     ...(p.align && p.align !== 'start' ? { textAlign: str(p.align, 'start') } : {}),
     ...(p.size === 'lg' ? { maxWidth: '44rem' } : {}),
     ...(p.weight === 'bold' ? { fontWeight: 600 } : {}),

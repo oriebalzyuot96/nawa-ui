@@ -13,14 +13,14 @@ function select(root: HTMLElement, tab: HTMLElement, focus: boolean) {
 }
 
 document.addEventListener('click', (event) => {
-  const tab = (event.target as HTMLElement).closest<HTMLElement>('.oc-tabs[data-oc-tabs] [role="tab"]');
-  if (tab && !tab.hasAttribute('disabled')) select(tab.closest<HTMLElement>('.oc-tabs')!, tab, false);
+  const tab = (event.target as HTMLElement).closest<HTMLElement>('.pl-tabs[data-pl-tabs] [role="tab"]');
+  if (tab && !tab.hasAttribute('disabled')) select(tab.closest<HTMLElement>('.pl-tabs')!, tab, false);
 });
 
 document.addEventListener('keydown', (event) => {
-  const tab = (event.target as HTMLElement).closest<HTMLElement>('.oc-tabs[data-oc-tabs] [role="tab"]');
+  const tab = (event.target as HTMLElement).closest<HTMLElement>('.pl-tabs[data-pl-tabs] [role="tab"]');
   if (!tab) return;
-  const root = tab.closest<HTMLElement>('.oc-tabs')!;
+  const root = tab.closest<HTMLElement>('.pl-tabs')!;
   const tabs = Array.from(root.querySelectorAll<HTMLElement>('[role="tab"]:not([disabled])'));
   const i = tabs.indexOf(tab);
   let next: HTMLElement | undefined;

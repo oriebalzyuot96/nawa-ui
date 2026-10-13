@@ -2,11 +2,11 @@ import 'package:flutter/widgets.dart';
 
 import '../foundation/pressable.dart';
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 import 'display.dart';
 
-/// Visual style of a [OrcaButton].
-enum OrcaButtonVariant {
+/// Visual style of a [PelagicButton].
+enum PelagicButtonVariant {
   /// Filled accent.
   primary,
 
@@ -23,8 +23,8 @@ enum OrcaButtonVariant {
   danger,
 }
 
-/// Size of a [OrcaButton]. The hit area is always at least 48x48.
-enum OrcaButtonSize {
+/// Size of a [PelagicButton]. The hit area is always at least 48x48.
+enum PelagicButtonSize {
   /// Compact (36 visual height).
   sm,
 
@@ -39,14 +39,14 @@ enum OrcaButtonSize {
 ///
 /// While [loading], the button is disabled, shows a spinner and exposes the
 /// value "Loading" ([loadingLabel]) to screen readers.
-class OrcaButton extends StatelessWidget {
+class PelagicButton extends StatelessWidget {
   /// Creates a button.
-  const OrcaButton({
+  const PelagicButton({
     super.key,
     required this.label,
     this.onPressed,
-    this.variant = OrcaButtonVariant.primary,
-    this.size = OrcaButtonSize.md,
+    this.variant = PelagicButtonVariant.primary,
+    this.size = PelagicButtonSize.md,
     this.loading = false,
     this.block = false,
     this.icon,
@@ -64,10 +64,10 @@ class OrcaButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
   /// Style.
-  final OrcaButtonVariant variant;
+  final PelagicButtonVariant variant;
 
   /// Size.
-  final OrcaButtonSize size;
+  final PelagicButtonSize size;
 
   /// Shows a spinner and disables the button.
   final bool loading;
@@ -95,23 +95,23 @@ class OrcaButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
-    final OrcaColors c = t.colors;
+    final PelagicTheme t = PelagicTheme.of(context);
+    final PelagicColors c = t.colors;
     final bool enabled = onPressed != null && !loading;
     final double height = switch (size) {
-      OrcaButtonSize.sm => 36.0,
-      OrcaButtonSize.md => 44.0,
-      OrcaButtonSize.lg => 52.0,
+      PelagicButtonSize.sm => 36.0,
+      PelagicButtonSize.md => 44.0,
+      PelagicButtonSize.lg => 52.0,
     };
     final double fontSize = switch (size) {
-      OrcaButtonSize.sm => OrcaFontSize.sm,
-      OrcaButtonSize.md => OrcaFontSize.md,
-      OrcaButtonSize.lg => OrcaFontSize.lg,
+      PelagicButtonSize.sm => PelagicFontSize.sm,
+      PelagicButtonSize.md => PelagicFontSize.md,
+      PelagicButtonSize.lg => PelagicFontSize.lg,
     };
-    final double hPad = size == OrcaButtonSize.lg ? OrcaSpace.xl : OrcaSpace.lg;
+    final double hPad = size == PelagicButtonSize.lg ? PelagicSpace.xl : PelagicSpace.lg;
     final BorderRadius radius = BorderRadius.circular(t.radii.md);
 
-    return OrcaPressable(
+    return PelagicPressable(
       onPressed: enabled ? onPressed : null,
       focusNode: focusNode,
       autofocus: autofocus,
@@ -122,19 +122,19 @@ class OrcaButton extends StatelessWidget {
       builder: (BuildContext context, Set<WidgetState> states) {
         final bool active = states.contains(WidgetState.hovered) || states.contains(WidgetState.pressed);
         final (Color bg, Color fg, Color border) = switch (variant) {
-          OrcaButtonVariant.primary => (active ? c.primaryHover : c.primary, c.onPrimary, const Color(0x00000000)),
-          OrcaButtonVariant.secondary => (
+          PelagicButtonVariant.primary => (active ? c.primaryHover : c.primary, c.onPrimary, const Color(0x00000000)),
+          PelagicButtonVariant.secondary => (
               active ? c.surfaceMuted : c.surfaceAlt,
               c.text,
               t.isHighContrast ? c.controlBorder : c.border,
             ),
-          OrcaButtonVariant.outline => (active ? c.primarySoft : const Color(0x00000000), c.primaryInk, c.primary),
-          OrcaButtonVariant.ghost => (
+          PelagicButtonVariant.outline => (active ? c.primarySoft : const Color(0x00000000), c.primaryInk, c.primary),
+          PelagicButtonVariant.ghost => (
               active ? c.surfaceMuted : const Color(0x00000000),
               c.text,
               t.isHighContrast && active ? c.controlBorder : const Color(0x00000000),
             ),
-          OrcaButtonVariant.danger => (
+          PelagicButtonVariant.danger => (
               active ? Color.alphaBlend(c.text.withAlpha(0x26), c.danger) : c.danger,
               c.onDanger,
               const Color(0x00000000),
@@ -142,7 +142,7 @@ class OrcaButton extends StatelessWidget {
         };
         final Widget face = Container(
           constraints: BoxConstraints(minHeight: height),
-          padding: EdgeInsetsDirectional.symmetric(horizontal: hPad, vertical: OrcaSpace.xs),
+          padding: EdgeInsetsDirectional.symmetric(horizontal: hPad, vertical: PelagicSpace.xs),
           decoration: BoxDecoration(
             color: bg,
             borderRadius: radius,
@@ -155,11 +155,11 @@ class OrcaButton extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 if (loading) ...<Widget>[
-                  OrcaSpinner(size: OrcaSpinnerSize.sm, color: fg, label: null),
-                  const SizedBox(width: OrcaSpace.sm),
+                  PelagicSpinner(size: PelagicSpinnerSize.sm, color: fg, label: null),
+                  const SizedBox(width: PelagicSpace.sm),
                 ] else if (icon != null) ...<Widget>[
                   ExcludeSemantics(child: icon),
-                  const SizedBox(width: OrcaSpace.sm),
+                  const SizedBox(width: PelagicSpace.sm),
                 ],
                 Flexible(
                   child: Text(
@@ -169,7 +169,7 @@ class OrcaButton extends StatelessWidget {
                   ),
                 ),
                 if (trailingIcon != null) ...<Widget>[
-                  const SizedBox(width: OrcaSpace.sm),
+                  const SizedBox(width: PelagicSpace.sm),
                   ExcludeSemantics(child: trailingIcon),
                 ],
               ],

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native';
-import { fontSize, radius, space, useOrcaTheme } from '../theme';
+import { fontSize, radius, space, usePelagicTheme } from '../theme';
 import type { Variant } from './display';
 
 export interface DialogProps {
@@ -15,7 +15,7 @@ export interface DialogProps {
 
 /** Centered modal. Android back button calls onClose. */
 export function Dialog({ visible, title, onClose, footer, children, closeOnBackdrop = true }: DialogProps) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} statusBarTranslucent>
       <Pressable style={[styles.backdrop, { backgroundColor: t.overlay }]} onPress={closeOnBackdrop ? onClose : undefined} accessibilityLabel="Dismiss dialog">
@@ -42,7 +42,7 @@ export interface DrawerProps extends Omit<DialogProps, 'closeOnBackdrop'> {
 
 /** Side sheet. */
 export function Drawer({ visible, title, onClose, footer, children, side = 'right' }: DrawerProps) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose} statusBarTranslucent>
       <Pressable style={[styles.backdrop, { backgroundColor: t.overlay, alignItems: side === 'right' ? 'flex-end' : 'flex-start', padding: 0 }]} onPress={onClose}>
@@ -70,12 +70,12 @@ export interface ToastItem {
   variant?: Variant;
 }
 
-const toastColor = (t: ReturnType<typeof useOrcaTheme>, v?: Variant) =>
+const toastColor = (t: ReturnType<typeof usePelagicTheme>, v?: Variant) =>
   v === 'success' ? t.success : v === 'warning' ? t.warning : v === 'danger' ? t.danger : t.info;
 
 /** Stack of toasts pinned to the bottom. Render it last in your screen so it sits on top. */
 export function Toast({ items, onDismiss }: { items: ToastItem[]; onDismiss: (id: string | number) => void }) {
-  const t = useOrcaTheme();
+  const t = usePelagicTheme();
   if (items.length === 0) return null;
   return (
     <View pointerEvents="box-none" style={styles.stack} accessibilityLiveRegion="polite">

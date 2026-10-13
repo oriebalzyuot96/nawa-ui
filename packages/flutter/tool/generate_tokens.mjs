@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Generates lib/src/tokens.g.dart from the Orca UI core theme source
+// Generates lib/src/tokens.g.dart from the Pelagic UI core theme source
 // (packages/core/src/themes.mjs) using the same resolver the web build uses
 // (packages/core/scripts/resolve.mjs), so Flutter colors match the CSS exactly.
 //
@@ -16,7 +16,7 @@ import {
   defaultShape,
 } from '../../core/src/themes.mjs';
 import { accentNames, modeNames, resolveTheme } from '../../core/scripts/resolve.mjs';
-// Custom brand accents, same flags as the core build: --brand '#ff6a00' --brand-name acme, or orca.config.json.
+// Custom brand accents, same flags as the core build: --brand '#ff6a00' --brand-name acme, or pelagic.config.json.
 import { buildBrands, readBrandConfig } from '../../core/scripts/brand.mjs';
 
 const brands = buildBrands(readBrandConfig());
@@ -83,40 +83,40 @@ function generate() {
   w("import 'theme/colors.dart';");
   w();
   w('/// Color mode of a resolved theme. `hc` is the high-contrast (light) mode.');
-  w(`enum OrcaMode { ${modeNames.join(', ')} }`);
+  w(`enum PelagicMode { ${modeNames.join(', ')} }`);
   w();
   w('/// Accent palette.');
-  w(`enum OrcaAccent { ${[...accentNames, ...brands.map((b) => dartName(b.theme.name))].join(', ')} }`);
+  w(`enum PelagicAccent { ${[...accentNames, ...brands.map((b) => dartName(b.theme.name))].join(', ')} }`);
   w();
   w('/// Corner radius preset. `standard` is the web `default` shape.');
-  w(`enum OrcaShape { ${Object.keys(shapes).map(shapeName).join(', ')} }`);
+  w(`enum PelagicShape { ${Object.keys(shapes).map(shapeName).join(', ')} }`);
   w();
   w('/// Default mode, accent and shape (same as the web defaults).');
-  w(`const OrcaMode orcaDefaultMode = OrcaMode.${defaultMode};`);
-  w(`const OrcaAccent orcaDefaultAccent = OrcaAccent.${defaultAccent};`);
-  w(`const OrcaShape orcaDefaultShape = OrcaShape.${shapeName(defaultShape)};`);
+  w(`const PelagicMode pelagicDefaultMode = PelagicMode.${defaultMode};`);
+  w(`const PelagicAccent pelagicDefaultAccent = PelagicAccent.${defaultAccent};`);
+  w(`const PelagicShape pelagicDefaultShape = PelagicShape.${shapeName(defaultShape)};`);
   w();
   w('/// Amount of the accent mixed into the surface for `primarySoft`.');
-  w(`const double orcaSoftMixPrimary = ${softMix.primary};`);
+  w(`const double pelagicSoftMixPrimary = ${softMix.primary};`);
   w();
   w('/// Amount of a status color mixed into the surface for `*Soft` tints.');
-  w(`const double orcaSoftMixStatus = ${softMix.status};`);
+  w(`const double pelagicSoftMixStatus = ${softMix.status};`);
   w();
   w('/// Corner radii per shape, in logical pixels.');
-  w('const Map<OrcaShape, OrcaRadii> orcaShapes = <OrcaShape, OrcaRadii>{');
+  w('const Map<PelagicShape, PelagicRadii> pelagicShapes = <PelagicShape, PelagicRadii>{');
   for (const [name, r] of Object.entries(shapes)) {
-    w(`  OrcaShape.${shapeName(name)}: OrcaRadii(sm: ${r.sm}, md: ${r.md}, lg: ${r.lg}),`);
+    w(`  PelagicShape.${shapeName(name)}: PelagicRadii(sm: ${r.sm}, md: ${r.md}, lg: ${r.lg}),`);
   }
   w('};');
   w();
   w('/// All resolved color themes: mode x accent.');
-  w('const Map<OrcaMode, Map<OrcaAccent, OrcaColors>> orcaColorThemes =');
-  w('    <OrcaMode, Map<OrcaAccent, OrcaColors>>{');
+  w('const Map<PelagicMode, Map<PelagicAccent, PelagicColors>> pelagicColorThemes =');
+  w('    <PelagicMode, Map<PelagicAccent, PelagicColors>>{');
   for (const mode of modeNames) {
-    w(`  OrcaMode.${mode}: <OrcaAccent, OrcaColors>{`);
+    w(`  PelagicMode.${mode}: <PelagicAccent, PelagicColors>{`);
     for (const accent of accentNames) {
       const t = resolveTheme(mode, accent);
-      w(`    OrcaAccent.${accent}: OrcaColors(`);
+      w(`    PelagicAccent.${accent}: PelagicColors(`);
       w(`      brightness: Brightness.${mode === 'dark' ? 'dark' : 'light'},`);
       for (const key of colorKeys) {
         if (!(key in t)) throw new Error(`resolveTheme(${mode}, ${accent}) is missing ${key}`);
@@ -126,7 +126,7 @@ function generate() {
     }
     for (const { theme } of brands) {
       const t = theme.tokens[mode];
-      w(`    OrcaAccent.${dartName(theme.name)}: OrcaColors(`);
+      w(`    PelagicAccent.${dartName(theme.name)}: PelagicColors(`);
       w(`      brightness: Brightness.${mode === 'dark' ? 'dark' : 'light'},`);
       for (const key of colorKeys) w(`      ${key}: ${dartColor(t[key])},`);
       w('    ),');
@@ -149,9 +149,9 @@ async function crossCheck(dart) {
   let accent = null;
   for (const line of dart.split('\n')) {
     let m;
-    if ((m = line.match(/^ {2}OrcaMode\.(\w+): /))) {
+    if ((m = line.match(/^ {2}PelagicMode\.(\w+): /))) {
       mode = m[1];
-    } else if ((m = line.match(/^ {4}OrcaAccent\.(\w+): OrcaColors\(/))) {
+    } else if ((m = line.match(/^ {4}PelagicAccent\.(\w+): PelagicColors\(/))) {
       accent = m[1];
       (parsed[mode] ??= {})[accent] = {};
     } else if ((m = line.match(/^ {6}(\w+): Color\(0x([0-9A-F]{8})\),/)) && mode && accent) {

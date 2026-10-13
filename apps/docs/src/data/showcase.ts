@@ -1,4 +1,4 @@
-// The hero showcase: the same "new deployment" card written for every platform Orca UI ships.
+// The hero showcase: the same "new deployment" card written for every platform Pelagic UI ships.
 
 export interface ShowcaseCode {
   key: string;
@@ -15,7 +15,7 @@ export const showcase: ShowcaseCode[] = [
     file: 'Deploy.tsx',
     lang: 'tsx',
     code: `import { useState } from 'react';
-import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button, toast } from '@orca-ui/react';
+import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button, toast } from '@pelagic-ui/react';
 
 const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
 
@@ -25,9 +25,9 @@ export function Deploy() {
   return (
     <Card
       title="New deployment"
-      footer={<Button onClick={() => toast.success('orca-app is live')}>Deploy</Button>}
+      footer={<Button onClick={() => toast.success('pelagic-app is live')}>Deploy</Button>}
     >
-      <Input label="Project name" defaultValue="orca-app" />
+      <Input label="Project name" defaultValue="pelagic-app" />
       <Segmented label="Environment" options={envs} value={env} onChange={setEnv} />
       <Switch label="Notify the team" showLabel checked={notify} onChange={setNotify} />
       <ProgressBar value={72} label="Build progress" />
@@ -43,10 +43,10 @@ export function Deploy() {
     lang: 'vue',
     code: `<script setup lang="ts">
 import { ref } from 'vue';
-import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@orca-ui/vue';
+import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@pelagic-ui/vue';
 
 const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
-const name = ref('orca-app');
+const name = ref('pelagic-app');
 const env = ref('preview');
 const notify = ref(true);
 </script>
@@ -70,24 +70,24 @@ const notify = ref(true);
     file: 'deploy.component.ts',
     lang: 'ts',
     code: `import { Component, signal } from '@angular/core';
-import { ORCA_UI } from '@orca-ui/angular';
+import { PELAGIC_UI } from '@pelagic-ui/angular';
 
 @Component({
   selector: 'app-deploy',
-  imports: [ORCA_UI],
+  imports: [PELAGIC_UI],
   template: \`
-    <oc-card title="New deployment">
-      <oc-input label="Project name" [(value)]="name" />
-      <oc-segmented label="Environment" [options]="envs" [(value)]="env" />
-      <oc-switch label="Notify the team" [(value)]="notify" />
-      <oc-progress-bar [value]="72" label="Build progress" />
-      <oc-badge variant="success">Checks passed</oc-badge>
-      <div ocCardFooter><button ocButton>Deploy</button></div>
-    </oc-card>\`,
+    <pl-card title="New deployment">
+      <pl-input label="Project name" [(value)]="name" />
+      <pl-segmented label="Environment" [options]="envs" [(value)]="env" />
+      <pl-switch label="Notify the team" [(value)]="notify" />
+      <pl-progress-bar [value]="72" label="Build progress" />
+      <pl-badge variant="success">Checks passed</pl-badge>
+      <div plCardFooter><button plButton>Deploy</button></div>
+    </pl-card>\`,
 })
 export class DeployComponent {
   envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
-  name = signal('orca-app');
+  name = signal('pelagic-app');
   env = signal('preview');
   notify = signal(true);
 }`,
@@ -98,10 +98,10 @@ export class DeployComponent {
     file: 'Deploy.svelte',
     lang: 'svelte',
     code: `<script lang="ts">
-  import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@orca-ui/svelte';
+  import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@pelagic-ui/svelte';
 
   const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
-  let name = $state('orca-app');
+  let name = $state('pelagic-app');
   let env = $state('preview');
   let notify = $state(true);
 </script>
@@ -123,18 +123,18 @@ export class DeployComponent {
     file: 'Deploy.astro',
     lang: 'astro',
     code: `---
-import Card from '@orca-ui/astro/components/Card';
-import Input from '@orca-ui/astro/components/Input';
-import Segmented from '@orca-ui/astro/components/Segmented';
-import Switch from '@orca-ui/astro/components/Switch';
-import ProgressBar from '@orca-ui/astro/components/ProgressBar';
-import Badge from '@orca-ui/astro/components/Badge';
-import Button from '@orca-ui/astro/components/Button';
+import Card from '@pelagic-ui/astro/components/Card';
+import Input from '@pelagic-ui/astro/components/Input';
+import Segmented from '@pelagic-ui/astro/components/Segmented';
+import Switch from '@pelagic-ui/astro/components/Switch';
+import ProgressBar from '@pelagic-ui/astro/components/ProgressBar';
+import Badge from '@pelagic-ui/astro/components/Badge';
+import Button from '@pelagic-ui/astro/components/Button';
 
 const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
 ---
 <Card title="New deployment">
-  <Input label="Project name" value="orca-app" />
+  <Input label="Project name" value="pelagic-app" />
   <Segmented name="env" label="Environment" options={envs} />
   <Switch label="Notify the team" checked />
   <ProgressBar value={72} label="Build progress" />
@@ -148,7 +148,7 @@ const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', val
     file: 'Deploy.tsx',
     lang: 'tsx',
     code: `import { useState } from 'react';
-import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@orca-ui/react-native';
+import { Card, Input, Segmented, Switch, ProgressBar, Badge, Button } from '@pelagic-ui/react-native';
 
 const envs = [{ label: 'Preview', value: 'preview' }, { label: 'Production', value: 'prod' }];
 
@@ -157,7 +157,7 @@ export function Deploy() {
   const [notify, setNotify] = useState(true);
   return (
     <Card title="New deployment" footer={<Button title="Deploy" onPress={deploy} />}>
-      <Input label="Project name" defaultValue="orca-app" />
+      <Input label="Project name" defaultValue="pelagic-app" />
       <Segmented label="Environment" options={envs} value={env} onChange={setEnv} />
       <Switch label="Notify the team" checked={notify} onChange={setNotify} />
       <ProgressBar value={72} label="Build progress" />
@@ -172,25 +172,25 @@ export function Deploy() {
     file: 'deploy.dart',
     lang: 'dart',
     code: `import 'package:flutter/widgets.dart';
-import 'package:orca_ui/orca_ui.dart';
+import 'package:pelagic_ui/pelagic_ui.dart';
 
-Widget deployCard() => OrcaCard(
+Widget deployCard() => PelagicCard(
       title: 'New deployment',
-      footer: OrcaButton(label: 'Deploy', onPressed: deploy),
+      footer: PelagicButton(label: 'Deploy', onPressed: deploy),
       child: Column(children: [
-        OrcaInput(label: 'Project name', controller: name),
-        OrcaSegmented<String>(
+        PelagicInput(label: 'Project name', controller: name),
+        PelagicSegmented<String>(
           label: 'Environment',
           options: const [
-            OrcaOption(value: 'preview', label: 'Preview'),
-            OrcaOption(value: 'prod', label: 'Production'),
+            PelagicOption(value: 'preview', label: 'Preview'),
+            PelagicOption(value: 'prod', label: 'Production'),
           ],
           value: env,
           onChanged: setEnv,
         ),
-        OrcaSwitch(label: 'Notify the team', value: notify, onChanged: setNotify),
-        const OrcaProgressBar(value: 0.72, label: 'Build progress'),
-        const OrcaBadge(label: 'Checks passed', tone: OrcaTone.success),
+        PelagicSwitch(label: 'Notify the team', value: notify, onChanged: setNotify),
+        const PelagicProgressBar(value: 0.72, label: 'Build progress'),
+        const PelagicBadge(label: 'Checks passed', tone: PelagicTone.success),
       ]),
     );`,
   },

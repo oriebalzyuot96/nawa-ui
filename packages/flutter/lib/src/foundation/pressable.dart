@@ -1,17 +1,17 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 
-/// Low-level accessible pressable surface used by every Orca control.
+/// Low-level accessible pressable surface used by every Pelagic control.
 ///
 /// - Activates with tap, Enter and Space (through [ActivateIntent]).
 /// - Shows a focus ring only for keyboard focus, and a hover/pressed state layer.
 /// - Enforces a minimum tap target ([minSize], 48x48 by default).
 /// - Exposes one semantics node with the given flags.
-class OrcaPressable extends StatefulWidget {
+class PelagicPressable extends StatefulWidget {
   /// Creates a pressable.
-  const OrcaPressable({
+  const PelagicPressable({
     super.key,
     this.child,
     this.builder,
@@ -20,7 +20,7 @@ class OrcaPressable extends StatefulWidget {
     this.autofocus = false,
     this.requestFocusOnTap = false,
     this.borderRadius = BorderRadius.zero,
-    this.minSize = const Size(orcaMinTapTarget, orcaMinTapTarget),
+    this.minSize = const Size(pelagicMinTapTarget, pelagicMinTapTarget),
     this.stateLayerColor,
     this.semanticLabel,
     this.semanticHint,
@@ -102,16 +102,16 @@ class OrcaPressable extends StatefulWidget {
   final MouseCursor? mouseCursor;
 
   @override
-  State<OrcaPressable> createState() => _OrcaPressableState();
+  State<PelagicPressable> createState() => _PelagicPressableState();
 }
 
-class _OrcaPressableState extends State<OrcaPressable> {
+class _PelagicPressableState extends State<PelagicPressable> {
   FocusNode? _ownNode;
   bool _focused = false;
   bool _hovered = false;
   bool _pressed = false;
 
-  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode(debugLabel: 'OrcaPressable'));
+  FocusNode get _node => widget.focusNode ?? (_ownNode ??= FocusNode(debugLabel: 'PelagicPressable'));
 
   bool get _enabled => widget.onPressed != null;
 
@@ -129,8 +129,8 @@ class _OrcaPressableState extends State<OrcaPressable> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme orca = OrcaTheme.of(context);
-    final Color layer = widget.stateLayerColor ?? orca.colors.text;
+    final PelagicTheme pelagic = PelagicTheme.of(context);
+    final Color layer = widget.stateLayerColor ?? pelagic.colors.text;
     final bool layered = widget.builder == null;
     final int alpha = !_enabled || !layered ? 0 : (_pressed ? 0x24 : (_hovered ? 0x12 : 0));
     final Set<WidgetState> states = <WidgetState>{
@@ -151,7 +151,7 @@ class _OrcaPressableState extends State<OrcaPressable> {
       decoration: BoxDecoration(
         color: alpha == 0 ? null : layer.withAlpha(alpha),
         borderRadius: radius,
-        border: _focused ? Border.all(color: orca.colors.focus, width: 2) : null,
+        border: _focused ? Border.all(color: pelagic.colors.focus, width: 2) : null,
       ),
       child: content,
     );
@@ -225,9 +225,9 @@ class _EdgeIntent extends Intent {
 /// Left / Right (and Up / Down when [vertical]) call [onMove] with a logical
 /// delta: +1 is "next" in reading order, so Right means previous in RTL.
 /// Home / End call [onEdge].
-class OrcaArrowKeys extends StatelessWidget {
+class PelagicArrowKeys extends StatelessWidget {
   /// Creates the keyboard handler.
-  const OrcaArrowKeys({
+  const PelagicArrowKeys({
     super.key,
     required this.onMove,
     this.onEdge,

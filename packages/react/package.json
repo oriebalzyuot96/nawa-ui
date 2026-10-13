@@ -1,7 +1,7 @@
 {
-  "name": "@orca-ui/react",
+  "name": "@pelagic-ui/react",
   "version": "0.1.0",
-  "description": "Orca UI for React — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Pelagic UI for React — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -30,8 +30,8 @@
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "dependencies": {
-    "@orca-ui/core": "0.1.0",
-    "@orca-ui/illustrations": "0.1.0"
+    "@pelagic-ui/core": "0.1.0",
+    "@pelagic-ui/illustrations": "0.1.0"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "6.6.3",
@@ -50,7 +50,7 @@
     "react",
     "react-components",
     "react-ui",
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -66,13 +66,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/react"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

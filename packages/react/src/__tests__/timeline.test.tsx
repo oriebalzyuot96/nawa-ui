@@ -9,11 +9,11 @@ const hoursAgo = (h: number) => new Date(now.getTime() - h * 3600_000);
 describe('Timeline', () => {
   it('keeps the original vertical markup', () => {
     const { container } = render(<Timeline items={[{ title: 'Created', time: '9:00' }, { title: 'Shipped', variant: 'success' }]} />);
-    const list = container.querySelector('ol.oc-timeline')!;
+    const list = container.querySelector('ol.pl-timeline')!;
     expect(list).not.toBeNull();
     expect(within(list as HTMLElement).getAllByRole('listitem')).toHaveLength(2);
-    expect(container.querySelector('.oc-timeline__dot--success')).toHaveAttribute('aria-hidden', 'true');
-    expect(screen.getByText('9:00')).toHaveClass('oc-timeline__time');
+    expect(container.querySelector('.pl-timeline__dot--success')).toHaveAttribute('aria-hidden', 'true');
+    expect(screen.getByText('9:00')).toHaveClass('pl-timeline__time');
   });
 
   it('shows relative times with the absolute time for tooltips and screen readers', () => {
@@ -24,7 +24,7 @@ describe('Timeline', () => {
     expect(time).toHaveTextContent('2h ago');
     expect(time).toHaveAttribute('dateTime', hoursAgo(2).toISOString());
     expect(time.getAttribute('title')).toMatch(/Oct 13, 2026/);
-    expect(container.querySelector('.oc-timeline__time .oc-sr-only')).toHaveTextContent(/Oct 13, 2026/);
+    expect(container.querySelector('.pl-timeline__time .pl-sr-only')).toHaveTextContent(/Oct 13, 2026/);
   });
 
   it('groups by day under headings that label each list', () => {
@@ -50,7 +50,7 @@ describe('Timeline', () => {
         ]}
       />,
     );
-    expect(container.querySelector('.oc-timeline')).toHaveClass('oc-timeline--media');
+    expect(container.querySelector('.pl-timeline')).toHaveClass('pl-timeline--media');
     const items = screen.getAllByRole('listitem');
     expect(items[0]).toHaveTextContent('Ordered (completed)');
     expect(items[1]).toHaveAttribute('aria-current', 'step');
@@ -65,12 +65,12 @@ describe('Timeline', () => {
 
   it('renders horizontal / alternate layouts in a container and a loading skeleton', () => {
     const { container, rerender } = render(<Timeline layout="alternate" label="Roadmap" items={[{ title: 'Q1' }, { title: 'Q2' }]} />);
-    expect(container.querySelector('.oc-timeline-wrap > ol.oc-timeline--alternate')).not.toBeNull();
+    expect(container.querySelector('.pl-timeline-wrap > ol.pl-timeline--alternate')).not.toBeNull();
     expect(screen.getByRole('list', { name: 'Roadmap' })).toBeInTheDocument();
-    const sides = Array.from(container.querySelectorAll('.oc-timeline__item')).map((li) => li.getAttribute('data-side'));
+    const sides = Array.from(container.querySelectorAll('.pl-timeline__item')).map((li) => li.getAttribute('data-side'));
     expect(sides).toEqual(['end', 'start']);
     rerender(<Timeline layout="horizontal" items={[{ title: 'Q1' }]} />);
-    expect(container.querySelector('ol.oc-timeline--horizontal')).not.toBeNull();
+    expect(container.querySelector('ol.pl-timeline--horizontal')).not.toBeNull();
     rerender(<Timeline loading items={[]} />);
     const status = screen.getByRole('status');
     expect(status).toHaveAttribute('aria-busy', 'true');

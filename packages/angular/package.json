@@ -1,10 +1,10 @@
 {
-  "name": "@orca-ui/angular",
+  "name": "@pelagic-ui/angular",
   "version": "0.1.0",
-  "description": "Orca UI for Angular — accessible, themeable standalone components built on signals (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
+  "description": "Pelagic UI for Angular — accessible, themeable standalone components built on signals (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "scripts": {
-    "build": "ng build orca-ui",
-    "test": "ng test orca-ui --watch=false",
+    "build": "ng build pelagic-ui",
+    "test": "ng test pelagic-ui --watch=false",
     "typecheck": "ngc -p tsconfig.lib.json --noEmit && ngc -p tsconfig.spec.json --noEmit"
   },
   "peerDependencies": {
@@ -13,7 +13,7 @@
     "@angular/forms": "^20.0.0 || ^21.0.0 || ^22.0.0"
   },
   "dependencies": {
-    "@orca-ui/core": "0.1.0",
+    "@pelagic-ui/core": "0.1.0",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "angular-ui",
     "angular-signals",
     "standalone-components",
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -53,13 +53,13 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
     "directory": "packages/angular"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "publishConfig": {
     "access": "public"

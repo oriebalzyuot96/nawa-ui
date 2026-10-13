@@ -1,7 +1,7 @@
 {
-  "name": "orca-ui",
+  "name": "pelagic",
   "version": "0.1.0",
-  "description": "Orca UI in one package: 150+ accessible, themeable components for React, Vue, Angular, Svelte, Astro and React Native, plus charts, 3D, icons, illustrations, motion and sound. WCAG 2.2 AA, 21 themes, custom brand colors, RTL.",
+  "description": "Pelagic UI in one package: 150+ accessible, themeable components for React, Vue, Angular, Svelte, Astro and React Native, plus charts, 3D, icons, illustrations, motion and sound. WCAG 2.2 AA, 21 themes, custom brand colors, RTL.",
   "type": "module",
   "files": [
     "dist",
@@ -18,7 +18,7 @@
     "prepublishOnly": "node ../../scripts/build-umbrella.mjs"
   },
   "keywords": [
-    "orca-ui",
+    "pelagic-ui",
     "ui-library",
     "component-library",
     "design-system",
@@ -42,23 +42,23 @@
     "arabic",
     "primeng-alternative"
   ],
-  "homepage": "https://oriebalzyuot96.github.io/orca-ui/",
+  "homepage": "https://oriebalzyuot96.github.io/pelagic-ui/",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/oriebalzyuot96/orca-ui.git",
-    "directory": "packages/orca-ui"
+    "url": "git+https://github.com/oriebalzyuot96/pelagic-ui.git",
+    "directory": "packages/pelagic"
   },
-  "bugs": "https://github.com/oriebalzyuot96/orca-ui/issues",
+  "bugs": "https://github.com/oriebalzyuot96/pelagic-ui/issues",
   "author": "oriebalzyuot96",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
   },
   "exports": {
-    "./style.css": "./dist/core/orca-ui.css",
+    "./style.css": "./dist/core/pelagic.css",
     "./package.json": "./package.json",
-    "./core/style.css": "./dist/core/orca-ui.css",
-    "./core/orca-ui.css": "./dist/core/orca-ui.css",
+    "./core/style.css": "./dist/core/pelagic.css",
+    "./core/pelagic.css": "./dist/core/pelagic.css",
     "./core/tokens": {
       "types": "./dist/core/tokens.d.ts",
       "default": "./dist/core/tokens.js"
@@ -101,8 +101,8 @@
     },
     "./astro/components/*": "./dist/astro/src/components/*.astro",
     "./angular": {
-      "types": "./dist/angular/types/orca-ui-angular.d.ts",
-      "default": "./dist/angular/fesm2022/orca-ui-angular.mjs"
+      "types": "./dist/angular/types/pelagic-ui-angular.d.ts",
+      "default": "./dist/angular/fesm2022/pelagic-ui-angular.mjs"
     },
     "./react-native": "./dist/react-native/src/index.ts",
     "./three": {
@@ -151,8 +151,8 @@
       "default": "./dist/icons/dist/icons/*.js"
     },
     "./icons/sprite.svg": "./dist/icons/dist/sprite.svg",
-    "./icons/css": "./dist/icons/dist/orca-icons.css",
-    "./icons/orca-icons.css": "./dist/icons/dist/orca-icons.css",
+    "./icons/css": "./dist/icons/dist/pelagic-icons.css",
+    "./icons/pelagic-icons.css": "./dist/icons/dist/pelagic-icons.css",
     "./icons/json": "./dist/icons/dist/icons.json",
     "./icons/icons.json": "./dist/icons/dist/icons.json",
     "./illustrations": {

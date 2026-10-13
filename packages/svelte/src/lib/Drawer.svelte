@@ -21,7 +21,7 @@
     children?: Snippet;
   } = $props();
 
-  const titleId = nextId('oc-drawer-title');
+  const titleId = nextId('pl-drawer-title');
 
   function onbackdrop(e: MouseEvent) {
     if (closeOnBackdrop && e.target === e.currentTarget) onclose?.();
@@ -29,21 +29,21 @@
 </script>
 
 {#if open}
-  <div class={['oc-overlay', 'oc-overlay--drawer', side === 'right' && 'oc-overlay--right']} role="presentation" onmousedown={onbackdrop}>
+  <div class={['pl-overlay', 'pl-overlay--drawer', side === 'right' && 'pl-overlay--right']} role="presentation" onmousedown={onbackdrop}>
     <div
       use:modal={onclose}
-      class={['oc-drawer', side === 'right' && 'oc-drawer--right']}
+      class={['pl-drawer', side === 'right' && 'pl-drawer--right']}
       role="dialog"
       aria-modal="true"
       aria-labelledby={titleId}
       tabindex="-1"
     >
-      <div class="oc-dialog__header">
-        <h2 id={titleId} class="oc-dialog__title">{title}</h2>
-        <button type="button" class="oc-close" aria-label="Close" onclick={onclose}>×</button>
+      <div class="pl-dialog__header">
+        <h2 id={titleId} class="pl-dialog__title">{title}</h2>
+        <button type="button" class="pl-close" aria-label="Close" onclick={onclose}>×</button>
       </div>
-      <div class="oc-dialog__body">{@render children?.()}</div>
-      {#if footer}<div class="oc-dialog__footer">{@render footer()}</div>{/if}
+      <div class="pl-dialog__body">{@render children?.()}</div>
+      {#if footer}<div class="pl-dialog__footer">{@render footer()}</div>{/if}
     </div>
   </div>
 {/if}

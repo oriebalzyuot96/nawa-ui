@@ -5,7 +5,7 @@
 
 const r2 = (n) => Math.round(n * 100) / 100;
 
-/** The Orca nucleus: a solid accent core inside a faint orbit ring. */
+/** The Pelagic nucleus: a solid accent core inside a faint orbit ring. */
 export function nucleus(cx, cy, r = 6, { float = '', ring = true } = {}) {
   const f = float ? ` float="${float}"` : '';
   return `<g${f}>${ring ? `<circle cx="${cx}" cy="${cy}" r="${r2(r * 1.9)}" fill="none" stroke="accent" stroke-width="1.5" stroke-opacity=".45"/>` : ''}<circle cx="${cx}" cy="${cy}" r="${r}" fill="accent"/></g>`;
@@ -51,7 +51,7 @@ export function bar(x, y, w, h = 6, role = 'ink', opacity = '.28') {
 }
 
 /**
- * Shared backdrop — the recurring Orca motif: two offset tonal discs, a dotted
+ * Shared backdrop — the recurring Pelagic motif: two offset tonal discs, a dotted
  * orbit with its satellite nucleus, and a short horizon dash. No drop shadows.
  */
 export function backdrop({ orbit = -14, satellite = 'left', horizon = true } = {}) {

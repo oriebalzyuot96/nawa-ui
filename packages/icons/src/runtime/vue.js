@@ -37,7 +37,7 @@ function renderIcon(data, p, id, attrs) {
 /** Create a component for one icon's data (used for every named export). */
 export function createIcon(data, name) {
   return defineComponent({
-    name: name || 'OrcaIcon',
+    name: name || 'PelagicIcon',
     inheritAttrs: false,
     props,
     setup(p, { attrs }) {
@@ -49,7 +49,7 @@ export function createIcon(data, name) {
 
 /** `<Icon name="search" />` — convenient, but imports the whole set. */
 export const Icon = defineComponent({
-  name: 'OrcaIcon',
+  name: 'PelagicIcon',
   inheritAttrs: false,
   props: { name: { type: String, required: true }, ...props },
   setup(p, { attrs }) {

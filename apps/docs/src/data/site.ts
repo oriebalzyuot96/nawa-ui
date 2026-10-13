@@ -1,10 +1,10 @@
-// Site-wide navigation, labels and the Orca icon used for each component category.
-import type { IconName } from '@orca-ui/icons';
+// Site-wide navigation, labels and the Pelagic icon used for each component category.
+import type { IconName } from '@pelagic-ui/icons';
 import type { Lang } from './packages';
 
-export const repo = 'https://github.com/oriebalzyuot96/orca-ui';
+export const repo = 'https://github.com/oriebalzyuot96/pelagic-ui';
 
-/** Orca icon per component category (replaces emoji in the chrome). */
+/** Pelagic icon per component category (replaces emoji in the chrome). */
 export const categoryIcon: Record<string, IconName> = {
   forms: 'edit',
   'advanced-forms': 'sliders',
@@ -43,7 +43,7 @@ export const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 
 export const t = {
   en: {
     skip: 'Skip to content',
-    home: 'Orca UI home',
+    home: 'Pelagic UI home',
     mainNav: 'Main',
     menu: 'Menu',
     search: 'Search',
@@ -67,7 +67,7 @@ export const t = {
   },
   ar: {
     skip: 'تخطَّ إلى المحتوى',
-    home: 'الصفحة الرئيسية لأوركا UI',
+    home: 'الصفحة الرئيسية لبيلاجيك UI',
     mainNav: 'التنقل الرئيسي',
     menu: 'القائمة',
     search: 'بحث',

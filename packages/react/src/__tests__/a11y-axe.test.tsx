@@ -246,7 +246,7 @@ function FormsAdvancedSection() {
       <ToggleButton onLabel="Following" offLabel="Follow" />
       <SelectButton label="Range" options={[{ label: 'Day', value: 'd' }, { label: 'Week', value: 'w' }]} defaultValue="d" />
       <FloatLabel label="Floating email">
-        <input className="oc-input" />
+        <input className="pl-input" />
       </FloatLabel>
     </section>
   );
@@ -361,7 +361,7 @@ function EffectsSection() {
 function Page() {
   return (
     <main>
-      <h1>Orca UI kitchen sink</h1>
+      <h1>Pelagic UI kitchen sink</h1>
       <CoreSection />
       <FormsAdvancedSection />
       <MenusSection />

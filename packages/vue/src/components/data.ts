@@ -24,7 +24,7 @@ function compareValues(a: unknown, b: unknown): number {
  * Sortable table. Custom cell content: slot `cell-<key>` receives `{ row, value }`.
  */
 export const DataTable = defineComponent({
-  name: 'OcDataTable',
+  name: 'PlDataTable',
   props: {
     columns: { type: Array as PropType<DataColumn[]>, required: true },
     rows: { type: Array as PropType<Record<string, unknown>[]>, required: true },
@@ -60,12 +60,12 @@ export const DataTable = defineComponent({
     };
 
     const alignClass = (align?: DataColumn['align']) =>
-      align === 'end' ? 'oc-table__align-end' : align === 'center' ? 'oc-table__align-center' : undefined;
+      align === 'end' ? 'pl-table__align-end' : align === 'center' ? 'pl-table__align-center' : undefined;
 
     return () =>
-      h('div', { class: 'oc-table-wrap', 'data-responsive': 'stack' }, [
-        h('table', { class: 'oc-table', 'aria-busy': props.loading ? 'true' : undefined }, [
-          props.caption ? h('caption', { class: props.captionVisible ? undefined : 'oc-sr-only' }, props.caption) : null,
+      h('div', { class: 'pl-table-wrap', 'data-responsive': 'stack' }, [
+        h('table', { class: 'pl-table', 'aria-busy': props.loading ? 'true' : undefined }, [
+          props.caption ? h('caption', { class: props.captionVisible ? undefined : 'pl-sr-only' }, props.caption) : null,
           h(
             'thead',
             null,
@@ -82,7 +82,7 @@ export const DataTable = defineComponent({
                       col.sortable && active ? (sort.value?.direction === 'asc' ? 'ascending' : 'descending') : undefined,
                   },
                   col.sortable
-                    ? h('button', { type: 'button', class: 'oc-table__sort', onClick: () => toggleSort(col.key) }, [
+                    ? h('button', { type: 'button', class: 'pl-table__sort', onClick: () => toggleSort(col.key) }, [
                         col.label,
                         h('span', { 'aria-hidden': 'true' }, active ? (sort.value?.direction === 'asc' ? '▲' : '▼') : '↕'),
                       ])
@@ -103,7 +103,7 @@ export const DataTable = defineComponent({
                   ),
                 )
               : sortedRows.value.length === 0
-                ? [h('tr', null, [h('td', { class: 'oc-table__empty', colspan: props.columns.length }, props.emptyMessage)])]
+                ? [h('tr', null, [h('td', { class: 'pl-table__empty', colspan: props.columns.length }, props.emptyMessage)])]
                 : sortedRows.value.map((row, i) =>
                     h(
                       'tr',

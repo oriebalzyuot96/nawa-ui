@@ -3,15 +3,15 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../theme/colors.dart';
-import '../theme/orca_theme.dart';
+import '../theme/pelagic_theme.dart';
 import 'button.dart';
 import 'data_table.dart';
 
 /// One labelled value of a chart.
 @immutable
-class OrcaChartPoint {
+class PelagicChartPoint {
   /// Creates a point.
-  const OrcaChartPoint(this.label, this.value);
+  const PelagicChartPoint(this.label, this.value);
 
   /// Category / x label.
   final String label;
@@ -38,11 +38,11 @@ String _defaultFormat(double v) {
 
 /// Text summary of a series for screen readers, e.g.
 /// "Revenue. 6 values. Highest: Jun, 42. Lowest: Jan, 12."
-String orcaDescribeSeries(String title, List<OrcaChartPoint> data, String Function(double) format) {
+String pelagicDescribeSeries(String title, List<PelagicChartPoint> data, String Function(double) format) {
   if (data.isEmpty) return '$title. No data.';
-  OrcaChartPoint hi = data.first;
-  OrcaChartPoint lo = data.first;
-  for (final OrcaChartPoint p in data) {
+  PelagicChartPoint hi = data.first;
+  PelagicChartPoint lo = data.first;
+  for (final PelagicChartPoint p in data) {
     if (p.value > hi.value) hi = p;
     if (p.value < lo.value) lo = p;
   }
@@ -51,10 +51,10 @@ String orcaDescribeSeries(String title, List<OrcaChartPoint> data, String Functi
 }
 
 /// Trend sentence for a line chart: "From Jan 12 to Jun 42, up 250%."
-String orcaTrendSummary(List<OrcaChartPoint> data, String Function(double) format) {
+String pelagicTrendSummary(List<PelagicChartPoint> data, String Function(double) format) {
   if (data.length < 2) return '';
-  final OrcaChartPoint first = data.first;
-  final OrcaChartPoint last = data.last;
+  final PelagicChartPoint first = data.first;
+  final PelagicChartPoint last = data.last;
   final double diff = last.value - first.value;
   final String direction = diff > 0 ? 'up' : (diff < 0 ? 'down' : 'unchanged');
   final String pct = first.value == 0 ? '' : ' ${(diff.abs() / first.value.abs() * 100).round()}%';
@@ -80,7 +80,7 @@ abstract class _ChartPainter extends CustomPainter {
     required this.textScaler,
   });
 
-  final List<OrcaChartPoint> data;
+  final List<PelagicChartPoint> data;
   final _ChartColors colors;
   final String Function(double) format;
   final TextDirection textDirection;
@@ -160,7 +160,7 @@ class _BarPainter extends _ChartPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (data.isEmpty) return;
-    final double maxValue = data.map((OrcaChartPoint p) => p.value).reduce(math.max);
+    final double maxValue = data.map((PelagicChartPoint p) => p.value).reduce(math.max);
     final ({double max, double step}) scale = _niceScale(maxValue);
     final Rect plot = drawFrame(canvas, size, scale);
     final double slot = plot.width / data.length;
@@ -191,7 +191,7 @@ class _LinePainter extends _ChartPainter {
   @override
   void paint(Canvas canvas, Size size) {
     if (data.isEmpty) return;
-    final double maxValue = data.map((OrcaChartPoint p) => p.value).reduce(math.max);
+    final double maxValue = data.map((PelagicChartPoint p) => p.value).reduce(math.max);
     final ({double max, double step}) scale = _niceScale(maxValue);
     final Rect plot = drawFrame(canvas, size, scale);
     final List<Offset> points = <Offset>[
@@ -248,7 +248,7 @@ class _ChartFrame extends StatefulWidget {
   final String title;
   final String? description;
   final String summary;
-  final List<OrcaChartPoint> data;
+  final List<PelagicChartPoint> data;
   final double height;
   final String Function(double) format;
   final String valueLabel;
@@ -266,7 +266,7 @@ class _ChartFrameState extends State<_ChartFrame> {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaColors c = OrcaTheme.of(context).colors;
+    final PelagicColors c = PelagicTheme.of(context).colors;
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -282,23 +282,23 @@ class _ChartFrameState extends State<_ChartFrame> {
                     header: true,
                     child: Text(
                       widget.title,
-                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: OrcaFontSize.md),
+                      style: TextStyle(color: c.text, fontWeight: FontWeight.w700, fontSize: PelagicFontSize.md),
                     ),
                   ),
                   if (widget.description != null)
-                    Text(widget.description!, style: TextStyle(color: c.textMuted, fontSize: OrcaFontSize.sm)),
+                    Text(widget.description!, style: TextStyle(color: c.textMuted, fontSize: PelagicFontSize.sm)),
                 ],
               ),
             ),
-            OrcaButton(
+            PelagicButton(
               label: _table ? widget.hideTableLabel : widget.showTableLabel,
-              variant: OrcaButtonVariant.ghost,
-              size: OrcaButtonSize.sm,
+              variant: PelagicButtonVariant.ghost,
+              size: PelagicButtonSize.sm,
               onPressed: () => setState(() => _table = !_table),
             ),
           ],
         ),
-        const SizedBox(height: OrcaSpace.sm),
+        const SizedBox(height: PelagicSpace.sm),
         Semantics(
           container: true,
           image: true,
@@ -311,24 +311,24 @@ class _ChartFrameState extends State<_ChartFrame> {
           ),
         ),
         if (_table) ...<Widget>[
-          const SizedBox(height: OrcaSpace.md),
-          OrcaDataTable<OrcaChartPoint>(
+          const SizedBox(height: PelagicSpace.md),
+          PelagicDataTable<PelagicChartPoint>(
             caption: widget.title,
             rows: widget.data,
-            columns: <OrcaDataColumn<OrcaChartPoint>>[
-              OrcaDataColumn<OrcaChartPoint>(
+            columns: <PelagicDataColumn<PelagicChartPoint>>[
+              PelagicDataColumn<PelagicChartPoint>(
                 key: 'label',
                 label: widget.title,
-                value: (OrcaChartPoint p) => p.label,
+                value: (PelagicChartPoint p) => p.label,
               ),
-              OrcaDataColumn<OrcaChartPoint>(
+              PelagicDataColumn<PelagicChartPoint>(
                 key: 'value',
                 label: widget.valueLabel,
-                align: OrcaColumnAlign.end,
-                value: (OrcaChartPoint p) => p.value,
-                cellBuilder: (BuildContext context, OrcaChartPoint p) => Text(
+                align: PelagicColumnAlign.end,
+                value: (PelagicChartPoint p) => p.value,
+                cellBuilder: (BuildContext context, PelagicChartPoint p) => Text(
                   widget.format(p.value),
-                  style: TextStyle(color: c.text, fontSize: OrcaFontSize.sm),
+                  style: TextStyle(color: c.text, fontSize: PelagicFontSize.sm),
                 ),
               ),
             ],
@@ -340,7 +340,7 @@ class _ChartFrameState extends State<_ChartFrame> {
 }
 
 _ChartColors _chartColors(BuildContext context, Color? color) {
-  final OrcaColors c = OrcaTheme.of(context).colors;
+  final PelagicColors c = PelagicTheme.of(context).colors;
   final Color series = color ?? c.primary;
   return _ChartColors(
     series: series,
@@ -354,9 +354,9 @@ _ChartColors _chartColors(BuildContext context, Color? color) {
 ///
 /// Screen readers get a text summary (count, highest, lowest). A button shows
 /// the same data as a table.
-class OrcaBarChart extends StatelessWidget {
+class PelagicBarChart extends StatelessWidget {
   /// Creates a bar chart.
-  const OrcaBarChart({
+  const PelagicBarChart({
     super.key,
     required this.title,
     required this.data,
@@ -375,7 +375,7 @@ class OrcaBarChart extends StatelessWidget {
   final String title;
 
   /// Points.
-  final List<OrcaChartPoint> data;
+  final List<PelagicChartPoint> data;
 
   /// Subtitle.
   final String? description;
@@ -406,11 +406,11 @@ class OrcaBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final OrcaTheme t = OrcaTheme.of(context);
+    final PelagicTheme t = PelagicTheme.of(context);
     return _ChartFrame(
       title: title,
       description: description,
-      summary: semanticSummary ?? 'Bar chart. ${orcaDescribeSeries(title, data, format)}',
+      summary: semanticSummary ?? 'Bar chart. ${pelagicDescribeSeries(title, data, format)}',
       data: data,
       height: height,
       format: format,
@@ -434,9 +434,9 @@ class OrcaBarChart extends StatelessWidget {
 ///
 /// Screen readers get a summary with the trend. A button shows the same data
 /// as a table.
-class OrcaLineChart extends StatelessWidget {
+class PelagicLineChart extends StatelessWidget {
   /// Creates a line chart.
-  const OrcaLineChart({
+  const PelagicLineChart({
     super.key,
     required this.title,
     required this.data,
@@ -455,7 +455,7 @@ class OrcaLineChart extends StatelessWidget {
   final String title;
 
   /// Points in order.
-  final List<OrcaChartPoint> data;
+  final List<PelagicChartPoint> data;
 
   /// Subtitle.
   final String? description;
@@ -490,7 +490,7 @@ class OrcaLineChart extends StatelessWidget {
       title: title,
       description: description,
       summary: semanticSummary ??
-          'Line chart. ${orcaDescribeSeries(title, data, format)} ${orcaTrendSummary(data, format)}'.trim(),
+          'Line chart. ${pelagicDescribeSeries(title, data, format)} ${pelagicTrendSummary(data, format)}'.trim(),
       data: data,
       height: height,
       format: format,

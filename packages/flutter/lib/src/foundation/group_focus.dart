@@ -4,9 +4,9 @@ import 'package:flutter/widgets.dart';
 ///
 /// Nodes are created on demand and only disposed with the owner, so a node is
 /// never disposed while a widget still uses it.
-class OrcaGroupFocus {
+class PelagicGroupFocus {
   /// Creates a node pool.
-  OrcaGroupFocus(this.debugLabel);
+  PelagicGroupFocus(this.debugLabel);
 
   /// Prefix of node debug labels.
   final String debugLabel;
@@ -33,7 +33,7 @@ class OrcaGroupFocus {
 }
 
 /// Next enabled index from [from] by [delta], wrapping. Returns [from] when none is enabled.
-int orcaNextEnabled(int from, int delta, int length, bool Function(int index) enabled) {
+int pelagicNextEnabled(int from, int delta, int length, bool Function(int index) enabled) {
   if (length == 0) return from;
   int i = from < 0 ? (delta > 0 ? -1 : length) : from;
   for (int step = 0; step < length; step++) {
@@ -45,7 +45,7 @@ int orcaNextEnabled(int from, int delta, int length, bool Function(int index) en
 }
 
 /// First (or [last]) enabled index, or -1.
-int orcaEdgeEnabled(bool last, int length, bool Function(int index) enabled) {
+int pelagicEdgeEnabled(bool last, int length, bool Function(int index) enabled) {
   if (last) {
     for (int i = length - 1; i >= 0; i--) {
       if (enabled(i)) return i;

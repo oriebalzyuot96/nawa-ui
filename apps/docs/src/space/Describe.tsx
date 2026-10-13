@@ -1,6 +1,6 @@
 /** "Describe what you need": Describe → Review chips → Generate. Fully offline (see engine.ts / recipes.ts). */
 import { forwardRef, useId, useState } from 'react';
-import { Button, Segmented, Textarea } from '@orca-ui/react';
+import { Button, Segmented, Textarea } from '@pelagic-ui/react';
 import { generate, understand, type BlockMention, type Understanding } from './engine';
 import { BLOCKS, type BlockId } from './blocks';
 import { EXAMPLES, PAGE_RECIPES } from './recipes';
