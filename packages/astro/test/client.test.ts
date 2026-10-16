@@ -214,66 +214,67 @@ describe('client/slider', () => {
 });
 
 describe('client/toast', () => {
-  const region = () => document.querySelector('[data-pl-toaster]')!;
-  const mount = () => {
-    document.body.innerHTML = '<div class="pl-toast-stack" role="status" aria-live="polite" data-pl-toaster></div>';
+  const region = () => document.querySelector('section.pl-toaster')!;
+  const items = () => [...region().querySelectorAll('.pl-toaster__toast[data-state="open"]')];
+  const mount = (config = {}) => {
+    document.body.innerHTML = `<template data-pl-toaster data-config='${JSON.stringify(config)}'></template>`;
   };
+  afterEach(() => window.pelagicToaster.remove());
 
-  it('window.pelagicToast appends a toast with title, message, variant and a labelled dismiss button', () => {
-    mount();
+  it('window.pelagicToast shows a toast with title, message, type icon and a labelled dismiss button', () => {
+    mount({ closeButton: true });
     window.pelagicToast({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
-    const toast = region().querySelector('.pl-toast')!;
-    expect(toast.className).toBe('pl-toast pl-toast--success');
-    expect(toast.querySelector('.pl-toast__title')!.textContent).toBe('Saved');
-    expect(toast.querySelector('.pl-toast__message')!.textContent).toBe('All good');
-    const close = toast.querySelector('button')!;
-    expect(close.getAttribute('aria-label')).toBe('Dismiss');
+    const toast = items()[0];
+    expect(toast.getAttribute('data-type')).toBe('success');
+    expect(toast.querySelector('.pl-toaster__title')!.textContent).toBe('Saved');
+    expect(toast.querySelector('.pl-toaster__desc')!.textContent).toBe('All good');
+    expect(toast.querySelector('.pl-toast-ico--success')).not.toBeNull();
+    const close = toast.querySelector<HTMLButtonElement>('[data-toast-close]')!;
+    expect(close.getAttribute('aria-label')).toBe('Dismiss notification');
     expect(close.type).toBe('button');
     close.click();
-    expect(region().children).toHaveLength(0);
+    expect(toast.getAttribute('data-state')).toBe('closed');
   });
 
   it('treats text as text (no HTML injection)', () => {
     mount();
     window.pelagicToast({ message: '<img src=x onerror=alert(1)>', duration: 0 });
     expect(region().querySelector('img')).toBeNull();
-    expect(region().querySelector('.pl-toast')!.className).toBe('pl-toast');
-    expect(region().querySelector('.pl-toast__title')).toBeNull();
+    expect(items()[0].querySelector('.pl-toaster__title')!.textContent).toBe('<img src=x onerror=alert(1)>');
   });
 
-  it('auto-dismisses after the duration and pauses while hovered or focused', () => {
+  it('auto-dismisses after the duration and pauses while hovered', () => {
     vi.useFakeTimers();
     mount();
     window.pelagicToast({ message: 'Bye', duration: 1000 });
-    const toast = region().querySelector('.pl-toast')!;
+    const list = region().querySelector('ol')!;
     vi.advanceTimersByTime(600);
-    toast.dispatchEvent(new MouseEvent('mouseenter'));
+    list.dispatchEvent(new MouseEvent('mouseenter'));
     vi.advanceTimersByTime(5000);
-    expect(region().children).toHaveLength(1);
-    toast.dispatchEvent(new MouseEvent('mouseleave'));
-    vi.advanceTimersByTime(999);
-    expect(region().children).toHaveLength(1);
-    toast.dispatchEvent(new FocusEvent('focusin'));
-    vi.advanceTimersByTime(5000);
-    expect(region().children).toHaveLength(1);
-    toast.dispatchEvent(new FocusEvent('focusout'));
-    vi.advanceTimersByTime(1000);
-    expect(region().children).toHaveLength(0);
+    expect(items()).toHaveLength(1);
+    list.dispatchEvent(new MouseEvent('mouseleave'));
+    vi.advanceTimersByTime(399);
+    expect(items()).toHaveLength(1);
+    vi.advanceTimersByTime(2);
+    expect(items()).toHaveLength(0);
   });
 
-  it('defaults to a 5 s timeout; duration 0 stays until closed', () => {
-    vi.useFakeTimers();
-    mount();
-    window.pelagicToast({ message: 'Default' });
-    window.pelagicToast({ message: 'Sticky', duration: 0 });
-    vi.advanceTimersByTime(4999);
-    expect(region().children).toHaveLength(2);
-    vi.advanceTimersByTime(1);
-    expect([...region().children].map((t) => t.textContent)).toEqual(['Sticky×']);
+  it('honours the configured position and the full toast() API', async () => {
+    mount({ position: 'top-center' });
+    expect(window.pelagicToast({ message: 'x', duration: 0 })).toBeTruthy();
+    expect(region().classList.contains('pl-toaster--top-center')).toBe(true);
+    let resolve!: (v: string) => void;
+    window.pelagicToaster.promise(new Promise<string>((r) => (resolve = r)), { loading: 'Saving', success: 'Saved', error: 'Failed' });
+    expect(region().querySelector('[data-type="loading"]')).not.toBeNull();
+    resolve('ok');
+    await Promise.resolve();
+    await Promise.resolve();
+    expect(region().querySelector('[data-type="success"] .pl-toast-ico[data-morph]')).not.toBeNull();
   });
 
   it('does nothing without a Toaster on the page', () => {
+    document.body.innerHTML = '';
     expect(() => window.pelagicToast({ message: 'nowhere' })).not.toThrow();
-    expect(document.querySelector('.pl-toast')).toBeNull();
+    expect(document.querySelector('.pl-toaster')).toBeNull();
   });
 });

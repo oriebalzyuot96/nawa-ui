@@ -17,7 +17,11 @@ interface Props {
   /** Show the live preview card. Default true. */
   preview?: boolean;
   /** Limit and order the groups. */
-  groups?: Array<'color' | 'text' | 'reading' | 'motion' | 'interaction'>;
+  groups?: Array<'appearance' | 'color' | 'text' | 'reading' | 'motion' | 'interaction' | 'sound'>;
+  /** Show the Theme group (mode, color theme, accent, own color, animated switch). Default true. */
+  appearance?: boolean;
+  /** Sound group: 'auto' (default, once a sound engine exists), true or false. */
+  sound?: boolean | 'auto';
   /** localStorage key, or false to not persist. */
   persist?: string | false;
   /** CSS selector of the element that receives the data-a11y-* attributes. Default <html>. */
@@ -26,7 +30,7 @@ interface Props {
   class?: string;
 }
 
-const { locale, labels, trigger = 'floating', triggerLabel, preview = true, groups, persist, target, id, class: className } = Astro.props;
+const { locale, labels, trigger = 'floating', triggerLabel, preview = true, groups, appearance = true, sound = 'auto', persist, target, id, class: className } = Astro.props;
 // Only a page-level panel that persists restores early; scoped or unsaved panels apply after load.
 const restore = persist !== false && !target;
 const storageKey = typeof persist === 'string' ? persist : 'pelagic-ui-a11y';
@@ -38,11 +42,13 @@ const html = renderA11yPanelHTML({
   triggerLabel,
   preview,
   groups,
+  appearance,
+  sound,
   className,
 });
 ---
 
-<div class="pl-a11y-host" data-pl-a11y-host data-persist={persist === false ? 'false' : persist} data-target={target} style="display: contents">
+<div class="pl-a11y-host" data-pl-a11y-host data-persist={persist === false ? 'false' : persist} data-target={target} data-sound={String(sound)} style="display: contents">
   <Fragment set:html={html} />
 </div>
 

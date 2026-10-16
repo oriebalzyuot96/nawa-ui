@@ -1,5 +1,6 @@
 ---
-// Put in <head>. Restores the saved theme before first paint so there is no flash of the wrong theme.
+// Put in <head>. Restores the saved theme before first paint so there is no flash of the wrong theme:
+// mode, accent, shape, named preset and a live brand color (its generated CSS is saved with it).
 ---
 
 <script is:inline>
@@ -8,8 +9,17 @@
     if (t) {
       var r = document.documentElement;
       if (t.mode && t.mode !== 'system') r.setAttribute('data-theme', t.mode);
-      if (t.accent) r.setAttribute('data-accent', t.accent);
+      if (t.preset && t.preset !== 'default') r.setAttribute('data-theme-preset', t.preset);
       if (t.shape) r.setAttribute('data-shape', t.shape);
+      var css = t.accent === 'brand' ? t.brandCss : t.customCss;
+      if (css && t.accent) {
+        var s = document.createElement('style');
+        s.setAttribute('data-theme-custom', t.accent);
+        if (t.brand) s.setAttribute('data-color', t.brand);
+        s.textContent = css;
+        document.head.appendChild(s);
+      }
+      if (t.accent && (t.accent !== 'brand' || css)) r.setAttribute('data-accent', t.accent);
     }
   } catch (e) {}
 </script>

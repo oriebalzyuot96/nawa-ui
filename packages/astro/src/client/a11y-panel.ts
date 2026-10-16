@@ -17,6 +17,7 @@ export function initA11yPanels(scope: ParentNode = document) {
     root.plA11yPanel = mountA11yPanel(root, {
       persist: persistAttr === 'false' ? false : persistAttr || true,
       target: selector ? () => document.querySelector<HTMLElement>(selector) : undefined,
+      sound: host.dataset.sound === 'true' ? true : host.dataset.sound === 'false' ? false : 'auto',
     });
   }
 }

@@ -456,12 +456,12 @@ describe('Astro components', () => {
     expect(r.$('footer')).toBeNull();
   });
 
-  it('Toaster: polite live region', async () => {
+  it('Toaster: an inert config template for the client region', async () => {
     mark('Toaster');
-    const r = await render(Toaster);
-    const region = r.$('[data-pl-toaster]')!;
-    expect(region.getAttribute('role')).toBe('status');
-    expect(region.getAttribute('aria-live')).toBe('polite');
+    const r = await render(Toaster, { position: 'top-start', progress: true });
+    const el = r.$('[data-pl-toaster]')!;
+    expect(el.tagName).toBe('TEMPLATE');
+    expect(JSON.parse(el.getAttribute('data-config')!)).toMatchObject({ position: 'top-start', progress: true, closeButton: true });
   });
 
   it('ThemeScript: inline, render-blocking restore of the saved theme', async () => {
@@ -536,7 +536,7 @@ describe('Astro components', () => {
     expect(dialog.hasAttribute('role')).toBe(false);
     expect(r.$(`#${dialog.getAttribute('data-labelledby')}`)!.textContent).toBe('Accessibility');
     expect(dialog.hasAttribute('hidden')).toBe(true);
-    expect(r.$$('.pl-a11y-group__title').map((h) => h.textContent)).toEqual(['Contrast & color', 'Text', 'Reading aids', 'Motion & media', 'Interaction']);
+    expect(r.$$('.pl-a11y-group__title').map((h) => h.textContent)).toEqual(['Theme', 'Contrast & color', 'Text', 'Reading aids', 'Motion & media', 'Interaction', 'Sound']);
     expect(r.$$('[role="radiogroup"][data-a11y-key="contrast"] [role="radio"]')).toHaveLength(8);
     expect(r.$('[role="status"][aria-live="polite"]')).not.toBeNull();
     expect(r.html).toContain('localStorage.getItem(storageKey)');
