@@ -146,11 +146,15 @@ before(async () => {
     });
   }
   await waitForUrl(BASE);
-  browser = await puppeteer.launch({
-    executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
-    headless: true,
-    args: process.env.CI ? ['--no-sandbox'] : [],
-  });
+  // E2E_BROWSER_URL: attach to a browser the caller started with --remote-debugging-port (used when
+  // Puppeteer cannot launch the installed Edge itself).
+  browser = process.env.E2E_BROWSER_URL
+    ? await puppeteer.connect({ browserURL: process.env.E2E_BROWSER_URL })
+    : await puppeteer.launch({
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || undefined,
+        headless: true,
+        args: process.env.CI ? ['--no-sandbox'] : [],
+      });
   pages = await discoverPages();
   assert.ok(pages.length > 5, `expected the sitemap to list the docs pages, got ${pages.length}`);
   for (const p of REQUIRED_PAGES) {
@@ -261,9 +265,12 @@ describe('themes 0.2: presets, panel, toaster, animated switch', () => {
     const { page, errors } = await open(url, { mode: 'light' });
     await hydrate(page);
     const clicked = await page.evaluate(() => {
-      const b = [...document.querySelectorAll('button')].find((x) => x.textContent?.trim() === 'Rich (avatar)');
+      // Scope to the toaster demo: other demos on the page have buttons with the same labels.
+      const col = document.querySelector('section[aria-label^="Demo notifications"]')?.closest('.demo-col') ?? document;
+      const buttons = [...col.querySelectorAll('button')];
+      const b = buttons.find((x) => x.textContent?.trim() === 'Rich (avatar)');
       b?.click();
-      const e = [...document.querySelectorAll('button')].find((x) => x.textContent?.trim() === 'Error');
+      const e = buttons.find((x) => x.textContent?.trim() === 'Error');
       e?.click();
       return !!b && !!e;
     });

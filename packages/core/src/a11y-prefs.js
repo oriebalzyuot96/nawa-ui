@@ -1004,7 +1004,18 @@ export function mountA11yPanel(root, options = {}) {
 
   /* ---- theme and sound controls ---- */
   const setTheme = (key, value, origin, extra = {}) => {
-    const next = key === 'reset' ? { preset: 'default', accent: null, brand: null } : { [key]: value };
+    // Explicit keys (not a computed `{ [key]: value }`): every bundler keeps them, so the panel always
+    // sends exactly the choice the user made.
+    const next =
+      key === 'reset'
+        ? { preset: 'default', accent: null, brand: null }
+        : key === 'mode'
+          ? { mode: value }
+          : key === 'preset'
+            ? { preset: value }
+            : key === 'accent'
+              ? { accent: value }
+              : { brand: value };
     const done = switchTheme(next, { origin, target: themeRoot, ...extra });
     renderTheme();
     if (extra.persist !== false && key !== 'reset') announce(announceA11yChange(labels, key, value ?? labels.off));

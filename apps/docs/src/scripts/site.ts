@@ -1,7 +1,7 @@
 // Site chrome behaviour: appearance (theme) controls, mobile menu, ⌘K palette, copy buttons,
 // package-manager memory, the home studio, motion pause, scroll-spy and small visual touches.
 // Everything degrades gracefully: without this script the pages are complete, readable documents.
-import { getThemeState, onThemeChange, switchTheme } from '@pelagic-ui/core/theme';
+import { getThemeState, onThemeChange, switchTheme, type ThemePreset } from '@pelagic-ui/core/theme';
 
 const doc = document.documentElement;
 const ar = doc.lang === 'ar';
@@ -54,7 +54,7 @@ for (const input of document.querySelectorAll<HTMLInputElement>('[data-theme-cho
 }
 document.querySelector<HTMLSelectElement>('[data-theme-preset-choice]')?.addEventListener('change', (e) => {
   const select = e.currentTarget as HTMLSelectElement;
-  void switchTheme({ preset: select.value }, { origin: select });
+  void switchTheme({ preset: select.value as ThemePreset }, { origin: select });
 });
 
 /* ---------- Disclosures: appearance popover and the mobile menu ---------- */

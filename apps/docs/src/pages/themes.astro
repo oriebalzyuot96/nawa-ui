@@ -220,11 +220,11 @@ switchTheme({ brand: '#ff6a00' });         // any color, tuned to WCAG AA
 </Base>
 
 <script>
-  import { applyCustomTheme, createTheme, switchTheme, themeToCode, type CustomTheme } from '@pelagic-ui/core/theme';
+  import { applyCustomTheme, createTheme, switchTheme, themeToCode, type CustomTheme, type ThemePreset } from '@pelagic-ui/core/theme';
 
   // Named presets and the animated switch: the reveal starts at the button that was used.
   for (const b of document.querySelectorAll<HTMLElement>('[data-preset-pick]')) {
-    b.addEventListener('click', (e) => void switchTheme({ preset: b.dataset.presetPick }, { origin: e }));
+    b.addEventListener('click', (e) => void switchTheme({ preset: b.dataset.presetPick as ThemePreset }, { origin: e }));
   }
   document.querySelector('[data-switch-demo]')?.addEventListener('click', (e) => {
     const dark = document.documentElement.getAttribute('data-theme') === 'dark';
