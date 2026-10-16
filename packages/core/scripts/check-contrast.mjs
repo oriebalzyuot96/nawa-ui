@@ -5,12 +5,15 @@
 //   3. the inverted rendering (data-a11y-contrast="invert": filter invert(1) hue-rotate(180deg)) of all 21 themes
 //   4. the saturation filters (data-a11y-saturation low / high) of all 21 themes
 //   5. custom brand themes from createTheme(): a fixed sample of brand colors, plus --brand / pelagic.config.json
+//   6. the named theme presets (data-theme-preset): every preset × mode with its own accent, every preset ×
+//      built-in accent (an explicit data-accent over a preset), their inverted and low-saturation renderings,
+//      and brand colors fitted to each preset with createTheme({ primary, preset })
 // Exits 1 on any failure. Pair list: contrastPairs in src/themes.mjs.
 import { contrastPairs, contrastSchemes } from '../src/themes.mjs';
 import { auditTheme, createTheme, parseColor, resolveTokens, rgbToHex } from '../src/theme.js';
 import { readBrandConfig } from './brand.mjs';
-import { accentNames, modeNames, resolveTheme } from './resolve.mjs';
-import { accents, modes } from '../src/themes.mjs';
+import { accentNames, modeNames, presetModeNeutrals, presetNames, resolvePresetTheme, resolveTheme } from './resolve.mjs';
+import { accents, modes, presets } from '../src/themes.mjs';
 
 let failures = 0;
 let checks = 0;
@@ -105,6 +108,43 @@ for (const primary of [...sample, ...configured]) {
   }
 }
 groups.push(`${brandThemes} custom brand themes × ${modeNames.length} modes`);
+
+// ---------- 6. Theme presets ----------
+let presetRuns = 0;
+for (const preset of presetNames) {
+  for (const mode of modeNames) {
+    const t = resolveTokens(mode, presetModeNeutrals(preset, mode), presets[preset][mode]);
+    const r = resolvePresetTheme(preset, mode);
+    for (const k of Object.keys(r)) if (k !== 'mode' && k !== 'accent' && r[k] !== t[k]) throw new Error(`resolve mismatch preset ${preset}/${mode}.${k}`);
+    run(`preset ${preset} ${mode}`, t);
+    presetRuns += 1;
+    // Saturation filter over the whole page, like the built-in themes.
+    run(`saturation-low preset ${preset} ${mode}`, Object.fromEntries(Object.entries(t).map(([k, v]) => [k, filters['saturation-low'].fn(v)])));
+    presetRuns += 1;
+    // An explicit data-accent over the preset surfaces (hc keeps the hc neutrals, so it equals section 1).
+    if (mode !== 'hc') {
+      for (const accent of accentNames) {
+        run(`preset ${preset} ${mode} + ${accent}`, resolveTokens(mode, presetModeNeutrals(preset, mode), accents[accent][mode]));
+        presetRuns += 1;
+      }
+    }
+  }
+  // Invert pins the light (or hc) neutrals; the preset accent stays.
+  for (const mode of ['light', 'hc']) {
+    const t = resolveTokens(mode, modes[mode], presets[preset][mode]);
+    run(`invert preset ${preset} ${mode}`, Object.fromEntries(Object.entries(t).map(([k, v]) => [k, filters.invert.fn(v)])));
+    presetRuns += 1;
+  }
+  // A brand fitted to the preset surfaces.
+  for (const primary of ['#ff6a00', '#ffd400', '#00e5ff', '#0a0a0a', '#7c3aed']) {
+    const theme = createTheme({ primary, preset });
+    for (const mode of modeNames) {
+      run(`brand ${primary} on preset ${preset} ${mode}`, theme.tokens[mode]);
+      presetRuns += 1;
+    }
+  }
+}
+groups.push(`${presetNames.length} presets: ${presetRuns} preset renderings (own accent, + every accent, saturation, invert, fitted brands)`);
 
 if (failures) {
   console.error(`\n${failures} of ${checks} contrast checks failed.`);

@@ -1,0 +1,69 @@
+/* ==========================================================================
+ * Motion polish: open / close, marks and focus transitions shared by every framework.
+ * Everything here animates only when motion is allowed: the OS reduced-motion rule (base.css) shortens it
+ * to nothing, data-a11y-motion="reduce" / "off" switch it off, and "full" keeps it on.
+ * Entrances use @starting-style, so elements shown with [hidden] / display changes animate in natively.
+ * ======================================================================== */
+:root {
+  --pl-motion-pop: cubic-bezier(0.2, 0.9, 0.3, 1.15);
+  --pl-motion-out: cubic-bezier(0.4, 0, 1, 1);
+}
+
+/* ---------- Press: one squeeze for every pressable control ---------- */
+:is(.pl-btn, .pl-segmented__item, .pl-pagination__btn, .pl-chip, .pl-tag, .pl-close, .pl-a11y-tile, .pl-a11y-swatch):active:not(:disabled):not([aria-disabled='true']) {
+  transform: scale(0.97);
+  transition-duration: 60ms;
+}
+
+/* ---------- Inputs: the border and halo ease in on focus ---------- */
+:is(.pl-input, .pl-textarea, .pl-select) {
+  transition:
+    border-color var(--pl-dur-1, 120ms) ease,
+    box-shadow var(--pl-dur-2, 200ms) ease,
+    background-color var(--pl-dur-1, 120ms) ease;
+}
+:is(.pl-input, .pl-textarea, .pl-select):focus-visible { transition-duration: 160ms, 240ms, 160ms; }
+
+/* ---------- Checkbox, radio and switch marks ---------- */
+.pl-check input[type='checkbox']:checked::before { animation: pl-polish-check 260ms var(--pl-motion-pop) both; }
+.pl-check input[type='radio'] { transition: box-shadow 220ms var(--pl-motion-pop), border-color 120ms ease, background-color 120ms ease; }
+.pl-check input:active:not(:disabled) { transform: scale(0.9); }
+.pl-switch::after { transition: transform 260ms var(--pl-motion-pop), width 160ms ease, background-color 160ms ease; }
+.pl-switch { transition: background-color 200ms ease, box-shadow 200ms ease; }
+@keyframes pl-polish-check {
+  0% { transform: rotate(-45deg) scale(0); }
+  60% { transform: rotate(-45deg) scale(1.2); }
+  100% { transform: rotate(-45deg) scale(1); }
+}
+
+/* ---------- Overlays and menus: fade + rise in, quicker fade out ---------- */
+:is(.pl-menu, .pl-popover, .pl-tooltip, .pl-dropdown__menu, .pl-select__listbox) {
+  transition:
+    opacity 180ms ease,
+    translate 220ms var(--pl-motion-pop),
+    scale 220ms var(--pl-motion-pop),
+    display 220ms allow-discrete,
+    overlay 220ms allow-discrete;
+}
+@starting-style {
+  :is(.pl-menu, .pl-popover, .pl-dropdown__menu, .pl-select__listbox) { opacity: 0; translate: 0 -4px; scale: 0.98; }
+  .pl-tooltip { opacity: 0; scale: 0.96; }
+}
+
+/* ---------- Accordion and tabs: content settles in ---------- */
+.pl-accordion__panel:not([hidden]),
+.pl-tabs__panel:not([hidden]) { animation: pl-polish-reveal 240ms ease-out both; }
+.pl-accordion__icon { transition: transform 240ms var(--pl-motion-pop), background-color 120ms ease, color 120ms ease; }
+@keyframes pl-polish-reveal { from { opacity: 0; translate: 0 -4px; } }
+
+/* ---------- Motion off / reduced by the user: no travel at all ---------- */
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) :is(.pl-btn, .pl-segmented__item, .pl-pagination__btn, .pl-chip, .pl-tag, .pl-close, .pl-a11y-tile, .pl-a11y-swatch, .pl-check input):active { transform: none; }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) :is(.pl-accordion__panel, .pl-tabs__panel) { animation: none; }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) .pl-check input::before { animation: none; }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) :is(.pl-menu, .pl-popover, .pl-tooltip, .pl-dropdown__menu, .pl-select__listbox) { transition: none; }
+@media (prefers-reduced-motion: reduce) {
+  :is(.pl-btn, .pl-segmented__item, .pl-pagination__btn, .pl-chip, .pl-tag, .pl-close, .pl-check input):active { transform: none; }
+  .pl-accordion__panel:not([hidden]),
+  .pl-tabs__panel:not([hidden]),
+  .pl-check input[type='checkbox']:checked::before { animation: none; }
+}

@@ -1,0 +1,33 @@
+/* ==========================================================================
+ * Theme switch (switchTheme() in src/theme.js)
+ * reveal: View Transitions. The new theme is clipped to a circle that grows from the control the user
+ *         touched (the clip-path animation is started from JS with the exact radius); the browser's default
+ *         crossfade is turned off so the old theme stays crisp underneath.
+ * fade:   browsers without View Transitions get a short crossfade of colors instead.
+ * Neither runs under reduced motion: switchTheme() applies the change instantly then.
+ * ======================================================================== */
+:root[data-pl-theme-transition='reveal']::view-transition-old(root),
+:root[data-pl-theme-transition='reveal']::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+:root[data-pl-theme-transition='reveal']::view-transition-old(root) { z-index: 1; }
+:root[data-pl-theme-transition='reveal']::view-transition-new(root) { z-index: 2; }
+/* Component transitions would otherwise replay the color change inside the reveal. */
+:root[data-pl-theme-transition='reveal'] *,
+:root[data-pl-theme-transition='reveal'] *::before,
+:root[data-pl-theme-transition='reveal'] *::after { transition: none !important; }
+
+:root[data-pl-theme-transition='fade'],
+:root[data-pl-theme-transition='fade'] *,
+:root[data-pl-theme-transition='fade'] *::before,
+:root[data-pl-theme-transition='fade'] *::after {
+  transition:
+    background-color 240ms ease,
+    color 240ms ease,
+    border-color 240ms ease,
+    outline-color 240ms ease,
+    fill 240ms ease,
+    stroke 240ms ease,
+    box-shadow 240ms ease !important;
+}

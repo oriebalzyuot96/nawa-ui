@@ -19,7 +19,9 @@
     "src/a11y-prefs.js",
     "src/a11y-prefs.d.ts",
     "fonts",
-    "README.md"
+    "README.md",
+    "src/toast.js",
+    "src/toast.d.ts"
   ],
   "style": "pelagic.css",
   "main": "tokens.js",
@@ -53,6 +55,10 @@
     "./motion": {
       "types": "./src/motion.d.ts",
       "default": "./src/motion.js"
+    },
+    "./toast": {
+      "types": "./src/toast.d.ts",
+      "default": "./src/toast.js"
     }
   },
   "sideEffects": [

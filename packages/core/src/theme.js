@@ -1,29 +1,51 @@
 // Apply and persist a Pelagic UI theme on the web, and generate custom brand themes.
 // Theming is pure CSS attributes, so this works the same for React, Vue, Svelte, Astro or plain HTML.
 // Everything except applyTheme / applyCustomTheme / save / load is DOM-free and runs in Node too.
-import { contrastPairs, modes as baseModes, secondaryContrastPairs, shapes, softMix, tint } from './themes.mjs';
+import { contrastPairs, modes as baseModes, presets as themePresets, secondaryContrastPairs, shapes, softMix, tint } from './themes.mjs';
 
 export const THEME_STORAGE_KEY = 'pelagic-ui-theme';
 
+/** Name of the custom theme generated for a live brand color (switchTheme({ brand }) and the panels). */
+export const BRAND_THEME_NAME = 'brand';
+/** Event dispatched (bubbling) on the target after switchTheme() changed the theme. */
+export const THEME_CHANGE_EVENT = 'pl-theme-change';
+
 /**
- * Set data-theme / data-accent / data-shape on `target` (default: <html>).
+ * Set data-theme / data-accent / data-shape / data-theme-preset on `target` (default: <html>).
  * mode 'system' removes data-theme so the OS setting (dark mode, high contrast) applies.
+ * accent null or 'default' removes data-accent (the preset's own accent, or the default one, applies).
+ * preset null or 'default' removes data-theme-preset.
  * `custom` (a createTheme() result) injects that theme's CSS and selects it as the accent.
+ * `brand` (any CSS color) builds a WCAG AA theme fitted to the current preset and selects it.
  */
-export function applyTheme({ mode, accent, shape, custom } = {}, target = document.documentElement) {
+export function applyTheme({ mode, accent, shape, custom, preset, brand } = {}, target = document.documentElement) {
   if (mode !== undefined) {
-    if (mode === 'system') target.removeAttribute('data-theme');
+    if (mode === 'system' || mode === null) target.removeAttribute('data-theme');
     else target.setAttribute('data-theme', mode);
   }
+  if (preset !== undefined) {
+    if (!preset || preset === 'default') target.removeAttribute('data-theme-preset');
+    else target.setAttribute('data-theme-preset', preset);
+  }
   if (custom) applyCustomTheme(custom, target);
-  else if (accent !== undefined) target.setAttribute('data-accent', accent);
+  else if (brand) applyBrandColor(brand, target);
+  else if (accent !== undefined || brand === null) {
+    if (target.getAttribute('data-accent') === BRAND_THEME_NAME) removeCustomTheme(BRAND_THEME_NAME, target.ownerDocument ?? document);
+    if (accent === undefined) {
+      if (target.getAttribute('data-accent') === BRAND_THEME_NAME) target.removeAttribute('data-accent');
+    } else if (accent === null || accent === 'default') target.removeAttribute('data-accent');
+    else target.setAttribute('data-accent', accent);
+  }
   if (shape !== undefined) target.setAttribute('data-shape', shape);
 }
 
 /** Save a theme choice. Storage can be unavailable (private mode); failures are ignored. */
 export function saveTheme(theme) {
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(theme));
+    const { custom, ...rest } = theme ?? {};
+    // A full createTheme() result is large; keep only what restores it before first paint.
+    const value = custom ? { ...rest, accent: custom.name, customCss: custom.css } : rest;
+    localStorage.setItem(THEME_STORAGE_KEY, JSON.stringify(value));
   } catch {
     /* storage unavailable */
   }
@@ -410,6 +432,15 @@ function radiusVars(radius) {
   };
 }
 
+/** Neutral + status tokens of a named preset in one mode (hc presets keep the pure high-contrast neutrals). */
+export function presetNeutrals(preset, mode) {
+  const p = typeof preset === 'string' ? themePresets[preset] : preset;
+  const out = { ...baseModes[mode] };
+  if (!p) return out;
+  for (const key of NEUTRAL_KEYS) if (p[mode]?.[key] !== undefined) out[key] = p[mode][key];
+  return out;
+}
+
 /**
  * Build a complete, WCAG 2.2 AA theme from brand colors.
  *
@@ -431,13 +462,21 @@ export function createTheme(options) {
   const brand = toOklch(opts.primary);
   const secondarySrc = opts.secondary ? toOklch(opts.secondary) : null;
   const neutralSrc = opts.neutral ? toOklch(opts.neutral) : null;
+  const presetName = opts.preset && opts.preset !== 'default' ? String(opts.preset) : null;
+  if (presetName && !themePresets[presetName]) {
+    throw new TypeError(`createTheme: unknown preset "${presetName}". Use one of: ${Object.keys(themePresets).join(', ')}`);
+  }
+  // Base neutrals: a named preset's surfaces (so the brand is fitted to the page it will sit on), explicit
+  // `baseNeutrals` (used by the preset generator) or the default Pelagic neutrals.
+  const baseFor = (mode) =>
+    presetName ? presetNeutrals(presetName, mode) : opts.baseNeutrals?.[mode] ? { ...baseModes[mode], ...opts.baseNeutrals[mode] } : { ...baseModes[mode] };
 
   const palette = {};
   const neutrals = {};
   const tokens = {};
   let customNeutrals = !!neutralSrc;
   for (const mode of MODES) {
-    const n = neutralSrc ? fitStatus(mode, deriveNeutrals(mode, neutralSrc)) : { ...baseModes[mode] };
+    const n = neutralSrc ? fitStatus(mode, deriveNeutrals(mode, neutralSrc)) : baseFor(mode);
     const accent = deriveAccent(mode, brand, n);
     if (secondarySrc) {
       const s = deriveAccent(mode, secondarySrc, n);
@@ -455,7 +494,7 @@ export function createTheme(options) {
   const css = buildCustomThemeCss({ name, palette, neutrals: customNeutrals ? neutrals : null, radius, font: opts.font, secondary: !!secondarySrc });
   return {
     name,
-    input: { primary: opts.primary, secondary: opts.secondary, neutral: opts.neutral, radius: opts.radius, font: opts.font },
+    input: { primary: opts.primary, secondary: opts.secondary, neutral: opts.neutral, preset: presetName ?? undefined, radius: opts.radius, font: opts.font },
     palette,
     tokens,
     css,
@@ -536,4 +575,262 @@ export function themeToCode(theme) {
   const entries = Object.entries(theme.input).filter(([, v]) => v !== undefined && v !== null && v !== '');
   const body = [...entries, ['name', theme.name]].map(([k, v]) => `  ${k}: ${typeof v === 'number' ? v : `'${v}'`},`).join('\n');
   return `import { createTheme, applyCustomTheme } from '@pelagic-ui/core/theme';\n\nconst theme = createTheme({\n${body}\n});\napplyCustomTheme(theme); // or applyCustomTheme(theme, someContainer)`;
+}
+
+/* ==========================================================================
+ * Live theme state, brand colors and the animated theme switch
+ * ======================================================================== */
+
+const brandCache = new Map();
+
+/**
+ * Build (cached) and apply a WCAG AA theme for a brand color on `target`, fitted to the preset that is
+ * active there. Returns the createTheme() result.
+ */
+export function applyBrandColor(color, target = document.documentElement) {
+  const preset = target.getAttribute('data-theme-preset') || undefined;
+  const hex = toHex(color);
+  const key = `${hex}|${preset ?? ''}`;
+  let theme = brandCache.get(key);
+  if (!theme) {
+    theme = createTheme({ primary: color, name: BRAND_THEME_NAME, preset });
+    brandCache.set(key, theme);
+    if (brandCache.size > 24) brandCache.delete(brandCache.keys().next().value);
+  }
+  applyCustomTheme(theme, target);
+  const doc = target.ownerDocument ?? document;
+  doc.head.querySelector(`style[data-theme-custom="${BRAND_THEME_NAME}"]`)?.setAttribute('data-color', hex);
+  return theme;
+}
+
+/**
+ * The theme currently applied to `target`, read from its attributes:
+ * { mode, accent, preset, shape, brand } (mode 'system', accent and brand null when not set, preset 'default').
+ */
+export function getThemeState(target = typeof document === 'undefined' ? null : document.documentElement) {
+  if (!target) return { mode: 'system', accent: null, preset: 'default', shape: 'default', brand: null };
+  const accent = target.getAttribute('data-accent');
+  const doc = target.ownerDocument ?? document;
+  const isBrand = accent === BRAND_THEME_NAME;
+  const brand = isBrand ? doc.head?.querySelector(`style[data-theme-custom="${BRAND_THEME_NAME}"]`)?.getAttribute('data-color') ?? null : null;
+  return {
+    mode: target.getAttribute('data-theme') ?? 'system',
+    accent: isBrand ? null : accent,
+    preset: target.getAttribute('data-theme-preset') ?? 'default',
+    shape: target.getAttribute('data-shape') ?? 'default',
+    brand,
+  };
+}
+
+/** The saved form of a theme state (what loadTheme() returns and the no-flash script restores). */
+function toSaved(state, target) {
+  const out = { mode: state.mode, accent: state.accent, shape: state.shape, preset: state.preset };
+  if (state.brand) {
+    const doc = target.ownerDocument ?? document;
+    out.accent = BRAND_THEME_NAME;
+    out.brand = state.brand;
+    out.brandCss = doc.head.querySelector(`style[data-theme-custom="${BRAND_THEME_NAME}"]`)?.textContent ?? undefined;
+  }
+  return out;
+}
+
+/** Apply a saved choice (default: loadTheme()) without animation. Returns the applied state, or null. */
+export function restoreTheme(target = document.documentElement, saved = loadTheme()) {
+  if (!saved) return null;
+  const { brandCss: _css, customCss: _custom, ...choice } = saved;
+  if (choice.accent === BRAND_THEME_NAME) delete choice.accent;
+  applyTheme(choice, target);
+  return getThemeState(target);
+}
+
+/** True when theme changes should not animate: data-a11y-motion off or reduce, or the OS asks (unless "full"). */
+export function themeMotionReduced(target = document.documentElement) {
+  const root = target.ownerDocument?.documentElement ?? target;
+  const pref = root.getAttribute('data-a11y-motion');
+  if (pref === 'off' || pref === 'reduce' || pref === 'reduced') return true;
+  if (pref === 'full' || pref === 'on') return false;
+  const win = root.ownerDocument?.defaultView;
+  return !!win?.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+}
+
+/** Viewport point of an origin: an element (its center), a pointer or mouse event, or { x, y }. */
+function originPoint(origin, win) {
+  const w = win?.innerWidth ?? 1024;
+  const h = win?.innerHeight ?? 768;
+  const center = { x: w / 2, y: h / 2 };
+  if (!origin) return center;
+  // Events from a real pointer carry coordinates; keyboard-activated clicks report 0, 0.
+  if (typeof origin.clientX === 'number' && (origin.clientX || origin.clientY)) return { x: origin.clientX, y: origin.clientY };
+  const el = origin.currentTarget?.getBoundingClientRect ? origin.currentTarget : origin.target?.getBoundingClientRect ? origin.target : origin;
+  if (el?.getBoundingClientRect) {
+    // A visually hidden radio (swatches, tiles) has a 1px box: use its label instead.
+    const box = el.labels?.[0] ?? el.closest?.('label') ?? el;
+    const r = box.getBoundingClientRect();
+    if (r.width > 1 || r.height > 1) return { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+  }
+  if (typeof origin.x === 'number' && typeof origin.y === 'number') return { x: origin.x, y: origin.y };
+  return center;
+}
+
+/** Point the theme-color meta tag (browser UI color) at the current accent. */
+function syncThemeColorMeta(doc) {
+  const meta = doc.querySelector('meta[name="theme-color"]:not([media])');
+  const win = doc.defaultView;
+  if (!meta || !win?.getComputedStyle) return;
+  const value = win.getComputedStyle(doc.documentElement).getPropertyValue('--pl-primary').trim();
+  if (/^#[0-9a-f]{3,8}$/i.test(value)) meta.setAttribute('content', value);
+}
+
+const sameState = (a, b) =>
+  a.mode === b.mode && a.accent === b.accent && a.preset === b.preset && a.shape === b.shape && (a.brand ?? null) === (b.brand ?? null);
+
+/** The state after `next` is merged into `before`. Choosing a new preset resets accent and brand to the preset's own. */
+function mergeState(before, next) {
+  const s = { ...before };
+  if (next.mode !== undefined) s.mode = next.mode ?? 'system';
+  if (next.shape !== undefined) s.shape = next.shape;
+  if (next.preset !== undefined) {
+    s.preset = next.preset || 'default';
+    if (s.preset !== before.preset && next.accent === undefined && next.brand === undefined) {
+      s.accent = null;
+      s.brand = null;
+    }
+  }
+  if (next.accent !== undefined) {
+    s.accent = next.accent === 'default' ? null : next.accent;
+    if (next.brand === undefined) s.brand = null;
+  }
+  if (next.brand !== undefined) {
+    s.brand = next.brand ? toHex(next.brand) : null;
+    if (s.brand) s.accent = null;
+  }
+  return s;
+}
+
+let running = null;
+const VT_ATTR = 'data-pl-theme-transition';
+const VT_VARS = ['--pl-vt-x', '--pl-vt-y', '--pl-vt-r', '--pl-vt-duration'];
+
+/**
+ * Change the theme with an animated reveal: a circle that grows from `origin` (the clicked control, a
+ * pointer event or { x, y }) until it covers the page, using the View Transitions API. Browsers without the
+ * API get a short color crossfade. Nothing animates when the user prefers reduced motion (OS setting, or
+ * data-a11y-motion "reduce" / "off"), when `animate` is false, or when `target` is not <html>.
+ *
+ *   switchTheme({ mode: 'dark' }, { origin: event })
+ *   switchTheme({ preset: 'abyss' }, { origin: button })
+ *   switchTheme({ brand: '#ff6a00' })
+ *
+ * `next` takes mode, accent, preset, shape and brand (any CSS color, or null to drop it). The choice is saved
+ * (persist: false to skip) and a bubbling `pl-theme-change` event with { state, previous } is dispatched.
+ * Returns a promise for the new state that resolves when the animation has finished.
+ */
+export function switchTheme(next = {}, options = {}) {
+  const target = options.target ?? document.documentElement;
+  const doc = target.ownerDocument ?? document;
+  const win = doc.defaultView;
+  const root = doc.documentElement;
+  const previous = getThemeState(target);
+  const state = mergeState(previous, next ?? {});
+  if (sameState(previous, state)) {
+    // Nothing to change (e.g. a brand color that was already previewed live): still save when asked to.
+    if (options.persist === true) saveTheme(toSaved(previous, target));
+    return Promise.resolve(previous);
+  }
+
+  const commit = () => {
+    applyTheme(
+      {
+        mode: state.mode,
+        preset: state.preset,
+        shape: state.shape === previous.shape ? undefined : state.shape,
+        ...(state.brand ? { brand: state.brand } : { accent: state.accent, brand: null }),
+      },
+      target,
+    );
+    const applied = getThemeState(target);
+    if (options.persist !== false) saveTheme(toSaved(applied, target));
+    syncThemeColorMeta(doc);
+    const Ev = win?.CustomEvent ?? globalThis.CustomEvent;
+    if (Ev) target.dispatchEvent(new Ev(THEME_CHANGE_EVENT, { bubbles: true, detail: { state: applied, previous } }));
+    return applied;
+  };
+
+  if (running) {
+    running.skip();
+    running = null;
+  }
+  if (options.animate === false || target !== root || themeMotionReduced(root)) return Promise.resolve(commit());
+
+  const { x, y } = originPoint(options.origin, win);
+  const w = win?.innerWidth ?? 1024;
+  const h = win?.innerHeight ?? 768;
+  const radius = Math.ceil(Math.hypot(Math.max(x, w - x), Math.max(y, h - y)));
+  const duration = options.duration ?? Math.round(Math.min(760, Math.max(460, 380 + radius * 0.22)));
+  const px = Math.round(x);
+  const py = Math.round(y);
+  root.style.setProperty('--pl-vt-x', `${px}px`);
+  root.style.setProperty('--pl-vt-y', `${py}px`);
+  root.style.setProperty('--pl-vt-r', `${radius}px`);
+  root.style.setProperty('--pl-vt-duration', `${duration}ms`);
+  const cleanup = () => {
+    root.removeAttribute(VT_ATTR);
+    for (const p of VT_VARS) root.style.removeProperty(p);
+  };
+
+  if (typeof doc.startViewTransition === 'function') {
+    root.setAttribute(VT_ATTR, 'reveal');
+    let applied = previous;
+    let vt;
+    try {
+      vt = doc.startViewTransition(() => {
+        applied = commit();
+      });
+    } catch {
+      cleanup();
+      return Promise.resolve(commit());
+    }
+    const handle = { skip: () => vt.skipTransition?.() };
+    running = handle;
+    vt.ready
+      ?.then(() => {
+        root.animate(
+          { clipPath: [`circle(0px at ${px}px ${py}px)`, `circle(${radius}px at ${px}px ${py}px)`] },
+          { duration, easing: 'cubic-bezier(0.22, 1, 0.36, 1)', fill: 'both', pseudoElement: '::view-transition-new(root)' },
+        );
+      })
+      .catch(() => {});
+    const done = () => {
+      if (running === handle) running = null;
+      cleanup();
+      return applied;
+    };
+    return Promise.resolve(vt.finished ?? vt.updateCallbackDone).then(done, done);
+  }
+
+  // No View Transitions: a short crossfade of colors (see [data-pl-theme-transition="fade"] in the CSS).
+  root.setAttribute(VT_ATTR, 'fade');
+  void win?.getComputedStyle?.(root).color; // start the transitions from the current colors
+  const applied = commit();
+  return new Promise((resolve) => {
+    let finished = false;
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      clearTimeout(timer);
+      if (running === handle) running = null;
+      cleanup();
+      resolve(applied);
+    };
+    const handle = { skip: finish };
+    running = handle;
+    const timer = setTimeout(finish, 300);
+  });
+}
+
+/** Call `listener(state, previous)` after every switchTheme() on `target` (default <html>). Returns an unsubscribe. */
+export function onThemeChange(listener, target = document.documentElement) {
+  const handler = (e) => listener(e.detail.state, e.detail.previous);
+  target.addEventListener(THEME_CHANGE_EVENT, handler);
+  return () => target.removeEventListener(THEME_CHANGE_EVENT, handler);
 }

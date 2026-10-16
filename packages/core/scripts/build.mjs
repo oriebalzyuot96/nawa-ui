@@ -4,10 +4,10 @@ import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 // Brand accents: --brand "#ff6a00" [--brand-name acme] [--neutral …] [--secondary …] [--brand-default],
 // or --config pelagic.config.json (see scripts/brand.mjs).
-import { accents, contrastSchemes, defaultAccent as coreDefaultAccent, defaultShape, modes, shapes, softMix, tint } from '../src/themes.mjs';
+import { accents, contrastSchemes, defaultAccent as coreDefaultAccent, defaultShape, modes, presets, shapes, softMix, tint } from '../src/themes.mjs';
 import { mixHex } from '../src/theme.js';
 import { buildBrands, readBrandConfig } from './brand.mjs';
-import { accentNames as coreAccentNames, modeNames, resolveTheme } from './resolve.mjs';
+import { accentNames as coreAccentNames, modeNames, presetNames, resolvePresetTheme, resolveTheme } from './resolve.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const brands = buildBrands(readBrandConfig());
@@ -187,11 +187,125 @@ function brandCss() {
   return `/* ---------- Brand accents ---------- */\n${parts.join('')}\n`;
 }
 
+/**
+ * Named theme presets (data-theme-preset). Each one overrides the raw neutrals of light and dark (the soft
+ * tints, raised surface and shadows are derived from them by the mode blocks) and supplies its own accent
+ * unless the element also has an explicit data-accent. High contrast keeps the hc neutrals.
+ */
+const PRESET_NEUTRALS = ['surface', 'surfaceAlt', 'surfaceMuted', 'text', 'textMuted', 'border', 'controlBorder', 'success', 'warning', 'danger', 'info', 'onDanger'];
+const PRESET_ACCENT_KEYS = ['primary', 'primaryHover', 'primaryInk', 'onPrimary'];
+function presetCss() {
+  let out = '/* ---------- Theme presets (data-theme-preset), verified by check-contrast ---------- */\n';
+  const neutralsOf = (name, mode) => {
+    const src = mode === 'hc' ? modes.hc : presets[name][mode];
+    return Object.fromEntries(PRESET_NEUTRALS.map((k) => [k, src[k]]));
+  };
+  const withScheme = (b, scheme) => b.replace('{\n', `{\n  color-scheme: ${scheme};\n`);
+  for (const name of presetNames) {
+    const sel = `[data-theme-preset="${name}"]`;
+    out += withScheme(block(`${sel}:not([data-theme="dark"], [data-theme="hc"])`, neutralsOf(name, 'light')), 'light');
+    out += withScheme(block(`${sel}[data-theme="dark"]`, neutralsOf(name, 'dark')), 'dark');
+    const accentVars = {};
+    for (const mode of modeNames) for (const k of PRESET_ACCENT_KEYS) accentVars[`a-${mode}-${kebab(k)}`] = presets[name][mode][k];
+    out += block(`${sel}:not([data-accent])`, accentVars);
+  }
+  // The OS settings apply when no data-theme is set: these are more specific than the light block above.
+  out += `@media (prefers-color-scheme: dark) {\n${presetNames.map((n) => withScheme(block(`:root[data-theme-preset="${n}"]:not([data-theme])`, neutralsOf(n, 'dark')), 'dark')).join('')}}\n`;
+  out += `@media (prefers-contrast: more) {\n${presetNames.map((n) => withScheme(block(`:root[data-theme-preset="${n}"]:not([data-theme])`, neutralsOf(n, 'hc')), 'light')).join('')}}\n`;
+  return out;
+}
+
+/**
+ * data-a11y-motion="full": the user asked for animation even though the OS asks to reduce motion. Every
+ * selector inside a `@media (prefers-reduced-motion: reduce)` block is scoped to
+ * `:root:not([data-a11y-motion="full"])`, so the reduced rules step aside only for that explicit choice.
+ */
+function scopeReducedMotion(text) {
+  const marker = '@media (prefers-reduced-motion: reduce)';
+  const guard = ':not([data-a11y-motion="full"])';
+  const prefix = (sel) => {
+    const t = sel.trim();
+    if (!t) return sel;
+    if (t.startsWith(':root')) return t.replace(':root', `:root${guard}`);
+    if (/^html\b/.test(t)) return t.replace('html', `html${guard}`);
+    return `:root${guard} ${t}`;
+  };
+  // Split a selector list on top-level commas only (not inside :is(), :not(), :where()).
+  const splitTop = (list) => {
+    const parts = [];
+    let depth = 0;
+    let cur = '';
+    for (const ch of list) {
+      if (ch === '(') depth += 1;
+      else if (ch === ')') depth -= 1;
+      if (ch === ',' && depth === 0) {
+        parts.push(cur);
+        cur = '';
+      } else cur += ch;
+    }
+    parts.push(cur);
+    return parts;
+  };
+  const strip = (x) => x.replace(/\/\*[\s\S]*?\*\//g, '');
+  // Rewrite the selectors of the rules in a block body (nested at-rules are walked, keyframes left alone).
+  const rewrite = (body) => {
+    let res = '';
+    let i = 0;
+    while (i < body.length) {
+      const open = body.indexOf('{', i);
+      if (open < 0) {
+        res += body.slice(i);
+        break;
+      }
+      const head = body.slice(i, open);
+      let depth = 1;
+      let j = open + 1;
+      while (j < body.length && depth) {
+        if (body[j] === '{') depth += 1;
+        else if (body[j] === '}') depth -= 1;
+        j += 1;
+      }
+      const inner = body.slice(open + 1, j - 1);
+      const clean = strip(head).trim();
+      if (clean.startsWith('@keyframes')) res += `${head}{${inner}}`;
+      else if (clean.startsWith('@')) res += `${head}{${rewrite(inner)}}`;
+      else {
+        // Keep leading whitespace and comments, rewrite each selector of the list.
+        const lead = head.match(/^(\s|\/\*[\s\S]*?\*\/)*/)[0];
+        res += `${lead}${splitTop(strip(head.slice(lead.length))).map(prefix).join(',\n  ')} {${inner}}`;
+      }
+      i = j;
+    }
+    return res;
+  };
+  let out = '';
+  let pos = 0;
+  for (;;) {
+    const at = text.indexOf(marker, pos);
+    if (at < 0) {
+      out += text.slice(pos);
+      break;
+    }
+    const open = text.indexOf('{', at);
+    let depth = 1;
+    let j = open + 1;
+    while (j < text.length && depth) {
+      if (text[j] === '{') depth += 1;
+      else if (text[j] === '}') depth -= 1;
+      j += 1;
+    }
+    out += text.slice(pos, open + 1) + rewrite(text.slice(open + 1, j - 1)) + '}';
+    pos = j;
+  }
+  return out;
+}
+
 let css = `/* Pelagic UI — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand.
  * Theme with attributes on <html> (or any container):
  *   data-theme="light | dark | hc"   (default: follows prefers-color-scheme / prefers-contrast)
  *   data-accent="${accentNames.join(' | ')}"
  *   data-shape="${Object.keys(shapes).join(' | ')}"
+ *   data-theme-preset="${presetNames.join(' | ')}"
  */
 
 /* ---------- Shapes ---------- */
@@ -223,6 +337,7 @@ ${block(':where(:root:not([data-theme])) [data-accent]', bindingVars('dark'))}}
 ${block(':where(:root:not([data-theme])) [data-accent]', bindingVars('hc'))}}
 ${block('[data-theme="light"]', bindingVars('light'))}${block('[data-theme="dark"]', bindingVars('dark'))}${block('[data-theme="hc"]', bindingVars('hc'))}`;
 
+css += '\n' + presetCss();
 css += '\n' + schemeCss();
 css += '\n' + readFileSync(join(root, 'src/base.css'), 'utf8');
 css += '\n' + readFileSync(join(root, 'src/components.css'), 'utf8');
@@ -233,6 +348,7 @@ if (existsSync(partsDir)) {
     css += `\n/* ===== ${file} ===== */\n` + readFileSync(join(partsDir, file), 'utf8');
   }
 }
+css = scopeReducedMotion(css);
 writeFileSync(join(root, 'pelagic.css'), css);
 
 // ---------- tokens.ts for React Native and other JS consumers ----------
@@ -249,6 +365,14 @@ for (const mode of modeNames) {
   }
 }
 const keys = Object.keys(themes.light[coreDefaultAccent]);
+const presetThemes = {};
+for (const name of presetNames) {
+  presetThemes[name] = {};
+  for (const mode of modeNames) {
+    const { mode: _m, accent: _a, ...colors } = resolvePresetTheme(name, mode);
+    presetThemes[name][mode] = colors;
+  }
+}
 
 const header = '/* Pelagic UI tokens — GENERATED by packages/core/scripts/build.mjs from src/themes.mjs. Do not edit by hand. */\n';
 
@@ -256,6 +380,9 @@ const js = `${header}
 export const themes = ${JSON.stringify(themes, null, 2)};
 
 export const shapes = ${JSON.stringify(shapes, null, 2)};
+
+/** Named theme presets (data-theme-preset), resolved per mode with their own accent. */
+export const presetThemes = ${JSON.stringify(presetThemes, null, 2)};
 
 export const lightTheme = themes.light.${defaultAccent};
 export const darkTheme = themes.dark.${defaultAccent};
@@ -274,6 +401,7 @@ const dts = `${header}
 export type ThemeMode = ${modeNames.map((m) => `'${m}'`).join(' | ')};
 export type ThemeAccent = ${accentNames.map((a) => `'${a}'`).join(' | ')};
 export type ThemeShape = ${Object.keys(shapes).map((s) => `'${s}'`).join(' | ')};
+export type ThemePreset = ${presetNames.map((s) => `'${s}'`).join(' | ')};
 /** @deprecated use ThemeMode */
 export type ThemeName = ThemeMode;
 
@@ -283,6 +411,7 @@ ${keys.map((k) => `  ${k}: string;`).join('\n')}
 
 export declare const themes: Record<ThemeMode, Record<ThemeAccent, PelagicTheme>>;
 export declare const shapes: Record<ThemeShape, { sm: number; md: number; lg: number }>;
+export declare const presetThemes: Record<ThemePreset, Record<ThemeMode, PelagicTheme>>;
 export declare const lightTheme: PelagicTheme;
 export declare const darkTheme: PelagicTheme;
 export declare const highContrastTheme: PelagicTheme;
@@ -294,4 +423,4 @@ export declare function getTheme(mode?: ThemeMode, accent?: ThemeAccent): Pelagi
 writeFileSync(join(root, 'tokens.js'), js);
 writeFileSync(join(root, 'tokens.d.ts'), dts);
 
-console.log(`Built pelagic.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes.`);
+console.log(`Built pelagic.css (${(css.length / 1024).toFixed(1)} KB) and tokens.js/.d.ts —${modeNames.length} modes × ${accentNames.length} accents × ${Object.keys(shapes).length} shapes × ${presetNames.length} presets.`);

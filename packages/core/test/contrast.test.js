@@ -21,7 +21,7 @@ describe('color math', () => {
 
   it('resolves every mode × accent', () => {
     expect(modeNames).toHaveLength(3);
-    expect(accentNames).toHaveLength(7);
+    expect(accentNames).toHaveLength(9);
     for (const m of modeNames) for (const a of accentNames) expect(resolveTheme(m, a).surface).toMatch(/^#/);
   });
 });
@@ -31,6 +31,6 @@ describe('scripts/check-contrast.mjs', () => {
     const result = spawnSync(process.execPath, [join(pkg, 'scripts', 'check-contrast.mjs')], { encoding: 'utf8' });
     expect(result.stderr).toBe('');
     expect(result.status).toBe(0);
-    expect(result.stdout).toMatch(/All \d+ contrast checks pass \(3 modes × 7 accents/);
+    expect(result.stdout).toMatch(/All \d+ contrast checks pass \(3 modes × 9 accents/);
   });
 });

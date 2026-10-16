@@ -100,3 +100,22 @@ export declare function createSoundEngine(options?: SoundEngineOptions): SoundEn
 
 /** Ask any listening engine to play a sound. No-op without an engine, during SSR or when sound is off. */
 export declare function emitUiSound(name: UiSoundName, detail?: { volume?: number }): void;
+
+/** Window event that asks listening engines to adopt new preferences (dispatched by setSoundPrefs). */
+export declare const SOUND_PREFS_EVENT: 'pl:sound-prefs';
+/** Window event a listening engine dispatches after its state changed (detail: SoundState). */
+export declare const SOUND_CHANGE_EVENT: 'pl:sound-change';
+
+/** The user-facing sound preferences. */
+export interface SoundPrefs {
+  enabled: boolean;
+  theme: SoundTheme;
+  volume: number;
+  reduced: boolean;
+}
+/** True when a listening sound engine exists on the page. */
+export declare function hasSoundEngine(): boolean;
+/** Current preferences: from a live engine, otherwise from storage. */
+export declare function getSoundPrefs(storageKey?: string): SoundPrefs;
+/** Save preferences and tell every listening engine (for settings UIs that do not own the engine). */
+export declare function setSoundPrefs(patch: Partial<SoundPrefs>, storageKey?: string): SoundPrefs;

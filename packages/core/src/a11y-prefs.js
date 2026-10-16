@@ -4,6 +4,12 @@
 // The JS here adds what CSS alone cannot: the SVG color-vision filters, the reading guide / mask that
 // follow the pointer and focus, pausing autoplaying media, persistence and OS preference watching.
 
+// The panel also carries the theme (mode, named preset, accent and a live brand color, switched with the
+// animated switchTheme) and the interface sound settings, which keep their own modules and storage keys.
+import { accents, defaultAccent, modes, presets } from './themes.mjs';
+import { THEME_CHANGE_EVENT, getThemeState, switchTheme } from './theme.js';
+import { SOUND_CHANGE_EVENT, SOUND_PREFS_EVENT, SOUND_THEMES, getSoundPrefs, hasSoundEngine, setSoundPrefs } from './sound.js';
+
 export const A11Y_STORAGE_KEY = 'pelagic-ui-a11y';
 
 /** Every preference with its default value. */
@@ -38,7 +44,7 @@ export const defaultA11yPrefs = Object.freeze({
   cursor: 'default',
   readingGuide: false,
   readingMask: false,
-  /** 'system' (follow the OS) | 'reduce' | 'off' (no animation, no autoplay) */
+  /** 'system' (follow the OS) | 'full' (animate even if the OS asks to reduce) | 'reduce' | 'off' (no animation, no autoplay) */
   motion: 'system',
   hideImages: false,
   /** Every control at least 44 × 44 px. */
@@ -56,8 +62,32 @@ export const a11yOptions = Object.freeze({
   links: ['default', 'underline', 'highlight'],
   focus: ['default', 'large'],
   cursor: ['default', 'large'],
-  motion: ['system', 'reduce', 'off'],
+  motion: ['system', 'full', 'reduce', 'off'],
 });
+
+/** Values of the theme and sound controls of the panel (stored by theme.js and sound.js, not here). */
+export const themePanelOptions = Object.freeze({
+  mode: ['system', 'light', 'dark', 'hc'],
+  preset: ['default', ...Object.keys(presets)],
+  accent: ['default', ...Object.keys(accents)],
+  soundTheme: [...SOUND_THEMES],
+});
+
+/** Swatch color of each built-in accent (its light-mode fill). */
+export const accentSwatches = Object.freeze(Object.fromEntries(Object.keys(accents).map((name) => [name, accents[name].light.primary])));
+
+/** Preview colors of each preset tile: light and dark surface, text and accent. */
+export const presetSwatches = Object.freeze(
+  Object.fromEntries(
+    themePanelOptions.preset.map((name) => {
+      const pick = (mode) => {
+        const p = name === 'default' ? { ...modes[mode], ...accents[defaultAccent][mode] } : presets[name][mode];
+        return { surface: p.surface, alt: p.surfaceAlt, text: p.text, primary: p.primary };
+      };
+      return [name, { light: pick('light'), dark: pick('dark') }];
+    }),
+  ),
+);
 
 export const FONT_SCALE_MIN = 0.9;
 export const FONT_SCALE_MAX = 2;
@@ -370,6 +400,15 @@ export function watchSystemPrefs(callback, win = typeof window === 'undefined' ?
 /** Groups and controls of the AccessibilityPanel, in display order. */
 export const a11yPanelSchema = Object.freeze([
   {
+    id: 'appearance',
+    controls: [
+      { key: 'mode', type: 'segmented', source: 'theme' },
+      { key: 'preset', type: 'presets', source: 'theme' },
+      { key: 'accent', type: 'swatches', source: 'theme' },
+      { key: 'brand', type: 'color', source: 'theme' },
+    ],
+  },
+  {
     id: 'color',
     controls: [
       { key: 'contrast', type: 'tiles' },
@@ -413,7 +452,18 @@ export const a11yPanelSchema = Object.freeze([
       { key: 'largeTargets', type: 'switch' },
     ],
   },
+  {
+    // Shown when the page has a sound engine (createSoundEngine), or always with `sound: true`.
+    id: 'sound',
+    controls: [
+      { key: 'sound', type: 'switch', source: 'sound' },
+      { key: 'soundTheme', type: 'segmented', source: 'sound' },
+    ],
+  },
 ]);
+
+/** True for controls whose value lives in theme.js or sound.js rather than in the A11yPrefs object. */
+export const isExternalControl = (control) => control?.source === 'theme' || control?.source === 'sound';
 
 /** Background / foreground of the contrast tiles (null = the current theme). */
 export const contrastSwatches = Object.freeze({
@@ -446,7 +496,10 @@ export const a11yPanelLabels = Object.freeze({
     off: 'off',
     active: '{n} active',
     changed: '{label}: {value}',
+    themeReset: 'Default colors',
     groups: {
+      appearance: 'Theme',
+      sound: 'Sound',
       color: 'Contrast & color',
       text: 'Text',
       reading: 'Reading aids',
@@ -454,6 +507,12 @@ export const a11yPanelLabels = Object.freeze({
       interaction: 'Interaction',
     },
     controls: {
+      mode: { label: 'Mode' },
+      preset: { label: 'Color theme', hint: 'Complete palettes for page, cards, text and accent. Each meets WCAG AA in light, dark and high contrast.' },
+      accent: { label: 'Accent color' },
+      brand: { label: 'Your own color', hint: 'Any color works: contrast is tuned to WCAG AA automatically.', clear: 'Remove custom color' },
+      sound: { label: 'Interface sounds', hint: 'Short, quiet sounds for clicks, switches and alerts.' },
+      soundTheme: { label: 'Sound style' },
       contrast: { label: 'Color scheme', hint: 'Exact token palettes; every pair meets WCAG AA or better.' },
       colorFilter: { label: 'Color vision', hint: 'Shifts colors you cannot tell apart into ones you can.' },
       saturation: { label: 'Saturation' },
@@ -468,7 +527,7 @@ export const a11yPanelLabels = Object.freeze({
       links: { label: 'Links' },
       readingGuide: { label: 'Reading guide', hint: 'A bar that follows the pointer and keyboard focus.' },
       readingMask: { label: 'Reading mask', hint: 'Dims everything except a band around the pointer.' },
-      motion: { label: 'Animation' },
+      motion: { label: 'Animation', hint: 'Full keeps animations on even when the device asks to reduce motion.' },
       hideImages: { label: 'Hide decorative images' },
       focus: { label: 'Bigger focus indicator' },
       cursor: { label: 'Big cursor' },
@@ -492,7 +551,23 @@ export const a11yPanelLabels = Object.freeze({
       wordSpacing: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
       paragraphSpacing: { normal: 'Normal', wide: 'Wide', wider: 'Wider' },
       links: { default: 'As designed', underline: 'Underline', highlight: 'Highlight' },
-      motion: { system: 'System', reduce: 'Reduce', off: 'Off' },
+      motion: { system: 'System', full: 'Full', reduce: 'Reduce', off: 'Off' },
+      mode: { system: 'System', light: 'Light', dark: 'Dark', hc: 'High contrast' },
+      preset: {
+        default: 'Pelagic',
+        lagoon: 'Lagoon',
+        abyss: 'Abyss',
+        reef: 'Reef',
+        kelp: 'Kelp',
+        sage: 'Sage',
+        dune: 'Dune',
+        aurora: 'Aurora',
+        merlot: 'Merlot',
+        ink: 'Ink & paper',
+        graphite: 'Graphite',
+      },
+      accent: { default: 'Theme accent', violet: 'Violet', teal: 'Teal', indigo: 'Indigo', rose: 'Rose', amber: 'Amber', emerald: 'Emerald', slate: 'Slate', ocean: 'Ocean', coral: 'Coral' },
+      soundTheme: { soft: 'Soft', crisp: 'Crisp', playful: 'Playful', minimal: 'Minimal' },
     },
   },
   ar: {
@@ -512,7 +587,10 @@ export const a11yPanelLabels = Object.freeze({
     off: 'متوقف',
     active: '{n} مفعّلة',
     changed: '{label}: {value}',
+    themeReset: 'الألوان الافتراضية',
     groups: {
+      appearance: 'المظهر',
+      sound: 'الصوت',
       color: 'التباين والألوان',
       text: 'النص',
       reading: 'مساعدات القراءة',
@@ -520,6 +598,12 @@ export const a11yPanelLabels = Object.freeze({
       interaction: 'التفاعل',
     },
     controls: {
+      mode: { label: 'الوضع' },
+      preset: { label: 'سمة الألوان', hint: 'لوحات كاملة للصفحة والبطاقات والنص ولون التمييز، وكل منها يحقق WCAG AA في الوضع الفاتح والداكن والتباين العالي.' },
+      accent: { label: 'لون التمييز' },
+      brand: { label: 'لونك الخاص', hint: 'أي لون يصلح: يُضبط التباين تلقائيًا ليحقق WCAG AA.', clear: 'إزالة اللون المخصص' },
+      sound: { label: 'أصوات الواجهة', hint: 'أصوات قصيرة وهادئة للنقرات والمفاتيح والتنبيهات.' },
+      soundTheme: { label: 'نمط الصوت' },
       contrast: { label: 'نظام الألوان', hint: 'لوحات ألوان دقيقة؛ كل زوج يحقق مستوى WCAG AA أو أعلى.' },
       colorFilter: { label: 'رؤية الألوان', hint: 'ينقل الألوان التي يصعب تمييزها إلى ألوان يمكن تمييزها.' },
       saturation: { label: 'التشبع' },
@@ -534,7 +618,7 @@ export const a11yPanelLabels = Object.freeze({
       links: { label: 'الروابط' },
       readingGuide: { label: 'دليل القراءة', hint: 'شريط يتبع المؤشر وتركيز لوحة المفاتيح.' },
       readingMask: { label: 'قناع القراءة', hint: 'يعتّم كل شيء عدا شريطًا حول المؤشر.' },
-      motion: { label: 'الحركة' },
+      motion: { label: 'الحركة', hint: 'خيار «كاملة» يُبقي الحركة مفعّلة حتى لو طلب الجهاز تقليلها.' },
       hideImages: { label: 'إخفاء الصور الزخرفية' },
       focus: { label: 'مؤشر تركيز أكبر' },
       cursor: { label: 'مؤشر فأرة كبير' },
@@ -558,7 +642,23 @@ export const a11yPanelLabels = Object.freeze({
       wordSpacing: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
       paragraphSpacing: { normal: 'عادي', wide: 'واسع', wider: 'أوسع' },
       links: { default: 'كما صُممت', underline: 'تسطير', highlight: 'إبراز' },
-      motion: { system: 'النظام', reduce: 'تقليل', off: 'إيقاف' },
+      motion: { system: 'النظام', full: 'كاملة', reduce: 'تقليل', off: 'إيقاف' },
+      mode: { system: 'النظام', light: 'فاتح', dark: 'داكن', hc: 'تباين عالٍ' },
+      preset: {
+        default: 'بيلاجيك',
+        lagoon: 'البحيرة',
+        abyss: 'الأعماق',
+        reef: 'الشعاب',
+        kelp: 'عشب البحر',
+        sage: 'المريمية',
+        dune: 'الكثبان',
+        aurora: 'الشفق',
+        merlot: 'العنابي',
+        ink: 'حبر وورق',
+        graphite: 'الجرافيت',
+      },
+      accent: { default: 'لون السمة', violet: 'بنفسجي', teal: 'أزرق مخضر', indigo: 'نيلي', rose: 'وردي', amber: 'كهرماني', emerald: 'زمردي', slate: 'أردوازي', ocean: 'محيطي', coral: 'مرجاني' },
+      soundTheme: { soft: 'ناعم', crisp: 'واضح', playful: 'مرح', minimal: 'خافت' },
     },
   },
 });
@@ -607,7 +707,24 @@ export const a11yIcons = Object.freeze({
   motion: '<circle cx="12" cy="12" r="8.25"/><path d="M10 9v6M14 9v6"/>',
   interaction: '<path d="M6 3.5v13.2l3.4-3.2 2.4 5.6 2.5-1.1-2.4-5.5H16.5z"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5" stroke-width="3.2"/>',
+  appearance: '<path d="M12 3.75a8.25 8.25 0 1 0 0 16.5c1.1 0 1.7-.7 1.7-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6h1.9a4.1 4.1 0 0 0 4.1-4.1c0-3.7-3.7-6.8-8.3-6.8z"/><circle cx="7.6" cy="11.2" r="1.1" fill="currentColor" stroke="none"/><circle cx="10.4" cy="7.6" r="1.1" fill="currentColor" stroke="none"/><circle cx="14.9" cy="7.9" r="1.1" fill="currentColor" stroke="none"/>',
+  sound: '<path d="M4.5 9.5h3l4.5-3.75v12.5L7.5 14.5h-3z"/><path d="M15.5 9.25a4 4 0 0 1 0 5.5M18 7a7.2 7.2 0 0 1 0 10"/>',
 });
+
+/** Panel groups to show, in order: `groups` limits them; appearance / sound false drop those groups. */
+export function panelGroups(groups, { appearance = true, sound = 'auto' } = {}) {
+  const list = groups ? groups.map((g) => a11yPanelSchema.find((s) => s.id === g)).filter(Boolean) : a11yPanelSchema;
+  return list.filter((g) => (g.id === 'appearance' ? appearance !== false : g.id === 'sound' ? sound !== false : true));
+}
+
+/** Current value of a theme control (accent is null while a brand color is applied). */
+export function themeControlValue(state, key) {
+  if (key === 'mode') return state.mode ?? 'system';
+  if (key === 'preset') return state.preset ?? 'default';
+  if (key === 'accent') return state.brand ? null : state.accent ?? 'default';
+  if (key === 'brand') return state.brand ?? null;
+  return null;
+}
 
 let panelSeq = 0;
 
@@ -617,7 +734,7 @@ let panelSeq = 0;
  * triggerLabel, preview (default true), groups (ids), prefs (initial state for server rendering), className.
  */
 export function renderA11yPanelHTML(options = {}) {
-  const { locale, labels: overrides, trigger = 'floating', triggerLabel, preview = true, groups, className } = options;
+  const { locale, labels: overrides, trigger = 'floating', triggerLabel, preview = true, groups, className, appearance = true, sound = 'auto' } = options;
   panelSeq += 1;
   const id = options.id ?? `pl-a11y-panel-${panelSeq}`;
   const L = getA11yLabels(locale ?? 'en', overrides);
@@ -625,9 +742,56 @@ export function renderA11yPanelHTML(options = {}) {
   const isAr = !!locale && String(locale).toLowerCase().startsWith('ar');
   const active = countActiveA11yPrefs(p);
   const activeText = L.active.replace('{n}', String(active));
-  const shown = groups ? groups.map((g) => a11yPanelSchema.find((s) => s.id === g)).filter(Boolean) : a11yPanelSchema;
+  const shown = panelGroups(groups, { appearance, sound });
+  const ts = { ...getThemeState(typeof document === 'undefined' ? null : document.documentElement), ...(options.theme ?? {}) };
+  const ss = { ...getSoundPrefs(), ...(options.soundPrefs ?? {}) };
 
-  const control = ({ key, type, on, off }) => {
+  const external = (ctl) => {
+    const { key, type } = ctl;
+    const t = L.controls[key];
+    const labelId = `${id}-${key}-label`;
+    const hintId = t.hint ? `${id}-${key}-hint` : '';
+    const hint = t.hint ? `<p id="${hintId}" class="pl-a11y-control__hint">${esc(t.hint)}</p>` : '';
+    const describedby = hintId ? ` aria-describedby="${hintId}"` : '';
+    const isTheme = ctl.source === 'theme';
+    const keyAttr = isTheme ? `data-theme-key="${key}"` : `data-sound-key="${key === 'sound' ? 'enabled' : 'theme'}"`;
+    const valueAttr = isTheme ? 'data-theme-value' : 'data-sound-value';
+    if (type === 'switch') {
+      return `<div class="pl-a11y-control pl-a11y-control--switch"><div class="pl-a11y-control__text"><span id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</span>${hint}</div><button type="button" role="switch" class="pl-switch" aria-checked="${!!ss.enabled}" aria-labelledby="${labelId}"${describedby} ${keyAttr}></button></div>`;
+    }
+    if (type === 'color') {
+      const value = ts.brand ?? presetSwatches[ts.preset]?.light.primary ?? presetSwatches.default.light.primary;
+      return `<div class="pl-a11y-control pl-a11y-brand"><label for="${id}-${key}" id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</label><div class="pl-a11y-brand__row"><input id="${id}-${key}" type="color" class="pl-a11y-brand__input" value="${esc(value)}"${describedby} ${keyAttr} data-active="${ts.brand ? 'true' : 'false'}"><span class="pl-a11y-brand__hex" dir="ltr" aria-hidden="true" data-brand-hex>${esc(ts.brand ?? '')}</span><button type="button" class="pl-btn pl-btn--ghost pl-btn--sm" data-theme-brand-clear${ts.brand ? '' : ' hidden'}>${esc(t.clear ?? 'Remove')}</button></div>${hint}</div>`;
+    }
+    const values = isTheme ? themePanelOptions[key] : themePanelOptions.soundTheme;
+    const current = isTheme ? themeControlValue(ts, key) : ss.theme;
+    const anyChecked = values.includes(current);
+    const radios = values
+      .map((o, i) => {
+        const checked = current === o;
+        const focusable = checked || (!anyChecked && i === 0);
+        const attrs = `type="button" role="radio" aria-checked="${checked}" tabindex="${focusable ? 0 : -1}" ${valueAttr}="${o}"`;
+        const text = esc(L.options[key]?.[o] ?? o);
+        if (type === 'presets') {
+          const sw = presetSwatches[o];
+          const style = `--pl-ps-ls: ${sw.light.surface}; --pl-ps-la: ${sw.light.alt}; --pl-ps-lp: ${sw.light.primary}; --pl-ps-lt: ${sw.light.text}; --pl-ps-ds: ${sw.dark.surface}; --pl-ps-da: ${sw.dark.alt}; --pl-ps-dp: ${sw.dark.primary}; --pl-ps-dt: ${sw.dark.text};`;
+          return `<button ${attrs} class="pl-a11y-preset" style="${style}"><span class="pl-a11y-preset__art" aria-hidden="true"><span class="pl-a11y-preset__half pl-a11y-preset__half--light"><i></i><b></b></span><span class="pl-a11y-preset__half pl-a11y-preset__half--dark"><i></i><b></b></span></span><span class="pl-a11y-preset__name">${text}</span><span class="pl-a11y-tile__check" aria-hidden="true">${ICON(a11yIcons.check)}</span></button>`;
+        }
+        if (type === 'swatches') {
+          const color = o === 'default' ? presetSwatches[ts.preset]?.light.primary ?? presetSwatches.default.light.primary : accentSwatches[o];
+          return `<button ${attrs} class="pl-a11y-swatch${o === 'default' ? ' pl-a11y-swatch--default' : ''}" aria-label="${text}" title="${text}" style="--pl-swatch: ${color};">${ICON(a11yIcons.check)}</button>`;
+        }
+        return `<button ${attrs} class="pl-segmented__item">${text}</button>`;
+      })
+      .join('');
+    const cls = type === 'presets' ? 'pl-a11y-presets' : type === 'swatches' ? 'pl-a11y-swatches' : 'pl-segmented';
+    const cols = type === 'presets' ? ' data-columns="3"' : '';
+    return `<div class="pl-a11y-control"><span id="${labelId}" class="pl-a11y-control__label">${esc(t.label)}</span>${type === 'segmented' ? '' : hint}<div role="radiogroup" aria-labelledby="${labelId}"${describedby} class="${cls}" ${keyAttr}${cols}>${radios}</div>${type === 'segmented' ? hint : ''}</div>`;
+  };
+
+  const control = (ctl) => {
+    if (isExternalControl(ctl)) return external(ctl);
+    const { key, type, on, off } = ctl;
     const t = L.controls[key];
     const labelId = `${id}-${key}-label`;
     const hintId = t.hint ? `${id}-${key}-hint` : '';
@@ -670,8 +834,12 @@ export function renderA11yPanelHTML(options = {}) {
   const previewHtml = preview
     ? `<div class="pl-a11y-preview" aria-hidden="true"><p class="pl-a11y-preview__label">${esc(L.preview)}</p><p class="pl-a11y-preview__title">${esc(L.previewTitle)}</p><p class="pl-a11y-preview__body">${esc(L.previewBody)}</p><div class="pl-a11y-preview__row"><span class="pl-a11y-preview__link">${esc(L.previewLink)}</span><span class="pl-btn pl-btn--primary pl-btn--sm">${esc(L.previewButton)}</span><span class="pl-badge pl-badge--success">${esc(L.previewStatus)}</span></div></div>`
     : '';
+  const themeIsDefault = ts.preset === 'default' && !ts.accent && !ts.brand;
+  const groupExtra = (g) =>
+    g.id === 'appearance' ? `<div class="pl-a11y-group__actions"><button type="button" class="pl-btn pl-btn--ghost pl-btn--sm" data-theme-reset${themeIsDefault ? ' disabled' : ''}>${esc(L.themeReset)}</button></div>` : '';
+  const groupAttrs = (g) => (g.id === 'sound' ? ` data-sound-group${sound === 'auto' && !hasSoundEngine() ? ' hidden' : ''}` : '');
   const groupsHtml = shown
-    .map((g) => `<section class="pl-a11y-group" aria-labelledby="${id}-${g.id}"><h3 id="${id}-${g.id}" class="pl-a11y-group__title">${ICON(a11yIcons[g.id])}${esc(L.groups[g.id])}</h3>${g.controls.map(control).join('')}</section>`)
+    .map((g) => `<section class="pl-a11y-group" aria-labelledby="${id}-${g.id}"${groupAttrs(g)}><h3 id="${id}-${g.id}" class="pl-a11y-group__title">${ICON(a11yIcons[g.id])}${esc(L.groups[g.id])}</h3>${g.controls.map(control).join('')}${groupExtra(g)}</section>`)
     .join('');
   const lang = locale ? ` lang="${isAr ? 'ar' : 'en'}" dir="${isAr ? 'rtl' : 'ltr'}"` : '';
   const badge = `<span class="pl-a11y-trigger__badge" aria-hidden="true" data-a11y-badge${active ? '' : ' hidden'}>${active}</span>`;
@@ -724,6 +892,52 @@ export function mountA11yPanel(root, options = {}) {
   let previous = null;
   let unlockScroll = null;
 
+  const themeRoot = options.themeTarget ?? doc.documentElement;
+
+  /** Check the radio whose value attribute equals `value` (roving tabindex; the first one when none matches). */
+  const checkRadios = (group, attr, value) => {
+    const radios = [...group.querySelectorAll('[role="radio"]')];
+    const any = radios.some((r) => r.getAttribute(attr) === String(value));
+    radios.forEach((r, i) => {
+      const on = r.getAttribute(attr) === String(value);
+      r.setAttribute('aria-checked', String(on));
+      r.tabIndex = on || (!any && i === 0) ? 0 : -1;
+    });
+  };
+
+  const renderTheme = () => {
+    const ts = getThemeState(themeRoot);
+    for (const el of panel.querySelectorAll('[data-theme-key]')) {
+      const key = el.getAttribute('data-theme-key');
+      if (el.getAttribute('role') === 'radiogroup') checkRadios(el, 'data-theme-value', themeControlValue(ts, key));
+      else if (el.type === 'color') {
+        const fallback = presetSwatches[ts.preset]?.light.primary ?? presetSwatches.default.light.primary;
+        if (doc.activeElement !== el) el.value = ts.brand ?? fallback;
+        el.setAttribute('data-active', String(!!ts.brand));
+      }
+    }
+    // The "theme accent" swatch shows the accent of the active preset.
+    const def = panel.querySelector('[data-theme-key="accent"] [data-theme-value="default"]');
+    def?.style.setProperty('--pl-swatch', presetSwatches[ts.preset]?.light.primary ?? presetSwatches.default.light.primary);
+    const hex = panel.querySelector('[data-brand-hex]');
+    if (hex) hex.textContent = ts.brand ?? '';
+    const clear = panel.querySelector('[data-theme-brand-clear]');
+    if (clear) clear.hidden = !ts.brand;
+    const themeReset = panel.querySelector('[data-theme-reset]');
+    if (themeReset) themeReset.disabled = ts.preset === 'default' && !ts.accent && !ts.brand;
+  };
+
+  const renderSound = () => {
+    const group = panel.querySelector('[data-sound-group]');
+    if (!group) return;
+    if (options.sound !== true && hasSoundEngine()) group.hidden = false;
+    const sp = getSoundPrefs();
+    const sw = group.querySelector('[data-sound-key="enabled"]');
+    sw?.setAttribute('aria-checked', String(!!sp.enabled));
+    const styles = group.querySelector('[data-sound-key="theme"]');
+    if (styles) checkRadios(styles, 'data-sound-value', sp.theme);
+  };
+
   const render = () => {
     for (const el of panel.querySelectorAll('[data-a11y-key]')) {
       const key = el.getAttribute('data-a11y-key');
@@ -763,6 +977,8 @@ export function mountA11yPanel(root, options = {}) {
     const sr = root.querySelector('[data-a11y-active-sr]');
     if (sr) sr.textContent = n ? ` (${activeText})` : '';
     if (trigger && !trigger.classList.contains('pl-a11y-trigger--inline')) trigger.setAttribute('aria-label', n ? `${labels.trigger} (${activeText})` : labels.trigger);
+    renderTheme();
+    renderSound();
   };
 
   const commit = (next, change) => {
@@ -784,6 +1000,34 @@ export function mountA11yPanel(root, options = {}) {
   const reset = () => {
     commit({ ...defaultA11yPrefs }, { key: 'reset', value: null });
     announce(labels.resetDone);
+  };
+
+  /* ---- theme and sound controls ---- */
+  const setTheme = (key, value, origin, extra = {}) => {
+    const next = key === 'reset' ? { preset: 'default', accent: null, brand: null } : { [key]: value };
+    const done = switchTheme(next, { origin, target: themeRoot, ...extra });
+    renderTheme();
+    if (extra.persist !== false && key !== 'reset') announce(announceA11yChange(labels, key, value ?? labels.off));
+    else if (key === 'reset') announce(`${labels.themeReset}`);
+    return done;
+  };
+  const setSound = (patch) => {
+    setSoundPrefs(patch);
+    renderSound();
+    if ('enabled' in patch) announce(announceA11yChange(labels, 'sound', patch.enabled));
+    else if ('theme' in patch) announce(announceA11yChange(labels, 'soundTheme', patch.theme));
+  };
+  let brandFrame = 0;
+  let pendingBrand = null;
+  const previewBrand = (value) => {
+    pendingBrand = value;
+    if (brandFrame) return;
+    const raf = win.requestAnimationFrame ?? ((fn) => setTimeout(fn, 16));
+    brandFrame = raf(() => {
+      brandFrame = 0;
+      switchTheme({ brand: pendingBrand }, { target: themeRoot, animate: false, persist: false });
+      renderTheme();
+    });
   };
 
   const focusables = () => [...panel.querySelectorAll(FOCUSABLE_IN_PANEL)];
@@ -813,6 +1057,8 @@ export function mountA11yPanel(root, options = {}) {
     panel.setAttribute('role', 'dialog');
     panel.setAttribute('aria-modal', 'true');
     panel.setAttribute('aria-labelledby', panel.getAttribute('data-labelledby'));
+    renderTheme();
+    renderSound();
     backdrop.hidden = false;
     panel.hidden = false;
     trigger?.setAttribute('aria-expanded', 'true');
@@ -828,7 +1074,7 @@ export function mountA11yPanel(root, options = {}) {
       return;
     }
     if (e.key !== 'Tab') return;
-    const items = focusables();
+    const items = focusables().filter((el) => !el.closest('[hidden]'));
     if (!items.length) return;
     const first = items[0];
     const last = items[items.length - 1];
@@ -844,11 +1090,21 @@ export function mountA11yPanel(root, options = {}) {
       first.focus();
     }
   };
+  /** Select a radio of any panel group (preference, theme or sound). */
+  const choose = (radio) => {
+    const group = radio.closest('[role="radiogroup"]');
+    if (group.hasAttribute('data-theme-key')) setTheme(group.getAttribute('data-theme-key'), radio.getAttribute('data-theme-value'), radio);
+    else if (group.hasAttribute('data-sound-key')) setSound({ theme: radio.getAttribute('data-sound-value') });
+    else set(group.getAttribute('data-a11y-key'), radio.getAttribute('data-value'));
+  };
   const onClick = (e) => {
     const el = e.target.closest?.('button');
     if (!el || !panel.contains(el) || el.disabled) return;
     if (el.hasAttribute('data-a11y-close')) close();
     else if (el.hasAttribute('data-a11y-reset')) reset();
+    else if (el.hasAttribute('data-theme-reset')) setTheme('reset', null, el);
+    else if (el.hasAttribute('data-theme-brand-clear')) setTheme('brand', null, el);
+    else if (el.hasAttribute('data-sound-key')) setSound({ enabled: !getSoundPrefs().enabled });
     else if (el.hasAttribute('data-a11y-step')) {
       const v = prefs.fontScale + Number(el.getAttribute('data-a11y-step'));
       set('fontScale', Math.round(Math.min(FONT_SCALE_MAX, Math.max(FONT_SCALE_MIN, v)) * 100) / 100);
@@ -857,16 +1113,23 @@ export function mountA11yPanel(root, options = {}) {
       const onValue = el.getAttribute('data-on');
       set(key, onValue ? (prefs[key] === onValue ? el.getAttribute('data-off') : onValue) : !prefs[key]);
     } else if (el.getAttribute('role') === 'radio') {
-      set(el.closest('[data-a11y-key]').getAttribute('data-a11y-key'), el.getAttribute('data-value'));
+      // Keyboard activation (Enter / Space) reports no pointer position: the reveal starts at the control.
+      choose(el);
     }
   };
   const onChangeEvent = (e) => {
     const key = e.target.getAttribute?.('data-a11y-key');
     if (key && e.target.tagName === 'SELECT') set(key, e.target.value);
+    else if (e.target.type === 'color' && e.target.hasAttribute('data-theme-key')) {
+      // The final pick is saved and announced (the live preview while dragging is not).
+      pendingBrand = null;
+      setTheme('brand', e.target.value, e.target, { animate: false, persist: true });
+    }
   };
   const onRange = (e) => {
     const key = e.target.getAttribute?.('data-a11y-key');
     if (key && e.target.type === 'range') set(key, Number(e.target.value));
+    else if (e.target.type === 'color' && e.target.hasAttribute('data-theme-key')) previewBrand(e.target.value);
   };
   const onKeyDown = (e) => {
     const radio = e.target.closest?.('[role="radio"]');
@@ -884,10 +1147,12 @@ export function mountA11yPanel(root, options = {}) {
     else if (e.key === 'End') next = radios.length - 1;
     else return;
     e.preventDefault();
-    set(group.getAttribute('data-a11y-key'), radios[next].getAttribute('data-value'));
+    choose(radios[next]);
     radios[next].focus();
   };
   const toggle = () => (openState ? close() : open());
+  const onThemeChange = () => renderTheme();
+  const onSoundChange = () => renderSound();
 
   panel.addEventListener('click', onClick);
   panel.addEventListener('change', onChangeEvent);
@@ -896,6 +1161,9 @@ export function mountA11yPanel(root, options = {}) {
   backdrop.addEventListener('mousedown', close);
   trigger?.addEventListener('click', toggle);
   doc.addEventListener('keydown', onDocKey, true);
+  themeRoot.addEventListener(THEME_CHANGE_EVENT, onThemeChange);
+  win.addEventListener?.(SOUND_CHANGE_EVENT, onSoundChange);
+  win.addEventListener?.(SOUND_PREFS_EVENT, onSoundChange);
 
   applyA11yPrefs(prefs, target());
   render();
@@ -922,6 +1190,9 @@ export function mountA11yPanel(root, options = {}) {
       backdrop.removeEventListener('mousedown', close);
       trigger?.removeEventListener('click', toggle);
       doc.removeEventListener('keydown', onDocKey, true);
+      themeRoot.removeEventListener(THEME_CHANGE_EVENT, onThemeChange);
+      win.removeEventListener?.(SOUND_CHANGE_EVENT, onSoundChange);
+      win.removeEventListener?.(SOUND_PREFS_EVENT, onSoundChange);
       if (portal) {
         root.appendChild(backdrop);
         root.appendChild(panel);

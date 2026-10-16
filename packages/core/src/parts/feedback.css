@@ -529,7 +529,7 @@
     opacity 240ms ease,
     height 300ms var(--pl-ease),
     box-shadow 200ms;
-  animation: pl-fb-toast-enter 420ms var(--pl-fb-spring);
+  animation: pl-fb-toast-enter 560ms var(--pl-toast-spring);
 }
 .pl-toaster--top-start .pl-toaster__toast,
 .pl-toaster--top-center .pl-toaster__toast,
@@ -553,7 +553,13 @@
 .pl-toaster__toast[data-swiping] { transition: none; cursor: grabbing; }
 .pl-toaster__toast[data-collapsed] { height: var(--pl-toast-front-h); }
 .pl-toaster__toast[data-collapsed] > * { opacity: 0; transition: opacity 160ms; }
-.pl-toaster__toast[data-state='closed'] { opacity: 0; transform: translate(var(--pl-swipe-x, 0px), var(--pl-toast-y, 0px)) scale(0.92); pointer-events: none; }
+/* Exit: back toward the edge it came from, quicker than the entrance. */
+.pl-toaster__toast[data-state='closed'] {
+  opacity: 0;
+  transform: translate(calc(var(--pl-swipe-x, 0px) + var(--pl-toast-enter-x, 0px) * 0.6), calc(var(--pl-toast-y, 0px) + var(--pl-toast-enter-y, 0px) * 0.6)) scale(0.9);
+  transition: transform 200ms cubic-bezier(0.4, 0, 1, 1), opacity 180ms ease;
+  pointer-events: none;
+}
 .pl-toaster__toast[data-swipe-out='right'] { transform: translate(110%, var(--pl-toast-y, 0px)); }
 .pl-toaster__toast[data-swipe-out='left'] { transform: translate(-110%, var(--pl-toast-y, 0px)); }
 
@@ -621,9 +627,123 @@
 }
 [dir='rtl'] .pl-toaster__progress > span { transform-origin: right; }
 
-@keyframes pl-fb-toast-enter {
-  from { opacity: 0; transform: translate(0, calc(var(--pl-toast-y, 0px) + var(--pl-toast-enter, -14px))) scale(0.94); }
+/* ---------- Toaster motion: springs in from its corner or edge ---------- */
+.pl-toaster {
+  /* A damped spring (one overshoot, settles quickly). Browsers without linear() use the cubic fallback. */
+  --pl-toast-spring: cubic-bezier(0.22, 1.28, 0.36, 1);
+  --pl-toast-enter-x: 0px;
+  --pl-toast-enter-y: -28px;
 }
+@supports (transition-timing-function: linear(0, 1)) {
+  .pl-toaster {
+    --pl-toast-spring: linear(0, 0.013 0.6%, 0.05 1.2%, 0.2 2.6%, 0.41 4.2%, 0.661 6.2%, 0.852 8.1%, 0.997 10.2%, 1.081 12.2%, 1.112 13.7%, 1.123 15.3%, 1.104 18.2%, 1.052 22%, 1.012 25.8%, 0.991 30%, 0.985 34.8%, 0.995 44.5%, 1.001 56.2%, 1);
+  }
+}
+.pl-toaster--bottom-start,
+.pl-toaster--bottom-center,
+.pl-toaster--bottom-end { --pl-toast-enter-y: 28px; }
+/* Corner toasts also slide in from their side (start / end follow the writing direction). */
+.pl-toaster--top-end,
+.pl-toaster--bottom-end { --pl-toast-enter-x: 36px; --pl-toast-enter-y: 0px; }
+.pl-toaster--top-start,
+.pl-toaster--bottom-start { --pl-toast-enter-x: -36px; --pl-toast-enter-y: 0px; }
+[dir='rtl'] .pl-toaster--top-end,
+[dir='rtl'] .pl-toaster--bottom-end,
+.pl-toaster--top-end[dir='rtl'],
+.pl-toaster--bottom-end[dir='rtl'] { --pl-toast-enter-x: -36px; }
+[dir='rtl'] .pl-toaster--top-start,
+[dir='rtl'] .pl-toaster--bottom-start,
+.pl-toaster--top-start[dir='rtl'],
+.pl-toaster--bottom-start[dir='rtl'] { --pl-toast-enter-x: 36px; }
+@keyframes pl-fb-toast-enter {
+  from {
+    opacity: 0;
+    transform: translate(var(--pl-toast-enter-x), calc(var(--pl-toast-y, 0px) + var(--pl-toast-enter-y))) scale(0.9);
+  }
+  35% { opacity: 1; }
+}
+
+/* Avatar (rich toasts: mentions, messages, assignments) */
+.pl-toaster__avatar {
+  flex: none;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--pl-radius-pill);
+  object-fit: cover;
+  box-shadow: 0 0 0 2px var(--pl-surface-raised), 0 0 0 3px var(--pl-toast-tone);
+}
+.pl-toaster__avatar--initials {
+  display: grid;
+  place-items: center;
+  background: var(--pl-primary-soft);
+  color: var(--pl-primary-ink);
+  font-size: 0.8rem;
+  font-weight: var(--pl-weight-bold);
+}
+.pl-toaster__toast--avatar::before { display: none; }
+
+/* ---------- Animated toast icons ----------
+ * A rounded tile in the type's tone; the mark draws in. Success pops, error shakes, warning pulses,
+ * info drops its dot, loading spins an arc that closes into the tile when the promise settles. */
+.pl-toast-ico { display: block; width: 1.4rem; height: 1.4rem; overflow: visible; }
+.pl-toast-ico__tile { fill: color-mix(in srgb, var(--pl-toast-tone) 16%, transparent); stroke: color-mix(in srgb, var(--pl-toast-tone) 34%, transparent); stroke-width: 1; transform-box: fill-box; transform-origin: center; }
+.pl-toast-ico__mark { fill: none; stroke: var(--pl-toast-tone); stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 1; animation: pl-toast-draw 380ms cubic-bezier(0.65, 0, 0.35, 1) 140ms forwards; }
+.pl-toast-ico__dot { fill: var(--pl-toast-tone); transform-box: fill-box; transform-origin: center; animation: pl-toast-dot 320ms var(--pl-toast-spring, ease-out) 320ms both; }
+.pl-toast-ico__arc { fill: none; stroke: var(--pl-toast-tone); stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 0.28 1; transform-box: fill-box; transform-origin: center; }
+.pl-toast-ico--loading .pl-toast-ico__arc { animation: pl-spin 0.8s linear infinite; }
+.pl-toast-ico--success .pl-toast-ico__tile { animation: pl-toast-pop 460ms var(--pl-toast-spring, ease-out) both; }
+.pl-toast-ico--error { animation: pl-toast-shake 420ms ease-in-out 260ms both; }
+.pl-toast-ico--warning .pl-toast-ico__tile { animation: pl-toast-pulse 1.4s ease-in-out 380ms 2; }
+.pl-toast-ico--info .pl-toast-ico__tile { animation: pl-toast-pop 420ms var(--pl-toast-spring, ease-out) both; }
+/* Morph: the spinner arc of the loading state closes into a full ring and fades into the tile. */
+.pl-toast-ico[data-morph] .pl-toast-ico__arc { animation: pl-toast-arc-close 420ms cubic-bezier(0.65, 0, 0.35, 1) forwards; }
+.pl-toast-ico[data-morph] .pl-toast-ico__mark { animation-delay: 300ms; }
+@keyframes pl-toast-draw { to { stroke-dashoffset: 0; } }
+@keyframes pl-toast-dot { from { transform: scale(0); opacity: 0; } }
+@keyframes pl-toast-pop { from { transform: scale(0.4) rotate(-12deg); opacity: 0; } }
+@keyframes pl-toast-shake {
+  0%, 100% { transform: none; }
+  20% { transform: translateX(-2.5px) rotate(-6deg); }
+  40% { transform: translateX(2.5px) rotate(5deg); }
+  60% { transform: translateX(-1.5px) rotate(-3deg); }
+  80% { transform: translateX(1px) rotate(1deg); }
+}
+@keyframes pl-toast-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.14); }
+}
+@keyframes pl-toast-arc-close {
+  0% { stroke-dasharray: 0.28 1; transform: rotate(0deg); opacity: 1; }
+  70% { stroke-dasharray: 1 1; transform: rotate(270deg); opacity: 1; }
+  100% { stroke-dasharray: 1 1; transform: rotate(360deg) scale(1.5); opacity: 0; }
+}
+
+/* Reduced motion: toasts only fade; icons appear drawn; the stack still re-flows without travel. */
+@media (prefers-reduced-motion: reduce) {
+  .pl-toaster .pl-toaster__toast {
+    animation: pl-toast-fade 160ms ease both !important;
+    animation-duration: 160ms !important;
+    transition: opacity 160ms ease !important;
+    transition-duration: 160ms !important;
+  }
+  .pl-toaster .pl-toaster__toast[data-state='closed'] { transform: translate(0, var(--pl-toast-y, 0px)) scale(var(--pl-toast-scale, 1)); }
+  .pl-toaster .pl-toast-ico,
+  .pl-toaster .pl-toast-ico * { animation: none !important; }
+  .pl-toaster .pl-toast-ico__mark { stroke-dashoffset: 0; }
+  .pl-toaster .pl-toast-ico[data-morph] .pl-toast-ico__arc { opacity: 0; }
+  .pl-toaster .pl-toast-ico--loading .pl-toast-ico__arc { animation: pl-spin 1.6s linear infinite !important; }
+}
+:root[data-a11y-motion='reduce'] .pl-toaster .pl-toaster__toast {
+  animation: pl-toast-fade 160ms ease both !important;
+  transition: opacity 160ms ease !important;
+}
+:root[data-a11y-motion='reduce'] .pl-toaster .pl-toaster__toast[data-state='closed'],
+:root[data-a11y-motion='off'] .pl-toaster .pl-toaster__toast[data-state='closed'] { transform: translate(0, var(--pl-toast-y, 0px)) scale(var(--pl-toast-scale, 1)); }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) .pl-toaster .pl-toast-ico,
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) .pl-toaster .pl-toast-ico * { animation: none !important; }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) .pl-toaster .pl-toast-ico__mark { stroke-dashoffset: 0; }
+:root:is([data-a11y-motion='reduce'], [data-a11y-motion='off']) .pl-toaster .pl-toast-ico[data-morph] .pl-toast-ico__arc { opacity: 0; }
+@keyframes pl-toast-fade { from { opacity: 0; } }
 
 /* ==========================================================================
  * Loaders

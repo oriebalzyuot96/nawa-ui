@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { accents, defaultAccent, modes, shapes } from '../src/themes.mjs';
+import { accents, defaultAccent, modes, presets, shapes } from '../src/themes.mjs';
 
 const pkg = join(dirname(fileURLToPath(import.meta.url)), '..');
 const packagesDir = join(pkg, '..');
@@ -120,6 +120,45 @@ describe('build output: pelagic.css', () => {
       }
     }
   });
+
+  it.each(Object.keys(presets))('has light, dark, system and accent blocks for preset "%s"', (name) => {
+    const sel = `[data-theme-preset="${name}"]`;
+    expect(css).toContain(`${sel}:not([data-theme="dark"], [data-theme="hc"]) {`);
+    expect(css).toContain(`${sel}[data-theme="dark"] {`);
+    expect(css).toContain(`${sel}:not([data-accent]) {`);
+    expect(css).toContain(`:root${sel}:not([data-theme]) {`);
+    expect(css).toContain(`--pl-surface: ${presets[name].light.surface};`);
+    expect(css).toContain(`--pl-a-dark-primary: ${presets[name].dark.primary};`);
+    expect(built.presetThemes[name].dark.surface).toBe(presets[name].dark.surface);
+  });
+
+  it('lets data-a11y-motion="full" opt out of every reduced-motion rule', () => {
+    const blocks = [...css.matchAll(/@media \(prefers-reduced-motion: reduce\) \{/g)];
+    expect(blocks.length).toBeGreaterThan(5);
+    for (const m of blocks) {
+      let depth = 0;
+      let end = m.index;
+      for (let i = css.indexOf('{', m.index); i < css.length; i += 1) {
+        if (css[i] === '{') depth += 1;
+        else if (css[i] === '}' && --depth === 0) {
+          end = i;
+          break;
+        }
+      }
+      const body = css.slice(m.index, end);
+      const selectors = stripComments(body)
+        .split('{')
+        .slice(1)
+        .map((chunk) => chunk.split('}').pop().trim())
+        .filter((s) => s && !s.startsWith('@'));
+      for (const s of selectors) for (const one of s.split(/,\s*(?![^(]*\))/)) expect(one, one).toMatch(/^(:root|html):not\(\[data-a11y-motion="full"\]\)/);
+    }
+  });
+
+  it('ships the theme-switch transition styles', () => {
+    expect(css).toContain(":root[data-pl-theme-transition='reveal']::view-transition-new(root)");
+    expect(css).toContain(":root[data-pl-theme-transition='fade']");
+  });
 });
 
 describe('build output: tokens.js', () => {
@@ -129,16 +168,16 @@ describe('build output: tokens.js', () => {
     expect(fresh).toBe(committed);
   });
 
-  it('exports a 3 × 7 theme matrix', () => {
+  it('exports a 3 × 9 theme matrix', () => {
     expect(Object.keys(built.themes)).toHaveLength(3);
-    for (const mode of Object.keys(built.themes)) expect(Object.keys(built.themes[mode])).toHaveLength(7);
+    for (const mode of Object.keys(built.themes)) expect(Object.keys(built.themes[mode])).toHaveLength(9);
     expect(built.getTheme()).toEqual(built.themes.light.violet);
   });
 
   it('writes matching type declarations', () => {
     const dts = readFileSync(join(dir, 'tokens.d.ts'), 'utf8');
     expect(dts).toContain("export type ThemeMode = 'light' | 'dark' | 'hc';");
-    expect(dts).toContain("export type ThemeAccent = 'violet' | 'teal' | 'indigo' | 'rose' | 'amber' | 'emerald' | 'slate';");
+    expect(dts).toContain("export type ThemeAccent = 'violet' | 'teal' | 'indigo' | 'rose' | 'amber' | 'emerald' | 'slate' | 'ocean' | 'coral';");
     for (const key of Object.keys(built.themes.light.violet)) expect(dts).toContain(`  ${key}: string;`);
   });
 });

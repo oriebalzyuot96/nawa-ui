@@ -1,10 +1,26 @@
 import { mix } from './color.mjs';
-import { accents, modes, softMix } from '../src/themes.mjs';
+import { accents, modes, presets, softMix } from '../src/themes.mjs';
 
 /** Fully resolved color theme (hex values) for one mode × accent. */
 export function resolveTheme(mode, accent) {
-  const m = modes[mode];
-  const a = accents[accent][mode];
+  return resolveWith(mode, accent, modes[mode], accents[accent][mode]);
+}
+
+const PRESET_NEUTRALS = ['surface', 'surfaceAlt', 'surfaceMuted', 'text', 'textMuted', 'border', 'controlBorder', 'success', 'warning', 'danger', 'info', 'onDanger'];
+
+/** Neutrals of a preset in one mode (hc keeps the high-contrast neutrals). */
+export function presetModeNeutrals(preset, mode) {
+  if (mode === 'hc') return { ...modes.hc };
+  return { ...modes[mode], ...Object.fromEntries(PRESET_NEUTRALS.map((k) => [k, presets[preset][mode][k]])) };
+}
+
+/** A preset in one mode, with its own accent (default) or a built-in accent. */
+export function resolvePresetTheme(preset, mode, accent) {
+  const a = accent ? accents[accent][mode] : presets[preset][mode];
+  return resolveWith(mode, accent ?? preset, presetModeNeutrals(preset, mode), a);
+}
+
+function resolveWith(mode, accent, m, a) {
   return {
     mode,
     accent,
@@ -36,3 +52,4 @@ export function resolveTheme(mode, accent) {
 
 export const modeNames = Object.keys(modes);
 export const accentNames = Object.keys(accents);
+export const presetNames = Object.keys(presets);

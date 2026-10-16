@@ -103,6 +103,18 @@ export const accents = {
     dark: { primary: '#cbd5e1', primaryHover: '#e2e8f0', primaryInk: '#cbd5e1', onPrimary: '#0f172a' },
     hc: { primary: '#000000', primaryHover: '#262626', primaryInk: '#000000', onPrimary: '#ffffff' },
   },
+  /** Open-water blue, brighter than indigo. */
+  ocean: {
+    light: { primary: '#007bbb', primaryHover: '#00669b', primaryInk: '#006ea7', onPrimary: '#ffffff' },
+    dark: { primary: '#3fa7ed', primaryHover: '#58baff', primaryInk: '#4db4fa', onPrimary: '#001829' },
+    hc: { primary: '#005c8d', primaryHover: '#004b74', primaryInk: '#004e79', onPrimary: '#ffffff' },
+  },
+  /** Warm red-orange. */
+  coral: {
+    light: { primary: '#d1451d', primaryHover: '#b63000', primaryInk: '#c03403', onPrimary: '#ffffff' },
+    dark: { primary: '#fa6b46', primaryHover: '#ff8c6d', primaryInk: '#ff8160', onPrimary: '#2c0902' },
+    hc: { primary: '#a42a00', primaryHover: '#882100', primaryInk: '#8a2200', onPrimary: '#ffffff' },
+  },
 };
 
 /** Corner radius presets, selected with data-shape. */
@@ -246,3 +258,63 @@ export const contrastSchemes = {
 export const defaultMode = 'light';
 export const defaultAccent = 'violet';
 export const defaultShape = 'default';
+
+/**
+ * Named theme presets, selected with data-theme-preset. A preset changes the whole palette, not only the
+ * accent: page and card surfaces, text, borders, status colors and its own accent, for light and dark.
+ * High contrast keeps the pure black-on-white neutrals and uses the preset's high-contrast accent.
+ * An explicit data-accent (or a custom brand from createTheme({ preset })) still wins over the preset accent.
+ * Every preset × mode, and every preset × built-in accent, is verified by scripts/check-contrast.mjs.
+ */
+export const presets = {
+  lagoon: {
+    light: { surface: '#f9fefe', surfaceAlt: '#e9fafb', surfaceMuted: '#dbeff0', text: '#172a2b', textMuted: '#50686a', border: '#d0e2e3', controlBorder: '#7a8c8d', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#0b7a8c', primaryHover: '#006474', primaryInk: '#007183', onPrimary: '#ffffff' },
+    dark: { surface: '#02171c', surfaceAlt: '#072025', surfaceMuted: '#112a30', text: '#d2edf4', textMuted: '#99b7bf', border: '#20383e', controlBorder: '#5a777f', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#38d0d6', primaryHover: '#53e4ea', primaryInk: '#38d0d6', onPrimary: '#001b1c' },
+    hc: { primary: '#006170', primaryHover: '#004f5c', primaryInk: '#005260', onPrimary: '#ffffff' },
+  },
+  abyss: {
+    light: { surface: '#fcfdff', surfaceAlt: '#f0f6ff', surfaceMuted: '#e3ebf6', text: '#202730', textMuted: '#5b6470', border: '#d7dfe8', controlBorder: '#818992', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#1f47c9', primaryHover: '#0f2fb1', primaryInk: '#1f47c9', onPrimary: '#ffffff' },
+    dark: { surface: '#040c20', surfaceAlt: '#09142a', surfaceMuted: '#111e36', text: '#dde8fd', textMuted: '#a5b2c8', border: '#1f2c44', controlBorder: '#607292', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#6ccbff', primaryHover: '#9fdbff', primaryInk: '#6ccbff', onPrimary: '#001926' },
+    hc: { primary: '#1f47c9', primaryHover: '#1132b5', primaryInk: '#1639bb', onPrimary: '#ffffff' },
+  },
+  reef: {
+    light: { surface: '#fffcfc', surfaceAlt: '#fff3ef', surfaceMuted: '#fae6df', text: '#33221c', textMuted: '#745d56', border: '#ecdad3', controlBorder: '#96847d', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#cc4829', primaryHover: '#b4300d', primaryInk: '#bb3817', onPrimary: '#ffffff' },
+    dark: { surface: '#1d100e', surfaceAlt: '#261816', surfaceMuted: '#31221f', text: '#fbe1dc', textMuted: '#c6a9a4', border: '#3f302d', controlBorder: '#806c68', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#ff8a6b', primaryHover: '#ffaa93', primaryInk: '#ff8a6b', onPrimary: '#2c0902' },
+    hc: { primary: '#a82700', primaryHover: '#8c1f00', primaryInk: '#8c1f00', onPrimary: '#ffffff' },
+  },
+  kelp: {
+    light: { surface: '#fbfefc', surfaceAlt: '#eef9f1', surfaceMuted: '#e1efe5', text: '#1e2a22', textMuted: '#58685d', border: '#d5e2d9', controlBorder: '#7f8c83', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#1d7148', primaryHover: '#005c36', primaryInk: '#1d7148', onPrimary: '#ffffff' },
+    dark: { surface: '#0a170f', surfaceAlt: '#122017', surfaceMuted: '#1b2a20', text: '#d9eedf', textMuted: '#a0b8a8', border: '#2a382e', controlBorder: '#64776a', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#5fd49a', primaryHover: '#74e8ad', primaryInk: '#5fd49a', onPrimary: '#001c0e' },
+    hc: { primary: '#09653d', primaryHover: '#005230', primaryInk: '#005632', onPrimary: '#ffffff' },
+  },
+  sage: {
+    light: { surface: '#fdfefa', surfaceAlt: '#f4f8ec', surfaceMuted: '#e9eddf', text: '#25281c', textMuted: '#616655', border: '#dce0d3', controlBorder: '#868a7d', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#56702a', primaryHover: '#435c13', primaryInk: '#56702a', onPrimary: '#ffffff' },
+    dark: { surface: '#13150c', surfaceAlt: '#1b1d13', surfaceMuted: '#25271d', text: '#e5ebd8', textMuted: '#aeb4a0', border: '#33362b', controlBorder: '#707466', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#b6cf7a', primaryHover: '#c9e38d', primaryInk: '#b6cf7a', onPrimary: '#121900' },
+    hc: { primary: '#476018', primaryHover: '#374f00', primaryInk: '#3a5204', onPrimary: '#ffffff' },
+  },
+  dune: {
+    light: { surface: '#fffdf9', surfaceAlt: '#fff4e4', surfaceMuted: '#f6e8d4', text: '#2f2515', textMuted: '#6e614d', border: '#e9dcc9', controlBorder: '#938673', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#a5530d', primaryHover: '#8a4200', primaryInk: '#a14f05', onPrimary: '#ffffff' },
+    dark: { surface: '#1b120b', surfaceAlt: '#231a12', surfaceMuted: '#2e241b', text: '#f7e4d6', textMuted: '#c1ad9d', border: '#3c3229', controlBorder: '#7d6f64', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#f0b45c', primaryHover: '#ffc97e', primaryInk: '#f0b45c', onPrimary: '#211300' },
+    hc: { primary: '#8d4400', primaryHover: '#753700', primaryInk: '#783900', onPrimary: '#ffffff' },
+  },
+  aurora: {
+    light: { surface: '#fdfdff', surfaceAlt: '#f7f4ff', surfaceMuted: '#ece8f7', text: '#282431', textMuted: '#666072', border: '#e0dbea', controlBorder: '#8a8594', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#7b3fd6', primaryHover: '#6824be', primaryInk: '#7b3fd6', onPrimary: '#ffffff' },
+    dark: { surface: '#16111f', surfaceAlt: '#1e1929', surfaceMuted: '#282234', text: '#ebe4fa', textMuted: '#b4acc5', border: '#363142', controlBorder: '#756d84', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#d7a8ff', primaryHover: '#e3c4ff', primaryInk: '#d7a8ff', onPrimary: '#1e0d2a' },
+    hc: { primary: '#6f2fc7', primaryHover: '#5f14b3', primaryInk: '#621ab7', onPrimary: '#ffffff' },
+  },
+  merlot: {
+    light: { surface: '#fffcfc', surfaceAlt: '#fff2f1', surfaceMuted: '#f7e6e4', text: '#312221', textMuted: '#715e5c', border: '#eadad8', controlBorder: '#948482', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#8f1d3d', primaryHover: '#76002c', primaryInk: '#8f1d3d', onPrimary: '#ffffff' },
+    dark: { surface: '#1e0f11', surfaceAlt: '#271719', surfaceMuted: '#322023', text: '#fbe0e3', textMuted: '#c6a8ac', border: '#412e31', controlBorder: '#836a6d', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#f29ab2', primaryHover: '#ffb2c6', primaryInk: '#f29ab2', onPrimary: '#2a0714' },
+    hc: { primary: '#8f1d3d', primaryHover: '#7b002e', primaryInk: '#8b183a', onPrimary: '#ffffff' },
+  },
+  ink: {
+    light: { surface: '#fffdf9', surfaceAlt: '#fbf5e7', surfaceMuted: '#f1ead9', text: '#2c2616', textMuted: '#6b624f', border: '#e4dece', controlBorder: '#8d8777', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#1e3a8a', primaryHover: '#0e2574', primaryInk: '#1e3a8a', onPrimary: '#ffffff' },
+    dark: { surface: '#0b1423', surfaceAlt: '#121c2d', surfaceMuted: '#1c2639', text: '#dde8fd', textMuted: '#a5b2c8', border: '#2a3447', controlBorder: '#64728b', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#e5bd62', primaryHover: '#f9d076', primaryInk: '#e5bd62', onPrimary: '#1e1400' },
+    hc: { primary: '#1e3a8a', primaryHover: '#102877', primaryInk: '#1e3a8a', onPrimary: '#ffffff' },
+  },
+  graphite: {
+    light: { surface: '#fcfdfe', surfaceAlt: '#f3f6fa', surfaceMuted: '#e7ebef', text: '#24272b', textMuted: '#606469', border: '#dbdee2', controlBorder: '#85888d', success: '#0f6b33', warning: '#9a4100', danger: '#c0262d', info: '#1458b0', onDanger: '#ffffff', primary: '#2f5fd0', primaryHover: '#1c49b8', primaryInk: '#2f5fd0', onPrimary: '#ffffff' },
+    dark: { surface: '#101419', surfaceAlt: '#181c22', surfaceMuted: '#22262c', text: '#e1e9f3', textMuted: '#a9b2bd', border: '#30353b', controlBorder: '#6c727a', success: '#4cd987', warning: '#f6a35c', danger: '#ff8a8a', info: '#78b3ff', onDanger: '#2a0606', primary: '#8fb1ff', primaryHover: '#acc6ff', primaryInk: '#8fb1ff', onPrimary: '#091431' },
+    hc: { primary: '#214fbe', primaryHover: '#113caa', primaryInk: '#1440ae', onPrimary: '#ffffff' },
+  },
+};

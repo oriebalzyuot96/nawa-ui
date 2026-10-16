@@ -86,6 +86,10 @@
       "types": "./dist/core/src/motion.d.ts",
       "default": "./dist/core/src/motion.js"
     },
+    "./core/toast": {
+      "types": "./dist/core/src/toast.d.ts",
+      "default": "./dist/core/src/toast.js"
+    },
     "./react": {
       "types": "./dist/react/dist/index.d.ts",
       "import": "./dist/react/dist/index.js"

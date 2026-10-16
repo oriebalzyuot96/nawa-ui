@@ -1,22 +1,78 @@
-import type { ThemeAccent, ThemeMode, ThemeShape } from '../tokens';
+import type { ThemeAccent, ThemeMode, ThemePreset, ThemeShape } from '../tokens';
+
+export type { ThemePreset } from '../tokens';
 
 export interface ThemeChoice {
   /** 'system' follows prefers-color-scheme and prefers-contrast. */
   mode?: ThemeMode | 'system';
-  /** A built-in accent, or the name of a custom theme already injected with applyCustomTheme(). */
-  accent?: ThemeAccent | (string & {});
+  /** A built-in accent, or the name of a custom theme already injected with applyCustomTheme(). null or 'default' removes data-accent. */
+  accent?: ThemeAccent | 'default' | (string & {}) | null;
   shape?: ThemeShape;
+  /** A named theme preset (data-theme-preset): surfaces, text, borders and accent. null or 'default' removes it. */
+  preset?: ThemePreset | 'default' | null;
+  /** Any CSS color: builds a WCAG AA theme fitted to the active preset and selects it (null removes it). */
+  brand?: string | null;
   /** A createTheme() result: its CSS is injected and it becomes the accent of `target`. */
   custom?: CustomTheme;
 }
 
 export declare const THEME_STORAGE_KEY: string;
+/** data-accent value of the live brand theme built by switchTheme({ brand }) and the panels. */
+export declare const BRAND_THEME_NAME: 'brand';
+/** Bubbling event dispatched on the target after switchTheme(); detail is { state, previous }. */
+export declare const THEME_CHANGE_EVENT: 'pl-theme-change';
 /** Set data-theme / data-accent / data-shape on `target` (default: <html>). */
 export declare function applyTheme(theme?: ThemeChoice, target?: HTMLElement): void;
 /** Save a theme choice to localStorage. Failures are ignored. */
 export declare function saveTheme(theme: ThemeChoice): void;
 /** Read a saved theme choice, or null. */
-export declare function loadTheme(): ThemeChoice | null;
+export declare function loadTheme(): (ThemeChoice & { brandCss?: string; customCss?: string }) | null;
+
+/** The theme applied to an element, read from its attributes. */
+export interface ThemeState {
+  mode: ThemeMode | 'system';
+  /** Explicit data-accent (null: the preset's or the default accent). */
+  accent: ThemeAccent | (string & {}) | null;
+  preset: ThemePreset | 'default';
+  shape: ThemeShape | (string & {});
+  /** The live brand color (hex), when one is applied. */
+  brand: string | null;
+}
+
+/** Where the reveal starts: a control, a pointer / mouse event or a viewport point. */
+export type ThemeSwitchOrigin = Element | { clientX: number; clientY: number } | { currentTarget?: EventTarget | null; target?: EventTarget | null } | { x: number; y: number } | null;
+
+export interface SwitchThemeOptions {
+  /** Start of the circular reveal. Default: the center of the viewport. */
+  origin?: ThemeSwitchOrigin;
+  /** Element to theme. Default <html>; other targets switch without animation. */
+  target?: HTMLElement;
+  /** Save the choice (loadTheme / the no-flash script restore it). Default true. */
+  persist?: boolean;
+  /** false: switch instantly. Reduced motion always switches instantly. */
+  animate?: boolean;
+  /** Reveal duration in ms. Default: 460–760 depending on the distance to cover. */
+  duration?: number;
+}
+
+/** Read the theme currently applied to `target` (default <html>). */
+export declare function getThemeState(target?: HTMLElement | null): ThemeState;
+/**
+ * Change mode, accent, preset, shape or brand with a circular reveal from `origin` (View Transitions API),
+ * a short crossfade where that API is missing, and no animation under reduced motion. Saves the choice and
+ * dispatches `pl-theme-change`. Resolves with the new state when the animation has finished.
+ */
+export declare function switchTheme(next: ThemeChoice, options?: SwitchThemeOptions): Promise<ThemeState>;
+/** Listen for switchTheme() changes on `target` (default <html>). Returns an unsubscribe. */
+export declare function onThemeChange(listener: (state: ThemeState, previous: ThemeState) => void, target?: HTMLElement): () => void;
+/** Apply a saved choice without animation (default: loadTheme()). Returns the applied state, or null. */
+export declare function restoreTheme(target?: HTMLElement, saved?: ReturnType<typeof loadTheme>): ThemeState | null;
+/** True when theme changes should not animate (OS reduced motion, or data-a11y-motion reduce / off; "full" forces motion). */
+export declare function themeMotionReduced(target?: HTMLElement): boolean;
+/** Build (cached) and apply a WCAG AA theme for a brand color, fitted to the preset active on `target`. */
+export declare function applyBrandColor(color: string, target?: HTMLElement): CustomTheme;
+/** Neutral and status tokens of a preset in one mode. */
+export declare function presetNeutrals(preset: ThemePreset | (string & {}), mode: CustomThemeMode): Record<string, string>;
 
 /* ---------- Custom brand themes ---------- */
 
@@ -33,6 +89,8 @@ export interface CreateThemeOptions {
   radius?: number | ThemeShape;
   /** CSS font-family for --pl-font. */
   font?: string;
+  /** Fit the brand to the surfaces of a named preset (data-theme-preset). */
+  preset?: ThemePreset | 'default';
   /** Theme name, used as the data-accent value. Default 'custom'. */
   name?: string;
 }

@@ -3,7 +3,7 @@ import * as tokens from '../tokens.js';
 import { accents, defaultAccent, modes, shapes as sourceShapes } from '../src/themes.mjs';
 
 const MODES = ['light', 'dark', 'hc'];
-const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'];
+const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate', 'ocean', 'coral'];
 const KEYS = [
   'primary', 'primaryHover', 'primaryInk', 'onPrimary', 'primarySoft', 'focus',
   'surface', 'surfaceAlt', 'surfaceMuted', 'text', 'textMuted', 'border', 'controlBorder',
@@ -13,7 +13,7 @@ const KEYS = [
 const COLOR = /^(#[0-9a-f]{6}|rgba\(\d+, \d+, \d+, (0|1|0?\.\d+)\))$/i;
 
 describe('tokens.js', () => {
-  it('has exactly the 3 modes and 7 accents from the source of truth', () => {
+  it('has exactly the 3 modes and 9 accents from the source of truth', () => {
     expect(Object.keys(tokens.themes)).toEqual(MODES);
     expect(Object.keys(modes)).toEqual(MODES);
     expect(Object.keys(accents)).toEqual(ACCENTS);

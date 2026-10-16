@@ -42,6 +42,14 @@ export const UI_SOUND_EVENT = 'pl:ui-sound';
 /** localStorage key holding the user's sound preferences. */
 export const SOUND_STORAGE_KEY = 'pl-sound';
 
+/** Window event asking every listening engine to adopt new user preferences (see setSoundPrefs). */
+export const SOUND_PREFS_EVENT = 'pl:sound-prefs';
+/** Window event an engine dispatches after its state changed (detail: the engine state). */
+export const SOUND_CHANGE_EVENT = 'pl:sound-change';
+
+/** Engines created with listen: true, so settings UIs can tell whether sound is available at all. */
+const liveEngines = new Set();
+
 /** Sounds kept in reduced mode: they confirm an outcome rather than decorate an interaction. */
 const ESSENTIAL = new Set(['success', 'error', 'warning', 'info', 'notification']);
 
@@ -168,6 +176,44 @@ function writePrefs(key, prefs) {
   }
 }
 
+/** True when at least one listening sound engine exists on the page. */
+export function hasSoundEngine() {
+  return liveEngines.size > 0;
+}
+
+/** The user's sound preferences: from a live engine when there is one, otherwise from storage. */
+export function getSoundPrefs(storageKey = SOUND_STORAGE_KEY) {
+  const engine = liveEngines.values().next().value;
+  const src = engine ? engine.getState() : readPrefs(storageKey) ?? {};
+  return {
+    enabled: typeof src.enabled === 'boolean' ? src.enabled : false,
+    theme: isTheme(src.theme) ? src.theme : 'soft',
+    volume: typeof src.volume === 'number' ? clamp01(src.volume) : 0.6,
+    reduced: typeof src.reduced === 'boolean' ? src.reduced : false,
+  };
+}
+
+/**
+ * Change the user's sound preferences from a settings UI that does not own the engine (the
+ * AccessibilityPanel does this): saves them and tells every listening engine. Returns the new preferences.
+ */
+export function setSoundPrefs(patch = {}, storageKey = SOUND_STORAGE_KEY) {
+  const next = { ...getSoundPrefs(storageKey) };
+  if (typeof patch.enabled === 'boolean') next.enabled = patch.enabled;
+  if (isTheme(patch.theme)) next.theme = patch.theme;
+  if (typeof patch.volume === 'number') next.volume = clamp01(patch.volume);
+  if (typeof patch.reduced === 'boolean') next.reduced = patch.reduced;
+  writePrefs(storageKey, next);
+  if (hasWindow() && typeof window.dispatchEvent === 'function') {
+    try {
+      window.dispatchEvent(new CustomEvent(SOUND_PREFS_EVENT, { detail: next }));
+    } catch {
+      /* CustomEvent unavailable */
+    }
+  }
+  return next;
+}
+
 function defaultContextFactory() {
   if (!hasWindow()) return null;
   const Ctor = window.AudioContext || window.webkitAudioContext;
@@ -214,6 +260,13 @@ export function createSoundEngine(options = {}) {
   const notify = () => {
     current = snapshot();
     listeners.forEach((l) => l(current));
+    if (options.listen !== false && hasWindow()) {
+      try {
+        window.dispatchEvent(new CustomEvent(SOUND_CHANGE_EVENT, { detail: current }));
+      } catch {
+        /* CustomEvent unavailable */
+      }
+    }
   };
   const persist = () => writePrefs(storageKey, { enabled: state.enabled, theme: state.theme, volume: state.volume, reduced: state.reduced });
 
@@ -258,6 +311,17 @@ export function createSoundEngine(options = {}) {
     };
     window.addEventListener(UI_SOUND_EVENT, onEmit);
     cleanups.push(() => window.removeEventListener(UI_SOUND_EVENT, onEmit));
+    // Preferences changed by a settings UI (setSoundPrefs): adopt them without writing storage again.
+    const onPrefs = (e) => {
+      const d = e?.detail;
+      if (!d) return;
+      if (isTheme(d.theme) && d.theme !== state.theme) setTheme(d.theme, { persist: false });
+      if (typeof d.volume === 'number' && d.volume !== state.volume) setVolume(d.volume, { persist: false });
+      if (typeof d.reduced === 'boolean' && d.reduced !== state.reduced) setReduced(d.reduced, { persist: false });
+      if (typeof d.enabled === 'boolean') setEnabled(d.enabled, { persist: false });
+    };
+    window.addEventListener(SOUND_PREFS_EVENT, onPrefs);
+    cleanups.push(() => window.removeEventListener(SOUND_PREFS_EVENT, onPrefs));
   }
 
   function unlock() {
@@ -495,7 +559,7 @@ export function createSoundEngine(options = {}) {
     notify();
   }
 
-  return {
+  const engine = {
     play,
     setEnabled,
     isEnabled: () => state.enabled && state.allowed,
@@ -518,6 +582,7 @@ export function createSoundEngine(options = {}) {
     },
     destroy() {
       destroyed = true;
+      liveEngines.delete(engine);
       cleanups.splice(0).forEach((fn) => fn());
       listeners.clear();
       try {
@@ -528,4 +593,6 @@ export function createSoundEngine(options = {}) {
       ctx = null;
     },
   };
+  if (options.listen !== false) liveEngines.add(engine);
+  return engine;
 }
