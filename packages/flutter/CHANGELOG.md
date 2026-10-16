@@ -1,3 +1,8 @@
+## 0.2.0
+
+- Version aligned with the Pelagic UI 0.2.0 release across every platform package.
+- Design tokens regenerated from the core theme source, so the named color themes and the new accents added to the web theme match here too.
+
 ## 0.1.0
 
 Initial release.
