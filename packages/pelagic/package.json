@@ -1,6 +1,6 @@
 {
   "name": "pelagic",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI in one package: 150+ accessible, themeable components for React, Vue, Angular, Svelte, Astro and React Native, plus charts, 3D, icons, illustrations, motion and sound. WCAG 2.2 AA, 21 themes, custom brand colors, RTL.",
   "type": "module",
   "files": [

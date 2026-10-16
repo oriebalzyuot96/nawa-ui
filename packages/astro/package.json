@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/astro",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI for Astro — accessible, zero-JS server-rendered components with 21 themes.",
   "type": "module",
   "files": [
@@ -18,7 +18,7 @@
     "astro": "^5.0.0"
   },
   "dependencies": {
-    "@pelagic-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.2.0"
   },
   "devDependencies": {
     "@astrojs/check": "0.9.4",

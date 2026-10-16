@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/icons",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic Icons: 239 original, accessible SVG icons in outline and duotone (plus solid) for React, Vue, Svelte, Angular, Astro, React Native, Web Components and plain SVG sprites.",
   "type": "module",
   "sideEffects": [
@@ -82,12 +82,24 @@
     "vue": ">=3.3.0"
   },
   "peerDependenciesMeta": {
-    "@angular/core": { "optional": true },
-    "astro": { "optional": true },
-    "react": { "optional": true },
-    "react-native-svg": { "optional": true },
-    "svelte": { "optional": true },
-    "vue": { "optional": true }
+    "@angular/core": {
+      "optional": true
+    },
+    "astro": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "devDependencies": {
     "typescript": "^5.6.0"

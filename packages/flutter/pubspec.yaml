@@ -2,7 +2,7 @@ name: pelagic_ui
 description: >-
   Accessible, themeable Flutter widgets from the Pelagic UI design system: light,
   dark and high-contrast themes with several accents, matching the web tokens.
-version: 0.1.0
+version: 0.2.0
 homepage: https://oriebalzyuot96.github.io/pelagic-ui/
 repository: https://github.com/oriebalzyuot96/pelagic-ui
 issue_tracker: https://github.com/oriebalzyuot96/pelagic-ui/issues

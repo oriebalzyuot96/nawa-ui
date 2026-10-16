@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/react-native",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI for React Native — accessible, themeable mobile components with the same API as the web packages.",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -17,7 +17,7 @@
     "react-native": ">=0.74.0"
   },
   "dependencies": {
-    "@pelagic-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.29.7",

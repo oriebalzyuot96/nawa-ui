@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/illustrations",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI illustrations — 24 original, themeable SVG empty-state scenes (no data, no results, offline, 404, …) that follow every Pelagic theme through CSS variables. Zero dependencies; React, Vue, Svelte, Angular, Astro, web component and React Native entry points.",
   "type": "module",
   "main": "./dist/illustrations.js",
@@ -63,11 +63,21 @@
     "vue": ">=3.3.0"
   },
   "peerDependenciesMeta": {
-    "@angular/core": { "optional": true },
-    "react": { "optional": true },
-    "react-native-svg": { "optional": true },
-    "svelte": { "optional": true },
-    "vue": { "optional": true }
+    "@angular/core": {
+      "optional": true
+    },
+    "react": {
+      "optional": true
+    },
+    "react-native-svg": {
+      "optional": true
+    },
+    "svelte": {
+      "optional": true
+    },
+    "vue": {
+      "optional": true
+    }
   },
   "keywords": [
     "pelagic-ui",

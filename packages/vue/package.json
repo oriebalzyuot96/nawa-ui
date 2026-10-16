@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/vue",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI for Vue 3 — accessible, themeable component library (DataTable, Dialog, Tabs, Skeleton, Toast and more). WCAG 2.2 AA, 21 themes, RTL.",
   "type": "module",
   "main": "dist/index.js",
@@ -29,7 +29,7 @@
     "vue": "^3.4.0"
   },
   "dependencies": {
-    "@pelagic-ui/core": "0.1.0"
+    "@pelagic-ui/core": "0.2.0"
   },
   "devDependencies": {
     "@vue/test-utils": "2.4.6",

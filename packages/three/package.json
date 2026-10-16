@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/three",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI WebGL 3D for React — accessible, theme-aware Three.js components (Scene3D, Globe3D, ParticlesField, FloatingShapes, ModelViewer, Chart3D) with reduced-motion, off-screen pausing and static fallbacks.",
   "type": "module",
   "main": "dist/index.js",

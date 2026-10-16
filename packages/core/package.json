@@ -1,6 +1,6 @@
 {
   "name": "@pelagic-ui/core",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Pelagic UI core: accessible design tokens, 21 color themes (light, dark, high contrast × 7 accents) and framework-agnostic CSS.",
   "type": "module",
   "files": [
