@@ -67,13 +67,14 @@ describe('AccessibilityPanel (Vue)', () => {
 
   it('arrow keys move the checked radio (roving tabindex)', () => {
     const w = mount(AccessibilityPanel, { attachTo: document.body, props: { open: true, persist: false } });
-    const first = radio('Theme');
+    const contrastRadio = (v: string) => document.querySelector<HTMLElement>('[data-a11y-key="contrast"] [data-value="' + v + '"]')!;
+    const first = contrastRadio('default');
     first.focus();
     first.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowRight', bubbles: true }));
     expect(html.getAttribute('data-a11y-contrast')).toBe('hc');
-    expect(document.activeElement).toBe(radio('High contrast'));
-    expect(radio('High contrast').tabIndex).toBe(0);
-    expect(radio('Theme').tabIndex).toBe(-1);
+    expect(document.activeElement).toBe(contrastRadio('hc'));
+    expect(contrastRadio('hc').tabIndex).toBe(0);
+    expect(contrastRadio('default').tabIndex).toBe(-1);
     w.unmount();
   });
 
