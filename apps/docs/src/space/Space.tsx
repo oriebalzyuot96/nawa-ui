@@ -3,7 +3,7 @@
  * Pointer-event drag and drop (no dependency) with a full keyboard alternative (WCAG 2.5.7).
  */
 import { useCallback, useEffect, useId, useReducer, useRef, useState, type KeyboardEvent, type PointerEvent } from 'react';
-import { Button, Segmented, Tabs, Toaster } from '@pelagic-ui/react';
+import { Button, Segmented, Select, Tabs, Toaster } from '@pelagic-ui/react';
 import { notify, onNotice, type Notice } from './notify';
 import { Canvas, type CanvasHandlers, type Device } from './Canvas';
 import { Inspector, Layers, Palette, type ArrangeAction, type PaletteItem } from './Panels';
@@ -32,17 +32,9 @@ interface DropTarget {
 const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
 
 function MiniSelect({ label, value, options, onChange }: { label: string; value: string; options: { label: string; value: string }[]; onChange: (v: string) => void }) {
-  const id = useId();
   return (
     <span className="sp-mini">
-      <label htmlFor={id}>{label}</label>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <Select label={label} value={value} options={options} onChange={(e) => onChange(e.target.value)} />
     </span>
   );
 }
@@ -598,9 +590,9 @@ export default function SpaceApp() {
           <h2 id="sp-left-title" className="pl-sr-only">Components and layers</h2>
           <div className="sp-sheet-head">
             <span>{leftTab === 'add' ? 'Add components' : 'Layers'}</span>
-            <button type="button" className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
+            <Button variant="ghost" size="sm" iconOnly className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
               <Icon name="x" size={16} />
-            </button>
+            </Button>
           </div>
           <Tabs
             className="sp-left-tabs"
@@ -685,9 +677,9 @@ export default function SpaceApp() {
           <h2 id="sp-inspector-title" className="pl-sr-only">Inspector</h2>
           <div className="sp-sheet-head">
             <span>{selectedNode ? `Edit ${REGISTRY[selectedNode.type].label}` : 'Page settings'}</span>
-            <button type="button" className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
+            <Button variant="ghost" size="sm" iconOnly className="sp-sheet-close" aria-label="Close panel" onClick={() => setSheet(null)}>
               <Icon name="x" size={16} />
-            </button>
+            </Button>
           </div>
           <Inspector
             doc={doc}
@@ -721,9 +713,9 @@ export default function SpaceApp() {
         >
           <Icon name="layers" /> Layers
         </button>
-        <button type="button" aria-expanded={sheet === 'inspect'} onClick={() => setSheet((s) => (s === 'inspect' ? null : 'inspect'))}>
+        <Button variant="ghost" size="sm" aria-expanded={sheet === 'inspect'} onClick={() => setSheet((s) => (s === 'inspect' ? null : 'inspect'))}>
           <Icon name="sliders" /> {selectedNode ? 'Edit' : 'Page'}
-        </button>
+        </Button>
       </nav>
 
       {drag && (

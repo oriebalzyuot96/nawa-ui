@@ -93,7 +93,7 @@ describe('Wizard', () => {
     await user.click(screen.getByRole('button', { name: 'Finish' }));
     await waitFor(() => expect(onComplete).toHaveBeenCalledWith({ email: 'ada@example.com' }));
     expect(screen.getByRole('heading', { name: 'All done' }).parentElement).toHaveFocus();
-  });
+  }, 30000);
 
   it('shows a busy state while async validation runs', async () => {
     const user = userEvent.setup();

@@ -37,10 +37,10 @@ export {
   defaultA11yPrefs,
   normalizeA11yPrefs,
 } from '@pelagic-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode, switchTheme, getThemeState, onThemeChange, restoreTheme } from '@pelagic-ui/core/theme';
 export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';
 
-export type PlA11yGroup = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
+export type PlA11yGroup = 'appearance' | 'color' | 'text' | 'reading' | 'motion' | 'interaction' | 'sound';
 
 /**
  * Accessibility settings drawer: color schemes, color-vision filters, text size and spacing, reading
@@ -67,6 +67,10 @@ export class PlAccessibilityPanel implements OnDestroy {
   readonly labels = input<A11yPanelLabelOverrides | undefined>(undefined);
   readonly preview = input(true, { transform: booleanAttribute });
   readonly groups = input<PlA11yGroup[] | undefined>(undefined);
+  /** Show the Theme group (mode, color theme, accent, own color, animated switch). Default true. */
+  readonly appearance = input(true, { transform: booleanAttribute });
+  /** Sound group: 'auto' (once a sound engine exists), true or false. */
+  readonly sound = input<boolean | 'auto'>('auto');
   /** localStorage key, true (default key) or false. */
   readonly persist = input<boolean | string>(true);
   /** Element that receives the data-a11y-* attributes. Default <html>. */
@@ -94,6 +98,8 @@ export class PlAccessibilityPanel implements OnDestroy {
       this.triggerLabel();
       this.preview();
       this.groups();
+      this.appearance();
+      this.sound();
       this.persist();
       if (this.rendered) untracked(() => this.mount());
     });
@@ -127,11 +133,14 @@ export class PlAccessibilityPanel implements OnDestroy {
       triggerLabel: this.triggerLabel(),
       preview: this.preview(),
       groups: this.groups(),
+      appearance: this.appearance(),
+      sound: this.sound(),
       prefs: initial,
     });
     this.ctl = mountA11yPanel(el.firstElementChild as HTMLElement, {
       target: () => this.target() ?? this.document.documentElement,
       persist: this.persist(),
+      sound: this.sound(),
       value: initial,
       onChange: (prefs, change) => {
         this.prefs.set(prefs);

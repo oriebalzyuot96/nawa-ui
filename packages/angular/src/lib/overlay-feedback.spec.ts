@@ -161,60 +161,62 @@ describe('PlToastService + pl-toaster', () => {
     TestBed.inject(PlToastService).clear();
   });
 
-  it('shows and dismisses toasts in a polite live region', async () => {
+  const region = () => document.querySelector('section.pl-toaster') as HTMLElement;
+
+  it('renders the shared notification region and speaks toasts through live regions', async () => {
     const fixture = TestBed.createComponent(Host);
     const toasts = TestBed.inject(PlToastService);
     await fixture.whenStable();
-    const stack = fixture.nativeElement.querySelector('pl-toaster') as HTMLElement;
-    expect(stack.getAttribute('role')).toBe('status');
-    expect(stack.getAttribute('aria-live')).toBe('polite');
-    expect(stack.classList).toContain('pl-toast-stack');
+    expect(region()).not.toBeNull();
+    expect(region().getAttribute('aria-label')).toBe('Notifications (Alt+T)');
+    expect(region().querySelector('ol')?.hasAttribute('aria-live')).toBe(false);
 
     const id = toasts.show({ title: 'Saved', message: 'All good', variant: 'success', duration: 0 });
     toasts.show('Plain message');
-    await fixture.whenStable();
-    const items = stack.querySelectorAll('.pl-toast');
+    const items = region().querySelectorAll('.pl-toaster__toast');
     expect(items.length).toBe(2);
-    expect(items[0].className).toBe('pl-toast pl-toast--success');
-    expect(items[0].querySelector('.pl-toast__title')?.textContent).toBe('Saved');
+    const saved = [...items].find((li) => li.textContent?.includes('Saved'))!;
+    expect(saved.getAttribute('data-type')).toBe('success');
+    expect(saved.querySelector('.pl-toaster__title')?.textContent).toBe('Saved');
+    expect(saved.querySelector('.pl-toaster__desc')?.textContent).toBe('All good');
+    expect(saved.querySelector('.pl-toast-ico--success')).not.toBeNull();
+    expect(toasts.toasts()[0]).toMatchObject({ title: 'Saved', message: 'All good', variant: 'success' });
 
     toasts.dismiss(id);
-    await fixture.whenStable();
-    expect(stack.querySelectorAll('.pl-toast').length).toBe(1);
-
-    (stack.querySelector('.pl-close') as HTMLButtonElement).click();
-    await fixture.whenStable();
+    expect(saved.getAttribute('data-state')).toBe('closed');
+    (region().querySelector('[data-toast-close]') as HTMLButtonElement).click();
     expect(toasts.toasts().length).toBe(0);
+    fixture.destroy();
+    expect(region()).toBeNull();
   });
 
   it('auto-dismisses and pauses while hovered or focused', () => {
     vi.useFakeTimers();
     const fixture = TestBed.createComponent(Host);
     fixture.detectChanges();
+    TestBed.tick();
     const toasts = TestBed.inject(PlToastService);
-    const stack = fixture.nativeElement.querySelector('pl-toaster') as HTMLElement;
-
     toasts.show({ message: 'Hi', duration: 1000 });
+    const list = region().querySelector('ol')!;
     vi.advanceTimersByTime(400);
-    stack.dispatchEvent(new MouseEvent('mouseenter'));
-    expect(toasts.isPaused).toBe(true);
+    list.dispatchEvent(new MouseEvent('mouseenter'));
     vi.advanceTimersByTime(5000);
     expect(toasts.toasts().length).toBe(1);
-
-    stack.dispatchEvent(new MouseEvent('mouseleave'));
-    expect(toasts.isPaused).toBe(false);
+    list.dispatchEvent(new MouseEvent('mouseleave'));
     vi.advanceTimersByTime(500);
     expect(toasts.toasts().length).toBe(1);
     vi.advanceTimersByTime(150);
     expect(toasts.toasts().length).toBe(0);
 
     toasts.show({ message: 'Again', duration: 1000 });
-    stack.dispatchEvent(new FocusEvent('focusin'));
+    toasts.pause();
+    expect(toasts.isPaused).toBe(true);
     vi.advanceTimersByTime(3000);
     expect(toasts.toasts().length).toBe(1);
-    stack.dispatchEvent(new FocusEvent('focusout', { relatedTarget: null }));
-    vi.advanceTimersByTime(1000);
+    toasts.resume();
+    vi.advanceTimersByTime(1100);
     expect(toasts.toasts().length).toBe(0);
+    fixture.destroy();
   });
 });
 

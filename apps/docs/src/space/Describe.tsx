@@ -1,6 +1,6 @@
 /** "Describe what you need": Describe → Review chips → Generate. Fully offline (see engine.ts / recipes.ts). */
 import { forwardRef, useId, useState } from 'react';
-import { Button, Segmented, Textarea } from '@pelagic-ui/react';
+import { Button, Checkbox, Input, Segmented, Select, Textarea } from '@pelagic-ui/react';
 import { generate, understand, type BlockMention, type Understanding } from './engine';
 import { BLOCKS, type BlockId } from './blocks';
 import { EXAMPLES, PAGE_RECIPES } from './recipes';
@@ -9,17 +9,9 @@ import { ACCENTS, type SpaceDoc } from './types';
 import { flatten } from './tree';
 
 function MiniSelect({ label, value, options, onChange }: { label: string; value: string; options: { label: string; value: string }[]; onChange: (v: string) => void }) {
-  const id = useId();
   return (
     <span className="sp-mini">
-      <label htmlFor={id}>{label}</label>
-      <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <Select label={label} value={value} options={options} onChange={(e) => onChange(e.target.value)} />
     </span>
   );
 }
@@ -151,9 +143,8 @@ export const Describe = forwardRef<HTMLTextAreaElement, { onGenerate: (doc: Spac
                   </span>
                   {def.countable && (
                     <span className="sp-mini sp-mini--num">
-                      <label htmlFor={`${headingId}-c${i}`}>{def.countable.noun}</label>
-                      <input
-                        id={`${headingId}-c${i}`}
+                      <Input
+                        label={def.countable.noun}
                         type="number"
                         min={def.countable.min}
                         max={def.countable.max}
@@ -162,17 +153,17 @@ export const Describe = forwardRef<HTMLTextAreaElement, { onGenerate: (doc: Spac
                       />
                     </span>
                   )}
-                  <button type="button" className="sp-chip__x" aria-label={`Remove ${def.label}`} onClick={() => patch({ blocks: u.blocks.filter((_, k) => k !== i) })}>
+                  <Button variant="ghost" size="sm" iconOnly className="sp-chip__x" aria-label={`Remove ${def.label}`} onClick={() => patch({ blocks: u.blocks.filter((_, k) => k !== i) })}>
                     <Icon name="x" size={13} />
-                  </button>
+                  </Button>
                 </li>
               );
             })}
             <li className="sp-chip sp-chip--add">
               <MiniSelect label="Add section" value={addBlock} onChange={(v) => setAddBlock(v as BlockId)} options={Object.values(BLOCKS).map((b) => ({ label: b.label, value: b.id }))} />
-              <button type="button" className="sp-chip__add" aria-label="Add this section" onClick={() => patch({ blocks: [...u.blocks, { block: addBlock }] })}>
+              <Button variant="primary" size="sm" iconOnly className="sp-chip__add" aria-label="Add this section" onClick={() => patch({ blocks: [...u.blocks, { block: addBlock }] })}>
                 <Icon name="plus" size={14} />
-              </button>
+              </Button>
             </li>
             <li className="sp-chip">
               <MiniSelect label="Mode" value={u.mode ?? 'page'} onChange={(v) => patch({ mode: v === 'page' ? undefined : (v as Understanding['mode']) })} options={[{ label: 'Follow site', value: 'page' }, { label: 'Light', value: 'light' }, { label: 'Dark', value: 'dark' }, { label: 'High contrast', value: 'hc' }]} />
@@ -190,14 +181,10 @@ export const Describe = forwardRef<HTMLTextAreaElement, { onGenerate: (doc: Spac
               <MiniSelect label="Language" value={u.lang} onChange={(v) => patch({ lang: v === 'ar' ? 'ar' : 'en', rtl: v === 'ar' ? true : u.rtl })} options={[{ label: 'English', value: 'en' }, { label: 'العربية', value: 'ar' }]} />
             </li>
             <li className="sp-chip">
-              <label className="sp-chip__check">
-                <input type="checkbox" checked={u.rtl} onChange={(e) => patch({ rtl: e.target.checked })} /> RTL
-              </label>
+              <Checkbox label="RTL" checked={u.rtl} onChange={(e) => patch({ rtl: e.target.checked })} />
             </li>
             <li className="sp-chip">
-              <label className="sp-chip__check">
-                <input type="checkbox" checked={u.captcha} onChange={(e) => patch({ captcha: e.target.checked })} /> Captcha
-              </label>
+              <Checkbox label="Captcha" checked={u.captcha} onChange={(e) => patch({ captcha: e.target.checked })} />
             </li>
           </ul>
           <p className="sp-help">

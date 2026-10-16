@@ -348,9 +348,11 @@ function SoundDemo() {
 function ToasterDemo() {
   const [position, setPosition] = useState<ToasterPosition>('bottom-end');
   const [rich, setRich] = useState(true);
+  const [progress, setProgress] = useState(true);
+  const [expand, setExpand] = useState(false);
   return (
     <div className="demo-col">
-      <Toaster position={position} richColors={rich} closeButton label="Demo notifications" />
+      <Toaster position={position} richColors={rich} progress={progress} expand={expand} visibleToasts={4} closeButton label="Demo notifications" />
       <Row>
         <Select
           label="Position"
@@ -359,6 +361,8 @@ function ToasterDemo() {
           options={(['top-start', 'top-center', 'top-end', 'bottom-start', 'bottom-center', 'bottom-end'] as const).map((p) => ({ label: p, value: p }))}
         />
         <SwitchField label="Rich colours" checked={rich} onChange={setRich} />
+        <SwitchField label="Countdown bar" checked={progress} onChange={setProgress} />
+        <SwitchField label="Always expanded" checked={expand} onChange={setExpand} />
       </Row>
       <Row>
         <Button onClick={() => toast.success('Saved', { description: 'Your changes are live.' })}>Success</Button>
@@ -383,12 +387,29 @@ function ToasterDemo() {
         >
           Promise
         </Button>
+        <Button
+          variant="secondary"
+          onClick={() => toast('Ada Lovelace mentioned you', { description: '“Can you review the new palette?” in #design', avatar: { name: 'Ada Lovelace' }, action: { label: 'Reply' } })}
+        >
+          Rich (avatar)
+        </Button>
+        <Button variant="secondary" onClick={() => toast('Message archived', { undo: () => toast.success('Message restored') })}>
+          Undo
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => {
+            for (const n of [1, 2, 3, 4, 5, 6]) toast.info(`Queued notification ${n}`, { description: 'Only four show at once; the rest wait their turn.' });
+          }}
+        >
+          Queue 6
+        </Button>
         <Button variant="ghost" onClick={() => toast.dismiss()}>
           Dismiss all
         </Button>
       </Row>
       <p className="muted" style={{ margin: 0 }}>
-        Press <kbd>Alt</kbd> + <kbd>T</kbd> to jump to the notifications.
+        Press <kbd>Alt</kbd> + <kbd>T</kbd> to jump to the notifications. Hover or focus fans the deck out and pauses every countdown (so does hiding the tab); swipe a toast sideways to dismiss it. Errors are announced assertively, everything else politely, each once. With reduced motion toasts only fade.
       </p>
     </div>
   );

@@ -27,7 +27,7 @@ mkdirSync(artifacts, { recursive: true });
 const PORT = Number(process.env.E2E_PORT ?? 4329);
 const BASE = (process.env.E2E_URL ?? `http://127.0.0.1:${PORT}/pelagic-ui/`).replace(/\/?$/, '/');
 const MODES = ['light', 'dark', 'hc'];
-const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'];
+const ACCENTS = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate', 'ocean', 'coral'];
 const VIEWPORT = { width: 1280, height: 900 };
 // Pages that must be in the sitemap (and so in every check below), whatever else it lists.
 const REQUIRED_PAGES = ['', 'ar/', 'packages/', 'ar/packages/', 'components/', 'themes/', 'accessibility-modes/', 'space/'];
@@ -219,6 +219,95 @@ describe('axe (real browser, includes color-contrast)', () => {
       }
     }
     assert.equal(all.length, 0, `axe violations:\n${describeViolations(all)}`);
+  });
+});
+
+describe('themes 0.2: presets, panel, toaster, animated switch', () => {
+  const PRESETS = ['lagoon', 'abyss', 'reef', 'kelp', 'sage', 'dune', 'aurora', 'merlot', 'ink', 'graphite'];
+
+  it('every color theme passes axe on the home page in light, dark and hc', async () => {
+    const all = [];
+    for (const preset of PRESETS) {
+      for (const mode of MODES) {
+        const page = await browser.newPage();
+        await page.setViewport(VIEWPORT);
+        await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+        await page.evaluateOnNewDocument((c) => localStorage.setItem('pelagic-ui-theme', JSON.stringify(c)), { mode, preset });
+        await page.goto(BASE, { waitUntil: 'networkidle0', timeout: 60000 });
+        await hydrate(page);
+        assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme-preset')), preset);
+        all.push(...(await runAxe(page, BASE, `${mode}/${preset}`)));
+        await page.close();
+      }
+    }
+    assert.equal(all.length, 0, `axe violations:\n${describeViolations(all)}`);
+  });
+
+  it('the open accessibility panel (Theme group included) passes axe, and its preset tile switches the theme', async () => {
+    const { page } = await open(new URL('accessibility-modes/', BASE).href, { mode: 'light' });
+    await page.click('.site-header [data-a11y-open]');
+    await page.waitForSelector('.pl-a11y-panel[role="dialog"]');
+    assert.ok(await page.$('.pl-a11y-panel [data-theme-key="preset"]'));
+    assert.ok(await page.$('.pl-a11y-panel input[type="color"]'));
+    const v = await runAxe(page, page.url(), 'panel-open');
+    await page.click('.pl-a11y-panel [data-theme-value="kelp"]');
+    assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-theme-preset')), 'kelp');
+    await page.close();
+    assert.equal(v.length, 0, `axe violations:\n${describeViolations(v)}`);
+  });
+
+  it('the toaster demo shows animated, announced toasts without axe violations', async () => {
+    const url = new URL('components/feedback/', BASE).href;
+    const { page, errors } = await open(url, { mode: 'light' });
+    await hydrate(page);
+    const clicked = await page.evaluate(() => {
+      const b = [...document.querySelectorAll('button')].find((x) => x.textContent?.trim() === 'Rich (avatar)');
+      b?.click();
+      const e = [...document.querySelectorAll('button')].find((x) => x.textContent?.trim() === 'Error');
+      e?.click();
+      return !!b && !!e;
+    });
+    assert.ok(clicked, 'toaster demo buttons not found');
+    await page.waitForSelector('.pl-toaster__toast[data-type="error"]');
+    await new Promise((r) => setTimeout(r, 400));
+    const assertive = await page.$eval('.pl-toaster [data-toast-announcer="assertive"]', (el) => el.textContent);
+    assert.match(assertive ?? '', /Upload failed/);
+    await page.screenshot({ path: join(artifacts, 'toaster-demo.png') });
+    const v = await runAxe(page, url, 'toaster');
+    await page.close();
+    assert.equal(v.length, 0, `axe violations:\n${describeViolations(v)}`);
+    assert.deepEqual(errors ?? [], []);
+  });
+
+  it('switchTheme reveals the new theme in a circle, and switches instantly under reduced motion', async () => {
+    const url = new URL('themes/', BASE).href;
+    const page = await browser.newPage();
+    await page.setViewport(VIEWPORT);
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'no-preference' }]);
+    await page.evaluateOnNewDocument(() => localStorage.setItem('pelagic-ui-theme', JSON.stringify({ mode: 'light' })));
+    await page.goto(url, { waitUntil: 'networkidle0', timeout: 60000 });
+    const hasVT = await page.evaluate(() => typeof document.startViewTransition === 'function');
+    const mid = await page.evaluate(async () => {
+      const btn = document.querySelector('[data-switch-demo]');
+      const r = btn.getBoundingClientRect();
+      btn.dispatchEvent(new MouseEvent('click', { bubbles: true, clientX: r.left + 10, clientY: r.top + 10 }));
+      await new Promise((res) => setTimeout(res, 160));
+      return { attr: document.documentElement.getAttribute('data-pl-theme-transition'), theme: document.documentElement.getAttribute('data-theme') };
+    });
+    await page.screenshot({ path: join(artifacts, 'theme-switch-mid.png') });
+    assert.equal(mid.theme, 'dark');
+    assert.equal(mid.attr, hasVT ? 'reveal' : 'fade');
+    await new Promise((r) => setTimeout(r, 1000));
+    assert.equal(await page.evaluate(() => document.documentElement.getAttribute('data-pl-theme-transition')), null);
+
+    await page.emulateMediaFeatures([{ name: 'prefers-reduced-motion', value: 'reduce' }]);
+    const reduced = await page.evaluate(async () => {
+      document.querySelector('[data-switch-demo]').click();
+      await new Promise((res) => setTimeout(res, 30));
+      return { attr: document.documentElement.getAttribute('data-pl-theme-transition'), theme: document.documentElement.getAttribute('data-theme') };
+    });
+    await page.close();
+    assert.deepEqual(reduced, { attr: null, theme: 'light' });
   });
 });
 

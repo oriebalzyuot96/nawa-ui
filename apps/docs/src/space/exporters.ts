@@ -546,6 +546,18 @@ function react(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] {
   }
 }
 
+/* ---------------- Vue and Angular helpers ---------------- */
+
+/** Charts and carousels are not in the Vue/Angular packages yet: map them onto Pelagic DataTable and Card. */
+function chartRows(ctx: Ctx, p: SpaceNode['props']) {
+  const c = chartData(p);
+  const base = ident(S(p.title), 'chart');
+  const columns = [{ key: 'label', label: 'Category', sortable: true }, ...c.series.map((s) => ({ key: s.key, label: s.label, sortable: true, align: 'end' }))];
+  return { columns: addConst(ctx, `${base}Columns`, columns), rows: addConst(ctx, `${base}Rows`, c.data) };
+}
+const otpLength = (p: SpaceNode['props']) => Math.min(8, Math.max(4, N(p.length, 6)));
+const SLIDER_ROW: Css = { display: 'grid', gridAutoFlow: 'column', gridAutoColumns: 'minmax(14rem, 1fr)', gap: '1rem', overflowX: 'auto' };
+
 /* ---------------- Vue ---------------- */
 
 function vue(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] | null {
@@ -651,6 +663,26 @@ function vue(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] | null {
       if (!p.showName) return [av];
       return [el('span', { style: { display: 'inline-flex', alignItems: 'center', gap: '0.75rem' } }, [av, el('span', { style: { display: 'grid' } }, [el('strong', {}, [txt(S(p.name))]), ...(S(p.subtitle) ? [el('span', { style: MUTED_SM }, [txt(S(p.subtitle))])] : [])])])];
     }
+    case 'datepicker':
+      use('Input');
+      return [el('Input', { label: S(p.label), type: 'date' })];
+    case 'otp': {
+      use('Input');
+      const len = otpLength(p);
+      return [el('div', { style: ROW, role: 'group', 'aria-label': S(p.label, 'Verification code') }, Array.from({ length: len }, (_, i) =>
+        el('Input', { label: `Digit ${i + 1} of ${len}`, inputmode: 'numeric', maxlength: 1, style: { inlineSize: '3rem' } }),
+      ))];
+    }
+    case 'carousel':
+      use('Card');
+      return [el('div', { role: 'region', 'aria-label': S(p.label, 'Gallery'), style: SLIDER_ROW }, rows(p.items).map((r) =>
+        el('Card', { title: r[0] }, [el('p', { style: MUTED_SM }, [txt(r[1] ?? '')])]),
+      ))];
+    case 'chart': {
+      use('Card', 'DataTable');
+      const t = chartRows(ctx, p);
+      return [el('Card', { title: S(p.title) || undefined }, [el('DataTable', { columns: expr(t.columns), rows: expr(t.rows), caption: S(p.title, 'Chart'), captionVisible: true })])];
+    }
     default:
       return common(n, ctx, kids);
   }
@@ -736,6 +768,22 @@ function angular(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] | null {
       const av = el('pl-avatar', { name: S(p.name, 'User'), size: S(p.size) !== 'md' ? S(p.size) : undefined });
       if (!p.showName) return [av];
       return [el('span', { style: { display: 'inline-flex', alignItems: 'center', gap: '0.75rem' } }, [av, el('span', { style: { display: 'grid' } }, [el('strong', {}, [txt(S(p.name))]), ...(S(p.subtitle) ? [el('span', { style: MUTED_SM }, [txt(S(p.subtitle))])] : [])])])];
+    }
+    case 'datepicker':
+      return [el('pl-input', { label: S(p.label), type: 'date' })];
+    case 'otp': {
+      const len = otpLength(p);
+      return [el('div', { style: ROW, role: 'group', 'aria-label': S(p.label, 'Verification code') }, Array.from({ length: len }, (_, i) =>
+        el('pl-input', { label: `Digit ${i + 1} of ${len}`, inputmode: 'numeric', maxlength: 1, style: { inlineSize: '3rem' } }),
+      ))];
+    }
+    case 'carousel':
+      return [el('div', { role: 'region', 'aria-label': S(p.label, 'Gallery'), style: SLIDER_ROW }, rows(p.items).map((r) =>
+        el('pl-card', { title: r[0] }, [el('p', { style: MUTED_SM }, [txt(r[1] ?? '')])]),
+      ))];
+    case 'chart': {
+      const t = chartRows(ctx, p);
+      return [el('pl-card', { title: S(p.title) || undefined }, [el('pl-data-table', { columns: expr(t.columns), rows: expr(t.rows), caption: S(p.title, 'Chart'), captionVisible: true })])];
     }
     default:
       return common(n, ctx, kids);

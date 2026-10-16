@@ -38,7 +38,8 @@ export function mainNav(lang: Lang, base: string): NavItem[] {
   ];
 }
 
-export const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'] as const;
+export const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate', 'ocean', 'coral'] as const;
+export const presets = ['default', 'lagoon', 'abyss', 'reef', 'kelp', 'sage', 'dune', 'aurora', 'merlot', 'ink', 'graphite'] as const;
 
 export const t = {
   en: {
@@ -52,6 +53,7 @@ export const t = {
     mode: 'Mode',
     modes: { system: 'System', light: 'Light', dark: 'Dark', hc: 'High contrast' },
     accent: 'Accent',
+    preset: 'Color theme',
     shape: 'Shape',
     shapes: { sharp: 'Sharp', default: 'Default', round: 'Round' },
     animations: 'Animations',
@@ -76,6 +78,7 @@ export const t = {
     mode: 'الوضع',
     modes: { system: 'النظام', light: 'فاتح', dark: 'داكن', hc: 'تباين عالٍ' },
     accent: 'اللون',
+    preset: 'سمة الألوان',
     shape: 'الشكل',
     shapes: { sharp: 'حاد', default: 'افتراضي', round: 'دائري' },
     animations: 'الحركة',

@@ -280,9 +280,9 @@ export function Inspector({
         </Button>
       </div>
       {loc.parentId && (
-        <button type="button" className="sp-linkbtn" onClick={() => onArrange('parent')}>
+        <Button variant="ghost" size="sm" onClick={() => onArrange('parent')}>
           Select parent ({nodeLabel(locate(doc.nodes, loc.parentId)!.node)})
-        </button>
+        </Button>
       )}
     </div>
   );

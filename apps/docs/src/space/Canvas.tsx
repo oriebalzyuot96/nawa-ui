@@ -82,18 +82,18 @@ function NodeView({ node, parentId, index, h }: { node: SpaceNode; parentId: str
             <Icon name="grip" size={14} />
           </span>
           <span className="sp-node__tag">{def.label}</span>
-          <button type="button" className="sp-node__btn" aria-label={`Move ${def.label} up`} onClick={() => h.onAction('up', node.id)}>
+          <Button variant="ghost" size="sm" iconOnly className="sp-node__btn" aria-label={`Move ${def.label} up`} onClick={() => h.onAction('up', node.id)}>
             <Icon name="up" size={14} />
-          </button>
-          <button type="button" className="sp-node__btn" aria-label={`Move ${def.label} down`} onClick={() => h.onAction('down', node.id)}>
+          </Button>
+          <Button variant="ghost" size="sm" iconOnly className="sp-node__btn" aria-label={`Move ${def.label} down`} onClick={() => h.onAction('down', node.id)}>
             <Icon name="down" size={14} />
-          </button>
-          <button type="button" className="sp-node__btn" aria-label={`Duplicate ${def.label}`} onClick={() => h.onAction('duplicate', node.id)}>
+          </Button>
+          <Button variant="ghost" size="sm" iconOnly className="sp-node__btn" aria-label={`Duplicate ${def.label}`} onClick={() => h.onAction('duplicate', node.id)}>
             <Icon name="copy" size={14} />
-          </button>
-          <button type="button" className="sp-node__btn sp-node__btn--danger" aria-label={`Delete ${def.label}`} onClick={() => h.onAction('delete', node.id)}>
+          </Button>
+          <Button variant="ghost" size="sm" iconOnly className="sp-node__btn sp-node__btn--danger" aria-label={`Delete ${def.label}`} onClick={() => h.onAction('delete', node.id)}>
             <Icon name="trash" size={14} />
-          </button>
+          </Button>
         </div>
       )}
       {body}

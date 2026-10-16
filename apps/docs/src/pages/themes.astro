@@ -6,6 +6,8 @@ import Badge from '@pelagic-ui/astro/components/Badge';
 import Button from '@pelagic-ui/astro/components/Button';
 import ProgressBar from '@pelagic-ui/astro/components/ProgressBar';
 import Checkbox from '@pelagic-ui/astro/components/Checkbox';
+import { a11yPanelLabels } from '@pelagic-ui/core/a11y-prefs';
+import { presets as presetPalettes } from '@pelagic-ui/core/themes';
 
 const modes = [
   { key: 'light', label: 'Light' },
@@ -144,6 +146,60 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
     </section>
   ))}
 
+  <section class="section" aria-labelledby="presets">
+    <div class="container">
+      <h2 id="presets">Color themes</h2>
+      <p class="lead">
+        Ten complete palettes on <code>data-theme-preset</code>: page, cards, text, borders, status colors and
+        their own accent, in light and dark (high contrast keeps pure black on white with the preset's accent).
+        Every preset, and every preset with each of the 9 accents, is checked against WCAG 2.2 AA in the build.
+        A brand color from <code>createTheme(&#123; primary, preset &#125;)</code> is fitted to the preset's surfaces.
+      </p>
+      <div class="grid grid--3">
+        {Object.keys(presetPalettes).map((name) => (
+          <div class="theme-card" data-theme="light" data-theme-preset={name}>
+            <div class="theme-card__title"><span>{a11yPanelLabels.en.options.preset?.[name] ?? name}</span><Badge variant="success">AA</Badge></div>
+            <div class="theme-card__row">
+              <Button size="sm" data-preset-pick={name}>Use {a11yPanelLabels.en.options.preset?.[name] ?? name}</Button>
+              <Button size="sm" variant="secondary">Secondary</Button>
+            </div>
+            <div class="theme-card" data-theme="dark" data-theme-preset={name}>
+              <div class="theme-card__row">
+                <Button size="sm">Dark</Button>
+                <Badge>Badge</Badge>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt" aria-labelledby="switch">
+    <div class="container">
+      <h2 id="switch">Animated theme switch</h2>
+      <p class="lead">
+        <code>switchTheme(next, &#123; origin &#125;)</code> changes mode, accent, preset, shape or brand color and reveals the
+        new theme in a circle that grows from the control you used (View Transitions API). Browsers without it get a
+        short crossfade; reduced motion (the OS setting or <code>data-a11y-motion</code> reduce / off) switches
+        instantly. The choice is saved, and a <code>pl-theme-change</code> event keeps every control in sync.
+      </p>
+      <div class="theme-card__row">
+        <Button data-switch-demo>Toggle light / dark from here</Button>
+      </div>
+      <pre class="code" tabindex="0"><code>{`import { switchTheme } from '@pelagic-ui/core/theme';
+
+button.addEventListener('click', (event) => switchTheme({ mode: 'dark' }, { origin: event }));
+switchTheme({ preset: 'abyss' });          // a whole palette
+switchTheme({ brand: '#ff6a00' });         // any color, tuned to WCAG AA
+
+// React: const { theme, switchTheme } = useThemeSwitch();   onClick={(e) => switchTheme({ mode: 'dark' }, e)}
+// Vue:   const { theme, switchTheme } = useThemeSwitch();
+// Svelte: <button use:themeSwitch={{ mode: 'dark' }}>  ·  $themeState
+// Angular: inject(PelagicThemeService).switch({ mode: 'dark' }, { origin: $event })`}</code></pre>
+    </div>
+  </section>
+
   <section class="section" aria-labelledby="shapes">
     <div class="container">
       <h2 id="shapes">Shapes</h2>
@@ -164,7 +220,16 @@ const accents = ['violet', 'teal', 'indigo', 'rose', 'amber', 'emerald', 'slate'
 </Base>
 
 <script>
-  import { applyCustomTheme, createTheme, themeToCode, type CustomTheme } from '@pelagic-ui/core/theme';
+  import { applyCustomTheme, createTheme, switchTheme, themeToCode, type CustomTheme } from '@pelagic-ui/core/theme';
+
+  // Named presets and the animated switch: the reveal starts at the button that was used.
+  for (const b of document.querySelectorAll<HTMLElement>('[data-preset-pick]')) {
+    b.addEventListener('click', (e) => void switchTheme({ preset: b.dataset.presetPick }, { origin: e }));
+  }
+  document.querySelector('[data-switch-demo]')?.addEventListener('click', (e) => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+    void switchTheme({ mode: dark ? 'light' : 'dark' }, { origin: e as MouseEvent });
+  });
 
   const lab = document.querySelector<HTMLElement>('[data-brand-lab]');
   if (lab) {

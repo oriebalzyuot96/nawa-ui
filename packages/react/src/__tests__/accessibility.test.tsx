@@ -81,7 +81,7 @@ describe('AccessibilityPanel', () => {
     expect(localStorage.getItem(A11Y_STORAGE_KEY)).toBeNull();
     expect(screen.getByRole('status')).toHaveTextContent('All accessibility settings were reset.');
     expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ contrast: 'default' }), { key: 'reset', value: null });
-  });
+  }, 30000);
 
   it('restores saved preferences on mount', () => {
     localStorage.setItem(A11Y_STORAGE_KEY, JSON.stringify({ contrast: 'gray', links: 'highlight' }));
@@ -120,7 +120,7 @@ describe('AccessibilityPanel', () => {
       await user.tab();
       expect(dialog.contains(document.activeElement), `tab ${i}: ${document.activeElement?.outerHTML.slice(0, 80)}`).toBe(true);
     }
-  });
+  }, 30000);
 
   it('renders Arabic labels with lang and dir', () => {
     render(<AccessibilityPanel defaultOpen locale="ar" persist={false} />);

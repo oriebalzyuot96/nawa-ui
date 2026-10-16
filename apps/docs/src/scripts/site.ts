@@ -1,7 +1,7 @@
 // Site chrome behaviour: appearance (theme) controls, mobile menu, ⌘K palette, copy buttons,
 // package-manager memory, the home studio, motion pause, scroll-spy and small visual touches.
 // Everything degrades gracefully: without this script the pages are complete, readable documents.
-import { applyTheme, loadTheme, saveTheme } from '@pelagic-ui/core/theme';
+import { getThemeState, onThemeChange, switchTheme } from '@pelagic-ui/core/theme';
 
 const doc = document.documentElement;
 const ar = doc.lang === 'ar';
@@ -31,20 +31,31 @@ function announce(message: string) {
   window.setTimeout(() => (live.textContent = message), 60);
 }
 
-/* ---------- Appearance: mode, accent, shape ---------- */
-type Choice = { mode: string; accent: string; shape: string };
-const saved = (loadTheme() ?? {}) as Partial<Choice>;
-const choice: Choice = { mode: saved.mode ?? 'system', accent: saved.accent ?? 'violet', shape: saved.shape ?? 'default' };
+/* ---------- Appearance: mode, preset, accent, shape (animated with switchTheme) ---------- */
+// The saved choice was applied before first paint (ThemeScript). Every change goes through switchTheme(),
+// which reveals the new theme in a circle from the control that was used (instant under reduced motion)
+// and tells the AccessibilityPanel, which offers the same choices, so both stay in sync.
+const accentFallback = 'default';
+function syncAppearance(state = getThemeState()) {
+  const current: Record<string, string> = { mode: state.mode, accent: state.brand ? '' : state.accent ?? accentFallback, shape: state.shape };
+  for (const input of document.querySelectorAll<HTMLInputElement>('[data-theme-choice]')) {
+    input.checked = current[input.dataset.themeChoice!] === input.value || (input.dataset.themeChoice === 'accent' && current.accent === accentFallback && input.value === 'violet' && state.preset === 'default');
+  }
+  const preset = document.querySelector<HTMLSelectElement>('[data-theme-preset-choice]');
+  if (preset) preset.value = state.preset;
+}
+syncAppearance();
+onThemeChange((state) => syncAppearance(state));
 for (const input of document.querySelectorAll<HTMLInputElement>('[data-theme-choice]')) {
-  const key = input.dataset.themeChoice as keyof Choice;
-  input.checked = choice[key] === input.value;
   input.addEventListener('change', () => {
     if (!input.checked) return;
-    choice[key] = input.value;
-    applyTheme(choice as Parameters<typeof applyTheme>[0]);
-    saveTheme(choice as Parameters<typeof saveTheme>[0]);
+    void switchTheme({ [input.dataset.themeChoice!]: input.value }, { origin: input });
   });
 }
+document.querySelector<HTMLSelectElement>('[data-theme-preset-choice]')?.addEventListener('change', (e) => {
+  const select = e.currentTarget as HTMLSelectElement;
+  void switchTheme({ preset: select.value }, { origin: select });
+});
 
 /* ---------- Disclosures: appearance popover and the mobile menu ---------- */
 function disclosure(button: HTMLElement | null, panel: HTMLElement | null, opts: { useHidden: boolean; root?: HTMLElement | null }) {

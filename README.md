@@ -7,7 +7,7 @@
 **Accessible, themeable UI components for every framework.**
 React · Vue · Angular · Svelte · Astro · React Native · Flutter
 
-WCAG 2.2 AA · 21 themes + your own brand colors · accessibility modes · charts · 3D · motion · sound · icons · RTL & Arabic · MIT
+WCAG 2.2 AA · 27 themes + 10 color themes + your own brand colors · animated theme switch · accessibility modes · charts · 3D · motion · sound · icons · RTL & Arabic · MIT
 
 [**Live docs & demos**](https://oriebalzyuot96.github.io/pelagic-ui/) · [Components](https://oriebalzyuot96.github.io/pelagic-ui/components/) · [Themes](https://oriebalzyuot96.github.io/pelagic-ui/themes/) · [Accessibility modes](https://oriebalzyuot96.github.io/pelagic-ui/accessibility-modes/) · [Space builder](https://oriebalzyuot96.github.io/pelagic-ui/space/) · [العربية](https://oriebalzyuot96.github.io/pelagic-ui/ar/)
 
@@ -64,7 +64,7 @@ Framework packages (react, vue, @angular/*, svelte, astro, react-native, three) 
 | **Overlays** | Dialog, Drawer, Popover, Tooltip, ConfirmDialog (`useConfirm`), DynamicDialog (`useDialog`), BlockUI, ScrollTop, Inplace |
 | **Menus** | Menu, Menubar, TieredMenu, ContextMenu, MegaMenu, PanelMenu, Dock, SplitButton, SpeedDial, Breadcrumb |
 | **Media** | Carousel, Carousel3D, Galleria, Image (preview), ImageCompare, Avatar, Badge, Tag, Chip, MeterGroup, FileUpload, Terminal |
-| **Feedback** | `swal.fire()` illustrated alerts with presets, Toaster with `toast()` and promise toasts, 15 loaders, PageLoader, TopProgressBar, Skeletons, EmptyState with illustrations |
+| **Feedback** | `swal.fire()` illustrated alerts with presets, Toaster with `toast()` for every framework: spring motion in 6 positions, deck, swipe, pausing countdown, animated icons that morph after promises, avatars, undo, queue, polite / assertive announcements, 15 loaders, PageLoader, TopProgressBar, Skeletons, EmptyState with illustrations |
 | **Charts** | Bar, Line, Area, Pie, Donut, Scatter, Bubble, Radar, Sparkline, Gauge, Heatmap, Combo, Waterfall + primitives for custom charts — keyboard navigable, announced, with a data-table fallback |
 | **Motion & flows** | `animate`, springs, timelines, `Presence`, FLIP layout, drag-to-reorder, Wizard, Marquee, NumberTicker, TextReveal, SpotlightCard, BorderBeam, Aurora/Grid backgrounds, AnimatedTabs |
 | **3D** | TiltCard, FlipCard, CubeCarousel, Parallax, Text3D; WebGL Globe3D, Scene3D, ModelViewer, Chart3D, Particles |
@@ -79,7 +79,8 @@ The full catalogue is in React; Vue, Svelte, Astro, Angular, React Native and Fl
 ```
 
 - **Modes:** `light`, `dark`, `hc` (high contrast) — or follow the OS automatically.
-- **Accents:** violet (default), teal, indigo, rose, amber, emerald, slate. **Shapes:** sharp, default, round.
+- **Accents:** violet (default), teal, indigo, rose, amber, emerald, slate, ocean, coral. **Shapes:** sharp, default, round.
+- **Color themes** (`data-theme-preset`): lagoon, abyss, reef, kelp, sage, dune, aurora, merlot, ink, graphite. Whole palettes (surfaces, text, borders, status and accent) for light and dark, all WCAG AA.
 - Themes are plain CSS attributes, so they work in every framework and can be scoped to any element.
 
 **Any brand color**, with contrast guaranteed:
@@ -89,13 +90,22 @@ import { createTheme, applyCustomTheme } from 'pelagic/core/theme';
 applyCustomTheme(createTheme({ primary: '#ff6a00' })); // light, dark and high contrast, all WCAG AA
 ```
 
+**Animated switch:** a circle reveal from the control you used (View Transitions), a crossfade elsewhere, instant under reduced motion.
+
+```ts
+import { switchTheme } from 'pelagic/core/theme';
+button.onclick = (e) => switchTheme({ mode: 'dark' }, { origin: e }); // also { preset }, { accent }, { brand: '#ff6a00' }
+```
+
+Helpers: React and Vue `useThemeSwitch()`, Svelte `use:themeSwitch` and `$themeState`, Angular `PelagicThemeService.switch()`.
+
 Or bake it in at build time: `node packages/core/scripts/build.mjs --brand "#ff6a00"` (this also feeds the React Native and Flutter tokens).
 
 ## Accessibility
 
 Built in, and checked automatically on every build:
 
-- **5,540 contrast checks** across all themes, accessibility schemes and sample brand themes (text 4.5:1, controls and focus 3:1).
+- **22,580 contrast checks** across all themes, color themes (with every accent), accessibility schemes and sample brand themes (text 4.5:1, controls and focus 3:1).
 - WAI-ARIA keyboard patterns for every widget, focus traps and focus return in overlays, labelled fields with linked hints and errors, live-region announcements, 24px+ targets.
 - `prefers-reduced-motion`, `prefers-contrast` and Windows forced-colors support; logical CSS for RTL.
 - axe-core in unit tests, plus real-browser end-to-end tests (axe including color contrast, keyboard, console) on every docs page in light, dark and high contrast.
@@ -108,8 +118,10 @@ Built in, and checked automatically on every build:
 | Color vision | protanopia, deuteranopia, tritanopia, achromatopsia filters; patterns in charts |
 | Text | size 90–200%, line / letter / word / paragraph spacing, readable font (Atkinson Hyperlegible), align to start |
 | Reading | underlined or highlighted links, large focus ring, big cursor, reading guide, reading mask |
-| Motion & media | reduce or stop all animation and autoplay, hide decorative images, saturation |
+| Theme | mode, color theme, accent and your own color (color picker), applied with the animated switch |
+| Motion & media | full, reduce or stop all animation and autoplay, hide decorative images, saturation |
 | Interaction | large targets (44px) |
+| Sound | interface sounds on / off and sound style (when a sound engine is on the page) |
 
 ```ts
 import { applyA11yPrefs } from 'pelagic/core/a11y-prefs';

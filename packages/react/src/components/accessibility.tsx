@@ -9,6 +9,7 @@ import {
   type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
+  type SyntheticEvent,
 } from 'react';
 import { createPortal } from 'react-dom';
 import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
@@ -17,23 +18,39 @@ import {
   FONT_SCALE_MAX,
   FONT_SCALE_MIN,
   a11yOptions,
-  a11yPanelSchema,
+  accentSwatches,
   announceA11yChange,
   applyA11yPrefs,
   contrastSwatches,
   countActiveA11yPrefs,
   defaultA11yPrefs,
   getA11yLabels,
+  isExternalControl,
   loadA11yPrefs,
   normalizeA11yPrefs,
+  panelGroups,
+  presetSwatches,
   saveA11yPrefs,
+  themeControlValue,
+  themePanelOptions,
   type A11yControl,
+  type A11yExternalKey,
   type A11yGroup,
   type A11yPanelLabelOverrides,
   type A11yPanelLabels,
   type A11yPrefKey,
   type A11yPrefs,
 } from '@pelagic-ui/core/a11y-prefs';
+import {
+  THEME_CHANGE_EVENT,
+  getThemeState,
+  switchTheme as coreSwitchTheme,
+  type SwitchThemeOptions,
+  type ThemeChoice,
+  type ThemeState,
+  type ThemeSwitchOrigin,
+} from '@pelagic-ui/core/theme';
+import { SOUND_CHANGE_EVENT, SOUND_PREFS_EVENT, getSoundPrefs, hasSoundEngine, setSoundPrefs, type SoundPrefs } from '@pelagic-ui/core/sound';
 import { cx } from '../utils';
 
 export type { A11yPrefs, A11yPrefKey, A11yPanelLabels, A11yPanelLabelOverrides } from '@pelagic-ui/core/a11y-prefs';
@@ -47,8 +64,64 @@ export {
   defaultA11yPrefs,
   normalizeA11yPrefs,
 } from '@pelagic-ui/core/a11y-prefs';
-export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode } from '@pelagic-ui/core/theme';
-export type { CustomTheme, CreateThemeOptions } from '@pelagic-ui/core/theme';
+export { createTheme, applyCustomTheme, removeCustomTheme, themeToCode, switchTheme, getThemeState, onThemeChange, restoreTheme } from '@pelagic-ui/core/theme';
+export type { CustomTheme, CreateThemeOptions, ThemeState, SwitchThemeOptions, ThemeSwitchOrigin, ThemePreset } from '@pelagic-ui/core/theme';
+
+/* ---------- Theme switch ---------- */
+
+const EMPTY_THEME = getThemeState(null);
+
+/**
+ * The live theme of <html> (or `target`) and an animated switch. The switch takes a theme change and,
+ * optionally, where the reveal starts: the click event of the control (its pointer position, or the control
+ * itself for keyboard clicks), an element or { x, y }.
+ *
+ *   const { theme, switchTheme } = useThemeSwitch();
+ *   <button onClick={(e) => switchTheme({ mode: theme.mode === 'dark' ? 'light' : 'dark' }, e)}>Toggle</button>
+ *
+ * Reduced motion (OS or data-a11y-motion) switches instantly. The state starts at the defaults on the server
+ * and the first client render (no hydration mismatch), then follows every switchTheme() on the page.
+ */
+export function useThemeSwitch({ target }: { target?: HTMLElement | null } = {}) {
+  const [theme, setTheme] = useState<ThemeState>(EMPTY_THEME);
+  useEffect(() => {
+    const el = target ?? document.documentElement;
+    const sync = () => setTheme(getThemeState(el));
+    sync();
+    el.addEventListener(THEME_CHANGE_EVENT, sync);
+    return () => el.removeEventListener(THEME_CHANGE_EVENT, sync);
+  }, [target]);
+  const switchTheme = useCallback(
+    (next: ThemeChoice, origin?: ThemeSwitchOrigin | SyntheticEvent, options?: Omit<SwitchThemeOptions, 'origin'>) =>
+      coreSwitchTheme(next, { target: target ?? undefined, ...options, origin: origin as ThemeSwitchOrigin }),
+    [target],
+  );
+  return { theme, switchTheme };
+}
+
+/**
+ * The user's interface-sound preferences, shared with every sound engine on the page (SoundProvider).
+ * Returns [prefs, set(patch), available] where `available` is true once a sound engine exists.
+ */
+export function useSoundPrefs() {
+  const [prefs, setPrefs] = useState<SoundPrefs>({ enabled: false, theme: 'soft', volume: 0.6, reduced: false });
+  const [available, setAvailable] = useState(false);
+  useEffect(() => {
+    const sync = () => {
+      setPrefs(getSoundPrefs());
+      setAvailable(hasSoundEngine());
+    };
+    sync();
+    window.addEventListener(SOUND_CHANGE_EVENT, sync);
+    window.addEventListener(SOUND_PREFS_EVENT, sync);
+    return () => {
+      window.removeEventListener(SOUND_CHANGE_EVENT, sync);
+      window.removeEventListener(SOUND_PREFS_EVENT, sync);
+    };
+  }, []);
+  const set = useCallback((patch: Partial<SoundPrefs>) => setPrefs(setSoundPrefs(patch)), []);
+  return [prefs, set, available] as const;
+}
 
 type Target = HTMLElement | null | undefined | (() => HTMLElement | null | undefined);
 const resolveTarget = (t: Target): HTMLElement | null =>
@@ -122,6 +195,20 @@ export function AccessibilityIcon(props: { className?: string }) {
   );
 }
 const groupIcons: Record<A11yGroup['id'], ReactNode> = {
+  appearance: (
+    <svg {...svgProps}>
+      <path d="M12 3.75a8.25 8.25 0 1 0 0 16.5c1.1 0 1.7-.7 1.7-1.6 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-.9.7-1.6 1.6-1.6h1.9a4.1 4.1 0 0 0 4.1-4.1c0-3.7-3.7-6.8-8.3-6.8z" />
+      <circle cx="7.6" cy="11.2" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="10.4" cy="7.6" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="14.9" cy="7.9" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  ),
+  sound: (
+    <svg {...svgProps}>
+      <path d="M4.5 9.5h3l4.5-3.75v12.5L7.5 14.5h-3z" />
+      <path d="M15.5 9.25a4 4 0 0 1 0 5.5M18 7a7.2 7.2 0 0 1 0 10" />
+    </svg>
+  ),
   color: (
     <svg {...svgProps}>
       <circle cx="12" cy="12" r="8.25" />
@@ -184,8 +271,170 @@ interface ControlProps {
   onSet: (key: A11yPrefKey, value: unknown) => void;
 }
 
-function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
+interface ExternalProps {
+  control: A11yControl;
+  labels: A11yPanelLabels;
+  idBase: string;
+  theme: ThemeState;
+  sound: SoundPrefs;
+  onTheme: (key: A11yExternalKey | 'reset', value: string | null, origin?: SyntheticEvent | Element | null, options?: Omit<SwitchThemeOptions, 'origin'>) => void;
+  onBrandPreview: (value: string) => void;
+  onSound: (patch: Partial<SoundPrefs>) => void;
+}
+
+/** Theme (mode, color theme, accent, own color) and sound controls: their values live in theme.js / sound.js. */
+function ExternalControl({ control, labels, idBase, theme, sound, onTheme, onBrandPreview, onSound }: ExternalProps) {
   const { key, type } = control;
+  const text = labels.controls[key];
+  const labelId = `${idBase}-${key}-label`;
+  const hintId = text.hint ? `${idBase}-${key}-hint` : undefined;
+  const hint = text.hint ? (
+    <p id={hintId} className="pl-a11y-control__hint">
+      {text.hint}
+    </p>
+  ) : null;
+  const isTheme = control.source === 'theme';
+
+  if (type === 'switch') {
+    return (
+      <div className="pl-a11y-control pl-a11y-control--switch">
+        <div className="pl-a11y-control__text">
+          <span id={labelId} className="pl-a11y-control__label">
+            {text.label}
+          </span>
+          {hint}
+        </div>
+        <button
+          type="button"
+          role="switch"
+          className="pl-switch"
+          aria-checked={sound.enabled}
+          aria-labelledby={labelId}
+          aria-describedby={hintId}
+          data-sound-key="enabled"
+          onClick={() => onSound({ enabled: !sound.enabled })}
+        />
+      </div>
+    );
+  }
+
+  if (type === 'color') {
+    const id = `${idBase}-${key}`;
+    const fallback = presetSwatches[theme.preset]?.light.primary ?? presetSwatches.default.light.primary;
+    return (
+      <div className="pl-a11y-control pl-a11y-brand">
+        <label htmlFor={id} id={labelId} className="pl-a11y-control__label">
+          {text.label}
+        </label>
+        <div className="pl-a11y-brand__row">
+          <input
+            id={id}
+            type="color"
+            className="pl-a11y-brand__input"
+            value={theme.brand ?? fallback}
+            aria-describedby={hintId}
+            data-theme-key="brand"
+            data-active={theme.brand ? 'true' : 'false'}
+            // React's onChange is the native input event: the theme follows the picker live and is saved.
+            onChange={(e) => onBrandPreview(e.target.value)}
+          />
+          <span className="pl-a11y-brand__hex" dir="ltr" aria-hidden="true">
+            {theme.brand ?? ''}
+          </span>
+          {theme.brand && (
+            <button type="button" className="pl-btn pl-btn--ghost pl-btn--sm" onClick={(e) => onTheme('brand', null, e)}>
+              {text.clear ?? 'Remove'}
+            </button>
+          )}
+        </div>
+        {hint}
+      </div>
+    );
+  }
+
+  const values: readonly string[] = isTheme ? (themePanelOptions as unknown as Record<string, readonly string[]>)[key] : themePanelOptions.soundTheme;
+  const current = isTheme ? themeControlValue(theme, key as 'mode' | 'preset' | 'accent') : sound.theme;
+  const anyChecked = current !== null && values.includes(current);
+  const select = (v: string, origin?: SyntheticEvent | Element) => (isTheme ? onTheme(key as A11yExternalKey, v, origin) : onSound({ theme: v as SoundPrefs['theme'] }));
+  const columns = type === 'presets' ? 3 : values.length;
+  const cls = type === 'presets' ? 'pl-a11y-presets' : type === 'swatches' ? 'pl-a11y-swatches' : 'pl-segmented';
+  const groupData = isTheme ? { 'data-theme-key': key } : { 'data-sound-key': 'theme' };
+  return (
+    <div className="pl-a11y-control">
+      <span id={labelId} className="pl-a11y-control__label">
+        {text.label}
+      </span>
+      {type !== 'segmented' && hint}
+      <div role="radiogroup" aria-labelledby={labelId} aria-describedby={hintId} className={cls} data-columns={type === 'presets' ? 3 : undefined} {...groupData}>
+        {values.map((o, i) => {
+          const checked = current === o;
+          const label = labels.options[key]?.[o] ?? o;
+          const common = {
+            type: 'button' as const,
+            role: 'radio',
+            'aria-checked': checked,
+            tabIndex: checked || (!anyChecked && i === 0) ? 0 : -1,
+            [isTheme ? 'data-theme-value' : 'data-sound-value']: o,
+            onClick: (e: SyntheticEvent) => select(o, e),
+            onKeyDown: (e: KeyboardEvent<HTMLElement>) => {
+              const group = e.currentTarget.closest('[role="radiogroup"]');
+              radioKeys(e, values, String(current), (v) => select(v, group?.querySelectorAll<HTMLElement>('[role="radio"]')[values.indexOf(v)] ?? undefined), columns);
+            },
+          };
+          if (type === 'presets') {
+            const sw = presetSwatches[o];
+            const style = {
+              '--pl-ps-ls': sw.light.surface,
+              '--pl-ps-la': sw.light.alt,
+              '--pl-ps-lp': sw.light.primary,
+              '--pl-ps-lt': sw.light.text,
+              '--pl-ps-ds': sw.dark.surface,
+              '--pl-ps-da': sw.dark.alt,
+              '--pl-ps-dp': sw.dark.primary,
+              '--pl-ps-dt': sw.dark.text,
+            } as CSSProperties;
+            return (
+              <button key={o} {...common} className="pl-a11y-preset" style={style}>
+                <span className="pl-a11y-preset__art" aria-hidden="true">
+                  <span className="pl-a11y-preset__half pl-a11y-preset__half--light">
+                    <i />
+                    <b />
+                  </span>
+                  <span className="pl-a11y-preset__half pl-a11y-preset__half--dark">
+                    <i />
+                    <b />
+                  </span>
+                </span>
+                <span className="pl-a11y-preset__name">{label}</span>
+                <span className="pl-a11y-tile__check" aria-hidden="true">
+                  <CheckIcon />
+                </span>
+              </button>
+            );
+          }
+          if (type === 'swatches') {
+            const color = o === 'default' ? presetSwatches[theme.preset]?.light.primary ?? presetSwatches.default.light.primary : accentSwatches[o];
+            return (
+              <button key={o} {...common} className={cx('pl-a11y-swatch', o === 'default' && 'pl-a11y-swatch--default')} aria-label={label} title={label} style={{ '--pl-swatch': color } as CSSProperties}>
+                <CheckIcon />
+              </button>
+            );
+          }
+          return (
+            <button key={o} {...common} className="pl-segmented__item">
+              {label}
+            </button>
+          );
+        })}
+      </div>
+      {type === 'segmented' && hint}
+    </div>
+  );
+}
+
+function Control({ control, prefs, labels, idBase, onSet }: ControlProps) {
+  const { type } = control;
+  const key = control.key as A11yPrefKey;
   const text = labels.controls[key];
   const labelId = `${idBase}-${key}-label`;
   const hintId = text.hint ? `${idBase}-${key}-hint` : undefined;
@@ -369,6 +618,10 @@ export interface AccessibilityPanelProps extends UseA11yPrefsOptions {
   preview?: boolean;
   /** Limit and order the groups. Default: all. */
   groups?: Array<A11yGroup['id']>;
+  /** Show the Theme group (mode, color theme, accent, own color). Default true. */
+  appearance?: boolean;
+  /** Sound group: 'auto' (default) once a sound engine exists (SoundProvider), true always, false never. */
+  sound?: boolean | 'auto';
   className?: string;
 }
 
@@ -388,10 +641,14 @@ export function AccessibilityPanel({
   labels: labelOverrides,
   preview = true,
   groups,
+  appearance = true,
+  sound: soundOption = 'auto',
   className,
   ...prefsOptions
 }: AccessibilityPanelProps) {
   const [prefs, set, reset] = useA11yPrefs(prefsOptions);
+  const { theme, switchTheme } = useThemeSwitch();
+  const [soundPrefs, setSound, soundAvailable] = useSoundPrefs();
   const labels = useMemo(() => getA11yLabels(locale ?? 'en', labelOverrides), [locale, labelOverrides]);
   const [innerOpen, setInnerOpen] = useState(defaultOpen);
   const open = openProp ?? innerOpen;
@@ -422,6 +679,44 @@ export function AccessibilityPanel({
     reset();
     setMessage(labels.resetDone);
   };
+  const onTheme = useCallback(
+    (key: A11yExternalKey | 'reset', value: string | null, origin?: SyntheticEvent | Element | null, options?: Omit<SwitchThemeOptions, 'origin'>) => {
+      const next: ThemeChoice = key === 'reset' ? { preset: 'default', accent: null, brand: null } : { [key]: value };
+      void switchTheme(next, origin ?? undefined, options);
+      setMessage(key === 'reset' ? labels.themeReset : announceA11yChange(labels, key, value ?? false));
+    },
+    [switchTheme, labels],
+  );
+  // The picker fires on every move: follow it once per frame, without the reveal animation.
+  const brandFrame = useRef(0);
+  const brandAnnounce = useRef(0);
+  const onBrandPreview = useCallback(
+    (value: string) => {
+      cancelAnimationFrame(brandFrame.current);
+      brandFrame.current = requestAnimationFrame(() => {
+        void switchTheme({ brand: value }, undefined, { animate: false });
+      });
+      // Announce once the picker settles, not on every move.
+      clearTimeout(brandAnnounce.current);
+      brandAnnounce.current = window.setTimeout(() => setMessage(announceA11yChange(labels, 'brand', value)), 700);
+    },
+    [switchTheme, labels],
+  );
+  useEffect(
+    () => () => {
+      cancelAnimationFrame(brandFrame.current);
+      clearTimeout(brandAnnounce.current);
+    },
+    [],
+  );
+  const onSound = useCallback(
+    (patch: Partial<SoundPrefs>) => {
+      setSound(patch);
+      if (patch.enabled !== undefined) setMessage(announceA11yChange(labels, 'sound', patch.enabled));
+      else if (patch.theme) setMessage(announceA11yChange(labels, 'soundTheme', patch.theme));
+    },
+    [setSound, labels],
+  );
 
   useEffect(() => {
     const panel = panelRef.current;
@@ -450,7 +745,8 @@ export function AccessibilityPanel({
   }, [open, setOpen, mounted]);
 
   const active = countActiveA11yPrefs(prefs);
-  const shownGroups = groups ? groups.map((g) => a11yPanelSchema.find((s) => s.id === g)).filter((g): g is A11yGroup => !!g) : a11yPanelSchema;
+  const shownGroups = panelGroups(groups, { appearance, sound: soundOption }).filter((g) => g.id !== 'sound' || soundOption === true || soundAvailable);
+  const themeIsDefault = theme.preset === 'default' && !theme.accent && !theme.brand;
   const isAr = !!locale && locale.toLowerCase().startsWith('ar');
   const langProps = locale ? { lang: isAr ? 'ar' : 'en', dir: isAr ? 'rtl' : 'ltr' } : {};
   const activeText = labels.active.replace('{n}', String(active));
@@ -502,9 +798,20 @@ export function AccessibilityPanel({
                 {groupIcons[group.id]}
                 {labels.groups[group.id]}
               </h3>
-              {group.controls.map((c) => (
-                <Control key={c.key} control={c} prefs={prefs} labels={labels} idBase={panelId} onSet={onSet} />
-              ))}
+              {group.controls.map((c) =>
+                isExternalControl(c) ? (
+                  <ExternalControl key={c.key} control={c} labels={labels} idBase={panelId} theme={theme} sound={soundPrefs} onTheme={onTheme} onBrandPreview={onBrandPreview} onSound={onSound} />
+                ) : (
+                  <Control key={c.key} control={c} prefs={prefs} labels={labels} idBase={panelId} onSet={onSet} />
+                ),
+              )}
+              {group.id === 'appearance' && (
+                <div className="pl-a11y-group__actions">
+                  <button type="button" className="pl-btn pl-btn--ghost pl-btn--sm" disabled={themeIsDefault} onClick={(e) => onTheme('reset', null, e)}>
+                    {labels.themeReset}
+                  </button>
+                </div>
+              )}
             </section>
           ))}
         </div>

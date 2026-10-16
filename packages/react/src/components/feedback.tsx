@@ -18,6 +18,16 @@ import {
 import { createPortal } from 'react-dom';
 import { lockScroll, trapFocus } from '@pelagic-ui/core/a11y';
 import { emitUiSound, type UiSoundName } from '@pelagic-ui/core/sound';
+import {
+  TOAST_SWIPE_THRESHOLD as CORE_SWIPE_THRESHOLD,
+  createToastAnnouncer,
+  getToastLabels,
+  toastDeckLayout,
+  toastIconSVG,
+  toastStore as coreToastStore,
+  type ToastAvatar,
+  type ToastStore as CoreToastStore,
+} from '@pelagic-ui/core/toast';
 import { Illustration, isIllustrationName, type IllustrationName } from '@pelagic-ui/illustrations/react';
 import { cx } from '../utils';
 
@@ -1017,6 +1027,10 @@ export interface ToastOptions {
   icon?: ReactNode;
   action?: ToastAction;
   cancel?: ToastAction;
+  /** Shorthand for an "Undo" action (label from the Toaster's `undoLabel`). */
+  undo?: ToastAction['onClick'] | ToastAction;
+  /** A picture or initials in place of the icon: chat, mention or assignment toasts. */
+  avatar?: string | ToastAvatar;
   closeButton?: boolean;
   /** Default true: swipe, Escape and the close button can dismiss it. */
   dismissible?: boolean;
@@ -1035,6 +1049,8 @@ export interface ToastRecord extends ToastOptions {
   message: ReactNode;
   version: number;
   dismissed: boolean;
+  /** Previous type when it changed (loading → success morphs the icon). */
+  from?: ToastType;
 }
 
 export interface ToastPromiseMessages<T> {
@@ -1044,45 +1060,19 @@ export interface ToastPromiseMessages<T> {
   description?: ReactNode;
 }
 
-const toastStore = createStore<ToastRecord[]>([]);
-let toastSeq = 0;
-/** Exit animation length before a dismissed toast leaves the DOM. */
-const TOAST_EXIT_MS = 200;
-
-function toastSound(type: ToastType): UiSoundName | null {
-  if (type === 'loading') return null;
-  return type === 'default' ? 'notification' : type;
-}
+// The page-wide queue lives in @pelagic-ui/core/toast, shared with every other Pelagic toaster.
+const toastStore = coreToastStore as unknown as CoreToastStore<ReactNode, ReactMouseEvent<HTMLButtonElement>> & Store<ToastRecord[]>;
 
 function upsertToast(message: ReactNode, opts: ToastOptions = {}): ToastId {
-  const list = toastStore.get();
-  const id = opts.id ?? `pl-toast-${++toastSeq}`;
-  const existing = list.find((t) => t.id === id);
-  const nextType = opts.type ?? existing?.type ?? 'default';
-  const silent = (opts.sound ?? existing?.sound) === false;
-  if (!silent && (!existing || existing.type !== nextType || existing.dismissed)) {
-    const s = opts.sound || toastSound(nextType);
-    if (s) emitUiSound(s);
-  }
-  if (existing) {
-    toastStore.set(list.map((t) => (t.id === id ? { ...t, ...opts, message, id, type: opts.type ?? t.type, version: t.version + 1, dismissed: false } : t)));
-  } else {
-    toastStore.set([...list, { ...opts, id, message, type: opts.type ?? 'default', version: 0, dismissed: false }]);
-  }
-  return id;
+  return toastStore.upsert(message, opts as never);
 }
 
 function removeToast(id?: ToastId) {
-  toastStore.set(id === undefined ? [] : toastStore.get().filter((t) => t.id !== id));
+  toastStore.remove(id);
 }
 
 function dismissToast(id?: ToastId) {
-  const targets = toastStore.get().filter((t) => !t.dismissed && (id === undefined || t.id === id));
-  if (targets.length === 0) return;
-  const ids = new Set(targets.map((t) => t.id));
-  toastStore.set(toastStore.get().map((t) => (ids.has(t.id) ? { ...t, dismissed: true } : t)));
-  targets.forEach((t) => t.onDismiss?.(t));
-  setTimeout(() => toastStore.set(toastStore.get().filter((t) => !(ids.has(t.id) && t.dismissed))), TOAST_EXIT_MS);
+  toastStore.dismiss(id);
 }
 
 const typed = (type: ToastType) => (message: ReactNode, opts?: Omit<ToastOptions, 'type'>) => upsertToast(message, { ...opts, type });
@@ -1155,17 +1145,32 @@ export interface ToasterProps {
   /** Region name for assistive tech. */
   label?: string;
   closeLabel?: string;
+  /** Label of the `undo` shorthand action. Default 'Undo'. */
+  undoLabel?: string;
+  /** Status words read before each message ('Error: …'). Default English; 'ar' for Arabic. */
+  locale?: string;
   dir?: 'ltr' | 'rtl' | 'auto';
   className?: string;
 }
 
 /** Horizontal swipe distance (px) that dismisses a toast. */
-export const TOAST_SWIPE_THRESHOLD = 64;
+export const TOAST_SWIPE_THRESHOLD = CORE_SWIPE_THRESHOLD;
 
-function ToastGlyph({ type }: { type: ToastType }) {
-  if (type === 'loading') return <LoaderArt type="ring" className="pl-toaster__spinner" />;
+/** The animated icon shared with every Pelagic toaster (static, trusted SVG markup from core). */
+function ToastGlyph({ type, from }: { type: ToastType; from?: ToastType }) {
   if (type === 'default') return null;
-  return <StatusGlyph tone={type} className="pl-glyph--sm" />;
+  return <span key={type} style={{ display: 'contents' }} dangerouslySetInnerHTML={{ __html: toastIconSVG(type, { from }) }} />;
+}
+
+function ToastAvatarView({ avatar }: { avatar: string | ToastAvatar }) {
+  const a = typeof avatar === 'string' ? { src: avatar } : avatar;
+  if (a.src) return <img className="pl-toaster__avatar" src={a.src} alt={a.alt ?? ''} width={36} height={36} decoding="async" />;
+  const initials = a.initials ?? String(a.name ?? '?').split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
+  return (
+    <span className="pl-toaster__avatar pl-toaster__avatar--initials" aria-hidden="true">
+      {initials}
+    </span>
+  );
 }
 
 interface ToastViewProps {
@@ -1181,11 +1186,14 @@ interface ToastViewProps {
   closeButton: boolean;
   progress: boolean;
   closeLabel: string;
+  undoLabel: string;
+  statusLabels: Record<string, string>;
   onHeight: (id: ToastId, height: number) => void;
   onSwipeChange: (active: boolean) => void;
+  onAnnounce: (t: ToastRecord, text: string) => void;
 }
 
-function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isTop, defaultDuration, closeButton, progress, closeLabel, onHeight, onSwipeChange }: ToastViewProps) {
+function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isTop, defaultDuration, closeButton, progress, closeLabel, undoLabel, statusLabels, onHeight, onSwipeChange, onAnnounce }: ToastViewProps) {
   const ref = useRef<HTMLLIElement>(null);
   const duration = t.duration ?? (t.type === 'loading' ? Infinity : defaultDuration);
   const finite = Number.isFinite(duration);
@@ -1202,6 +1210,14 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
     onHeight(t.id, el.getBoundingClientRect().height);
     el.style.height = prev;
   }, [t.id, t.version, t.message, t.description, onHeight]);
+
+  // Speak each version once, through the Toaster's polite or assertive region.
+  useEffect(() => {
+    if (t.dismissed) return;
+    const text = ref.current?.querySelector('.pl-toaster__body')?.textContent ?? '';
+    onAnnounce(t, text);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [t.version, t.dismissed]);
 
   // Auto-dismiss with pause/resume; restarts when the toast is updated.
   const remaining = useRef(duration);
@@ -1271,8 +1287,9 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
   };
 
   const collapsedBack = !expanded && index > 0;
-  const isError = t.type === 'error';
-  const y = expanded ? offset : index * 14;
+  const undo = t.undo ? (typeof t.undo === 'function' ? { label: undoLabel, onClick: t.undo } : t.undo) : undefined;
+  const mainAction = t.action ?? undo;
+  const y = offset;
   const style = vars({
     '--pl-toast-y': `${isTop ? y : -y}px`,
     '--pl-toast-scale': expanded ? 1 : Math.max(0.8, 1 - index * 0.055),
@@ -1285,11 +1302,9 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
   return (
     <li
       ref={ref}
-      // Items stay plain list items (valid ARIA); the list is a polite live region and errors interrupt.
-      aria-live={isError ? 'assertive' : undefined}
-      aria-atomic="true"
+      // Plain list items: the Toaster's two live regions speak them (errors interrupt, nothing twice).
       tabIndex={0}
-      className={cx('pl-toaster__toast', `pl-toaster__toast--${t.type}`, t.className)}
+      className={cx('pl-toaster__toast', `pl-toaster__toast--${t.type}`, t.avatar && 'pl-toaster__toast--avatar', t.className)}
       data-type={t.type}
       data-front={index === 0 || undefined}
       data-collapsed={collapsedBack || undefined}
@@ -1303,21 +1318,29 @@ function ToastView({ t, index, count, offset, frontHeight, expanded, paused, isT
       onPointerCancel={endSwipe}
       onKeyDown={onKeyDown}
     >
-      {(t.icon ?? t.type !== 'default') && <span className="pl-toaster__icon">{t.icon ?? <ToastGlyph type={t.type} />}</span>}
+      {t.avatar ? (
+        <ToastAvatarView avatar={t.avatar} />
+      ) : (
+        (t.icon ?? t.type !== 'default') && (
+          <span className="pl-toaster__icon" aria-hidden="true">
+            {t.icon ?? <ToastGlyph type={t.type} from={t.from} />}
+          </span>
+        )
+      )}
       <div className="pl-toaster__body">
-        {t.type !== 'default' && t.type !== 'loading' && <span className="pl-sr-only">{DEFAULT_STATUS_LABEL[t.type]}: </span>}
+        {t.type !== 'default' && <span className="pl-sr-only">{statusLabels[t.type] ?? t.type}: </span>}
         <div className="pl-toaster__title">{t.message}</div>
         {t.description != null && <div className="pl-toaster__desc">{t.description}</div>}
-        {(t.action || t.cancel) && (
+        {(mainAction || t.cancel) && (
           <div className="pl-toaster__actions">
             {t.cancel && (
               <button type="button" className="pl-toaster__btn pl-toaster__btn--cancel" onClick={runAction(t.cancel)}>
                 {t.cancel.label}
               </button>
             )}
-            {t.action && (
-              <button type="button" className="pl-toaster__btn pl-toaster__btn--action" onClick={runAction(t.action)}>
-                {t.action.label}
+            {mainAction && (
+              <button type="button" className="pl-toaster__btn pl-toaster__btn--action" onClick={runAction(mainAction)}>
+                {mainAction.label}
               </button>
             )}
           </div>
@@ -1353,11 +1376,22 @@ export function Toaster({
   gap = 12,
   hotkey = DEFAULT_HOTKEY,
   hotkeyLabel = 'Alt+T',
-  label = 'Notifications',
-  closeLabel = 'Dismiss notification',
+  label,
+  closeLabel,
+  undoLabel,
+  locale,
   dir,
   className,
 }: ToasterProps) {
+  const L = getToastLabels(locale ?? 'en');
+  const regionLabel = label ?? L.region;
+  const politeRef = useRef<HTMLDivElement>(null);
+  const assertiveRef = useRef<HTMLDivElement>(null);
+  const announcer = useRef<ReturnType<typeof createToastAnnouncer> | null>(null);
+  const onAnnounce = useCallback((t: ToastRecord, text: string) => {
+    announcer.current ??= createToastAnnouncer(politeRef.current, assertiveRef.current);
+    announcer.current.announce(t.id, t.version, text, t.type === 'error');
+  }, []);
   const toasts = useStore(toastStore);
   const listRef = useRef<HTMLOListElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -1396,21 +1430,17 @@ export function Toaster({
 
   const shown = [...toasts].reverse().slice(0, Math.max(1, visibleToasts));
   const expanded = expand || hovered || focusWithin;
-  const paused = hovered || focusWithin || docHidden || swiping;
+  const paused = hovered || focusWithin || docHidden || swiping || toastStore.isPaused();
   const isTop = position.startsWith('top');
   const heightOf = (t: ToastRecord) => heights[String(t.id)] ?? 0;
   const frontHeight = shown[0] ? heightOf(shown[0]) : 0;
-  const offsets: number[] = [];
-  shown.reduce((acc, t, i) => {
-    offsets[i] = acc + i * gap;
-    return acc + heightOf(t);
-  }, 0);
-  const expandedHeight = shown.reduce((acc, t) => acc + heightOf(t), 0) + Math.max(0, shown.length - 1) * gap;
-  const listHeight = expanded ? expandedHeight : frontHeight + Math.max(0, shown.length - 1) * 14;
+  const deck = toastDeckLayout(shown.map(heightOf), { expanded, gap });
+  const offsets = deck.items.map((d) => d.y);
+  const listHeight = deck.height;
 
   return (
     <section
-      aria-label={`${label} (${hotkeyLabel})`}
+      aria-label={hotkey ? `${regionLabel} (${hotkeyLabel})` : regionLabel}
       className={cx('pl-toaster', `pl-toaster--${position}`, richColors && 'pl-toaster--rich', className)}
       data-expanded={expanded || undefined}
       dir={dir}
@@ -1422,8 +1452,6 @@ export function Toaster({
       <ol
         ref={listRef}
         tabIndex={-1}
-        aria-live="polite"
-        aria-relevant="additions text"
         className="pl-toaster__list"
         style={{ height: listHeight || undefined }}
         onMouseEnter={() => setHovered(true)}
@@ -1443,12 +1471,17 @@ export function Toaster({
             defaultDuration={duration}
             closeButton={closeButton}
             progress={progress}
-            closeLabel={closeLabel}
+            closeLabel={closeLabel ?? L.close}
+            undoLabel={undoLabel ?? L.undo}
+            statusLabels={L.status}
             onHeight={onHeight}
             onSwipeChange={setSwiping}
+            onAnnounce={onAnnounce}
           />
         ))}
       </ol>
+      <div ref={politeRef} className="pl-sr-only" role="status" aria-live="polite" aria-atomic="true" data-toast-announcer="polite" />
+      <div ref={assertiveRef} className="pl-sr-only" aria-live="assertive" aria-atomic="true" data-toast-announcer="assertive" />
     </section>
   );
 }

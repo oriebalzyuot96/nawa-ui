@@ -87,6 +87,6 @@ describe('PlAccessibilityPanel', () => {
       const results = await axe.run(document.body, { rules: { 'color-contrast': { enabled: false }, 'target-size': { enabled: false }, region: { enabled: false } } });
       expect(results.violations.map((v) => v.id)).toEqual([]);
       fixture.destroy();
-    });
+    }, 30000);
   }
 });

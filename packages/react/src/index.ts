@@ -8,7 +8,7 @@ export * from './components/overlay';
 export { getPageItems, cx } from './utils';
 export { applyTheme, saveTheme, loadTheme, THEME_STORAGE_KEY } from '@pelagic-ui/core/theme';
 export type { ThemeChoice } from '@pelagic-ui/core/theme';
-export type { ThemeMode, ThemeAccent, ThemeShape } from '@pelagic-ui/core/tokens';
+export type { ThemeMode, ThemeAccent, ThemeShape, ThemePreset } from '@pelagic-ui/core/tokens';
 // PrimeNG parity groups
 export * from './components/forms-advanced';
 export * from './components/menus-overlays';

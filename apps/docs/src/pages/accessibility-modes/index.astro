@@ -40,7 +40,9 @@ const modes = [
   ['Focus indicator', 'data-a11y-focus', 'large', '4px outline plus a wide halo on everything focusable.', '2.4.7, 2.4.13'],
   ['Big cursor', 'data-a11y-cursor', 'large', '48px SVG cursors (arrow, hand, text) with a light outline that reads on any background.', ''],
   ['Reading guide / mask', 'data-a11y-reading-guide · data-a11y-reading-mask', '(present)', 'A band that follows the pointer and keyboard focus, or a mask that dims everything else.', ''],
-  ['Motion', 'data-a11y-motion', 'reduce · off', 'Reduce matches prefers-reduced-motion; off stops every animation and transition and pauses autoplaying media.', '2.2.2, 2.3.3'],
+  ['Motion', 'data-a11y-motion', 'full · reduce · off', 'Full keeps animations on even when the device asks to reduce motion; reduce matches prefers-reduced-motion; off stops every animation and transition and pauses autoplaying media. The animated theme switch follows the same setting.', '2.2.2, 2.3.3'],
+  ['Theme', 'data-theme · data-theme-preset · data-accent', 'system · light · dark · hc; 10 presets; 9 accents; any brand color', 'The panel’s Theme group: mode, named color themes, accent and your own color (createTheme keeps it WCAG AA). Changes reveal in a circle from the control you used.', '1.4.3, 1.4.11'],
+  ['Sound', 'pl-sound (storage)', 'on · off; soft · crisp · playful · minimal', 'Interface sounds through the Pelagic sound engine. The group appears when the page has a sound engine.', '1.4.2'],
   ['Decorative images', 'data-a11y-images', 'hide', 'Hides images with empty alt text, presentation images, illustrations and [data-decorative].', ''],
   ['Large targets', 'data-a11y-targets', 'large', 'Every control at least 44 × 44 px with any pointer.', '2.5.5, 2.5.8'],
 ];

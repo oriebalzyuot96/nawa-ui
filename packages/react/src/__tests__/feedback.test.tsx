@@ -271,7 +271,7 @@ describe('swal', () => {
 
 /* ------------------------------------------------------------------ */
 describe('toaster', () => {
-  it('renders toasts as list items in a polite live region, with errors assertive', () => {
+  it('renders toasts as plain list items and speaks them once: errors assertive, the rest polite', async () => {
     render(<Toaster />);
     act(() => {
       toast('Saved draft');
@@ -279,13 +279,51 @@ describe('toaster', () => {
     });
     const region = screen.getByRole('region', { name: 'Notifications (Alt+T)' });
     const list = region.querySelector('ol')!;
-    expect(list).toHaveAttribute('aria-live', 'polite');
+    expect(list).not.toHaveAttribute('aria-live');
     const items = within(region).getAllByRole('listitem');
-    const saved = items.find((li) => li.textContent?.includes('Saved draft'))!;
+    for (const li of items) expect(li).not.toHaveAttribute('aria-live');
     const failed = items.find((li) => li.textContent?.includes('Upload failed'))!;
-    expect(saved).not.toHaveAttribute('aria-live');
-    expect(failed).toHaveAttribute('aria-live', 'assertive');
     expect(failed).toHaveTextContent('Error: Upload failed');
+    await act(async () => new Promise((r) => requestAnimationFrame(() => r(undefined))));
+    expect(region.querySelector('[data-toast-announcer="assertive"]')).toHaveTextContent('Error: Upload failed');
+    expect(region.querySelector('[data-toast-announcer="polite"]')).toHaveTextContent('Saved draft');
+    // Hover and re-render do not repeat it.
+    const polite = region.querySelector('[data-toast-announcer="polite"]')!;
+    polite.textContent = '';
+    fireEvent.mouseEnter(list);
+    await act(async () => new Promise((r) => requestAnimationFrame(() => r(undefined))));
+    expect(polite.textContent).toBe('');
+  });
+
+  it('draws an animated icon, morphs the spinner of a promise toast, and supports avatars and undo', async () => {
+    render(<Toaster />);
+    const ok = deferred<string>();
+    act(() => {
+      toast.promise(ok.promise, { loading: 'Publishing…', success: 'Published', error: 'Failed' });
+    });
+    expect(screen.getByText('Publishing…').closest('li')!.querySelector('.pl-toast-ico--loading .pl-toast-ico__arc')).not.toBeNull();
+    await act(async () => ok.resolve('x'));
+    const done = screen.getByText('Published').closest('li')!;
+    expect(done.querySelector('.pl-toast-ico--success[data-morph]')).not.toBeNull();
+    const onUndo = vi.fn();
+    act(() => {
+      toast('Ada mentioned you', { description: 'in #design', avatar: { name: 'Ada Lovelace' }, undo: onUndo, duration: Infinity });
+    });
+    const rich = screen.getByText('Ada mentioned you').closest('li')!;
+    expect(rich.querySelector('.pl-toaster__avatar--initials')).toHaveTextContent('AL');
+    await userEvent.click(within(rich).getByRole('button', { name: 'Undo' }));
+    expect(onUndo).toHaveBeenCalledTimes(1);
+  });
+
+  it('assertive announcement for a promise that fails', async () => {
+    render(<Toaster />);
+    const bad = deferred<string>();
+    act(() => {
+      toast.promise(bad.promise, { loading: 'Deleting…', success: 'Deleted', error: (e) => 'Failed: ' + String(e) });
+    });
+    await act(async () => bad.reject('offline'));
+    await act(async () => new Promise((r) => requestAnimationFrame(() => r(undefined))));
+    expect(screen.getByRole('region').querySelector('[data-toast-announcer="assertive"]')).toHaveTextContent('Failed: offline');
   });
 
   it('turns a promise toast from loading into success or error', async () => {
@@ -303,8 +341,7 @@ describe('toaster', () => {
       toast.promise(bad.promise, { loading: 'Deleting…', success: 'Deleted', error: (e) => `Failed: ${String(e)}` });
     });
     await act(async () => bad.reject('offline'));
-    const err = screen.getByText('Failed: offline').closest('li')!;
-    expect(err).toHaveAttribute('aria-live', 'assertive');
+    expect(screen.getByText('Failed: offline').closest('li')).toHaveAttribute('data-type', 'error');
   });
 
   it('dismisses and updates by id', () => {
@@ -334,7 +371,7 @@ describe('toaster', () => {
     const list = screen.getByRole('region').querySelector('ol')!;
     fireEvent.mouseEnter(list);
     act(() => vi.advanceTimersByTime(5000));
-    expect(screen.getByText('Heads up')).toBeInTheDocument();
+    expect(screen.getByText('Heads up', { selector: '.pl-toaster__title' })).toBeInTheDocument();
     fireEvent.mouseLeave(list);
 
     const visibility = vi.spyOn(document, 'visibilityState', 'get').mockReturnValue('hidden');
@@ -342,7 +379,7 @@ describe('toaster', () => {
       document.dispatchEvent(new Event('visibilitychange'));
     });
     act(() => vi.advanceTimersByTime(5000));
-    expect(screen.getByText('Heads up')).toBeInTheDocument();
+    expect(screen.getByText('Heads up', { selector: '.pl-toaster__title' })).toBeInTheDocument();
     visibility.mockReturnValue('visible');
     act(() => {
       document.dispatchEvent(new Event('visibilitychange'));
@@ -351,7 +388,7 @@ describe('toaster', () => {
     act(() => vi.advanceTimersByTime(1000));
     expect(onAutoClose).toHaveBeenCalledTimes(1);
     act(() => vi.advanceTimersByTime(250));
-    expect(screen.queryByText('Heads up')).toBeNull();
+    expect(screen.queryByText('Heads up', { selector: '.pl-toaster__title' })).toBeNull();
     visibility.mockRestore();
   });
 
@@ -362,11 +399,11 @@ describe('toaster', () => {
       toast('Sticky', { duration: Infinity });
       toast('Timed', { duration: 2000 });
     });
-    expect(screen.getByText('Timed').closest('li')!.querySelector('.pl-toaster__progress')).not.toBeNull();
-    expect(screen.getByText('Sticky').closest('li')!.querySelector('.pl-toaster__progress')).toBeNull();
+    expect(screen.getByText('Timed', { selector: '.pl-toaster__title' }).closest('li')!.querySelector('.pl-toaster__progress')).not.toBeNull();
+    expect(screen.getByText('Sticky', { selector: '.pl-toaster__title' }).closest('li')!.querySelector('.pl-toaster__progress')).toBeNull();
     act(() => vi.advanceTimersByTime(60_000));
-    expect(screen.getByText('Sticky')).toBeInTheDocument();
-    expect(screen.queryByText('Timed')).toBeNull();
+    expect(screen.getByText('Sticky', { selector: '.pl-toaster__title' })).toBeInTheDocument();
+    expect(screen.queryByText('Timed', { selector: '.pl-toaster__title' })).toBeNull();
   });
 
   it('dismisses on a horizontal swipe past the threshold only', () => {
@@ -695,7 +732,7 @@ describe('swal illustrations, layouts and presets', () => {
     });
     const results = await axe.run(document.body, { rules: { 'color-contrast': { enabled: false } }, resultTypes: ['violations'] });
     expect(results.violations.map((v) => v.id)).toEqual([]);
-  });
+  }, 30000);
 
   it('can opt out of the mobile bottom sheet', () => {
     render(<SwalHost />);

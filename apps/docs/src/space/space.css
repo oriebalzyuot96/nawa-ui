@@ -645,3 +645,11 @@ body.sp-is-dragging * { cursor: grabbing !important; user-select: none; -webkit-
 @media (max-width: 900px) { .sp-notices { bottom: 4.75rem; } }
 @media (prefers-reduced-motion: reduce) { .sp-notice { animation: none; } }
 .pl-dialog.sp-dialog:focus { outline: none; }
+
+/* Site motion pause: the library sets data-a11y-motion on <html>; honour reduce and off inside the builder too. */
+:root[data-a11y-motion='reduce'] .space-app *,
+:root[data-a11y-motion='off'] .space-app * {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+  scroll-behavior: auto !important;
+}
