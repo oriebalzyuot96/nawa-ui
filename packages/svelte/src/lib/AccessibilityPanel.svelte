@@ -15,7 +15,7 @@
     type A11yPrefs,
   } from '@pelagic-ui/core/a11y-prefs';
 
-  type GroupId = 'color' | 'text' | 'reading' | 'motion' | 'interaction';
+  type GroupId = 'appearance' | 'color' | 'text' | 'reading' | 'motion' | 'interaction' | 'sound';
 
   let {
     prefs = $bindable(),
@@ -26,6 +26,8 @@
     labels,
     preview = true,
     groups,
+    appearance = true,
+    sound = 'auto',
     persist = true,
     target,
     id = `pl-a11y-${Math.random().toString(36).slice(2, 8)}`,
@@ -41,6 +43,10 @@
     labels?: A11yPanelLabelOverrides;
     preview?: boolean;
     groups?: GroupId[];
+    /** Show the Theme group (mode, color theme, accent, own color, animated switch). Default true. */
+    appearance?: boolean;
+    /** Sound group: 'auto' (once a sound engine exists), true or false. */
+    sound?: boolean | 'auto';
     /** localStorage key, true (default key) or false. */
     persist?: boolean | string;
     /** Element that receives the data-a11y-* attributes. Default <html>. */
@@ -54,10 +60,11 @@
   function mount() {
     ctl?.destroy();
     const initial = untrack(() => prefs);
-    host.innerHTML = renderA11yPanelHTML({ id, locale, labels, trigger, triggerLabel, preview, groups, prefs: initial });
+    host.innerHTML = renderA11yPanelHTML({ id, locale, labels, trigger, triggerLabel, preview, groups, appearance, sound, prefs: initial });
     ctl = mountA11yPanel(host.firstElementChild as HTMLElement, {
       target: () => target ?? undefined,
       persist,
+      sound,
       value: initial,
       onChange: (next, change) => {
         prefs = next;
@@ -76,7 +83,7 @@
 
   // Render on mount and again when a markup-defining prop changes.
   $effect(() => {
-    void [locale, labels, trigger, triggerLabel, preview, groups, persist];
+    void [locale, labels, trigger, triggerLabel, preview, groups, appearance, sound, persist];
     mount();
   });
   $effect(() => {

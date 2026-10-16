@@ -11,6 +11,7 @@ import A11yBind from './fixtures/A11yBind.svelte';
 const html = document.documentElement;
 const dialog = () => document.querySelector<HTMLElement>('.pl-a11y-panel')!;
 const radio = (name: string) => [...document.querySelectorAll<HTMLElement>('[role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
+const contrastRadio = (name: string) => [...document.querySelectorAll<HTMLElement>('[data-a11y-key="contrast"] [role="radio"]')].find((r) => r.textContent?.replace('Aa', '').trim() === name)!;
 const byLabel = (role: string, name: string) =>
   [...document.querySelectorAll<HTMLElement>(`[role="${role}"]`)].find((el) => document.getElementById(el.getAttribute('aria-labelledby') ?? '')?.textContent === name)!;
 
@@ -38,7 +39,7 @@ describe('AccessibilityPanel (Svelte)', () => {
     const onchange = vi.fn();
     render(AccessibilityPanel, { props: { open: true, onchange } });
     flushSync();
-    radio('Black on yellow').click();
+    contrastRadio('Black on yellow').click();
     expect(html.getAttribute('data-a11y-contrast')).toBe('black-yellow');
     expect(onchange).toHaveBeenLastCalledWith(expect.objectContaining({ contrast: 'black-yellow' }), { key: 'contrast', value: 'black-yellow' });
     expect(JSON.parse(localStorage.getItem(A11Y_STORAGE_KEY)!).contrast).toBe('black-yellow');
@@ -60,7 +61,7 @@ describe('AccessibilityPanel (Svelte)', () => {
     (r.getByTestId('open') as HTMLButtonElement).click();
     flushSync();
     expect(dialog().hidden).toBe(false);
-    radio('High contrast').click();
+    contrastRadio('High contrast').click();
     flushSync();
     expect(r.getByTestId('contrast').textContent).toBe('hc');
     document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
