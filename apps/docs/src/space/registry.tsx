@@ -34,6 +34,7 @@ import {
   Timeline,
   toast,
 } from '@pelagic-ui/react';
+import { NawaCaptcha } from 'nawa-captcha/react';
 import type { NodeProps, NodeType, SpaceNode } from './types';
 import { cardBodyStyle, gridStyle, headingStyle, sectionInner, sectionOuter, spacerStyle, stackStyle, textStyle, type Css } from './styles';
 import { cells, chartModel, isNumericCell, lines, placeholderImage, rows, statusTone, toNumber } from './data';
@@ -168,17 +169,7 @@ function StatView({ p }: { p: NodeProps }) {
 }
 
 function CaptchaView({ p }: { p: NodeProps }) {
-  return (
-    <div className="sp-captcha">
-      <Checkbox label={S(p.label, "I'm not a robot")} />
-      <span className="sp-captcha__brand" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z M9 12l2 2 4-4" />
-        </svg>
-        <small>{S(p.provider, 'Captcha')}</small>
-      </span>
-    </div>
-  );
+  return <NawaCaptcha action={S(p.action, 'login')} lang="en" theme="pelagic" appearance="auto" />;
 }
 
 const fire = (variant: string, message: string) => {
@@ -503,13 +494,10 @@ export const REGISTRY: Record<NodeType, NodeDef> = {
     label: 'Captcha',
     group: 'forms',
     icon: 'captcha',
-    description: 'Placeholder for your captcha provider',
-    keywords: 'robot bot human verification recaptcha turnstile hcaptcha',
-    defaults: { label: "I'm not a robot", provider: 'Captcha' },
-    fields: [
-      { key: 'label', label: 'Label', kind: 'text' },
-      { key: 'provider', label: 'Provider name', kind: 'text', hint: 'Replace with Turnstile, hCaptcha or reCAPTCHA in your app' },
-    ],
+    description: 'Self-hosted puzzle captcha (nawa-captcha)',
+    keywords: 'robot bot human verification nawa captcha puzzle',
+    defaults: { label: "I'm not a robot", action: 'login' },
+    fields: [{ key: 'action', label: 'Action name', kind: 'text', hint: 'Must match the action your server verifies, e.g. login' }],
     render: (n) => <CaptchaView p={n.props} />,
   },
 

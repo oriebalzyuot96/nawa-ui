@@ -43,7 +43,13 @@ interface Ctx {
   notes: Set<string>;
   uid: number;
   usesToast: boolean;
+  /** Set when the page contains a nawa-captcha block; drives the framework import and the HTML script. */
+  usesCaptcha: boolean;
 }
+
+/** Captcha attributes shared by every target (nawa-captcha, self-hosted; theme follows the Pelagic preset). */
+const CAPTCHA_ATTRS = (p: SpaceNode['props']) => ({ action: S(p.action, 'login'), lang: 'en', theme: 'pelagic', appearance: 'auto' });
+const NAWA_CDN = 'https://cdn.jsdelivr.net/npm/nawa-captcha@0.1.1/dist/widget/index.js';
 
 function uniqueName(ctx: Ctx, base: string): string {
   let name = base;
@@ -159,11 +165,10 @@ function plain(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] {
       ];
     }
     case 'checkbox':
+      return [el('label', { class: 'pl-check' }, [el('input', { type: 'checkbox', checked: Boolean(p.checked) }), txt(S(p.label))])];
     case 'captcha':
-      return [
-        ...(n.type === 'captcha' ? [note(`Captcha placeholder: replace with your provider's widget (${S(p.provider, 'Turnstile, hCaptcha or reCAPTCHA')}).`)] : []),
-        el('label', { class: 'pl-check' }, [el('input', { type: 'checkbox', checked: n.type === 'checkbox' && Boolean(p.checked) }), txt(S(p.label))]),
-      ];
+      ctx.usesCaptcha = true;
+      return [el('nawa-captcha', CAPTCHA_ATTRS(p), [])];
     case 'switch': {
       const id = fieldId(ctx, S(p.label));
       return [
@@ -346,21 +351,21 @@ function common(n: SpaceNode, _ctx: Ctx, kids: () => Child[]): Child[] | null {
   const p = n.props;
   switch (n.type) {
     case 'section':
-      return [el('section', { style: sectionOuter(p), 'data-theme': p.tone === 'inverse' ? 'dark' : undefined }, [el('div', { style: sectionInner(p) }, kids())])];
+      return [el('section', { class: 'pl-section', style: sectionOuter(p), 'data-theme': p.tone === 'inverse' ? 'dark' : undefined }, [el('div', { class: 'pl-section__inner', style: sectionInner(p) }, kids())])];
     case 'grid':
-      return [el('div', { style: gridStyle(p) }, kids())];
+      return [el('div', { class: 'pl-grid', style: gridStyle(p) }, kids())];
     case 'stack':
-      return [el('div', { style: stackStyle(p) }, kids())];
+      return [el('div', { class: 'pl-stack', style: stackStyle(p) }, kids())];
     case 'spacer':
       return [el('div', { style: spacerStyle(p), 'aria-hidden': 'true' })];
     case 'heading': {
       const level = Math.min(4, Math.max(1, N(p.level, 2)));
-      const h = el(`h${level}`, { style: headingStyle(p) }, [txt(S(p.text))]);
+      const h = el(`h${level}`, { class: 'pl-heading', style: headingStyle(p) }, [txt(S(p.text))]);
       if (!S(p.eyebrow)) return [h];
       return [el('div', { style: { textAlign: S(p.align, 'start') } }, [el('p', { style: EYEBROW }, [txt(S(p.eyebrow))]), h])];
     }
     case 'text':
-      return [el('p', { style: textStyle(p) }, [txt(S(p.text))])];
+      return [el('p', { class: 'pl-text', style: textStyle(p) }, [txt(S(p.text))])];
     case 'list': {
       const check = p.marker === 'check';
       return [
@@ -371,8 +376,8 @@ function common(n: SpaceNode, _ctx: Ctx, kids: () => Child[]): Child[] | null {
     }
     case 'image':
       return [
-        el('figure', { style: { margin: 0 } }, [
-          el('img', { src: `/images/${slug(S(p.alt), 'image')}.jpg`, alt: S(p.alt), style: { display: 'block', width: '100%', aspectRatio: S(p.ratio, '16/9').replace('/', ' / '), objectFit: 'cover', borderRadius: 'var(--pl-radius-lg)' } }),
+        el('figure', { class: 'pl-image', style: { margin: 0 } }, [
+          el('img', { class: 'pl-image__img', src: `/images/${slug(S(p.alt), 'image')}.jpg`, alt: S(p.alt), style: { display: 'block', width: '100%', aspectRatio: S(p.ratio, '16/9').replace('/', ' / '), objectFit: 'cover', borderRadius: 'var(--pl-radius-lg)' } }),
           ...(S(p.caption) ? [el('figcaption', { style: { ...MUTED_SM, marginBlockStart: '0.5rem' } }, [txt(S(p.caption))])] : []),
         ]),
       ];
@@ -408,8 +413,8 @@ function react(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] {
       use('Checkbox');
       return [el('Checkbox', { label: S(p.label), defaultChecked: Boolean(p.checked) || undefined })];
     case 'captcha':
-      use('Checkbox');
-      return [note(`Captcha placeholder: render your provider's widget here (${S(p.provider, 'Turnstile, hCaptcha or reCAPTCHA')}).`), el('Checkbox', { label: S(p.label) })];
+      ctx.usesCaptcha = true;
+      return [el('NawaCaptcha', CAPTCHA_ATTRS(p))];
     case 'switch': {
       use('Switch');
       const name = uniqueName(ctx, ident(S(p.label), 'enabled'));
@@ -567,6 +572,9 @@ function vue(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] | null {
     case 'checkbox':
       use('Checkbox');
       return [el('Checkbox', { label: S(p.label), modelValue: p.checked ? expr('true') : undefined })];
+    case 'captcha':
+      ctx.usesCaptcha = true;
+      return [el('NawaCaptcha', CAPTCHA_ATTRS(p))];
     case 'switch': {
       use('Switch');
       const name = uniqueName(ctx, ident(S(p.label), 'enabled'));
@@ -665,6 +673,9 @@ function angular(n: SpaceNode, ctx: Ctx, kids: () => Child[]): Child[] | null {
       return [el('pl-select', { label: S(p.label), placeholder: S(p.placeholder) || undefined, options: expr(addConst(ctx, `${ident(S(p.label), 'select')}Options`, lines(p.options).map((o) => ({ label: o, value: slug(o, o) })))) })];
     case 'checkbox':
       return [el('pl-checkbox', { label: S(p.label), value: p.checked ? expr('true') : undefined })];
+    case 'captcha':
+      ctx.usesCaptcha = true;
+      return [el('nawa-captcha', CAPTCHA_ATTRS(p), [])];
     case 'switch': {
       const name = uniqueName(ctx, ident(S(p.label), 'enabled'));
       ctx.states.push({ name, initial: Boolean(p.checked) });
@@ -755,7 +766,7 @@ function toChildren(n: SpaceNode, ctx: Ctx): Child[] {
 /* ---------------- Rendering ---------------- */
 
 const VOID = new Set(['input', 'img', 'hr', 'br', 'meta', 'link']);
-const isComponent = (tag: string) => /^[A-Z]/.test(tag) || tag.startsWith('pl-');
+const isComponent = (tag: string) => /^[A-Z]/.test(tag) || tag.startsWith('pl-') || tag.startsWith('nawa-');
 
 function escText(s: string, t: Target): string {
   if (t === 'react') return /[{}<>]/.test(s) ? `{${lit(s)}}` : s;
@@ -834,7 +845,7 @@ function renderChild(c: Child, depth: number, t: Target): string[] {
   const children = c.children ?? [];
   if (!children.length) {
     if (VOID.has(c.tag) && t === 'html') return multiline ? [...head, `${pad}>`] : [`${head[0]}>`];
-    if (t === 'react' || isComponent(c.tag) || VOID.has(c.tag)) return multiline ? [...head, `${pad}/>`] : [`${head[0]} />`];
+    if (t === 'react' || (t !== 'html' && isComponent(c.tag)) || VOID.has(c.tag)) return multiline ? [...head, `${pad}/>`] : [`${head[0]} />`];
     return multiline ? [...head, `${pad}></${c.tag}>`] : [`${head[0]}></${c.tag}>`];
   }
   if (!multiline && children.length === 1 && 'text' in children[0]) {
@@ -877,7 +888,7 @@ export interface ExportResult {
 }
 
 export function exportCode(doc: SpaceDoc, target: Target): ExportResult {
-  const ctx: Ctx = { target, imports: new Set(), consts: [], states: [], names: new Set(), notes: new Set(), uid: 0, usesToast: false };
+  const ctx: Ctx = { target, imports: new Set(), consts: [], states: [], names: new Set(), notes: new Set(), uid: 0, usesToast: false, usesCaptcha: false };
   const body = doc.nodes.flatMap((n) => toChildren(n, ctx));
   const root = el(target === 'html' ? 'main' : 'div', { ...rootAttrs(doc), style: { background: 'var(--pl-surface)', color: 'var(--pl-text)' } }, body);
   const name = pascal(doc.name || 'Generated page');
@@ -894,6 +905,7 @@ export function exportCode(doc: SpaceDoc, target: Target): ExportResult {
     const code = [
       ...(states.length ? ["import { useState } from 'react';"] : []),
       `import { ${[...new Set(imports)].join(', ')} } from '@pelagic-ui/react';`,
+      ...(ctx.usesCaptcha ? ["import { NawaCaptcha } from 'nawa-captcha/react';"] : []),
       "import '@pelagic-ui/core/style.css'; // once, in your app entry",
       '',
       ...ctx.consts.map((c) => `const ${c.name} = ${c.code};\n`),
@@ -916,6 +928,7 @@ export function exportCode(doc: SpaceDoc, target: Target): ExportResult {
       '<script setup lang="ts">',
       ...(ctx.states.length ? ["import { ref } from 'vue';"] : []),
       ...(imports.length ? [`import { ${imports.join(', ')} } from '@pelagic-ui/vue';`] : []),
+      ...(ctx.usesCaptcha ? ["import { NawaCaptcha } from 'nawa-captcha/vue';"] : []),
       "import '@pelagic-ui/core/style.css'; // once, in your app entry",
       ...(ctx.consts.length || ctx.states.length ? [''] : []),
       ...ctx.consts.map((c) => `const ${c.name} = ${c.code};`),
@@ -936,12 +949,13 @@ export function exportCode(doc: SpaceDoc, target: Target): ExportResult {
     const code = [
       "import { Component } from '@angular/core';",
       "import { PELAGIC_UI } from '@pelagic-ui/angular';",
+      ...(ctx.usesCaptcha ? ["import { NawaCaptchaComponent } from 'nawa-captcha/angular';"] : []),
       "// Add '@pelagic-ui/core/style.css' to the global styles in angular.json once.",
       '',
       '@Component({',
       `  selector: 'app-${slug(doc.name || 'page', 'page')}',`,
       '  standalone: true,',
-      '  imports: [PELAGIC_UI],',
+      `  imports: [PELAGIC_UI${ctx.usesCaptcha ? ', NawaCaptchaComponent' : ''}],`,
       '  template: `',
       ...tree,
       '  `,',
@@ -967,6 +981,7 @@ export function exportCode(doc: SpaceDoc, target: Target): ExportResult {
     '  </head>',
     '  <body>',
     ...tree,
+    ...(ctx.usesCaptcha ? [`    <script type="module" src="${NAWA_CDN}"></script>`] : []),
     '  </body>',
     '</html>',
     '',
