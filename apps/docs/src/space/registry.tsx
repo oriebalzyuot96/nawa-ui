@@ -34,7 +34,6 @@ import {
   Timeline,
   toast,
 } from '@pelagic-ui/react';
-import { NawaCaptcha } from 'nawa-captcha/react';
 import type { NodeProps, NodeType, SpaceNode } from './types';
 import { cardBodyStyle, gridStyle, headingStyle, sectionInner, sectionOuter, spacerStyle, stackStyle, textStyle, type Css } from './styles';
 import { cells, chartModel, isNumericCell, lines, placeholderImage, rows, statusTone, toNumber } from './data';
@@ -169,7 +168,13 @@ function StatView({ p }: { p: NodeProps }) {
 }
 
 function CaptchaView({ p }: { p: NodeProps }) {
-  return <NawaCaptcha action={S(p.action, 'login')} lang="en" theme="pelagic" appearance="auto" />;
+  // The canvas has no captcha server, so the builder shows a demo-mode placeholder; exports use the live widget.
+  return (
+    <div className="sp-captcha-demo" role="group" aria-label="Captcha, demo mode" data-action={S(p.action, 'login')}>
+      <strong>Captcha</strong>
+      <span>Demo mode: the live nawa-captcha widget loads in your exported page.</span>
+    </div>
+  );
 }
 
 const fire = (variant: string, message: string) => {

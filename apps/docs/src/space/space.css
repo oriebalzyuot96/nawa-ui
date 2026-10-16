@@ -653,3 +653,14 @@ body.sp-is-dragging * { cursor: grabbing !important; user-select: none; -webkit-
   animation-duration: 0ms !important;
   scroll-behavior: auto !important;
 }
+
+.sp-captcha-demo {
+  display: grid;
+  gap: 0.2rem;
+  padding: 0.75rem 1rem;
+  border: 1px dashed var(--pl-border-strong, var(--pl-border));
+  border-radius: var(--pl-radius-md, 0.5rem);
+  background: var(--pl-surface-2, var(--pl-surface));
+  color: var(--pl-text);
+  font-size: 0.875rem;
+}
