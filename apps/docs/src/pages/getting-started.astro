@@ -21,7 +21,22 @@ import Alert from '@pelagic-ui/astro/components/Alert';
       <h2 style="margin-top:2rem">2. Use a component</h2>
       <CodeTabs label="Button" code={snippets.button} />
 
-      <h2 style="margin-top:2rem">3. Pick a theme</h2>
+      <h2 style="margin-top:2rem">3. Supported versions</h2>
+      <table>
+        <thead><tr><th scope="col">Framework</th><th scope="col">Supported versions</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">React</th><td>18 and 19</td></tr>
+          <tr><th scope="row">Vue</th><td>3.4 and up</td></tr>
+          <tr><th scope="row">Angular</th><td>20, 21 and 22</td></tr>
+          <tr><th scope="row">Svelte</th><td>5</td></tr>
+          <tr><th scope="row">Astro</th><td>5 (the <code>@pelagic-ui/astro</code> package)</td></tr>
+          <tr><th scope="row">React Native</th><td>0.74 and up, including Expo</td></tr>
+          <tr><th scope="row">Three.js (3D)</th><td>0.160 and up</td></tr>
+          <tr><th scope="row">Flutter</th><td>The <code>pelagic_ui</code> package on pub.dev</td></tr>
+        </tbody>
+      </table>
+
+      <h2 style="margin-top:2rem">4. Pick a theme</h2>
       <p class="muted">By default Pelagic UI follows the operating system: light, dark, or high contrast. Override it any time.</p>
       <CodeTabs label="Theme" code={snippets.theme} />
 

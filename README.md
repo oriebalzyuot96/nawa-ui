@@ -42,13 +42,15 @@ Framework packages (react, vue, @angular/*, svelte, astro, react-native, three) 
 | Package | Platform |
 |---|---|
 | `@pelagic-ui/react` | React 18 / 19 — the most complete set (180+ components and building blocks) |
-| `@pelagic-ui/vue` | Vue 3 |
-| `@pelagic-ui/angular` | Angular 20–22 (standalone, signals, reactive forms) |
+| `@pelagic-ui/vue` | Vue 3.4 and up |
+| `@pelagic-ui/angular` | Angular 20, 21 and 22 (standalone, signals, reactive forms) |
 | `@pelagic-ui/svelte` | Svelte 5 |
 | `@pelagic-ui/astro` | Astro 5 (server-rendered, zero JS by default) |
-| `@pelagic-ui/react-native` | React Native / Expo |
+| `@pelagic-ui/react-native` | React Native 0.74 and up, including Expo |
 | `pelagic_ui` (pub.dev) | Flutter |
-| `@pelagic-ui/three` | WebGL 3D components (three.js) |
+| `@pelagic-ui/three` | WebGL 3D components (three.js 0.160 and up, with React 18 / 19) |
+
+The single `pelagic` npm package has the same peer ranges: React 18 / 19, Vue 3.3+, Angular 20–22, Svelte 5, Astro 4+, React Native 0.74+ and three.js 0.160+. Install only the framework you use.
 | `@pelagic-ui/icons` | 239 original duotone icons for every framework |
 | `@pelagic-ui/illustrations` | 24 themeable empty-state illustrations |
 | `@pelagic-ui/core` | Tokens, CSS, theme engine, accessibility, motion and sound engines |
